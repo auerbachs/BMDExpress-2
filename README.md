@@ -30,6 +30,7 @@ Contributors
 -   Longlong Yang, Vistronix, originally The Hamner Institute (BMDExpress v1 Lead Software Engineer)
 -   Jeff Gift, US EPA (Updated BMD models)
 -   Bruce Allen, Bruce Allen Consulting (Updated BMD Models; BMDExpress v1 Modeling and Statistical Consultant)
+-   B. Alex Merrick, National Toxicology Program (Contract Officer for the NTP Bioinformatics Contract)
 -   Testers
     -   Julia Rager (ToxStrategies)
     -   Stephen Ferguson (National Toxicology Program)
