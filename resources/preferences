@@ -1,0 +1,22 @@
+## Don't change phrase before '='
+#Mon Nov 09 14:05:09 EST 2015
+size.y=943
+size.x=1601
+http.update=http\://apps.sciome.com/bmdexpress2/annotations/
+decimal.number=6
+power.executable=power.exe
+hill.executable=hill.exe
+poly.executable=poly.exe
+file.projectpath=
+file.expressionpath=
+file.exportpath=
+file.definedpath=
+exponential.executable=exponential.exe
+data.path=
+http.proxySet=true
+use.precision=true
+preference.file=preferences
+location.y=49
+location.x=240
+Rscript=
+pathway.filter=PathwayFilter.R

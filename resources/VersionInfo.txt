@@ -1,0 +1,42 @@
+<html>
+<body>
+<h1>
+ BMDExpress 2 
+</h1>
+
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on May 30, 2017</h2>
+
+
+<h3>
+This version is still being tested and validated. 
+</h3>
+
+
+<h3>
+New Features
+</h3>
+<ul>
+<li>Changed "KEGG" pathway to "Signaling Pathway" in analysis notes.</li>
+<li>Added expression data validation feature to ensure expression data contains valid data to avoid the garbage-in/garbage-out phenomenon. </li>
+<li>Multi-export feature will output multiple files based on unique column headers</li>
+<li>Added REACTOME annotations for pathway analysis.</li>
+<li>Added headers to multi-export feature.</li>
+<li>Annotation updates show GEO ID and GEO Names.  You can also click on GEO ID to open the associated web page.</li>
+<li>Added BMDU to BMDS analysis results, filters, charts and many other things.</li>
+<li>Added exponential model to BMD Analysis</li>
+<li>Added Logarithmic Axis toggle for charts.</li>
+<li>Added ability to only show desired filter fields.</li>
+</ul>
+<h3>
+Bug Fixes
+</h3>
+<ul>
+<li>Fixed an issue that was causing REACTOME analysis to return far too few results.</li>
+<li>If One-Way ANOVA p-Value is equal to NaN, then the probe is filtered out.  Previously the probe was allowed and caused problems further down the pipeline.</li>
+
+</ul>
+
+
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.default-color0.chart-bar { -fx-bar-fill: cornflowerblue }
+.default-color1.chart-bar { -fx-bar-fill: lightgreen }
+.default-color2.chart-bar { -fx-bar-fill: coral }
+.default-color3.chart-bar { -fx-bar-fill: khaki }
+.default-color4.chart-bar { -fx-bar-fill: indianred }
+.default-color5.chart-bar { -fx-bar-fill: darksalmon }
+.default-color6.chart-bar { -fx-bar-fill: cyan  }
+
+
+.default-color0.chart-pie { -fx-pie-color: cornflowerblue; }
+.default-color1.chart-pie { -fx-pie-color: lightgreen; }
+.default-color2.chart-pie { -fx-pie-color: coral; }
+.default-color3.chart-pie { -fx-pie-color: khaki; }
+.default-color4.chart-pie { -fx-pie-color: indianred; }
+.default-color5.chart-pie { -fx-pie-color: darksalmon; }
+.default-color6.chart-pie { -fx-pie-color: cyan; }
+
+.default-color0.chart-bubble { -fx-bubble-fill: cornflowerblue }
+.default-color1.chart-bubble { -fx-bubble-fill: lightgreen }
+.default-color2.chart-bubble { -fx-bubble-fill: coral }
+.default-color3.chart-bubble { -fx-bubble-fill: khaki }
+.default-color4.chart-bubble { -fx-bubble-fill: indianred }
+.default-color5.chart-bubble { -fx-bubble-fill: darksalmon }
+.default-color6.chart-bubble { -fx-bubble-fill: cyan  }
+
+.chart-line-symbol {
+    -fx-background-color: cornflowerblue, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+}
+
+.default-color0.chart-series-line { -fx-stroke: cornflowerblue }
+.default-color1.chart-series-line { -fx-stroke: lightgreen }
+.default-color2.chart-series-line { -fx-stroke: coral }
+.default-color3.chart-series-line { -fx-stroke: khaki }
+.default-color4.chart-series-line { -fx-stroke: indianred }
+.default-color5.chart-series-line { -fx-stroke: darksalmon }
+.default-color6.chart-series-line { -fx-stroke: cyan  }
+
+.default-color0.chart-line-symbol { -fx-background-color: cornflowerblue, white; }
+.default-color1.chart-line-symbol { -fx-background-color: lightgreen, white; }
+.default-color2.chart-line-symbol { -fx-background-color: coral, white; }
+.default-color3.chart-line-symbol { -fx-background-color: khaki, white; }
+.default-color4.chart-line-symbol { -fx-background-color: indianred, white; }
+.default-color5.chart-line-symbol { -fx-background-color: darksalmon, white; }
+.default-color6.chart-line-symbol { -fx-background-color: cyan, white; }
+
+
+
+
+/* ====== CANDLE STICK CHART =========================================================== */
+.boxwhisker-tooltip-label {
+    -fx-font-size: 0.75em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666666;
+    -fx-padding: 2 5 2 0;
+}
+.boxwhisker-average-line {
+    -fx-stroke: #106ece;
+    -fx-stroke-width: 2px;
+}
+.boxwhisker-bar {
+    -fx-effect: dropshadow( two-pass-box , rgba(0,0,0,0.4) , 10, 0.0 , 2 , 4 );
+}
+.boxwhisker-line {
+    -fx-stroke: #000000;
+    -fx-stroke-width: 1px;
+}
+
+.boxwhisker-lowmedianline {
+    -fx-stroke: red;
+    -fx-stroke-width: 1px;
+}
+
+.boxwhisker-highmedianline {
+    -fx-stroke: darkblue ;
+    -fx-stroke-width: 1px;
+}
+
+.boxwhisker-box {
+    -fx-padding: 5;
+    -demo-bar-fill: cornflowerblue;
+    -fx-background-color: linear-gradient(derive(-demo-bar-fill,-30%), derive(-demo-bar-fill,-40%)),
+                          linear-gradient(derive(-demo-bar-fill,100%), derive(-demo-bar-fill, 10%)),
+                          linear-gradient(derive(-demo-bar-fill,30%), derive(-demo-bar-fill,-10%));
+    -fx-background-insets: 0,1,2;
+}
+.boxwhisker-box.default-color0 {
+    -demo-bar-fill: cornflowerblue;
+}
+.boxwhisker-box.default-color1 {
+    -demo-bar-fill: lightgreen;
+}
+.boxwhisker-box.default-color2 {
+    -demo-bar-fill: coral;
+}
+.boxwhisker-box.default-color3 {
+    -demo-bar-fill: khaki;
+}
+.boxwhisker-box.default-color4 {
+    -demo-bar-fill: indianred;
+}
+.boxwhisker-box.default-color5 {
+    -demo-bar-fill: darksalmon;
+}
+.boxwhisker-box.default-color6 {
+    -demo-bar-fill: cyan;
+}
+
+
+
+.transparentbutton{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-font-family:"Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 1em; /* 12 */
+    -fx-text-fill: #828282;
+}
+
+.transparentbutton:focused {
+    -fx-border-color: transparent, black;
+    -fx-border-width: 1, 1;
+    -fx-border-style: solid, segments(1, 2);
+    -fx-border-radius: 0, 0;
+    -fx-border-insets: 1 1 1 1, 0;
+}
+
+.transparentbutton:pressed {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+

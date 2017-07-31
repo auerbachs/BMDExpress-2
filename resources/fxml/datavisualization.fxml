@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
+<?import javafx.embed.swing.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="814.0" spacing="2.0" VBox.vgrow="NEVER">
+         <children>
+            <Button fx:id="addDataSet" mnemonicParsing="false" onAction="#handle_addDataSet" text="+" />
+            <Button fx:id="removeDataSet" mnemonicParsing="false" onAction="#handle_removeDataSet" text="-" />
+            <Label text="&lt;-- Add/Remove dataset in visualizations. " />
+         </children>
+      </HBox>
+      <AnchorPane fx:id="graphViewAnchorPane" prefHeight="647.0" prefWidth="814.0" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

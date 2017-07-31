@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxHeight="431.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="431.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView">
+   <center>
+      <VBox prefHeight="246.0" prefWidth="600.0">
+         <children>
+            <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
+               <children>
+                  <TitledPane collapsible="false" prefHeight="170.0" prefWidth="600.0" text="One Way Anova" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <GridPane prefHeight="157.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="224.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.0" minWidth="10.0" prefWidth="376.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="29.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="13.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="Adjusted P-Value Cutoff:" GridPane.rowIndex="2" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="3" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="4" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ComboBox fx:id="expressionDataComboBox" layoutX="96.0" layoutY="7.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ComboBox fx:id="adjustedPValueCutoffComboBox" editable="true" layoutY="1.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <CheckBox fx:id="benAndHochCheckBox" layoutY="8.0" mnemonicParsing="false" text="Benjamini &amp; Hochberg (FDR)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <CheckBox fx:id="filterControlGenesCheckBox" layoutX="-10.0" layoutY="5.0" mnemonicParsing="false" selected="true" text="(probes starting with AFFX...)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="158.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
+                           <children>
+                              <GridPane prefHeight="114.0" prefWidth="598.0">
+                                 <children>
+                                    <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="100.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="138.0" spacing="10.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <CheckBox fx:id="useFoldChangeCheckBox" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handle_UseFoldChangeFilter" prefHeight="18.0" prefWidth="206.0" selected="true" text="Use Fold Change Filter" GridPane.columnSpan="2147483647">
+                                             <GridPane.margin>
+                                                <Insets left="100.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="100.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+                                       <children>
+                                          <CheckBox fx:id="isLogTransformationData" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handle_LogTransformationClick" prefHeight="18.0" prefWidth="187.0" selected="true" text="Log Transformation" />
+                                          <RadioButton fx:id="baseTwo" mnemonicParsing="false" selected="true" text="2">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="logBase" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="baseTen" mnemonicParsing="false" text="10" toggleGroup="$logBase" />
+                                          <RadioButton fx:id="baseNatural" mnemonicParsing="false" text="Natural" toggleGroup="$logBase" />
+                                       </children>
+                                       <GridPane.margin>
+                                          <Insets left="100.0" />
+                                       </GridPane.margin>
+                                    </HBox>
+                                    <Label prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="100.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="395.0" minWidth="10.0" prefWidth="378.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="36.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <HBox fx:id="adjustedPValueComboBox" alignment="CENTER" prefHeight="66.0" prefWidth="600.0" spacing="50.0">
+                     <children>
+                        <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#handle_startButtonPressed" text="Start" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handle_cancelButtonPressed" text="Cancel" />
+                        <Button fx:id="doneButton" mnemonicParsing="false" onAction="#handle_doneButtonPressed" text="Done" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

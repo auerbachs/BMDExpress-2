@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.mainstage.MenuBarView">
+   <menus>
+      <Menu mnemonicParsing="false" text="File">
+         <items>
+            <MenuItem mnemonicParsing="false" onAction="#handle_openProject" text="Open Project" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Import Expression Data" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_importBMDFile" text="Import BMD File" />
+            <MenuItem fx:id="dataVisualizationMenuItem" mnemonicParsing="false" onAction="#handle_dataVisualization" text="Data Visualization" visible="false" />
+            <MenuItem mnemonicParsing="false" text="Save Selection As" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_saveProject" text="Save Project" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_saveAs" text="Save Project As" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_closeProject" text="Close Project" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_annotationsFromWeb" text="Update Annotations" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_exit" text="Exit" />
+         </items>
+      </Menu>
+      <Menu mnemonicParsing="false" text="Edit" visible="false">
+         <items>
+            <Menu mnemonicParsing="false" text="Preferences">
+               <items>
+                  <CheckMenuItem fx:id="useWebServiceCheckMenu" mnemonicParsing="false" onAction="#handle_useWebServicePreference" text="Use Webservice" />
+                  <CheckMenuItem fx:id="usePrecisionCheckMenu" mnemonicParsing="false" onAction="#handle_userPrecisionPreference" text="Use Precision" />
+                  <CheckMenuItem fx:id="autoUpdateCheckMenu" mnemonicParsing="false" onAction="#handle_autoUpdatePreference" text="Auto Update" />
+               </items>
+            </Menu>
+         </items>
+      </Menu>
+      <Menu mnemonicParsing="false" text="View" visible="false">
+         <items>
+            <MenuItem mnemonicParsing="false" onAction="#handle_roundDecimals" text="Round Decimals" visible="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_spreadSheetMenuView" text="Spreadsheet" visible="false" />
+         </items>
+      </Menu>
+      <Menu mnemonicParsing="false" text="Tools">
+         <items>
+            <MenuItem fx:id="pathwayFilterMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayFilter" text="Pathway Filter" visible="false" />
+            <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />
+            <MenuItem fx:id="bMDAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalyses" text="Benchmark Dose Analyses" />
+            <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
+            <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />
+            <MenuItem fx:id="definedCategoryAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_definedCategoryAnalyses" text="Defined Category Analyses" />
+         </items>
+      </Menu>
+      <Menu mnemonicParsing="false" text="Help">
+         <items>
+            <MenuItem mnemonicParsing="false" onAction="#handle_tutorial" text="Tutorial" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_credits" text="Credits" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_about" text="About" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_license" text="License" />
+         </items>
+      </Menu>
+   </menus>
+</MenuBar>

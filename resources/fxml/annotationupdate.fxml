@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="538.0" prefWidth="685.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.annotation.AnnotationUpdateView">
+   <children>
+      <BorderPane layoutX="-197.0" layoutY="-218.0" prefHeight="538.0" prefWidth="514.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <AnchorPane>
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="44.0" prefWidth="681.0" spacing="20.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Label fx:id="progressLabel" />
+                              <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="294.0" progress="0.0" />
+                           </children>
+                        </HBox>
+                        <AnchorPane VBox.vgrow="ALWAYS">
+                           <children>
+                              <TableView fx:id="annotationUpdateTableView" prefHeight="438.0" prefWidth="514.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="Select" />
+                                    <TableColumn editable="false" prefWidth="75.0" text="Name" />
+                                    <TableColumn editable="false" prefWidth="75.0" text="Provider" />
+                                    <TableColumn editable="false" prefWidth="75.0" text="Size" />
+                                    <TableColumn editable="false" prefWidth="145.0" text="Last Updated Date" />
+                                    <TableColumn editable="false" prefWidth="151.0" text="Local Updated Date" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" spacing="50.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Button fx:id="updateButton" mnemonicParsing="false" onAction="#handle_updateButton" text="Update" />
+                              <Button fx:id="doneButton" mnemonicParsing="false" onAction="#handle_doneButton" text="Done" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

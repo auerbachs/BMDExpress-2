@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxWidth="-Infinity" prefHeight="670.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" prefHeight="631.0" prefViewportHeight="600.0" prefViewportWidth="800.0" prefWidth="825.0">
+         <content>
+            <AnchorPane prefHeight="585.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox fx:id="mainVBox" prefHeight="670.0" prefWidth="800.0" AnchorPane.bottomAnchor="-85.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane fx:id="dataOptionsPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+                           <children>
+                              <TitledPane collapsible="false" layoutX="22.0" layoutY="-14.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="800.0" text="Data Options" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="90.0" prefWidth="200.0">
+                                       <children>
+                                          <GridPane prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="342.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="192.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="489.0" minWidth="10.0" prefWidth="298.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label alignment="TOP_RIGHT" prefHeight="16.0" prefWidth="424.0" text="Expression Data:" textAlignment="RIGHT" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.vgrow="ALWAYS" />
+                                                <Label fx:id="oneWayANOVADataLabelLabel" alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="376.0" text="Prefilter:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                                <Label fx:id="expressionDataLabel" prefHeight="16.0" prefWidth="412.0" GridPane.columnIndex="2">
+                                                   <padding>
+                                                      <Insets left="20.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Label fx:id="oneWayANOVADataLabel" prefHeight="16.0" prefWidth="406.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                   <padding>
+                                                      <Insets left="20.0" />
+                                                   </padding>
+                                                </Label>
+                                                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="146.0" progress="0.0" />
+                                                <Label fx:id="progressLabel" prefHeight="16.0" prefWidth="326.0" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="9.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="modelsPane" prefHeight="193.0" prefWidth="800.0">
+                           <children>
+                              <TitledPane collapsible="false" prefHeight="98.0" prefWidth="800.0" text="Continuous Models" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <GridPane layoutX="36.0" layoutY="18.0" prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <CheckBox fx:id="poly2CheckBox" layoutX="179.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 2" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="exponential2CheckBox" layoutX="36.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="Exp 2">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="poly3CheckBox" layoutX="324.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 3" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="hillCheckBox" layoutX="146.0" layoutY="27.0" mnemonicParsing="false" onAction="#handle_HillCheckBox" selected="true" text="Hill" GridPane.rowIndex="2">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="powerCheckBox" layoutX="367.0" layoutY="18.0" mnemonicParsing="false" onAction="#handle_PowerCheckBox" selected="true" text="Power" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="linearCheckBox" layoutX="49.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Linear" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="exponential3CheckBox" mnemonicParsing="false" selected="true" text="Exp 3" GridPane.columnIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="exponential4CheckBox" mnemonicParsing="false" selected="true" text="Exp 4" GridPane.columnIndex="2">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="exponential5CheckBox" mnemonicParsing="false" selected="true" text="Exp 5" GridPane.columnIndex="3">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <CheckBox fx:id="poly4CheckBox" mnemonicParsing="false" text="Poly 4" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="20.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="parametersPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                           <children>
+                              <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
+                                 <content>
+                                    <AnchorPane prefHeight="106.0" prefWidth="798.0">
+                                       <children>
+                                          <GridPane layoutX="21.4" layoutY="20.4" prefHeight="101.0" prefWidth="777.0" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="183.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.00000762939453" minWidth="10.0" prefWidth="109.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="135.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="177.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="182.00003051757812" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="Confidence Level" GridPane.columnIndex="2" />
+                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="14.0" prefHeight="16.0" prefWidth="161.0" text="Maximum Iterations" />
+                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="54.0" prefHeight="16.0" prefWidth="157.0" text="BMR Factor" GridPane.rowIndex="1" />
+                                                <TextField fx:id="maximumIterationsTextField" layoutX="122.0" layoutY="9.0" text="250" GridPane.columnIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </TextField>
+                                                <Label fx:id="restrictPowerLabel" alignment="CENTER_RIGHT" layoutX="425.0" layoutY="61.0" prefHeight="16.0" prefWidth="237.0" text="Restrict Power" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="confidenceLevelComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="3">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </ComboBox>
+                                                <ComboBox fx:id="restrictPowerComboBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </ComboBox>
+                                                <CheckBox fx:id="constantVarianceCheckBox" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" selected="true" text="Constant Variance" GridPane.columnIndex="4">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </CheckBox>
+                                                <ComboBox fx:id="bMRFactorComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="modelSelectionPane" prefHeight="213.0" prefWidth="800.0" VBox.vgrow="NEVER">
+                           <children>
+                              <TitledPane collapsible="false" layoutY="-27.0" prefHeight="156.0" prefWidth="800.0" text="Model Selection" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-27.0">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox layoutX="143.0" layoutY="-26.0" prefHeight="195.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <GridPane>
+                                                  <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="198.0" text="Best Poly Model Test:">
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                         <padding>
+                                                            <Insets right="20.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="199.0" text="P-Value Cutoff:" GridPane.columnIndex="2">
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                         <padding>
+                                                            <Insets right="20.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <ComboBox fx:id="bestPolyTestComboBox" prefHeight="26.0" prefWidth="196.0" GridPane.columnIndex="1" />
+                                                      <ComboBox fx:id="pValueCutoffComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="3" />
+                                                   </children>
+                                                </GridPane>
+                                                <GridPane>
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <CheckBox fx:id="flagHillkParamCheckBox" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#handle_FlagHillCheckBox" prefHeight="18.0" prefWidth="237.0" selected="true" text="Flag Hill Model with 'k' Parameter &lt;" GridPane.halignment="RIGHT">
+                                                         <GridPane.margin>
+                                                            <Insets right="20.0" />
+                                                         </GridPane.margin>
+                                                      </CheckBox>
+                                                      <ComboBox fx:id="flagHillkParamComboBox" prefHeight="26.0" prefWidth="357.0" GridPane.columnIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                                <GridPane>
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <ComboBox fx:id="bestModelSeletionWithFlaggedHillComboBox" prefHeight="26.0" prefWidth="357.0" GridPane.columnIndex="1" />
+                                                      <Label fx:id="bestModelSeletionWithFlaggedHillLabel" alignment="BOTTOM_RIGHT" prefHeight="16.0" prefWidth="414.0" text="Best Model Selection with Flagged Hill Model">
+                                                         <padding>
+                                                            <Insets right="20.0" />
+                                                         </padding>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
+                                                <GridPane>
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="580.9999694824219" minWidth="10.0" prefWidth="543.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="235.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label fx:id="modifyFlaggedHillBMDLabel" alignment="CENTER_RIGHT" disable="true" prefHeight="16.0" prefWidth="591.0" text="Modify BMD of flagged Hill as Best Models with Fraction of Minimum BMD">
+                                                         <GridPane.margin>
+                                                            <Insets right="20.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                      <TextField fx:id="modifyFlaggedHillBMDTextField" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="117.0" text="0.5" GridPane.columnIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="threadPane" prefHeight="126.0" prefWidth="800.0">
+                           <children>
+                              <TitledPane collapsible="false" layoutY="-19.0" prefHeight="79.0" prefWidth="800.0" text="Multiple Threads" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-19.0">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <GridPane prefHeight="59.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" prefHeight="26.0" prefWidth="78.0" GridPane.columnIndex="1" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="591.0" text="Number of Threads: " />
+                                             </children>
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="439.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="339.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="startCancelPane" prefHeight="100.0" prefWidth="800.0">
+                           <children>
+                              <HBox alignment="CENTER" layoutX="247.0" prefHeight="73.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="startButton" alignment="BASELINE_CENTER" mnemonicParsing="false" onAction="#handle_start" text="Start">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="cancelButton" alignment="BASELINE_CENTER" mnemonicParsing="false" onAction="#handle_cancel" text="Cancel">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
