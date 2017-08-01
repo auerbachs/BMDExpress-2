@@ -6,6 +6,29 @@ The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) t
 BMDExpress 1.0 is available here: https://sourceforge.net/projects/bmdexpress/ .
 Details on the US EPA BMDS software can be found here: https://www.epa.gov/bmds .
 
+Updates in BMDExpress-2.0
+=========================
+**Modeling**
+- Added Exponential Models
+- Updated model versions
+- BMDU Determinations
+- Homo/heteroscedasticity option
+**Data Visualization**
+- Variety of plots in 3 analysis levels
+- On the fly data filtering
+- Data set comparison
+**Gene Seta Analysis**
+- Increased options for removing poorly fit data
+- Updated GO Annotations
+- Statistical enrichment of gene sets
+- Reactome Pathways Integration
+**Analysis Efficiency**
+- Batch processing and export
+- Updated platform number and annotations
+- More detailed parameter capture
+- More detailed file naming
+
+
 Questions and Contact Information
 =================================
 
