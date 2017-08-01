@@ -9,7 +9,7 @@ Details on the US EPA BMDS software can be found here: https://www.epa.gov/bmds 
 Questions and Contact Information
 =================================
 
-If you still have further questions, concerns, comments or suggestions, please contact Scott Auerbach or Sciome.
+If you still have further questions, concerns, comments or suggestions, please contact Scott Auerbach(auerbachs@niehs.nih.gov) or Jason Phillips (jason.phillips@sciome.com).
 
 Contributors
 ============
