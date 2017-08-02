@@ -11,9 +11,9 @@ Updates in BMDExpress-2.0
 
 **Modeling**
 
-- Added Exponential Models
+- Added exponential models
 - Updated model versions
-- BMDU Determinations
+- BMDU determinations
 - Homo/heteroscedasticity option
 
 **Data Visualization**
@@ -25,9 +25,9 @@ Updates in BMDExpress-2.0
 **Gene Set Analysis**
 
 - Increased options for removing poorly fit data
-- Updated GO Annotations
+- Updated GO annotations
 - Statistical enrichment of gene sets
-- Reactome Pathways Integration
+- Reactome pathways integration
 
 **Analysis Efficiency**
 
