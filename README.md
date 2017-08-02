@@ -8,21 +8,29 @@ Details on the US EPA BMDS software can be found here: https://www.epa.gov/bmds 
 
 Updates in BMDExpress-2.0
 =========================
+
 **Modeling**
+
 - Added Exponential Models
 - Updated model versions
 - BMDU Determinations
 - Homo/heteroscedasticity option
+
 **Data Visualization**
+
 - Variety of plots in 3 analysis levels
 - On the fly data filtering
 - Data set comparison
+
 **Gene Seta Analysis**
+
 - Increased options for removing poorly fit data
 - Updated GO Annotations
 - Statistical enrichment of gene sets
 - Reactome Pathways Integration
+
 **Analysis Efficiency**
+
 - Batch processing and export
 - Updated platform number and annotations
 - More detailed parameter capture
@@ -51,6 +59,7 @@ Contributors
 -   Jason Pirone, Sciome (Statistical and Modeling Consultant)
 -   Russell Thomas, US EPA, originally The Hamner Institute (BMDExpress v1 Project Lead)
 -   Longlong Yang, Vistronix, originally The Hamner Institute (BMDExpress v1 Lead Software Engineer)
+-   Mel Anderson, Scitovation, orignally The Hamner Institute (BMDExpress v1 contributor)
 -   Jeff Gift, US EPA (Updated BMD models)
 -   Bruce Allen, Bruce Allen Consulting (Updated BMD Models; BMDExpress v1 Modeling and Statistical Consultant)
 -   B. Alex Merrick, National Toxicology Program (Contract Officer for the NTP Bioinformatics Contract)
