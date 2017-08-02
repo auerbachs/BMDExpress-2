@@ -22,7 +22,7 @@ Updates in BMDExpress-2.0
 - On the fly data filtering
 - Data set comparison
 
-**Gene Seta Analysis**
+**Gene Set Analysis**
 
 - Increased options for removing poorly fit data
 - Updated GO Annotations
