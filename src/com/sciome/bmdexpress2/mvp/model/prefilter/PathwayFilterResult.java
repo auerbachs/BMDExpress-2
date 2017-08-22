@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
@@ -13,6 +19,8 @@ import com.sciome.charts.annotation.ChartableDataPoint;
 import com.sciome.charts.annotation.ChartableDataPointLabel;
 import com.sciome.filter.annotation.Filterable;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class PathwayFilterResult extends BMDExpressAnalysisRow implements Serializable
 {
 
@@ -21,6 +29,7 @@ public class PathwayFilterResult extends BMDExpressAnalysisRow implements Serial
 	 */
 	private static final long			serialVersionUID	= -465506000834082809L;
 
+	@JsonValue
 	private ProbeResponse				probeResponse;
 	private List<String>				pathways;
 	private List<Double>				pValues;
@@ -28,11 +37,27 @@ public class PathwayFilterResult extends BMDExpressAnalysisRow implements Serial
 	private List<Double>				FWERs;
 
 	// row data for the table view.
+	@JsonIgnore
 	protected transient List<Object>	row;
-
+	@JsonIgnore
 	private transient String			genes;
+	@JsonIgnore
 	private transient String			geneSymbols;
+	@JsonIgnore
 	private transient int				geneCount			= 0;
+
+	private Long						id;
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	public ProbeResponse getProbeResponse()
 	{

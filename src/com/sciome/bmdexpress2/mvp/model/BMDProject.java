@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
@@ -89,6 +90,7 @@ public class BMDProject implements Serializable
 		this.pathwayFilterResults = pathwayFilterResults;
 	}
 
+	@JsonIgnore
 	public boolean isProjectEmpty()
 	{
 		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0

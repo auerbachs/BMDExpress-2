@@ -9,6 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
@@ -19,102 +26,120 @@ import com.sciome.charts.annotation.ChartableDataPoint;
 import com.sciome.charts.annotation.ChartableDataPointLabel;
 import com.sciome.filter.annotation.Filterable;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonSubTypes({ @Type(value = GOAnalysisResult.class, name = "go"),
+		@Type(value = PathwayAnalysisResult.class, name = "pathway"),
+		@Type(value = DefinedCategoryAnalysisResult.class, name = "defined") })
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow implements Serializable
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3651047352571831492L;
+	private static final long					serialVersionUID				= -3651047352571831492L;
 
-	protected CategoryIdentifier categoryIdentifier;
-	private List<ReferenceGeneProbeStatResult> referenceGeneProbeStatResults;
-	private Integer geneAllCountFromExperiment;
-	private Integer geneAllCount;
-	private Integer geneCountSignificantANOVA;
-	private Double percentage;
+	private Long								id;
+	protected CategoryIdentifier				categoryIdentifier;
+
+	private List<ReferenceGeneProbeStatResult>	referenceGeneProbeStatResults;
+	private Integer								geneAllCountFromExperiment;
+	private Integer								geneAllCount;
+	private Integer								geneCountSignificantANOVA;
+	private Double								percentage;
 
 	// filter count vars
-	private Integer genesWithBMDLessEqualHighDose;
-	private Integer genesWithBMDpValueGreaterEqualValue;
-	private Integer genesWithBMDBMDLRatioBelowValue;
-	private Integer genesWithBMDUBMDLRatioBelowValue;
-	private Integer genesWithBMDUBMDRatioBelowValue;
-	private Integer genesWithNFoldBelowLowPostiveDoseValue;
-	private Integer genesThatPassedAllFilters;
+	private Integer								genesWithBMDLessEqualHighDose;
+	private Integer								genesWithBMDpValueGreaterEqualValue;
+	private Integer								genesWithBMDBMDLRatioBelowValue;
+	private Integer								genesWithBMDUBMDLRatioBelowValue;
+	private Integer								genesWithBMDUBMDRatioBelowValue;
+	private Integer								genesWithNFoldBelowLowPostiveDoseValue;
+	private Integer								genesThatPassedAllFilters;
 
-	private Double fishersExactLeftPValue;
-	private Double fishersExactRightPValue;
-	private Double fishersExactTwoTailPValue;
+	private Double								fishersExactLeftPValue;
+	private Double								fishersExactRightPValue;
+	private Double								fishersExactTwoTailPValue;
 
-	private String genesWithConflictingProbeSets = null;
+	private String								genesWithConflictingProbeSets	= null;
 
 	// bmd/bmdl/bmdu stats
-	private Double bmdMean;
-	private Double bmdMedian;
-	private Double bmdMinimum;
-	private Double bmdSD;
-	private Double bmdWMean;
-	private Double bmdWSD;
+	private Double								bmdMean;
+	private Double								bmdMedian;
+	private Double								bmdMinimum;
+	private Double								bmdSD;
+	private Double								bmdWMean;
+	private Double								bmdWSD;
 
-	private Double bmdlMean;
-	private Double bmdlMedian;
-	private Double bmdlMinimum;
-	private Double bmdlSD;
-	private Double bmdlWMean;
-	private Double bmdlWSD;
+	private Double								bmdlMean;
+	private Double								bmdlMedian;
+	private Double								bmdlMinimum;
+	private Double								bmdlSD;
+	private Double								bmdlWMean;
+	private Double								bmdlWSD;
 
-	private Double bmduMean;
-	private Double bmduMedian;
-	private Double bmduMinimum;
-	private Double bmduSD;
-	private Double bmduWMean;
-	private Double bmduWSD;
+	private Double								bmduMean;
+	private Double								bmduMedian;
+	private Double								bmduMinimum;
+	private Double								bmduSD;
+	private Double								bmduWMean;
+	private Double								bmduWSD;
 
 	// percentile fields
-	private Double fifthPercentileIndex;
-	private Double bmdFifthPercentileTotalGenes;
+	private Double								fifthPercentileIndex;
+	private Double								bmdFifthPercentileTotalGenes;
 
-	private Double tenthPercentileIndex;
-	private Double bmdTenthPercentileTotalGenes;
+	private Double								tenthPercentileIndex;
+	private Double								bmdTenthPercentileTotalGenes;
 
-	private Double genesUpBMDMean;
-	private Double genesUpBMDMedian;
-	private Double genesUpBMDSD;
+	private Double								genesUpBMDMean;
+	private Double								genesUpBMDMedian;
+	private Double								genesUpBMDSD;
 
-	private Double genesUpBMDLMean;
-	private Double genesUpBMDLMedian;
-	private Double genesUpBMDLSD;
+	private Double								genesUpBMDLMean;
+	private Double								genesUpBMDLMedian;
+	private Double								genesUpBMDLSD;
 
-	private Double genesUpBMDUMean;
-	private Double genesUpBMDUMedian;
-	private Double genesUpBMDUSD;
+	private Double								genesUpBMDUMean;
+	private Double								genesUpBMDUMedian;
+	private Double								genesUpBMDUSD;
 
-	private Double genesDownBMDMean;
-	private Double genesDownBMDMedian;
-	private Double genesDownBMDSD;
+	private Double								genesDownBMDMean;
+	private Double								genesDownBMDMedian;
+	private Double								genesDownBMDSD;
 
-	private Double genesDownBMDLMean;
-	private Double genesDownBMDLMedian;
-	private Double genesDownBMDLSD;
+	private Double								genesDownBMDLMean;
+	private Double								genesDownBMDLMedian;
+	private Double								genesDownBMDLSD;
 
-	private Double genesDownBMDUMean;
-	private Double genesDownBMDUMedian;
-	private Double genesDownBMDUSD;
+	private Double								genesDownBMDUMean;
+	private Double								genesDownBMDUMedian;
+	private Double								genesDownBMDUSD;
 
 	// statResult counts
 	// could be computed from probestatresult
-	private Map<StatResult, Integer> statResultCounts;
+	private Map<StatResult, Integer>			statResultCounts;
 
 	// row data for the table view.
-	protected transient List<Object> row;
+	protected transient List<Object>			row;
 
-	private transient String genes;
-	private transient String geneSymbols;
+	private transient String					genes;
+	private transient String					geneSymbols;
 
 	// converting the object data to row data will require lots of string buffers.
 	// let them all use the same object to reduce instantiation
-	private transient StringBuffer stringBuffer = new StringBuffer();
+	private transient StringBuffer				stringBuffer					= new StringBuffer();
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	public List<ReferenceGeneProbeStatResult> getReferenceGeneProbeStatResults()
 	{
@@ -128,18 +153,21 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@Filterable(key = CategoryAnalysisResults.CATEGORY_ID)
+	@JsonIgnore
 	public String getCategoryID()
 	{
 		return categoryIdentifier.getId();
 	}
 
 	@Filterable(key = CategoryAnalysisResults.CATEGORY_DESCRIPTION)
+	@JsonIgnore
 	public String getCategoryDescription()
 	{
 		return categoryIdentifier.getTitle();
 	}
 
 	@Filterable(key = CategoryAnalysisResults.GO_TERM_LEVEL)
+	@JsonIgnore
 	public Integer getGotermLevel()
 	{
 		if (categoryIdentifier instanceof GOCategoryIdentifier)
@@ -160,6 +188,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@Filterable(key = "Entrez Gene IDs")
+	@JsonIgnore
 	public String getGenes()
 	{
 		if (genes == null)
@@ -168,6 +197,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@Filterable(key = "Gene Symbols")
+	@JsonIgnore
 	public String getGeneSymbols()
 	{
 		if (geneSymbols == null)
@@ -176,6 +206,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@ChartableDataPoint(key = CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG)
+	@JsonIgnore
 	public Double getNegLogOfFishers2Tail()
 	{
 		if (fishersExactTwoTailPValue == null)
@@ -309,6 +340,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_MAXIMUM)
+	@JsonIgnore
 	public Double getBMDMaximum()
 	{
 		Double currentMaxBMD = null;
@@ -329,6 +361,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_MAXIMUM)
+	@JsonIgnore
 	public Double getBMDLMaximum()
 	{
 		Double currentMaxBMDL = null;
@@ -393,6 +426,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@ChartableDataPointLabel
+	@JsonIgnore
 	public String getChartableDataLabel()
 	{
 		return this.getCategoryIdentifier().getId();
@@ -830,6 +864,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		this.genesDownBMDUSD = genesDownBMDUSD;
 	}
 
+	@JsonIgnore
 	public Map<StatResult, Integer> getStatResultCounts()
 	{
 		return statResultCounts;
@@ -910,54 +945,74 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 	// add in the ratios filters
 	@Filterable(key = CategoryAnalysisResults.BMDU_BMDL_MEDIAN_RATIO)
+	@JsonIgnore
 	public Double getBMDUdivBMDLMEDIAN()
 	{
+		if (bmduMedian == null)
+			return null;
 		if (bmduMedian.equals(0.0))
 			return null;
 		return this.bmduMedian / this.bmdlMedian;
 	}
 
 	@Filterable(key = CategoryAnalysisResults.BMD_BMDL_MEDIAN_RATIO)
+	@JsonIgnore
 	public Double getBMDdivBMDLMEDIAN()
 	{
+		if (bmduMedian == null)
+			return null;
+
 		if (bmdMedian.equals(0.0))
 			return null;
 		return this.bmdMedian / this.bmdlMedian;
 	}
 
 	@Filterable(key = CategoryAnalysisResults.BMDU_BMD_MEDIAN_RATIO)
+	@JsonIgnore
 	public Double getBMDUdivBMDMEDIAN()
 	{
+		if (bmduMedian == null)
+			return null;
 		if (bmduMedian.equals(0.0))
 			return null;
 		return this.bmduMedian / this.bmdMedian;
 	}
 
 	@Filterable(key = CategoryAnalysisResults.BMDU_BMDL_MEAN_RATIO)
+	@JsonIgnore
 	public Double getBMDUdivBMDLMEAN()
 	{
+		if (bmduMean == null)
+			return null;
 		if (bmduMean.equals(0.0))
 			return null;
 		return this.bmduMean / this.bmdlMean;
 	}
 
 	@Filterable(key = CategoryAnalysisResults.BMD_BMDL_MEAN_RATIO)
+	@JsonIgnore
 	public Double getBMDdivBMDLMEAN()
 	{
+		if (bmduMean == null)
+			return null;
 		if (bmdMean.equals(0.0))
 			return null;
 		return this.bmdMean / this.bmdlMean;
 	}
 
 	@Filterable(key = CategoryAnalysisResults.BMDU_BMD_MEAN_RATIO)
+	@JsonIgnore
 	public Double getBMDUdivBMDMEAN()
 	{
+		if (bmduMean == null)
+			return null;
 		if (bmduMean.equals(0.0))
 			return null;
 		return this.bmduMean / this.bmdMean;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getRow()
 	{
 		if (row == null || row.size() == 0)
@@ -1218,6 +1273,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@Filterable(key = "Genes That Passed All Filters")
+	@JsonIgnore
 	public Integer getAllGenesPassedAllFilters()
 	{
 

@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
@@ -15,30 +20,46 @@ import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.charts.annotation.ChartableData;
 import com.sciome.charts.annotation.ChartableDataLabel;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable, IStatModelProcessable
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 4821688005886618518L;
+	private static final long		serialVersionUID	= 4821688005886618518L;
 
-	private String name;
-	private List<ProbeStatResult> probeStatResults;
-	private DoseResponseExperiment doseResponseExperiment;
-	private AnalysisInfo analysisInfo;
+	private String					name;
+	private List<ProbeStatResult>	probeStatResults;
 
-	private transient List<String> columnHeader;
+	private DoseResponseExperiment	doseResponseExperiment;
+	private AnalysisInfo			analysisInfo;
+
+	private transient List<String>	columnHeader;
+
+	private Long					id;
 
 	/* define chartabble key values */
-	public static final String BMD = "Best BMD";
-	public static final String BMDL = "Best BMDL";
-	public static final String BMDU = "Best BMDU";
-	public static final String BMD_BMDL_RATIO = "Best BMD/BMDL";
-	public static final String BMDU_BMDL_RATIO = "Best BMDU/BMDL";
-	public static final String BMDU_BMD_RATIO = "Best BMDU/BMD";
-	public static final String FIT_PVALUE = "Best Fit P-Value";
-	public static final String FIT_LOG_LIKELIHOOD = "Best Fit Log-Likelihood";
+	public static final String		BMD					= "Best BMD";
+	public static final String		BMDL				= "Best BMDL";
+	public static final String		BMDU				= "Best BMDU";
+	public static final String		BMD_BMDL_RATIO		= "Best BMD/BMDL";
+	public static final String		BMDU_BMDL_RATIO		= "Best BMDU/BMDL";
+	public static final String		BMDU_BMD_RATIO		= "Best BMDU/BMD";
+	public static final String		FIT_PVALUE			= "Best Fit P-Value";
+	public static final String		FIT_LOG_LIKELIHOOD	= "Best Fit Log-Likelihood";
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	@Override
 	@ChartableDataLabel(key = "Category Results Name")
@@ -90,6 +111,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	}
 
 	@Override
+	@JsonIgnore
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null || columnHeader.size() == 0)
@@ -124,7 +146,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			}
 		}
 		for (ProbeStatResult probeStatResult : probeStatResults)
-		{	
+		{
 			probeStatResult.createRowData(probeToGeneMap);
 		}
 	}
@@ -157,12 +179,14 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	}
 
 	@Override
+	@JsonIgnore
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
 	{
 		return doseResponseExperiment;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<ProbeResponse> getProcessableProbeResponses()
 	{
 
@@ -176,6 +200,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	}
 
 	@Override
+	@JsonIgnore
 	public String getParentDataSetName()
 	{
 		return doseResponseExperiment.getName();
@@ -183,12 +208,14 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@JsonIgnore
 	public List getAnalysisRows()
 	{
 		return probeStatResults;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getColumnHeader2()
 	{
 		// TODO Auto-generated method stub

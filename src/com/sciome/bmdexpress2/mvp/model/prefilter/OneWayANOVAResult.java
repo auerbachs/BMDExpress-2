@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
@@ -14,6 +19,8 @@ import com.sciome.charts.annotation.ChartableDataPoint;
 import com.sciome.charts.annotation.ChartableDataPointLabel;
 import com.sciome.filter.annotation.Filterable;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializable
 {
 
@@ -32,15 +39,31 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 
 	private List<Float>					foldChanges;
 
+	@JsonIgnore
 	private transient String			genes;
+	@JsonIgnore
 	private transient String			geneSymbols;
 
 	// row data for the table view.
+	@JsonIgnore
 	protected transient List<Object>	row;
+
+	private Long						id;
 
 	public ProbeResponse getProbeResponse()
 	{
 		return probeResponse;
+	}
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
 	}
 
 	public void setProbeResponse(ProbeResponse probeResponse)
@@ -50,6 +73,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 
 	@Filterable(key = OneWayANOVAResults.PROBE_ID)
 	@ChartableDataPointLabel(key = OneWayANOVAResults.PROBE_ID)
+	@JsonIgnore
 	public String getProbeID()
 	{
 		return probeResponse.getProbe().getId();
@@ -62,6 +86,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 	}
 
 	@Filterable(key = OneWayANOVAResults.GENE_SYMBOL)
+	@JsonIgnore
 	public String getGeneSymbols()
 	{
 		return geneSymbols;
@@ -107,6 +132,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 	}
 
 	@ChartableDataPoint(key = OneWayANOVAResults.NEG_LOG_UNADJUSTED_PVALUE)
+	@JsonIgnore
 	public double getNegativeLog10pValue()
 	{
 
@@ -119,6 +145,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 	}
 
 	@ChartableDataPoint(key = OneWayANOVAResults.NEG_LOG_ADJUSTED_PVALUE)
+	@JsonIgnore
 	public double getNegativeLogAdjustedPValue()
 	{
 		return NumberManager.negLog10(this.adjustedPValue);
@@ -145,6 +172,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 
 	@Filterable(key = OneWayANOVAResults.BEST_FOLD_CHANGE_ABS)
 	@ChartableDataPoint(key = OneWayANOVAResults.BEST_FOLD_CHANGE_ABS)
+	@JsonIgnore
 	public Float getBestFoldChangeABS()
 	{
 		if (bestFoldChange == null)
@@ -225,6 +253,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getRow()
 	{
 		return row;

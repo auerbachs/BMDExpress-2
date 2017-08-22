@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
@@ -15,6 +20,8 @@ import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.charts.annotation.ChartableData;
 import com.sciome.charts.annotation.ChartableDataLabel;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		implements Serializable, IStatModelProcessable
 {
@@ -25,10 +32,13 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	private static final long		serialVersionUID			= -5704632335867988973L;
 
 	private String					name;
+
 	private DoseResponseExperiment	doseResponseExperiment;
 	private List<OneWayANOVAResult>	oneWayANOVAResults;
 	private AnalysisInfo			analysisInfo;
 	private transient List<String>	columnHeader;
+
+	private Long					id;
 
 	/* define chartabble key values */
 	public static final String		FVALUE						= "F-Value";
@@ -43,6 +53,17 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	public static final String		PROBE_ID					= "Probe ID";
 
 	public static final String		NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	@ChartableData(key = "One Way ANOVA")
 	public List<OneWayANOVAResult> getOneWayANOVAResults()
@@ -67,6 +88,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public DoseResponseExperiment getDoseResponseExperiement()
 	{
 		return doseResponseExperiment;
@@ -83,6 +105,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		return name;
 	}
 
+	@JsonIgnore
 	public List<ProbeResponse> getProbeResponses()
 	{
 		List<ProbeResponse> probeResponses = new ArrayList<>();
@@ -103,18 +126,21 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	 */
 
 	@Override
+	@JsonIgnore
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
 	{
 		return this.doseResponseExperiment;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<ProbeResponse> getProcessableProbeResponses()
 	{
 		return this.getProbeResponses();
 	}
 
 	@Override
+	@JsonIgnore
 	public String getParentDataSetName()
 	{
 		return this.doseResponseExperiment.toString();
@@ -177,6 +203,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null || columnHeader.size() == 0)
@@ -209,12 +236,14 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List getAnalysisRows()
 	{
 		return oneWayANOVAResults;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getColumnHeader2()
 	{
 		// TODO Auto-generated method stub

@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 
 import org.ciit.io.ProjectReader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -57,6 +58,8 @@ public class DialogWithThreadProcess
 					out.writeObject(bmdProject);
 					out.close();
 					fileOut.close();
+
+					saveAsJSON(bmdProject);
 
 				}
 				catch (IOException i)
@@ -262,6 +265,28 @@ public class DialogWithThreadProcess
 		showWaitDialog("Load Project", "Loading Project from " + selectedFile.getAbsolutePath());
 		return (BMDProject) task.getValue();
 
+	}
+
+	private void saveAsJSON(BMDProject project) throws Exception
+	{
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		/**
+		 * To make the JSON String pretty use the below code
+		 */
+		File testFile = new File("/tmp/test.json");
+		mapper.writerWithDefaultPrettyPrinter().writeValue(testFile, project);
+
+	}
+
+	public BMDProject testJSON() throws Exception
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		BMDProject projecttest = mapper.readValue(new File("/tmp/test.json"), BMDProject.class);
+		projecttest.setName("json test");
+
+		return projecttest;
 	}
 
 }

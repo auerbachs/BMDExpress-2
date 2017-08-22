@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
@@ -13,24 +18,39 @@ import com.sciome.charts.annotation.ChartableDataPoint;
 import com.sciome.charts.annotation.ChartableDataPointLabel;
 import com.sciome.filter.annotation.Filterable;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8457191085367967268L;
+	private static final long		serialVersionUID	= 8457191085367967268L;
 
-	private ProbeResponse probeResponse;
-	private StatResult bestStatResult;
-	private StatResult bestPolyStatResult;
-	private List<StatResult> statResults;
-	private List<ChiSquareResult> chiSquaredResults;
+	private ProbeResponse			probeResponse;
+	private StatResult				bestStatResult;
+	private StatResult				bestPolyStatResult;
+	private List<StatResult>		statResults;
+	private List<ChiSquareResult>	chiSquaredResults;
 
 	// convenience variables for easy query and reduced processing.
-	private transient List<Object> row;
-	private transient String genes;
-	private transient String geneSymbols;
+	private transient List<Object>	row;
+	private transient String		genes;
+	private transient String		geneSymbols;
+
+	private Long					id;
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	public ProbeResponse getProbeResponse()
 	{
@@ -166,11 +186,13 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getRow()
 	{
 		return row;
 	}
 
+	@JsonIgnore
 	public List<String> generateColumnHeader()
 	{
 		List<String> columnHeader = new ArrayList<String>();
@@ -235,6 +257,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	}
 
 	@Filterable(key = "Entrez Gene ID")
+	@JsonIgnore
 	public String getGenes()
 	{
 		return genes;
@@ -246,6 +269,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	}
 
 	@Filterable(key = "Gene Symbols")
+	@JsonIgnore
 	public String getGeneSymbols()
 	{
 		return geneSymbols;
@@ -261,6 +285,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	 * list of StatResults that are of PolyResult type. Though it could be used to get a list of other
 	 * model(s) as well.
 	 */
+	@JsonIgnore
 	public List<StatResult> getStatResultsOfClassType(Class type)
 	{
 		List<StatResult> returnList = new ArrayList<>();
@@ -286,6 +311,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMD)
 	@ChartableDataPoint(key = BMDResult.BMD)
+	@JsonIgnore
 	public Double getBestBMD()
 	{
 		if (bestStatResult == null)
@@ -295,6 +321,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMDL)
 	@ChartableDataPoint(key = BMDResult.BMDL)
+	@JsonIgnore
 	public Double getBestBMDL()
 	{
 		if (bestStatResult == null)
@@ -304,6 +331,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.FIT_PVALUE)
 	@ChartableDataPoint(key = BMDResult.FIT_PVALUE)
+	@JsonIgnore
 	public Double getBestFitPValue()
 	{
 		if (bestStatResult == null)
@@ -313,6 +341,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.FIT_LOG_LIKELIHOOD)
 	@ChartableDataPoint(key = BMDResult.FIT_LOG_LIKELIHOOD)
+	@JsonIgnore
 	public Double getBestFitLogLikelihood()
 	{
 		if (bestStatResult == null)
@@ -322,6 +351,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMDU)
 	@ChartableDataPoint(key = BMDResult.BMDU)
+	@JsonIgnore
 	public Double getBestBMDU()
 	{
 		if (bestStatResult == null)
@@ -331,6 +361,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMD_BMDL_RATIO)
 	@ChartableDataPoint(key = BMDResult.BMD_BMDL_RATIO)
+	@JsonIgnore
 	public Double getBestBMDdiffBMDL()
 	{
 		if (bestStatResult == null)
@@ -340,6 +371,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMDU_BMDL_RATIO)
 	@ChartableDataPoint(key = BMDResult.BMDU_BMDL_RATIO)
+	@JsonIgnore
 	public Double getBestBMDUdiffBMDL()
 	{
 		if (bestStatResult == null)
@@ -349,6 +381,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	@Filterable(key = BMDResult.BMDU_BMD_RATIO)
 	@ChartableDataPoint(key = BMDResult.BMDU_BMD_RATIO)
+	@JsonIgnore
 	public Double getBestBMDUdiffBMD()
 	{
 		if (bestStatResult == null)
@@ -357,6 +390,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	}
 
 	@ChartableDataPointLabel
+	@JsonIgnore
 	public String getChartableDataLabel()
 	{
 		return getProbeResponse().getProbe().getId();

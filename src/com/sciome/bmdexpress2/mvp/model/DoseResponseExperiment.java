@@ -4,12 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		implements Serializable, IStatModelProcessable
 {
@@ -17,16 +24,28 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6106646178862193241L;
-	private String name;
-	private List<Treatment> treatments;
-	private List<ProbeResponse> probeResponses;
-	private List<ReferenceGeneAnnotation> referenceGeneAnnotations;
-	private ChipInfo chip;
-	private AnalysisInfo analysisInfo;
+	private static final long				serialVersionUID	= 6106646178862193241L;
+	private String							name;
+	private List<Treatment>					treatments;
+	private List<ProbeResponse>				probeResponses;
+	private List<ReferenceGeneAnnotation>	referenceGeneAnnotations;
+	private ChipInfo						chip;
+	private AnalysisInfo					analysisInfo;
 
-	private transient List<String> columnHeader;
-	private transient List<Object> columnHeader2;
+	private transient List<String>			columnHeader;
+	private transient List<Object>			columnHeader2;
+	private Long							id;
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	@Override
 	public String getName()
@@ -97,18 +116,21 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		return name;
 	}
 
+	@JsonIgnore
 	@Override
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
 	{
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public List<ProbeResponse> getProcessableProbeResponses()
 	{
 		return this.probeResponses;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getParentDataSetName()
 	{
@@ -118,6 +140,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	/*
 	 * treatments are known to be sorted low to high when stored
 	 */
+	@JsonIgnore
 	public Double getMinDose()
 	{
 		if (treatments != null && treatments.size() > 0)
@@ -126,6 +149,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		return null;
 	}
 
+	@JsonIgnore
 	public Double getMaxDose()
 	{
 		if (treatments != null && treatments.size() > 0)
@@ -135,6 +159,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null)
@@ -152,6 +177,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List getAnalysisRows()
 	{
 		return probeResponses;

@@ -53,21 +53,21 @@ import com.sciome.bmdexpress2.util.annotation.URLUtils;
 public class ProbeGeneMaps
 {
 
-	public String httpURL, basePath, provider, chip, chipId, species;
-	public String[] probesChips;
-	public String[][] subG2Probes, arrayInfo = null;
-	public Vector<String> uniqueProbes, subGenes, allGenes, subAllProbes;
-	public Hashtable<String, Integer> probesHash;
-	public Hashtable<String, Vector> subHashG2Ids;
+	public String							httpURL, basePath, provider, chip, chipId, species;
+	public String[]							probesChips;
+	public String[][]						subG2Probes, arrayInfo = null;
+	public Vector<String>					uniqueProbes, subGenes, allGenes, subAllProbes;
+	public Hashtable<String, Integer>		probesHash;
+	public Hashtable<String, Vector>		subHashG2Ids;
 
-	private Map<String, ProbeStatResult> statResultMap = new HashMap<>();
-	private Map<String, ReferenceGene> referenceGeneMap = new HashMap<>();
-	private ChipInfo chipInfo;
+	private Map<String, ProbeStatResult>	statResultMap		= new HashMap<>();
+	private Map<String, ReferenceGene>		referenceGeneMap	= new HashMap<>();
+	private ChipInfo						chipInfo;
 
-	private final int BATCHMAX = 2000;
-	protected BMDResult bmdResults;
-	protected Set<String> geneSet = new HashSet<>();
-	protected Vector<String> dataSetGenes = null;
+	private final int						BATCHMAX			= 2000;
+	protected BMDResult						bmdResults;
+	protected Set<String>					geneSet				= new HashSet<>();
+	protected Vector<String>				dataSetGenes		= null;
 
 	public ProbeGeneMaps(BMDResult bmdResults)
 	{
