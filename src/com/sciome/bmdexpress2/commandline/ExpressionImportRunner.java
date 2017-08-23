@@ -1,0 +1,156 @@
+package com.sciome.bmdexpress2.commandline;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
+import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
+import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
+import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.util.ExperimentFileUtil;
+import com.sciome.bmdexpress2.util.MatrixData;
+import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
+
+import javafx.stage.Window;
+
+public class ExpressionImportRunner implements IProjectNavigationView
+{
+
+	public DoseResponseExperiment runExpressionImport(File file, String chipID)
+	{
+		ProjectNavigationPresenter presenter = new ProjectNavigationPresenter(this,
+				BMDExpressEventBus.getInstance());
+
+		DoseResponseExperiment doseResponseExperiment = ExperimentFileUtil.getInstance().readFile(file);
+		FileAnnotation ann = new FileAnnotation();
+		ann.readArraysInfo();
+		ChipInfo chipInfo = ann.getChip(chipID);
+		presenter.assignArrayAnnotations(chipInfo, Arrays.asList(doseResponseExperiment), ann);
+
+		return doseResponseExperiment;
+	}
+
+	@Override
+	public void clearNavigationTree()
+	{
+
+	}
+
+	@Override
+	public void addDoseResponseExperiement(DoseResponseExperiment doseResponseExperiment, boolean selectIt)
+	{
+
+	}
+
+	@Override
+	public void addOneWayANOVAAnalysis(OneWayANOVAResults getPayload, boolean selectIt)
+	{
+
+	}
+
+	@Override
+	public void addBMDAnalysis(BMDResult getPayload, boolean selectIt)
+	{
+
+	}
+
+	@Override
+	public void addCategoryAnalysis(CategoryAnalysisResults getPayload, boolean selectIt)
+	{
+
+	}
+
+	@Override
+	public void performOneWayANOVA()
+	{
+
+	}
+
+	@Override
+	public void performBMDAnalysis()
+	{
+
+	}
+
+	@Override
+	public void performCategoryAnalysis(CategoryAnalysisEnum categoryAnalysisEnum)
+	{
+
+	}
+
+	@Override
+	public void addPathwayFilterResults(PathwayFilterResults pathwayFilterResults, boolean selectIt)
+	{
+
+	}
+
+	@Override
+	public void performPathwayFilter()
+	{
+
+	}
+
+	@Override
+	public void expandTree()
+	{
+
+	}
+
+	@Override
+	public int askToSaveBeforeClose()
+	{
+		return 0;
+	}
+
+	@Override
+	public File askForAProjectFile()
+	{
+		return null;
+	}
+
+	@Override
+	public File askForAProjectFileToOpen()
+	{
+		return null;
+	}
+
+	@Override
+	public void showMatrixPreview(String string, MatrixData matrixData)
+	{
+
+	}
+
+	@Override
+	public void setWindowSizeProperties()
+	{
+
+	}
+
+	@Override
+	public Window getWindow()
+	{
+
+		return null;
+	}
+
+	@Override
+	public void getAChip(List<ChipInfo> choices, List<DoseResponseExperiment> doseResponseExperiment,
+			FileAnnotation fileAnnotation)
+	{
+
+	}
+
+	@Override
+	public File askForABMDFileToImport()
+	{
+		return null;
+	}
+
+}
