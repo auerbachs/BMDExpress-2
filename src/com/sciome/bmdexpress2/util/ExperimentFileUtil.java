@@ -105,6 +105,8 @@ public class ExperimentFileUtil
 					{
 						starti = 1;
 					}
+					else if (owner == null)
+						starti = 1;
 					List<Treatment> treatments = new ArrayList<>();
 					for (int i = 1; i < experiementHeaders.length; i++)
 					{

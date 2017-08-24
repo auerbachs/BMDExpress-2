@@ -17,8 +17,8 @@ public abstract class CategoryConfig
 	// name of output for the analysis
 	private String	outputName;
 
-	private Integer	removePromiscuousProbes;
-	private Integer	removeBMDGreaterHighDose;
+	private Boolean	removePromiscuousProbes;
+	private Boolean	removeBMDGreaterHighDose;
 
 	private Double	bmdPValueCutoff;
 	private Double	bmdBMDLRatioMin;
@@ -26,7 +26,7 @@ public abstract class CategoryConfig
 	private Double	bmduBMDLRatioMin;
 	private Double	nFoldBelowLowestDose;
 
-	private Integer	identifyConflictingProbeSets;
+	private Boolean	identifyConflictingProbeSets;
 	private Double	correlationCutoffForConflictingProbeSets;
 
 	public String getInputName()
@@ -49,22 +49,22 @@ public abstract class CategoryConfig
 		this.outputName = outputName;
 	}
 
-	public Integer getRemovePromiscuousProbes()
+	public Boolean getRemovePromiscuousProbes()
 	{
 		return removePromiscuousProbes;
 	}
 
-	public void setRemovePromiscuousProbes(Integer removePromiscuousProbes)
+	public void setRemovePromiscuousProbes(Boolean removePromiscuousProbes)
 	{
 		this.removePromiscuousProbes = removePromiscuousProbes;
 	}
 
-	public Integer getRemoveBMDGreaterHighDose()
+	public Boolean getRemoveBMDGreaterHighDose()
 	{
 		return removeBMDGreaterHighDose;
 	}
 
-	public void setRemoveBMDGreaterHighDose(Integer removeBMDGreaterHighDose)
+	public void setRemoveBMDGreaterHighDose(Boolean removeBMDGreaterHighDose)
 	{
 		this.removeBMDGreaterHighDose = removeBMDGreaterHighDose;
 	}
@@ -119,12 +119,12 @@ public abstract class CategoryConfig
 		this.nFoldBelowLowestDose = nFoldBelowLowestDose;
 	}
 
-	public Integer getIdentifyConflictingProbeSets()
+	public Boolean getIdentifyConflictingProbeSets()
 	{
 		return identifyConflictingProbeSets;
 	}
 
-	public void setIdentifyConflictingProbeSets(Integer identifyConflictingProbeSets)
+	public void setIdentifyConflictingProbeSets(Boolean identifyConflictingProbeSets)
 	{
 		this.identifyConflictingProbeSets = identifyConflictingProbeSets;
 	}

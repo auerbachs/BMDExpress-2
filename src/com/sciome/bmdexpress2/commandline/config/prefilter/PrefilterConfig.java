@@ -17,10 +17,10 @@ public abstract class PrefilterConfig
 	private String	outputName;
 
 	private Double	pValueCutoff;
-	private Integer	useMultipleTestingCorrection;
-	private Integer	filterOutControlGenes;
+	private Boolean	useMultipleTestingCorrection	= false;
+	private Boolean	filterOutControlGenes			= false;
 
-	private Integer	useFoldChange;
+	private Boolean	useFoldChange					= false;
 	// 0=no log, 1=log2, 2=log10, 3=lognatural
 	private Integer	logTransformationOfData;
 	private Double	foldChange;
@@ -55,32 +55,32 @@ public abstract class PrefilterConfig
 		this.pValueCutoff = pValueCutoff;
 	}
 
-	public Integer getUseMultipleTestingCorrection()
+	public Boolean getUseMultipleTestingCorrection()
 	{
 		return useMultipleTestingCorrection;
 	}
 
-	public void setUseMultipleTestingCorrection(Integer useMultipleTestingCorrection)
+	public void setUseMultipleTestingCorrection(Boolean useMultipleTestingCorrection)
 	{
 		this.useMultipleTestingCorrection = useMultipleTestingCorrection;
 	}
 
-	public Integer getFilterOutControlGenes()
+	public Boolean getFilterOutControlGenes()
 	{
 		return filterOutControlGenes;
 	}
 
-	public void setFilterOutControlGenes(Integer filterOutControlGenes)
+	public void setFilterOutControlGenes(Boolean filterOutControlGenes)
 	{
 		this.filterOutControlGenes = filterOutControlGenes;
 	}
 
-	public Integer getUseFoldChange()
+	public Boolean getUseFoldChange()
 	{
 		return useFoldChange;
 	}
 
-	public void setUseFoldChange(Integer userFoldChange)
+	public void setUseFoldChange(Boolean userFoldChange)
 	{
 		this.useFoldChange = userFoldChange;
 	}

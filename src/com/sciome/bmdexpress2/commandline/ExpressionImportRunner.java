@@ -23,7 +23,7 @@ import javafx.stage.Window;
 public class ExpressionImportRunner implements IProjectNavigationView
 {
 
-	public DoseResponseExperiment runExpressionImport(File file, String chipID)
+	public DoseResponseExperiment runExpressionImport(File file, String chipID, String outputName)
 	{
 		ProjectNavigationPresenter presenter = new ProjectNavigationPresenter(this,
 				BMDExpressEventBus.getInstance());
@@ -34,6 +34,7 @@ public class ExpressionImportRunner implements IProjectNavigationView
 		ChipInfo chipInfo = ann.getChip(chipID);
 		presenter.assignArrayAnnotations(chipInfo, Arrays.asList(doseResponseExperiment), ann);
 
+		doseResponseExperiment.setName(outputName);
 		return doseResponseExperiment;
 	}
 

@@ -10,7 +10,7 @@ public class ExpressionDataConfig
 	private String	outputName;
 
 	// is the first line labels or doses?
-	private Integer	hasHeaders;
+	private Boolean	hasHeaders;
 
 	// GPL id for most things.
 	private String	platform;
@@ -35,12 +35,12 @@ public class ExpressionDataConfig
 		this.outputName = outputName;
 	}
 
-	public Integer getHasHeaders()
+	public Boolean getHasHeaders()
 	{
 		return hasHeaders;
 	}
 
-	public void setHasHeaders(Integer hasHeaders)
+	public void setHasHeaders(Boolean hasHeaders)
 	{
 		this.hasHeaders = hasHeaders;
 	}

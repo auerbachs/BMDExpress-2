@@ -48,7 +48,7 @@ public class OneWayANOVAPresenter extends PresenterBase<IOneWayANOVAView>
 	/*
 	 * do one way anova filter
 	 */
-	public void performOneWayANOVA(IStatModelProcessable processableData, double pCutOff,
+	public OneWayANOVAResults performOneWayANOVA(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, boolean isLogTransformation, double baseValue)
 	{
@@ -76,7 +76,7 @@ public class OneWayANOVAPresenter extends PresenterBase<IOneWayANOVAView>
 			// check if control gene
 			if (
 			// first check the pValue
-			((Double.isNaN(pValueToCheck) && pCutOff <9999) || pValueToCheck >= pCutOff) ||
+			((Double.isNaN(pValueToCheck) && pCutOff < 9999) || pValueToCheck >= pCutOff) ||
 			// second check if it is a control gene
 					(filterOutControlGenes
 							&& oneWayResult.getProbeResponse().getProbe().getId().startsWith("AFFX"))
@@ -138,6 +138,8 @@ public class OneWayANOVAPresenter extends PresenterBase<IOneWayANOVAView>
 
 		// post the new oneway object to the event bus so folks can do the right thing.
 		getEventBus().post(new OneWayANOVADataLoadedEvent(oneWayResults));
+
+		return oneWayResults;
 
 	}
 

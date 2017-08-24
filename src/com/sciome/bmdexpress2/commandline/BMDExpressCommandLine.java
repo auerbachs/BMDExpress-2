@@ -128,8 +128,9 @@ public class BMDExpressCommandLine
 		catch (Exception exp)
 		{
 			System.out.println("Unexpected exception:" + exp.getMessage());
+			exp.printStackTrace();
 		}
-		new BMDExpressCommandLine().createStrawMan();
+		// new BMDExpressCommandLine().createStrawMan();
 
 	}
 
@@ -144,13 +145,13 @@ public class BMDExpressCommandLine
 
 		// load doseresponse data
 		ExpressionDataConfig expression1 = new ExpressionDataConfig();
-		expression1.setHasHeaders(0);
+		expression1.setHasHeaders(false);
 		expression1.setInputFileName("/home/japhill/analysis/expressiondata/expression1.txt");
 		expression1.setOutputName("expression1");
 		expression1.setPlatform("GPL1255");
 
 		ExpressionDataConfig expression2 = new ExpressionDataConfig();
-		expression2.setHasHeaders(0);
+		expression2.setHasHeaders(false);
 		expression2.setInputFileName("/home/japhill/analysis/expressiondata/expression2.txt");
 		expression2.setOutputName("expression2");
 		expression2.setPlatform("GPL1255");
@@ -160,23 +161,23 @@ public class BMDExpressCommandLine
 		// load prefilters
 		ANOVAConfig anovaConfig = new ANOVAConfig();
 
-		anovaConfig.setFilterOutControlGenes(1);
+		anovaConfig.setFilterOutControlGenes(true);
 		anovaConfig.setFoldChange(2.0);
 		anovaConfig.setInputName("expression1");
 		anovaConfig.setOutputName("expression1_anova");
 		anovaConfig.setLogTransformationOfData(1);
 		anovaConfig.setpValueCutoff(0.05);
-		anovaConfig.setUseFoldChange(1);
+		anovaConfig.setUseFoldChange(true);
 
 		ANOVAConfig anovaConfig1 = new ANOVAConfig();
 
-		anovaConfig1.setFilterOutControlGenes(1);
+		anovaConfig1.setFilterOutControlGenes(true);
 		anovaConfig1.setFoldChange(2.0);
 		anovaConfig1.setInputName("expression2");
 		anovaConfig1.setOutputName("expression2_anova");
 		anovaConfig1.setLogTransformationOfData(1);
 		anovaConfig1.setpValueCutoff(0.05);
-		anovaConfig1.setUseFoldChange(1);
+		anovaConfig1.setUseFoldChange(true);
 
 		runConfig.setPreFilterConfigs(Arrays.asList(anovaConfig, anovaConfig1));
 
@@ -249,8 +250,8 @@ public class BMDExpressCommandLine
 	{
 		GOConfig go = new GOConfig();
 
-		go.setRemovePromiscuousProbes(1);
-		go.setRemoveBMDGreaterHighDose(1);
+		go.setRemovePromiscuousProbes(true);
+		go.setRemoveBMDGreaterHighDose(true);
 		go.setnFoldBelowLowestDose(10.0);
 		go.setBmdPValueCutoff(0.1);
 		go.setBmduBMDLRatioMin(20.0);
@@ -260,8 +261,8 @@ public class BMDExpressCommandLine
 
 		PathwayConfig path = new PathwayConfig();
 
-		path.setRemovePromiscuousProbes(1);
-		path.setRemoveBMDGreaterHighDose(1);
+		path.setRemovePromiscuousProbes(true);
+		path.setRemoveBMDGreaterHighDose(true);
 		path.setnFoldBelowLowestDose(10.0);
 		path.setBmdPValueCutoff(0.1);
 		path.setBmduBMDLRatioMin(20.0);
@@ -271,8 +272,8 @@ public class BMDExpressCommandLine
 
 		DefinedConfig defined = new DefinedConfig();
 
-		defined.setRemovePromiscuousProbes(1);
-		defined.setRemoveBMDGreaterHighDose(1);
+		defined.setRemovePromiscuousProbes(true);
+		defined.setRemoveBMDGreaterHighDose(true);
 		defined.setnFoldBelowLowestDose(10.0);
 		defined.setBmdPValueCutoff(0.1);
 		defined.setBmduBMDLRatioMin(20.0);

@@ -21,6 +21,7 @@ public class RunConfig
 
 	private String						preprendToNames	= "";
 	private String						appendToNames	= "";
+	private Boolean						overwrite		= false;
 
 	public String getBm2FileName()
 	{
@@ -100,6 +101,16 @@ public class RunConfig
 	public void setCategoryAnalysisConfigs(List<CategoryConfig> categoryAnalysisConfigs)
 	{
 		this.categoryAnalysisConfigs = categoryAnalysisConfigs;
+	}
+
+	public Boolean getOverwrite()
+	{
+		return overwrite;
+	}
+
+	public void setOverwrite(Boolean overwrite)
+	{
+		this.overwrite = overwrite;
 	}
 
 }
