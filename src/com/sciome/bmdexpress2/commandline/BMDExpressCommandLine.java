@@ -18,7 +18,9 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sciome.bmdexpress2.commandline.config.RunConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.BMDSBestModelSelectionConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.BMDSInputConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSModelConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.ExponentialConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.HillConfig;
@@ -130,7 +132,7 @@ public class BMDExpressCommandLine
 			System.out.println("Unexpected exception:" + exp.getMessage());
 			exp.printStackTrace();
 		}
-		// new BMDExpressCommandLine().createStrawMan();
+		new BMDExpressCommandLine().createStrawMan();
 
 	}
 
@@ -184,33 +186,41 @@ public class BMDExpressCommandLine
 		// load bmd config
 
 		BMDSConfig bmdsConfig = new BMDSConfig();
-		bmdsConfig.setBestModelSelectionWithFlaggedHill(1);
-		bmdsConfig.setBestPolyTest(1);
-		bmdsConfig.setFlagHillWithKParameter(1);
 		bmdsConfig.setInputCategory("anova");
 		bmdsConfig.setInputName("expression1_anova");
-		bmdsConfig.setkParameterValue(1);
-		bmdsConfig.setModifyFlaggedHillWithFractionMinBMD(0.05);
-		bmdsConfig.setNumberOfThreads(100);
 		bmdsConfig.setOutputName("expression1_anova_bmds");
-		bmdsConfig.setpValueCutoff(0.05);
+		bmdsConfig.setNumberOfThreads(100);
+		BMDSBestModelSelectionConfig bestModConfig = new BMDSBestModelSelectionConfig();
+		bestModConfig.setBestModelSelectionWithFlaggedHill(1);
+		bestModConfig.setBestPolyTest(1);
+		bestModConfig.setFlagHillWithKParameter(true);
+
+		bestModConfig.setkParameterValue(1);
+		bestModConfig.setModifyFlaggedHillWithFractionMinBMD(0.05);
+
+		bestModConfig.setpValueCutoff(0.05);
+		bmdsConfig.setBmdsInputConfig(getBMDSInputConfig());
+		bmdsConfig.setBmdsBestModelSelection(bestModConfig);
 
 		bmdsConfig.setModelConfigs(getModelConfigs());
 
 		BMDSConfig bmdsConfig1 = new BMDSConfig();
-		bmdsConfig1.setBestModelSelectionWithFlaggedHill(1);
-		bmdsConfig1.setBestPolyTest(1);
-		bmdsConfig1.setFlagHillWithKParameter(1);
 		bmdsConfig1.setInputCategory("anova");
-		bmdsConfig1.setInputName("expression2_anova");
-		bmdsConfig1.setkParameterValue(1);
-		bmdsConfig1.setModifyFlaggedHillWithFractionMinBMD(0.05);
-		bmdsConfig1.setNumberOfThreads(100);
-		bmdsConfig1.setOutputName("expression2_anova_bmds");
-		bmdsConfig1.setpValueCutoff(0.05);
+		bmdsConfig.setNumberOfThreads(100);
+		bmdsConfig1.setInputName("expression1_anova");
+		bmdsConfig1.setOutputName("expression1_anova_bmds");
+		BMDSBestModelSelectionConfig bestModConfig1 = new BMDSBestModelSelectionConfig();
+		bestModConfig1.setBestModelSelectionWithFlaggedHill(1);
+		bestModConfig1.setBestPolyTest(1);
+		bestModConfig1.setFlagHillWithKParameter(true);
 
+		bestModConfig1.setkParameterValue(1);
+		bestModConfig1.setModifyFlaggedHillWithFractionMinBMD(0.05);
+
+		bestModConfig1.setpValueCutoff(0.05);
+		bmdsConfig1.setBmdsInputConfig(getBMDSInputConfig());
 		bmdsConfig1.setModelConfigs(getModelConfigs());
-
+		bmdsConfig1.setBmdsBestModelSelection(bestModConfig1);
 		runConfig.setBmdsConfigs(Arrays.asList(bmdsConfig, bmdsConfig1));
 
 		List<CategoryConfig> configs = new ArrayList<>();
@@ -285,66 +295,44 @@ public class BMDExpressCommandLine
 		return Arrays.asList(go, path, defined);
 	}
 
+	private BMDSInputConfig getBMDSInputConfig()
+	{
+		BMDSInputConfig conf = new BMDSInputConfig();
+
+		conf.setBmrFactor(1.349);
+		conf.setConfidenceLevel(0.95);
+		conf.setConstantVariance(true);
+		conf.setMaxIterations(250);
+		conf.setRestrictPower(true);
+		return conf;
+	}
+
 	private List<BMDSModelConfig> getModelConfigs()
 	{
 		HillConfig hill = new HillConfig();
-		hill.setBmrFactor(1.349);
-		hill.setConfidenceLevel(0.95);
-		hill.setConstantVariance(1);
-		hill.setMaxIterations(250);
 
 		PowerConfig power = new PowerConfig();
-		power.setBmrFactor(1.349);
-		power.setConfidenceLevel(0.95);
-		power.setConstantVariance(1);
-		power.setMaxIterations(250);
 
 		PolyConfig poly1 = new PolyConfig();
 		poly1.setDegree(1);
-		poly1.setBmrFactor(1.349);
-		poly1.setConfidenceLevel(0.95);
-		poly1.setConstantVariance(1);
-		poly1.setMaxIterations(250);
 
 		PolyConfig poly2 = new PolyConfig();
 		poly2.setDegree(2);
-		poly2.setBmrFactor(1.349);
-		poly2.setConfidenceLevel(0.95);
-		poly2.setConstantVariance(1);
-		poly2.setMaxIterations(250);
 
 		PolyConfig poly3 = new PolyConfig();
 		poly3.setDegree(3);
-		poly3.setBmrFactor(1.349);
-		poly3.setConfidenceLevel(0.95);
-		poly3.setConstantVariance(1);
-		poly3.setMaxIterations(250);
 
 		ExponentialConfig exp2 = new ExponentialConfig();
 		exp2.setExpModel(2);
-		exp2.setBmrFactor(1.349);
-		exp2.setConfidenceLevel(0.95);
-		exp2.setConstantVariance(1);
-		exp2.setMaxIterations(250);
 
 		ExponentialConfig exp3 = new ExponentialConfig();
 		exp3.setExpModel(3);
-		exp3.setBmrFactor(1.349);
-		exp3.setConfidenceLevel(0.95);
-		exp3.setConstantVariance(1);
-		exp3.setMaxIterations(250);
+
 		ExponentialConfig exp4 = new ExponentialConfig();
 		exp4.setExpModel(4);
-		exp4.setBmrFactor(1.349);
-		exp4.setConfidenceLevel(0.95);
-		exp4.setConstantVariance(1);
-		exp4.setMaxIterations(250);
+
 		ExponentialConfig exp5 = new ExponentialConfig();
 		exp5.setExpModel(5);
-		exp5.setBmrFactor(1.349);
-		exp5.setConfidenceLevel(0.95);
-		exp5.setConstantVariance(1);
-		exp5.setMaxIterations(250);
 
 		return Arrays.asList(hill, power, poly1, poly2, poly3, exp2, exp3, exp4, exp5);
 

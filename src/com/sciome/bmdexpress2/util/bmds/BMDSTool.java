@@ -64,34 +64,34 @@ import com.sciome.bmdexpress2.util.stat.DosesStat;
  */
 public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 {
-	private Vector<File> tempFiles;
-	private BufferedWriter LOGOUT;
+	private Vector<File>								tempFiles;
+	private BufferedWriter								LOGOUT;
 
-	private double maxDose, lowPDose, flagDose, flagRatio;
+	private double										maxDose, lowPDose, flagDose, flagRatio;
 
-	private final String TEMPDIR = "temp";
+	private final String								TEMPDIR				= "temp";
 
-	private final double DEFAULTDOUBLE = -9999;
-	private final double p05 = 0.05;
+	private final double								DEFAULTDOUBLE		= -9999;
+	private final double								p05					= 0.05;
 
-	private List<ProbeResponse> probeResponses;
-	private ModelInputParameters inputParameters;
-	private ModelSelectionParameters modelSelectionParameters;
-	private List<StatModel> modelsToRun;
-	private float[] doses;
-	private BMDResult bmdResults = new BMDResult();
+	private List<ProbeResponse>							probeResponses;
+	private ModelInputParameters						inputParameters;
+	private ModelSelectionParameters					modelSelectionParameters;
+	private List<StatModel>								modelsToRun;
+	private float[]										doses;
+	private BMDResult									bmdResults			= new BMDResult();
 
-	private int numberOfProbesRun = 0;
-	private String currentMessage = "";
+	private int											numberOfProbesRun	= 0;
+	private String										currentMessage		= "";
 
 	// the calling thing that needs to update progress to a view or something.
-	private IBMDSToolProgress progressReciever = null;
+	private IBMDSToolProgress							progressReciever	= null;
 
-	private List<IFitThread> fitThreads = new ArrayList<>();
-	private boolean cancel = false;
-	private AnalysisInfo analysisInfo;
-	private com.sciome.bmdexpress2.util.stat.DosesStat dosesStat;
-	private List<Integer> doseResponseQueue = new ArrayList<>();
+	private List<IFitThread>							fitThreads			= new ArrayList<>();
+	private boolean										cancel				= false;
+	private AnalysisInfo								analysisInfo;
+	private com.sciome.bmdexpress2.util.stat.DosesStat	dosesStat;
+	private List<Integer>								doseResponseQueue	= new ArrayList<>();
 
 	/**
 	 * Class constructor
@@ -106,7 +106,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		this.inputParameters = inputParameters;
 		this.modelSelectionParameters = modelSelectionParameters;
 		this.modelsToRun = modelsToRun;
-
+		bmdResults.setName(processableData.toString() + "_BMD");
 		// create an array of doubles for the doses for the old code to user.
 		doses = new float[treatments.size()];
 		for (int i = 0; i < treatments.size(); i++)
@@ -187,6 +187,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	{
 
 		bmdResults.setAnalysisInfo(analysisInfo);
+
 		if (probeResponses != null)
 		{
 
@@ -201,19 +202,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			}
 
 			tempFiles = new Vector<File>();
-			// HashSet<String> probeSet = indexingGenes();
-
-			// if (!(probeSet.size() > 0))
-			// {
-			// return;
-			// }
-
-			// initLogFile(srcName);
-			// tempFileOut(LOGOUT, "Start");
-			// String[] columnNames = assignColumnNames();
-			// int MAXROW = probeSet.size();
-			// int MAXCOL = columnNames.length;
-			// int curCol = prepareReponseData(probeSet);
 
 			boolean pass = fitSelectedModels();
 			closeOutFile(LOGOUT);

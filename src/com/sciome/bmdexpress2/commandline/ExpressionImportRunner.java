@@ -2,6 +2,7 @@ package com.sciome.bmdexpress2.commandline;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
@@ -9,6 +10,7 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
+import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
@@ -29,8 +31,14 @@ public class ExpressionImportRunner implements IProjectNavigationView
 				BMDExpressEventBus.getInstance());
 
 		DoseResponseExperiment doseResponseExperiment = ExperimentFileUtil.getInstance().readFile(file);
+
+		Hashtable<String, Integer> probeHash = new Hashtable<>();
+		for (ProbeResponse probeResponse : doseResponseExperiment.getProbeResponses())
+			probeHash.put(probeResponse.getProbe().getId(), 1);
 		FileAnnotation ann = new FileAnnotation();
+		ann.setProbesHash(probeHash);
 		ann.readArraysInfo();
+
 		ChipInfo chipInfo = ann.getChip(chipID);
 		presenter.assignArrayAnnotations(chipInfo, Arrays.asList(doseResponseExperiment), ann);
 

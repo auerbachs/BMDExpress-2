@@ -90,7 +90,6 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 							if (bMDResults != null)
 							{
 
-								bMDResults.setName(processableData.toString() + "_BMD");
 								getEventBus().post(new BMDAnalysisDataLoadedEvent(bMDResults));
 
 							}

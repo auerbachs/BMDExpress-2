@@ -263,7 +263,9 @@ public class FileAnnotation extends ArrayAnnotation
 								}
 							}
 							catch (NullPointerException e)
-							{}
+							{
+								e.printStackTrace();
+							}
 
 							// add gene / probe
 							for (int j = 0; j < genes.length; j++)
@@ -281,7 +283,9 @@ public class FileAnnotation extends ArrayAnnotation
 									vectProbes.add(values[0]);
 								}
 								catch (NullPointerException e)
-								{}
+								{
+									e.printStackTrace();
+								}
 							}
 						}
 					}

@@ -8,19 +8,48 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sciome.bmdexpress2.commandline.config.RunConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.BMDSModelConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.ExponentialConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.HillConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.PolyConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.PowerConfig;
 import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
+import com.sciome.bmdexpress2.commandline.config.category.DefinedConfig;
+import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
+import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
+import com.sciome.bmdexpress2.util.FileIO;
+import com.sciome.bmdexpress2.util.MatrixData;
+import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
+import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
+import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 
 public class AnalyzeRunner
 {
@@ -60,7 +89,7 @@ public class AnalyzeRunner
 		List<ExpressionDataConfig> expressionConfigs = runConfig.getExpressionDataConfigs();
 		if (expressionConfigs != null)
 			for (ExpressionDataConfig expressionConfig : expressionConfigs)
-				project.getDoseResponseExperiments().add(doExpressionConfig(expressionConfig));
+				doExpressionConfig(expressionConfig);
 
 		// 2: get all the anova configs
 		List<PrefilterConfig> preFilterConfigs = runConfig.getPreFilterConfigs();
@@ -104,11 +133,256 @@ public class AnalyzeRunner
 	{
 		System.out.println("category analysis");
 
+		CategoryAnalysisEnum catAn = null;
+		if (catConfig instanceof GOConfig)
+			catAn = CategoryAnalysisEnum.GO;
+		else if (catConfig instanceof DefinedConfig)
+			catAn = CategoryAnalysisEnum.DEFINED;
+		else if (catConfig instanceof PathwayConfig)
+			catAn = CategoryAnalysisEnum.PATHWAY;
+
+		List<BMDResult> bmdResultsToRun = new ArrayList<>();
+		for (BMDResult result : project.getbMDResult())
+			if (catConfig.getInputName() == null)
+				bmdResultsToRun.add(result);
+			else if (result.getName().equalsIgnoreCase(catConfig.getInputName()))
+				bmdResultsToRun.add(result);
+
+		CategoryAnalysisParameters params = new CategoryAnalysisParameters();
+
+		if (catConfig.getBmdBMDLRatioMin() == null)
+			params.setRemoveBMDBMDLRatio(false);
+		else
+		{
+			params.setBmdBmdlRatio(catConfig.getBmdBMDLRatioMin());
+			params.setRemoveBMDBMDLRatio(true);
+		}
+
+		if (catConfig.getBmduBMDLRatioMin() == null)
+			params.setRemoveBMDUBMDLRatio(false);
+		else
+		{
+			params.setBmduBmdlRatio(catConfig.getBmduBMDLRatioMin());
+			params.setRemoveBMDUBMDLRatio(true);
+		}
+
+		if (catConfig.getBmduBMDRatioMin() == null)
+			params.setRemoveBMDUBMDRatio(false);
+		else
+		{
+			params.setBmduBmdRatio(catConfig.getBmduBMDRatioMin());
+			params.setRemoveBMDUBMDRatio(true);
+		}
+		if (catConfig.getBmdPValueCutoff() == null)
+			params.setRemoveBMDPValueLessCuttoff(false);
+		else
+		{
+			params.setpValueCutoff(catConfig.getBmdPValueCutoff());
+			params.setRemoveBMDPValueLessCuttoff(true);
+		}
+
+		if (catConfig.getCorrelationCutoffForConflictingProbeSets() != null)
+			params.setCorrelationCutoffConflictingProbeSets(
+					catConfig.getCorrelationCutoffForConflictingProbeSets());
+
+		if (catConfig.getIdentifyConflictingProbeSets() == null)
+			params.setIdentifyConflictingProbeSets(false);
+		else
+			params.setIdentifyConflictingProbeSets(catConfig.getIdentifyConflictingProbeSets());
+
+		if (catConfig.getnFoldBelowLowestDose() == null)
+			params.setRemoveNFoldBelowLowestDose(false);
+		else
+		{
+			params.setnFoldbelowLowestDoseValue(catConfig.getnFoldBelowLowestDose());
+			params.setRemoveNFoldBelowLowestDose(true);
+		}
+
+		if (catConfig.getRemoveBMDGreaterHighDose() == null)
+			params.setRemoveBMDGreaterHighDose(false);
+		else
+			params.setRemoveBMDGreaterHighDose(catConfig.getRemoveBMDGreaterHighDose());
+
+		if (catConfig.getRemovePromiscuousProbes() == null)
+			params.setRemovePromiscuousProbes(false);
+		else
+			params.setRemovePromiscuousProbes(catConfig.getRemovePromiscuousProbes());
+
+		if (catConfig instanceof DefinedConfig)
+		{
+			DefinedCategoryFileParameters probeFileParameters = new DefinedCategoryFileParameters();
+
+			probeFileParameters.setUsedColumns(new int[] { 0, 1 });
+			probeFileParameters.setFileName(((DefinedConfig) catConfig).getProbeFilePath());
+			MatrixData idsMatrix = FileIO.readFileMatrix(null,
+					new File(((DefinedConfig) catConfig).getProbeFilePath()));
+			idsMatrix.setAllString(true);
+			probeFileParameters.setMatrixData(idsMatrix);
+
+			DefinedCategoryFileParameters catFileParameters = new DefinedCategoryFileParameters();
+
+			catFileParameters.setUsedColumns(new int[] { 0, 1, 2 });
+			catFileParameters.setFileName(((DefinedConfig) catConfig).getProbeFilePath());
+			MatrixData idsMatrix1 = FileIO.readFileMatrix(null,
+					new File(((DefinedConfig) catConfig).getCategoryFilePath()));
+			idsMatrix1.setAllString(true);
+			catFileParameters.setMatrixData(idsMatrix1);
+			params.setProbeFileParameters(probeFileParameters);
+			params.setCategoryFileParameters(catFileParameters);
+		}
+
+		if (catConfig instanceof PathwayConfig)
+			params.setPathwayDB(((PathwayConfig) catConfig).getSignalingPathway());
+		if (catConfig instanceof GOConfig)
+		{
+			params.setGoCat(((GOConfig) catConfig).getGoCategory());
+
+			if (((GOConfig) catConfig).getGoCategory().equalsIgnoreCase("universal"))
+				params.setGoTermIdx(0);
+			else if (((GOConfig) catConfig).getGoCategory().equalsIgnoreCase("biological_process"))
+				params.setGoTermIdx(1);
+			else if (((GOConfig) catConfig).getGoCategory().equalsIgnoreCase("molecular_function"))
+				params.setGoTermIdx(2);
+			else if (((GOConfig) catConfig).getGoCategory().equalsIgnoreCase("cellular_component"))
+				params.setGoTermIdx(3);
+
+		}
+
+		for (BMDResult bmdResult : bmdResultsToRun)
+		{
+			CategoryAnalysisResults catResults = new CategoryAnalysisRunner().runCategoryAnalysis(bmdResult,
+					catAn, params);
+
+			if (catConfig.getOutputName() != null)
+				catResults.setName(catConfig.getOutputName());
+			project.getCategoryAnalysisResults().add(catResults);
+		}
 	}
 
 	private void doBMDSAnalysis(BMDSConfig bmdsConfig)
 	{
-		System.out.println("bmds analysis");
+
+		ModelInputParameters inputParameters = new ModelInputParameters();
+
+		inputParameters.setIterations(bmdsConfig.getBmdsInputConfig().getMaxIterations());
+		inputParameters.setConfidence(bmdsConfig.getBmdsInputConfig().getConfidenceLevel());
+		inputParameters.setBmrLevel(bmdsConfig.getBmdsInputConfig().getBmrFactor());
+		inputParameters.setNumThreads(bmdsConfig.getNumberOfThreads());
+
+		inputParameters.setBmdlCalculation(1);
+		inputParameters.setBmdCalculation(1);
+		inputParameters.setConstantVariance((bmdsConfig.getBmdsInputConfig().getConstantVariance()) ? 1 : 0);
+		// for simulation only?
+		inputParameters.setRestirctPower((bmdsConfig.getBmdsInputConfig().getRestrictPower()) ? 1 : 0);
+
+		if (inputParameters.getConstantVariance() == 0)
+			inputParameters.setRho(inputParameters.getNegative());
+
+		ModelSelectionParameters modelSelectionParameters = new ModelSelectionParameters();
+
+		BestPolyModelTestEnum polyTest = null;
+		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(0))
+			polyTest = BestPolyModelTestEnum.LOWEST_AIC;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(1))
+			polyTest = BestPolyModelTestEnum.NESTED_CHI_SQUARED;
+		modelSelectionParameters.setBestPolyModelTest(polyTest);
+
+		// set up the pValue
+		modelSelectionParameters.setpValue(bmdsConfig.getBmdsBestModelSelection().getpValueCutoff());
+
+		// set up Flag HIll
+		modelSelectionParameters
+				.setFlagHillModel(bmdsConfig.getBmdsBestModelSelection().getFlagHillWithKParameter());
+
+		FlagHillModelDoseEnum flagHillDose = null;
+		if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(1))
+			flagHillDose = FlagHillModelDoseEnum.LOWEST_DOSE;
+		else if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(2))
+			flagHillDose = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
+		else if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(3))
+			flagHillDose = FlagHillModelDoseEnum.ONE_HALF_OF_LOWEST_DOSE;
+
+		modelSelectionParameters.setFlagHillModelDose(flagHillDose);
+
+		// best model selection with flagged hill model
+		BestModelSelectionWithFlaggedHillModelEnum bestModeSel = null;
+		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(1))
+			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.INCLUDE_FLAGGED_HILL;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(2))
+			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.EXCLUDE_FLAGGED_HILL_FROM_BEST;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(3))
+			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.EXCLUDE_ALL_HILL_FROM_BEST;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(4))
+			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.MODIFY_BMD_IF_FLAGGED_HILL_BEST;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(5))
+			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
+
+		modelSelectionParameters.setBestModelSelectionWithFlaggedHill(bestModeSel);
+
+		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(4))
+			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(
+					bmdsConfig.getBmdsBestModelSelection().getModifyFlaggedHillWithFractionMinBMD());
+		else
+			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(0.5);
+
+		List<StatModel> modelsToRun = new ArrayList<>();
+		for (BMDSModelConfig modelConfig : bmdsConfig.getModelConfigs())
+		{
+			if (modelConfig instanceof HillConfig)
+			{
+				HillModel hillModel = new HillModel();
+				hillModel.setVersion(BMDExpressProperties.getInstance().getHillVersion());
+				modelsToRun.add(hillModel);
+			}
+			if (modelConfig instanceof PowerConfig)
+			{
+				PowerModel powerModel = new PowerModel();
+				powerModel.setVersion(BMDExpressProperties.getInstance().getPowerVersion());
+				modelsToRun.add(powerModel);
+			}
+			if (modelConfig instanceof PolyConfig)
+			{
+				PolyModel polymodel = new PolyModel();
+				polymodel.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
+				polymodel.setDegree(((PolyConfig) modelConfig).getDegree());
+				modelsToRun.add(polymodel);
+			}
+
+			if (modelConfig instanceof ExponentialConfig)
+			{
+				ExponentialModel exponentialModel = new ExponentialModel();
+				exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
+				exponentialModel.setOption(((ExponentialConfig) modelConfig).getExpModel());
+				modelsToRun.add(exponentialModel);
+			}
+
+		}
+
+		List<IStatModelProcessable> processables = new ArrayList<>();
+		// get the dataset to run
+
+		for (OneWayANOVAResults ways : project.getOneWayANOVAResults())
+			if (bmdsConfig.getInputCategory().equalsIgnoreCase("anova"))
+				if (bmdsConfig.getInputName() == null)
+					processables.add(ways);
+				else if (ways.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
+					processables.add(ways);
+
+		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
+			if (bmdsConfig.getInputCategory().equalsIgnoreCase("expression"))
+				if (bmdsConfig.getInputName() == null)
+					processables.add(exps);
+				else if (exps.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
+					processables.add(exps);
+
+		for (IStatModelProcessable processableData : processables)
+		{
+			BMDResult result = new BMDAnalysisRunner().runBMDAnalysis(processableData,
+					modelSelectionParameters, modelsToRun, inputParameters);
+			if (bmdsConfig.getOutputName() != null)
+				result.setName(bmdsConfig.getOutputName());
+			project.getbMDResult().add(result);
+		}
 
 	}
 
@@ -125,32 +399,50 @@ public class AnalyzeRunner
 			else if (preFilterConfig.getLogTransformationOfData().equals(3))
 				baseValue = Math.E;
 
-			IStatModelProcessable processable = null;
+			List<IStatModelProcessable> processables = new ArrayList<>();
 			for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
-				if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
-					processable = exp;
+				if (preFilterConfig.getInputName() == null)
+					processables.add(exp);
+				else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
+					processables.add(exp);
 
-			for (OneWayANOVAResults oneway : project.getOneWayANOVAResults())
-				if (oneway.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
-					processable = oneway;
-
-			project.getOneWayANOVAResults()
-					.add(anovaRunner.runBMDAnalysis(processable, preFilterConfig.getpValueCutoff(),
-							preFilterConfig.getUseMultipleTestingCorrection(),
-							preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-							String.valueOf(preFilterConfig.getFoldChange()),
-							!new Integer(0).equals(preFilterConfig.getLogTransformationOfData()), baseValue,
-							preFilterConfig.getOutputName()));
+			for (IStatModelProcessable processable : processables)
+			{
+				project.getOneWayANOVAResults().add(anovaRunner.runBMDAnalysis(processable,
+						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
+						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
+						String.valueOf(preFilterConfig.getFoldChange()),
+						!new Integer(0).equals(preFilterConfig.getLogTransformationOfData()), baseValue,
+						preFilterConfig.getOutputName()));
+			}
 		}
 		System.out.println("prefilter analysis");
 
 	}
 
-	private DoseResponseExperiment doExpressionConfig(ExpressionDataConfig expressionConfig)
+	private void doExpressionConfig(ExpressionDataConfig expressionConfig)
 	{
-		return (new ExpressionImportRunner()).runExpressionImport(
-				new File(expressionConfig.getInputFileName()), expressionConfig.getPlatform(),
-				expressionConfig.getOutputName());
+
+		List<File> files = new ArrayList<>();
+		if (new File(expressionConfig.getInputFileName()).isDirectory())
+		{
+			for (final File fileEntry : new File(expressionConfig.getInputFileName()).listFiles())
+			{
+				String outname = FilenameUtils.removeExtension(fileEntry.getName());
+				project.getDoseResponseExperiments().add((new ExpressionImportRunner())
+						.runExpressionImport(fileEntry, expressionConfig.getPlatform(), outname));
+			}
+
+		}
+		else
+		{
+			File inputFile = new File(expressionConfig.getInputFileName());
+			String outname = FilenameUtils.removeExtension(inputFile.getName());
+			if (expressionConfig.getOutputName() != null)
+				outname = expressionConfig.getOutputName();
+			project.getDoseResponseExperiments().add(new ExpressionImportRunner()
+					.runExpressionImport(inputFile, expressionConfig.getPlatform(), outname));
+		}
 
 	}
 

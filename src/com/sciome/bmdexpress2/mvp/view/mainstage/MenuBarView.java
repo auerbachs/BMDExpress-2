@@ -39,32 +39,32 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	// Menu Bar
 	@FXML
-	private MenuBar menuBar;
+	private MenuBar			menuBar;
 
 	// Menu check items
 	@FXML
-	private CheckMenuItem useWebServiceCheckMenu;
+	private CheckMenuItem	useWebServiceCheckMenu;
 	@FXML
-	private CheckMenuItem usePrecisionCheckMenu;
+	private CheckMenuItem	usePrecisionCheckMenu;
 	@FXML
-	private CheckMenuItem autoUpdateCheckMenu;
+	private CheckMenuItem	autoUpdateCheckMenu;
 
 	// Menu items
 	@FXML
-	private MenuItem oneWayANOVAMenuItem;
+	private MenuItem		oneWayANOVAMenuItem;
 	@FXML
-	private MenuItem pathwayFilterMenuItem;
+	private MenuItem		pathwayFilterMenuItem;
 
 	@FXML
-	private MenuItem bMDAnalysesMenuItem;
+	private MenuItem		bMDAnalysesMenuItem;
 	@FXML
-	private MenuItem GOAnalysesMenuItem;
+	private MenuItem		GOAnalysesMenuItem;
 	@FXML
-	private MenuItem pathwayAnalysesMenuItem;
+	private MenuItem		pathwayAnalysesMenuItem;
 	@FXML
-	private MenuItem definedCategoryAnalysesMenuItem;
+	private MenuItem		definedCategoryAnalysesMenuItem;
 
-	MenuBarPresenter presenter;
+	MenuBarPresenter		presenter;
 
 	public MenuBarView()
 	{
@@ -100,8 +100,8 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			// classifications on mac and linux.
 			if (os != null && !os.toLowerCase().contains("windows"))
 			{
-				bMDAnalysesMenuItem.setVisible(false);
-				oneWayANOVAMenuItem.setVisible(false);
+				// bMDAnalysesMenuItem.setVisible(false);
+				// oneWayANOVAMenuItem.setVisible(false);
 			}
 		}
 		catch (Exception e)
@@ -329,13 +329,17 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	 */
 	public void handle_tutorial(ActionEvent event)
 	{
-		try {
-			java.awt.Desktop.getDesktop().browse(new URI(
-					BMDExpressConstants.getInstance().TUTORIAL_URL)) ;
-		} catch (IOException e) {
+		try
+		{
+			java.awt.Desktop.getDesktop().browse(new URI(BMDExpressConstants.getInstance().TUTORIAL_URL));
+		}
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
+		}
+		catch (URISyntaxException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

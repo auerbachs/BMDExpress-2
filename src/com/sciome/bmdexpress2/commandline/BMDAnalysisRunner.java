@@ -2,6 +2,7 @@ package com.sciome.bmdexpress2.commandline;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
@@ -12,8 +13,9 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 public class BMDAnalysisRunner implements IBMDSToolProgress
 {
 
-	public void runBMDAnalysis(BMDResult processableData, ModelSelectionParameters modelSelectionParameters,
-			List<StatModel> modelsToRun, ModelInputParameters inputParameters)
+	public BMDResult runBMDAnalysis(IStatModelProcessable processableData,
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			ModelInputParameters inputParameters)
 	{
 		inputParameters.setObservations(
 				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
@@ -23,12 +25,13 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 
 		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
+		return bMDResults;
 	}
 
 	@Override
 	public void updateProgress(String label, double value)
 	{
-		// TODO Auto-generated method stub
+		System.out.println(label + ": " + value);
 
 	}
 

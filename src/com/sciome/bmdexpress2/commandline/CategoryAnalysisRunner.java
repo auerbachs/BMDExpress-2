@@ -21,8 +21,8 @@ public class CategoryAnalysisRunner implements ICategoryMapToolProgress
 
 	}
 
-	public void runCategoryAnalysis(BMDResult bmdResult, CategoryAnalysisEnum catAnalysisEnum,
-			CategoryAnalysisParameters params)
+	public CategoryAnalysisResults runCategoryAnalysis(BMDResult bmdResult,
+			CategoryAnalysisEnum catAnalysisEnum, CategoryAnalysisParameters params)
 	{
 		AnalysisInfo analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
@@ -34,6 +34,8 @@ public class CategoryAnalysisRunner implements ICategoryMapToolProgress
 		CategoryAnalysisResults categoryAnalysisResults = catMapTool.startAnalyses();
 
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
+
+		return categoryAnalysisResults;
 	}
 
 }
