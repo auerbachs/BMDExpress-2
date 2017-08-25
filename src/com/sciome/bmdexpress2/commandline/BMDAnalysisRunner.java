@@ -2,6 +2,8 @@ package com.sciome.bmdexpress2.commandline;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
@@ -10,6 +12,9 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
+/*
+ * System.out.print
+ */
 public class BMDAnalysisRunner implements IBMDSToolProgress
 {
 
@@ -31,7 +36,7 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 	@Override
 	public void updateProgress(String label, double value)
 	{
-		System.out.println(label + ": " + value);
+		System.out.print(StringUtils.rightPad(label + ": " + value, 80, " ") + "\r");
 
 	}
 

@@ -10,6 +10,7 @@ import java.util.zip.GZIPInputStream;
 
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 
 /**
  * The class of ChipInfoReader
@@ -42,8 +43,13 @@ public class ChipInfoReader
 					+ BMDExpressConstants.getInstance().ARRAYDIR;
 			File inFile = new File(filePath, BMDExpressConstants.getInstance().MICROARRAYGZ);
 
-			// Always check available update in case new supported arrays added
-			if (URLUtils.updateAvailable(http, inFile))
+			// if infile exists and this is a console, then do not look for updates.
+			if (inFile.exists() && BMDExpressProperties.getInstance().isConsole())
+			{
+				System.out.println("This is console application and the file: " + inFile.getName()
+						+ " exists.  Not looking for update on server.");
+			}
+			else if (URLUtils.updateAvailable(http, inFile))
 			{// !inFile.exists() ||
 				System.out.println("Download " + BMDExpressConstants.getInstance().MICROARRAYGZ);
 				URLUtils.download(http, inFile);
@@ -76,8 +82,7 @@ public class ChipInfoReader
 				}
 				catch (Exception e)
 				{
-					// e.printStackTrace();
-					// ExceptionDialog.showException(parent, "Read From File - " + MICROARRAYGZ, e);
+					e.printStackTrace();
 				}
 			}
 
@@ -85,8 +90,7 @@ public class ChipInfoReader
 		}
 		catch (Exception e)
 		{
-			// e.printStackTrace();
-			// ExceptionDialog.showException(parent, "Read From File - " + MICROARRAYGZ, e);
+			e.printStackTrace();
 		}
 
 		return chipsHash;

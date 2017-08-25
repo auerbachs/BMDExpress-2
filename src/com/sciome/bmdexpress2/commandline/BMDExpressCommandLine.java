@@ -32,6 +32,7 @@ import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 
 public class BMDExpressCommandLine
 {
@@ -50,6 +51,7 @@ public class BMDExpressCommandLine
 
 	public static void main(String[] args)
 	{
+		BMDExpressProperties.getInstance().setIsConsole(true);
 		CommandLineParser parser = new DefaultParser();
 
 		Options analyzeOptions = new Options();

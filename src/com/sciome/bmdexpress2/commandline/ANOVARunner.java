@@ -8,6 +8,9 @@ import com.sciome.bmdexpress2.mvp.presenter.prefilter.OneWayANOVAPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
+/*
+ * use the presenter to run the one way anova as it would be run from the view.
+ */
 public class ANOVARunner implements IOneWayANOVAView
 {
 	public OneWayANOVAResults runBMDAnalysis(IStatModelProcessable processableData, double pCutOff,

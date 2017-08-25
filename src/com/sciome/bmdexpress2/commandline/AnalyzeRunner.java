@@ -51,6 +51,10 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 
+/*
+ * When command line is in "analyze" mode, use this class to run the different anlayses
+ * specified in the configuration file that is passed in.
+ */
 public class AnalyzeRunner
 {
 
@@ -60,9 +64,13 @@ public class AnalyzeRunner
 	{
 		System.out.println("analyze");
 		System.out.println(configFile);
+
+		// deserialize the config file that was passed on commandline
 		RunConfig runConfig = getRunConfig(configFile);
 
 		// load the project if the file exists.
+		// if overwrite is set to true then don't open it, but rather start fresh
+
 		if (new File(runConfig.getBm2FileName()).exists() && !runConfig.getOverwrite())
 		{
 			try
@@ -129,6 +137,9 @@ public class AnalyzeRunner
 		}
 	}
 
+	/*
+	 * perform category analysis based on the category configuration.
+	 */
 	private void doCatAnalysis(CategoryConfig catConfig)
 	{
 		System.out.println("category analysis");
@@ -259,9 +270,14 @@ public class AnalyzeRunner
 		}
 	}
 
+	/*
+	 * perform bmd analysis on the data.
+	 */
 	private void doBMDSAnalysis(BMDSConfig bmdsConfig)
 	{
 
+		// first set up the model input parameters basedo n
+		// bmdsConfig setup
 		ModelInputParameters inputParameters = new ModelInputParameters();
 
 		inputParameters.setIterations(bmdsConfig.getBmdsInputConfig().getMaxIterations());
@@ -278,6 +294,7 @@ public class AnalyzeRunner
 		if (inputParameters.getConstantVariance() == 0)
 			inputParameters.setRho(inputParameters.getNegative());
 
+		// now set up the model selection parameters.
 		ModelSelectionParameters modelSelectionParameters = new ModelSelectionParameters();
 
 		BestPolyModelTestEnum polyTest = null;
@@ -325,6 +342,7 @@ public class AnalyzeRunner
 		else
 			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(0.5);
 
+		// figure out which models are going to be run
 		List<StatModel> modelsToRun = new ArrayList<>();
 		for (BMDSModelConfig modelConfig : bmdsConfig.getModelConfigs())
 		{
@@ -358,6 +376,10 @@ public class AnalyzeRunner
 
 		}
 
+		// if inputname is specified then get the analysis that matches name.
+		// otherwise get all the analysis based on the given input category.
+		// input category can be "anova" or "expression" which means
+		// one way anova results or dose response expersssion data.
 		List<IStatModelProcessable> processables = new ArrayList<>();
 		// get the dataset to run
 
@@ -375,6 +397,7 @@ public class AnalyzeRunner
 				else if (exps.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(exps);
 
+		// for each processable analysis, run the models and select best models.
 		for (IStatModelProcessable processableData : processables)
 		{
 			BMDResult result = new BMDAnalysisRunner().runBMDAnalysis(processableData,
@@ -386,6 +409,9 @@ public class AnalyzeRunner
 
 	}
 
+	/*
+	 * do prefilter. currently the only pre filter is one way anova.
+	 */
 	private void doPrefilter(PrefilterConfig preFilterConfig)
 	{
 		if (preFilterConfig instanceof ANOVAConfig)
@@ -399,6 +425,9 @@ public class AnalyzeRunner
 			else if (preFilterConfig.getLogTransformationOfData().equals(3))
 				baseValue = Math.E;
 
+			// if the user specifies a dose experiment name, then find it and add it.
+			// if the inputname is null, then add all dose response experiments
+			// to receive the pre filter.
 			List<IStatModelProcessable> processables = new ArrayList<>();
 			for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
 				if (preFilterConfig.getInputName() == null)
@@ -424,10 +453,14 @@ public class AnalyzeRunner
 	{
 
 		List<File> files = new ArrayList<>();
+
+		// if the inputfilename is a directory, then loop through each file
+		// in the directory and import it as a doseresponse experiment.
 		if (new File(expressionConfig.getInputFileName()).isDirectory())
 		{
 			for (final File fileEntry : new File(expressionConfig.getInputFileName()).listFiles())
 			{
+				// the name stored in project bm2 file should be name of file without the extension
 				String outname = FilenameUtils.removeExtension(fileEntry.getName());
 				project.getDoseResponseExperiments().add((new ExpressionImportRunner())
 						.runExpressionImport(fileEntry, expressionConfig.getPlatform(), outname));
@@ -438,6 +471,8 @@ public class AnalyzeRunner
 		{
 			File inputFile = new File(expressionConfig.getInputFileName());
 			String outname = FilenameUtils.removeExtension(inputFile.getName());
+
+			// if config file outputname is set, then override the default
 			if (expressionConfig.getOutputName() != null)
 				outname = expressionConfig.getOutputName();
 			project.getDoseResponseExperiments().add(new ExpressionImportRunner()
@@ -446,6 +481,7 @@ public class AnalyzeRunner
 
 	}
 
+	// deserialize the json file and return the RunConfig object
 	private RunConfig getRunConfig(String configFile) throws Exception
 	{
 		return new ObjectMapper().readValue(new File(configFile), RunConfig.class);

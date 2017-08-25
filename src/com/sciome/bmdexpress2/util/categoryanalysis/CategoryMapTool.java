@@ -57,16 +57,16 @@ import com.sciome.bmdexpress2.util.stat.FishersExact;
 public class CategoryMapTool
 {
 
-	private BMDResult bmdResults;
-	private ProbeGeneMaps probeGeneMaps;
-	private BMDStatatistics bmdStats;
-	private CategoryMapBase categoryGeneMap;
+	private BMDResult					bmdResults;
+	private ProbeGeneMaps				probeGeneMaps;
+	private BMDStatatistics				bmdStats;
+	private CategoryMapBase				categoryGeneMap;
 
-	private String rstName;
-	private ICategoryMapToolProgress categoryMapProgress;
-	private AnalysisInfo analysisInfo;
+	private String						rstName;
+	private ICategoryMapToolProgress	categoryMapProgress;
+	private AnalysisInfo				analysisInfo;
 
-	private CategoryAnalysisParameters params;
+	private CategoryAnalysisParameters	params;
 
 	/**
 	 * Class constructor
@@ -514,8 +514,7 @@ public class CategoryMapTool
 			pValues[0] = NumberManager.numberFormat(5, test.pLeft());
 			pValues[1] = NumberManager.numberFormat(5, test.pRight());
 			pValues[2] = NumberManager.numberFormat(5, test.twoTail());
-			if (pValues[2] < .01)
-				System.out.println();
+
 		}
 
 		return pValues;// NumberManager.numberFormat(4, pValues);

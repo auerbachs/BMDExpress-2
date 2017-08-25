@@ -23,22 +23,25 @@ import com.sciome.filter.DataFilterPack;
 public class BMDExpressProperties
 {
 
-	private PropertiesParser propertiesParser;
-	private int locX, locY, sizeX, sizeY, precision;
-	private String user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet, proxyHost, proxyPort,
-			endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE, powerVersion, polyVersion,
-			hillVersion, exponentialEXE, exponentialVersion, Rscript, pathwayFilterScript, projectPath,
-			expressionPath, exportPath, definedPath;
-	private boolean useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate, isWindows, hideTable,
-			hideFilter, hideCharts, applyFilter;
+	private PropertiesParser			propertiesParser;
+	private int							locX, locY, sizeX, sizeY, precision;
+	private String						user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet,
+			proxyHost, proxyPort, endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE,
+			powerVersion, polyVersion, hillVersion, exponentialEXE, exponentialVersion, Rscript,
+			pathwayFilterScript, projectPath, expressionPath, exportPath, definedPath;
+	private boolean						useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate,
+			isWindows, hideTable, hideFilter, hideCharts, applyFilter;
 
-	private File propertyFile;
+	// boolean to be set if the console version is running
+	private boolean						isConsole			= false;
 
-	private static BMDExpressProperties instance = null;
+	private File						propertyFile;
 
-	private Map<String, DataFilterPack> dataFilterPackMap = new HashMap<>();
+	private static BMDExpressProperties	instance			= null;
 
-	private Properties versionProperties = new Properties();
+	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
+
+	private Properties					versionProperties	= new Properties();
 
 	protected BMDExpressProperties()
 	{
@@ -910,6 +913,16 @@ public class BMDExpressProperties
 
 		return sb.toString();
 
+	}
+
+	public boolean isConsole()
+	{
+		return isConsole;
+	}
+
+	public void setIsConsole(boolean is)
+	{
+		isConsole = is;
 	}
 
 }
