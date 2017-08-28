@@ -206,6 +206,15 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
+	public void handle_exportAsJSON(ActionEvent event)
+	{
+		File selectedFile = ViewUtilities.getInstance().getSaveAsJSONFile(menuBar.getScene().getWindow());
+		if (selectedFile != null)
+		{
+			presenter.saveProjectAsJSON(selectedFile);
+		}
+	}
+
 	/*
 	 * save the project to disk. invoke serialization
 	 */
@@ -374,6 +383,11 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void handle_importBMDFile(ActionEvent event)
 	{
 		presenter.importBMDFile();
+	}
+
+	public void handle_importJSON(ActionEvent event)
+	{
+		presenter.importJSONFile();
 	}
 
 	public void handle_dataVisualization(ActionEvent event)

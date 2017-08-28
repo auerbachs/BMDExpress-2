@@ -231,7 +231,6 @@ public class NumberManager
 	{
 		double num = 1234.555555555555;
 		double fNum = NumberManager.numberFormat("#.####", num);
-		// System.out.println(num + ": " + fNum);
 		num = 0.00000555555567898765;
 		fNum = NumberManager.numberFormat(10, num);
 		System.out.println(num + ": " + fNum);

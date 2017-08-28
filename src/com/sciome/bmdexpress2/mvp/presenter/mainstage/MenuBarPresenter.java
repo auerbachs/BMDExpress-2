@@ -23,8 +23,10 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent
 import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.LoadProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.RequestFileNameForProjectSaveEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsJSONRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.TryCloseProjectRequestEvent;
@@ -125,6 +127,12 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 
 	}
 
+	public void saveProjectAsJSON(File selectedFile)
+	{
+		this.getEventBus().post(new SaveProjectAsJSONRequestEvent(selectedFile));
+
+	}
+
 	/*
 	 * save the current working project
 	 */
@@ -202,6 +210,12 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void importBMDFile()
 	{
 		getEventBus().post(new ImportBMDEvent(null));
+
+	}
+
+	public void importJSONFile()
+	{
+		getEventBus().post(new ImportJSONEvent(null));
 
 	}
 

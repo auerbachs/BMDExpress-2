@@ -222,7 +222,7 @@ public class ExperimentFileUtil
 			}
 			catch (IOException e)
 			{
-				// System.out.println("Read file problem: " + e);
+				e.printStackTrace();
 			}
 			finally
 			{
@@ -232,7 +232,7 @@ public class ExperimentFileUtil
 		}
 		catch (FileNotFoundException e)
 		{
-			// System.out.println("Input file problem: " + e);
+			e.printStackTrace();
 		}
 		catch (Exception e)
 		{

@@ -118,6 +118,10 @@ public class AnalyzeRunner
 			for (CategoryConfig catConfig : catConfigs)
 				doCatAnalysis(catConfig);
 
+		// 5. see if this needs exporting to json
+		if (runConfig.getJsonExportFileName() != null)
+			doJsonExport(runConfig.getJsonExportFileName());
+
 		try
 		{
 			File selectedFile = new File(runConfig.getBm2FileName());
@@ -135,6 +139,12 @@ public class AnalyzeRunner
 		{
 			i.printStackTrace();
 		}
+	}
+
+	// invoke the export to json functionality.
+	private void doJsonExport(String jsonExportFileName) throws Exception
+	{
+		new ExportRunner().exportToJson(project, jsonExportFileName);
 	}
 
 	/*

@@ -62,8 +62,10 @@ import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.GiveMeProjectRequest;
 import com.sciome.bmdexpress2.shared.eventbus.project.HeresYourProjectEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.LoadProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.RequestFileNameForProjectSaveEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsJSONRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -80,10 +82,10 @@ import javafx.scene.control.TreeItem;
 public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigationView>
 {
 
-	private BMDProject currentProject = new BMDProject();
-	private File currentProjectFile;
+	private BMDProject	currentProject				= new BMDProject();
+	private File		currentProjectFile;
 
-	private final int MAX_FILES_FOR_MULTI_EXPORT = 10;
+	private final int	MAX_FILES_FOR_MULTI_EXPORT	= 10;
 
 	public ProjectNavigationPresenter(IProjectNavigationView view, BMDExpressEventBus eventBus)
 	{
@@ -373,6 +375,41 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 
 	}
 
+	@Subscribe
+	public void importJSONFileRequest(ImportJSONEvent importJSONEvent)
+	{
+		try
+		{
+			if ((currentProject != null && !currentProject.isProjectEmpty()) && saveProjectFirstMaybe() == -1)
+			{
+				return;
+			}
+			File selectedFile = getView().askForAJSONFileToImport();
+
+			if (selectedFile == null)
+			{
+				return;
+			}
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+			BMDProject newProject = loadDialog.importJSONFile(selectedFile);
+			String newFileName = selectedFile.getAbsolutePath().replace(".json", ".bm2");
+
+			if (newProject != null)
+			{
+				File newFile = new File(newFileName);
+				newProject.setName(newFile.getName());
+				currentProject = newProject;
+				currentProjectFile = newFile;
+				this.getEventBus().post(new BMDProjectLoadedEvent(currentProject));
+			}
+		}
+		catch (Exception exception)
+		{
+			this.getEventBus().post(new ShowErrorEvent(exception.getMessage()));
+		}
+
+	}
+
 	/*
 	 * save as event was file
 	 */
@@ -387,6 +424,17 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		saveProject(selectedFile);
 	}
 
+	@Subscribe
+	public void onSaveProjectAsJSONRequest(SaveProjectAsJSONRequestEvent event)
+	{
+		File selectedFile = event.GetPayload();
+		if (selectedFile == null)
+		{
+			return;
+		}
+		saveJSONProject(selectedFile);
+	}
+
 	private void saveProject(File selectedFile)
 	{
 
@@ -396,6 +444,22 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		}
 		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(getView().getWindow());
 		saveDialog.saveProject(currentProject, selectedFile);
+		currentProject.setName(selectedFile.getName());
+		currentProjectFile = selectedFile;
+
+		this.getEventBus().post(new BMDProjectSavedEvent(currentProject));
+
+	}
+
+	private void saveJSONProject(File selectedFile)
+	{
+
+		if (selectedFile == null)
+		{
+			return;
+		}
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(getView().getWindow());
+		saveDialog.saveJSONProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;
 
@@ -898,9 +962,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	}
 
 	/*
-	 * A list of analysis data sets will be exported to one or more files.
-	 * If there are datasets with varying headers, then we will export to more than
-	 * one file.
+	 * A list of analysis data sets will be exported to one or more files. If there are datasets with varying
+	 * headers, then we will export to more than one file.
 	 */
 	public void exportMultipleResults(List<TreeItem> selectedItems, File selectedFile)
 	{

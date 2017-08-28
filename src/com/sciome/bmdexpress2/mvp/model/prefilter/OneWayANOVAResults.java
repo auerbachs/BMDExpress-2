@@ -88,7 +88,6 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		this.name = name;
 	}
 
-	@JsonIgnore
 	public DoseResponseExperiment getDoseResponseExperiement()
 	{
 		return doseResponseExperiment;

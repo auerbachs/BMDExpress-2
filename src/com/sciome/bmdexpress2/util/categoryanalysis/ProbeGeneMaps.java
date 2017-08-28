@@ -167,9 +167,6 @@ public class ProbeGeneMaps
 		subGenes = new Vector<String>();
 		allGenes = new Vector<String>();
 		subHashG2Ids = new Hashtable<String, Vector>();
-		// System.out.println("UniqueProbes = " + uniqueProbes.size());
-
-		// filedProbes2GeneIds(uniqueProbes, toAll);
 		probes2GeneIds(uniqueProbes, toAll);
 
 	}
@@ -422,7 +419,6 @@ public class ProbeGeneMaps
 	private void filedSubGenesAllProbes(File inFile)
 	{
 		int size = subGenes.size();
-		// System.out.println("filedSubGenesAllProbes(): " + size);
 		subG2Probes = new String[size][];
 		subAllProbes = new Vector<String>(size);
 		Vector<String>[] vectProbes = new Vector[size];
@@ -490,7 +486,6 @@ public class ProbeGeneMaps
 		{
 			String[] probes = new String[vectProbes[i].size()];
 			subG2Probes[i] = vectProbes[i].toArray(probes);
-			// System.out.println(probes.length);
 		}
 	}
 
@@ -667,7 +662,6 @@ public class ProbeGeneMaps
 	private void subGenesAllProbes()
 	{
 		int size = subGenes.size();
-		// System.out.println("filedSubGenesAllProbes(): " + size);
 		subG2Probes = new String[size][];
 		subAllProbes = new Vector<String>(size);
 		Vector<String>[] vectProbes = new Vector[size];
@@ -706,7 +700,6 @@ public class ProbeGeneMaps
 		{
 			String[] probes = new String[vectProbes[i].size()];
 			subG2Probes[i] = vectProbes[i].toArray(probes);
-			// System.out.println(probes.length);
 		}
 	}
 

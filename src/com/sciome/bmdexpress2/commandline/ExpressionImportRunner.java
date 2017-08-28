@@ -162,4 +162,11 @@ public class ExpressionImportRunner implements IProjectNavigationView
 		return null;
 	}
 
+	@Override
+	public File askForAJSONFileToImport()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -12,6 +12,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEven
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsJSONRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -83,6 +84,12 @@ public class MainPresenter extends PresenterBase<IMainView>
 
 	@Subscribe
 	public void onSaveProjectAsRequest(SaveProjectAsRequestEvent event)
+	{
+		getView().updateActionStatusLabel("");
+	}
+
+	@Subscribe
+	void onSaveProjectAsJSONRequest(SaveProjectAsJSONRequestEvent event)
 	{
 		getView().updateActionStatusLabel("");
 	}

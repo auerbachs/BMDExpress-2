@@ -23,17 +23,17 @@ import com.sciome.bmdexpress2.util.NumberManager;
  */
 public class FilePowerFit extends FileFitBase
 {
-	private String powerEXE, dPath;
-	private int[] intParams;
+	private String			powerEXE, dPath;
+	private int[]			intParams;
 
-	private final int maxParams = 9;
-	private final int SIX = 6;
-	private final double minDouble = -9999;
-	private final String newline = "\n";
-	private final String space1 = " ";
+	private final int		maxParams	= 9;
+	private final int		SIX			= 6;
+	private final double	minDouble	= -9999;
+	private final String	newline		= "\n";
+	private final String	space1		= " ";
 
-	private final String[] FLAGS = { "Parameter Estimates", "Likelihoods of Interest", "Tests of Interest",
-			"control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
+	private final String[]	FLAGS		= { "Parameter Estimates", "Likelihoods of Interest",
+			"Tests of Interest", "control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
 
 	public FilePowerFit()
 	{
@@ -59,18 +59,8 @@ public class FilePowerFit extends FileFitBase
 		File infile = createDataFile(fileName, inputParameters, inputX, inputY);
 		double[] outputs = NumberManager.initDoubles(maxParams, minDouble);
 
-		while (!infile.canRead())
-		{
-			System.out.println(".");
-			/*
-			 * try { Thread.currentThread().sleep(10); } catch (InterruptedException e) { e.printStackTrace();
-			 * }
-			 */
-		}
-
 		if (infile != null)
 		{
-			// System.out.println("Pathf = " + infile.getPath());
 			executeModel(powerEXE, infile.getPath());// infile.getAbsolutePath());
 			File outFile = readOutputs(fileName, outputs);
 			infile.delete();

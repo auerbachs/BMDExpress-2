@@ -56,4 +56,6 @@ public interface IProjectNavigationView
 
 	File askForABMDFileToImport();
 
+	File askForAJSONFileToImport();
+
 }

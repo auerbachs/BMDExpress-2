@@ -76,16 +76,16 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 	// Navigation View
 	@FXML
-	private TreeView navigationTreeView;
+	private TreeView							navigationTreeView;
 
 	// base tree items.
-	private TreeItem<DoseResponseExperiment> expressionDataTreeItem = null;
-	private TreeItem<OneWayANOVAResults> oneWayANOVATreeItem = null;
-	private TreeItem<PathwayFilterResults> pathwayFilterTreeItem = null;
-	private TreeItem<BMDResult> bMDDoseAnalysesTreeItem = null;
-	private TreeItem<CategoryAnalysisResults> functionalClassificationsTreeItem = null;
+	private TreeItem<DoseResponseExperiment>	expressionDataTreeItem				= null;
+	private TreeItem<OneWayANOVAResults>		oneWayANOVATreeItem					= null;
+	private TreeItem<PathwayFilterResults>		pathwayFilterTreeItem				= null;
+	private TreeItem<BMDResult>					bMDDoseAnalysesTreeItem				= null;
+	private TreeItem<CategoryAnalysisResults>	functionalClassificationsTreeItem	= null;
 
-	ProjectNavigationPresenter presenter;
+	ProjectNavigationPresenter					presenter;
 
 	public ProjectNavigationView()
 	{
@@ -1251,6 +1251,13 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	{
 		return ViewUtilities.getInstance()
 				.getBMDImportFileToImport(navigationTreeView.getScene().getWindow());
+	}
+
+	@Override
+	public File askForAJSONFileToImport()
+	{
+		return ViewUtilities.getInstance()
+				.getJSONImportFileToImport(navigationTreeView.getScene().getWindow());
 	}
 
 	@Override

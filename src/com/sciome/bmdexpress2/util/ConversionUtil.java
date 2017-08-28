@@ -584,16 +584,13 @@ public class ConversionUtil
 						rgPs.add(rgP);
 						List<ProbeStatResult> probeStatResults = new ArrayList<>();
 						rgP.setReferenceGene(referenceGeneMap.get(geneID));
-						if (geneProbeMap.get(geneID) == null)
-							System.out.println();
+
 						for (String probeID : geneProbeMap.get(geneID))
 						{
 							for (String probe : probeID.split(","))
 							{
 								if (this.probeStatResultMap
-										.get(source + "__" + workSource + "__" + probe) == null)
-									System.out.println();
-								else
+										.get(source + "__" + workSource + "__" + probe) != null)
 									probeStatResults.add(this.probeStatResultMap
 											.get(source + "__" + workSource + "__" + probe));
 							}
@@ -1010,7 +1007,6 @@ public class ConversionUtil
 	 */
 	private double[] fisherExactTest(int sub, int chgTotal, int all, int allTotal)
 	{
-		// System.out.println("Called the test");
 		int a = sub;
 		int b = chgTotal - a;
 		int c = all - a;

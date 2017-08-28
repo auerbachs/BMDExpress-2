@@ -10,12 +10,14 @@
       <Menu mnemonicParsing="false" text="File">
          <items>
             <MenuItem mnemonicParsing="false" onAction="#handle_openProject" text="Open Project" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_importJSON" text="Import JSON File" />
             <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Import Expression Data" />
             <MenuItem mnemonicParsing="false" onAction="#handle_importBMDFile" text="Import BMD File" />
             <MenuItem fx:id="dataVisualizationMenuItem" mnemonicParsing="false" onAction="#handle_dataVisualization" text="Data Visualization" visible="false" />
             <MenuItem mnemonicParsing="false" text="Save Selection As" visible="false" />
             <MenuItem mnemonicParsing="false" onAction="#handle_saveProject" text="Save Project" />
             <MenuItem mnemonicParsing="false" onAction="#handle_saveAs" text="Save Project As" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_exportAsJSON" text="Export as JSON" />
             <MenuItem mnemonicParsing="false" onAction="#handle_closeProject" text="Close Project" />
             <MenuItem mnemonicParsing="false" onAction="#handle_annotationsFromWeb" text="Update Annotations" />
             <MenuItem mnemonicParsing="false" onAction="#handle_exit" text="Exit" />

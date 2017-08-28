@@ -77,12 +77,12 @@ public class FileIO
 			}
 			catch (IOException e)
 			{
-				System.out.println("Read preferences problem: " + e);
+				e.printStackTrace();
 			}
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println("Find preferences problem: " + e);
+			e.printStackTrace();
 		}
 
 		return vect;
@@ -190,14 +190,12 @@ public class FileIO
 			}
 			catch (IOException e)
 			{
-				// System.out.println("Read file problem: " + e);
-				// ExceptionDialog.showError(owner, "Read File Problem", e);
+				e.printStackTrace();
 			}
 		}
 		catch (FileNotFoundException e)
 		{
-			// System.out.println("Input file problem: " + e);
-			// ExceptionDialog.showError(owner, "Input File Problem", e);
+			e.printStackTrace();
 		}
 
 		return null;

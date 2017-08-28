@@ -224,8 +224,6 @@ public class BMDExpressProperties
 				e.printStackTrace();
 			}
 
-			System.out.println();
-
 		}
 
 		if (makeExecutable)
@@ -237,7 +235,6 @@ public class BMDExpressProperties
 	private void checkOperatingSystem()
 	{
 		String os = System.getProperty("os.name");
-		// System.out.println("Operating System: " + os);
 		isWindows = false;
 		// if (os.startsWith("Linux")) { // for linux OS
 		if (os.toLowerCase().contains("mac"))

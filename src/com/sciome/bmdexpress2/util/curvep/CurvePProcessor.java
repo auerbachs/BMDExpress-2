@@ -58,17 +58,14 @@ public class CurvePProcessor
 
 		CurvePProcessor curvePProcessor = new CurvePProcessor(new ArrayList<>(), new ArrayList<>(), 0.0f);
 
-		System.out.println("hello world");
 		try
 		{
 			curvePProcessor.calculateCorrectedListOfResponses();
 		}
 		catch (Exception e)
 		{
-
+			e.printStackTrace();
 		}
-
-		System.out.println("good bye world");
 
 	}
 

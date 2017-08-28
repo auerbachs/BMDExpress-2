@@ -39,6 +39,66 @@ public class DialogWithThreadProcess
 		this.owner = owner;
 	}
 
+	public void saveJSONProject(BMDProject bmdProject, File selectedFile)
+	{
+		Task task = new Task<Void>() {
+
+			@Override
+			protected Void call() throws Exception
+			{
+				try
+				{
+
+					saveAsJSON(bmdProject, selectedFile);
+
+				}
+				catch (IOException i)
+				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Error saveing file. " + i.toString()));
+
+						}
+					});
+					i.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void succeeded()
+			{
+				super.succeeded();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void cancelled()
+			{
+				super.cancelled();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void failed()
+			{
+				super.failed();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+		};
+		new Thread(task).start();
+
+		showWaitDialog("Save Project",
+				"Saving Project : " + bmdProject.getName() + " to " + selectedFile.getAbsolutePath());
+	}
+
 	public void saveProject(BMDProject bmdProject, File selectedFile)
 	{
 
@@ -58,8 +118,6 @@ public class DialogWithThreadProcess
 					out.writeObject(bmdProject);
 					out.close();
 					fileOut.close();
-
-					saveAsJSON(bmdProject);
 
 				}
 				catch (IOException i)
@@ -267,7 +325,7 @@ public class DialogWithThreadProcess
 
 	}
 
-	private void saveAsJSON(BMDProject project) throws Exception
+	private void saveAsJSON(BMDProject project, File theFile) throws Exception
 	{
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -275,16 +333,14 @@ public class DialogWithThreadProcess
 		/**
 		 * To make the JSON String pretty use the below code
 		 */
-		File testFile = new File("/tmp/test.json");
-		mapper.writerWithDefaultPrettyPrinter().writeValue(testFile, project);
+		mapper.writerWithDefaultPrettyPrinter().writeValue(theFile, project);
 
 	}
 
-	public BMDProject testJSON() throws Exception
+	public BMDProject importJSONFile(File selectedFile) throws Exception
 	{
 		ObjectMapper mapper = new ObjectMapper();
-		BMDProject projecttest = mapper.readValue(new File("/tmp/test.json"), BMDProject.class);
-		projecttest.setName("json test");
+		BMDProject projecttest = mapper.readValue(selectedFile, BMDProject.class);
 
 		return projecttest;
 	}
