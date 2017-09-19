@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
@@ -34,14 +35,12 @@ public class OneWayANOVAPresenter extends PresenterBase<IOneWayANOVAView>
 	 */
 	public void performOneWayANOVA(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, boolean isLogTransformation, double baseValue)
+			String foldFilterValue)
 	{
 
 		for (IStatModelProcessable pData : processableData)
-		{
 			performOneWayANOVA(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
-					useFoldFilter, foldFilterValue, isLogTransformation, baseValue);
-		}
+					useFoldFilter, foldFilterValue);
 
 	}
 
@@ -50,11 +49,20 @@ public class OneWayANOVAPresenter extends PresenterBase<IOneWayANOVAView>
 	 */
 	public OneWayANOVAResults performOneWayANOVA(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, boolean isLogTransformation, double baseValue)
+			String foldFilterValue)
 	{
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		OneWayANOVAAnalysis aNOVAAnalysis = new OneWayANOVAAnalysis();
+
+		double baseValue = 2.0;
+		boolean isLogTransformation = true;
+		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
+			baseValue = 10.0f;
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+			baseValue = 2.718281828459045;
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
+			isLogTransformation = false;
 
 		// get a list of oneWayResults
 		List<OneWayANOVAResult> oneWayResultList = aNOVAAnalysis.analyzeDoseResponseData(processableData);

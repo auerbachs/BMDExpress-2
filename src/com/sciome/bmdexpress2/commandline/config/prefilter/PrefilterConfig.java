@@ -21,8 +21,7 @@ public abstract class PrefilterConfig
 	private Boolean	filterOutControlGenes			= false;
 
 	private Boolean	useFoldChange					= false;
-	// 0=no log, 1=log2, 2=log10, 3=lognatural
-	private Integer	logTransformationOfData;
+
 	private Double	foldChange;
 
 	public String getInputName()
@@ -83,16 +82,6 @@ public abstract class PrefilterConfig
 	public void setUseFoldChange(Boolean userFoldChange)
 	{
 		this.useFoldChange = userFoldChange;
-	}
-
-	public Integer getLogTransformationOfData()
-	{
-		return logTransformationOfData;
-	}
-
-	public void setLogTransformationOfData(Integer logTransformationOfData)
-	{
-		this.logTransformationOfData = logTransformationOfData;
 	}
 
 	public Double getFoldChange()

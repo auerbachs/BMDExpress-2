@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
@@ -25,12 +26,14 @@ import javafx.stage.Window;
 public class ExpressionImportRunner implements IProjectNavigationView
 {
 
-	public DoseResponseExperiment runExpressionImport(File file, String chipID, String outputName)
+	public DoseResponseExperiment runExpressionImport(File file, String chipID, String outputName,
+			LogTransformationEnum logtransformation)
 	{
 		ProjectNavigationPresenter presenter = new ProjectNavigationPresenter(this,
 				BMDExpressEventBus.getInstance());
 
 		DoseResponseExperiment doseResponseExperiment = ExperimentFileUtil.getInstance().readFile(file);
+		doseResponseExperiment.setLogTransformation(logtransformation);
 
 		Hashtable<String, Integer> probeHash = new Hashtable<>();
 		for (ProbeResponse probeResponse : doseResponseExperiment.getProbeResponses())

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
@@ -30,6 +31,9 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 
 		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
+
+		if (processableData instanceof PrefilterResults)
+			bMDResults.setPrefilterResults((PrefilterResults) processableData);
 		return bMDResults;
 	}
 

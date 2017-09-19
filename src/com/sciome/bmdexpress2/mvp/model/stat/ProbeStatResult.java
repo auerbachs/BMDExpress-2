@@ -39,6 +39,11 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	private transient String		genes;
 	private transient String		geneSymbols;
 
+	private transient Double		prefilterAdjustedPValue;
+	private transient Double		prefilterPvalue;
+	private transient Double		prefilterBestFoldChange;
+	private transient Double		prefilterBestABSFoldChange;
+
 	private Long					id;
 
 	@JsonIgnore
@@ -104,7 +109,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	// calculate columns and rows. The purpose of this is to agregate all the results
 	// so the data can be viewed by a table.
-	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations)
+	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations,
+			Double adjustedPValue, Double pValue, Double bestFoldChange)
 	{
 		row = new ArrayList<Object>();
 		row.add(probeResponse.getProbe().getId());
@@ -181,6 +187,23 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getAIC());
 			row.add(bestStatResult.getAdverseDirection());
 			row.add(bestStatResult.getBMD() / bestStatResult.getBMDL());
+		}
+
+		row.add(adjustedPValue);
+		this.prefilterAdjustedPValue = adjustedPValue;
+
+		row.add(pValue);
+		this.prefilterPvalue = pValue;
+
+		row.add(bestFoldChange);
+		this.prefilterBestFoldChange = bestFoldChange;
+
+		if (bestFoldChange == null)
+			row.add(null);
+		else
+		{
+			row.add(Math.abs(bestFoldChange));
+			this.prefilterBestABSFoldChange = Math.abs(bestFoldChange);
 		}
 
 	}
@@ -387,6 +410,38 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		if (bestStatResult == null)
 			return null;
 		return bestStatResult.getBMDU() / bestStatResult.getBMD();
+	}
+
+	@Filterable(key = BMDResult.PREFILTER_ADJUSTEDPVALUE)
+	@ChartableDataPoint(key = BMDResult.PREFILTER_ADJUSTEDPVALUE)
+	@JsonIgnore
+	public Double getPrefilterAdjustedPValue()
+	{
+		return prefilterAdjustedPValue;
+	}
+
+	@Filterable(key = BMDResult.PREFILTER_PVALUE)
+	@ChartableDataPoint(key = BMDResult.PREFILTER_PVALUE)
+	@JsonIgnore
+	public Double getPrefilterPValue()
+	{
+		return prefilterPvalue;
+	}
+
+	@Filterable(key = BMDResult.BEST_FOLDCHANGE)
+	@ChartableDataPoint(key = BMDResult.BEST_FOLDCHANGE)
+	@JsonIgnore
+	public Double getBestFoldChange()
+	{
+		return prefilterBestFoldChange;
+	}
+
+	@Filterable(key = BMDResult.BEST_ABSFOLDCHANGE)
+	@ChartableDataPoint(key = BMDResult.BEST_ABSFOLDCHANGE)
+	@JsonIgnore
+	public Double getBestABSFoldChange()
+	{
+		return prefilterBestABSFoldChange;
 	}
 
 	@ChartableDataPointLabel

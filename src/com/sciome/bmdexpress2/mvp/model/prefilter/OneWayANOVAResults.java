@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
@@ -23,7 +24,7 @@ import com.sciome.charts.annotation.ChartableDataLabel;
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
-		implements Serializable, IStatModelProcessable
+		implements Serializable, IStatModelProcessable, PrefilterResults
 {
 
 	/**
@@ -247,6 +248,20 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PrefilterResult> getPrefilterResults()
+	{
+		return (List<PrefilterResult>) (List<?>) oneWayANOVAResults;
+	}
+
+	@Override
+	@JsonIgnore
+	public LogTransformationEnum getLogTransformation()
+	{
+		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 
 }

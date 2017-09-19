@@ -14,6 +14,7 @@ import com.sciome.bmdexpress2.BMDExpress2Main;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
@@ -702,6 +703,32 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		annationDialog.initOwner(navigationTreeView.getScene().getWindow());
 		annationDialog.initModality(Modality.WINDOW_MODAL);
 		Optional<ChipInfo> myvalue = annationDialog.showAndWait();
+
+		try
+		{
+			ChoiceDialog<LogTransformationEnum> logTransFormationDialog = new ChoiceDialog<>(
+					LogTransformationEnum.BASE2, LogTransformationEnum.values());
+
+			logTransFormationDialog.setTitle("How is your data transformed?");
+			logTransFormationDialog.setGraphic(null);
+			logTransFormationDialog.setHeaderText("Log Transformation chooser");
+			logTransFormationDialog.setContentText("Choose a Log Transformation");
+			logTransFormationDialog.initOwner(navigationTreeView.getScene().getWindow());
+			logTransFormationDialog.initModality(Modality.WINDOW_MODAL);
+			Optional<LogTransformationEnum> logtransform = logTransFormationDialog.showAndWait();
+
+			LogTransformationEnum lt = LogTransformationEnum.BASE2;;
+			if (logtransform.isPresent())
+				lt = logtransform.get();
+
+			for (DoseResponseExperiment de : doseResponseExperiment)
+				de.setLogTransformation(lt);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		if (myvalue.isPresent())
 			presenter.assignArrayAnnotations(myvalue.get(), doseResponseExperiment, fileAnnotation);

@@ -21,7 +21,7 @@ import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
-public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializable
+public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializable, PrefilterResult
 {
 
 	/**

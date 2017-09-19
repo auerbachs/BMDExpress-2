@@ -91,18 +91,6 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			final String os = System.getProperty("os.name");
 			if (os != null && os.toLowerCase().contains("mac"))
 				menuBar.useSystemMenuBarProperty().set(true);
-
-			// only allow bmdsanalysis and oneway filtering on windows platform.
-			// this is particularly important for bmds analysis because the
-			// bmds executables are only tested and valid on windows platform
-			// linux and mac executables are giving different results
-			// This allows users to view bm2 files and perform functional
-			// classifications on mac and linux.
-			if (os != null && !os.toLowerCase().contains("windows"))
-			{
-				// bMDAnalysesMenuItem.setVisible(false);
-				// oneWayANOVAMenuItem.setVisible(false);
-			}
 		}
 		catch (Exception e)
 		{

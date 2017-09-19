@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,11 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	private List<ReferenceGeneAnnotation>	referenceGeneAnnotations;
 	private ChipInfo						chip;
 	private AnalysisInfo					analysisInfo;
+
+	// default to logTransformation of base2
+	// this defines how the data was log transformed before being input into bmdexpress
+	// this information is important to know for correctly calculating the fold change
+	private LogTransformationEnum			logTransformation	= LogTransformationEnum.BASE2;
 
 	private transient List<String>			columnHeader;
 	private transient List<Object>			columnHeader2;
@@ -108,6 +114,16 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	public void setAnalysisInfo(AnalysisInfo analysisInfo)
 	{
 		this.analysisInfo = analysisInfo;
+	}
+
+	public LogTransformationEnum getLogTransformation()
+	{
+		return logTransformation;
+	}
+
+	public void setLogTransformation(LogTransformationEnum logTransformation)
+	{
+		this.logTransformation = logTransformation;
 	}
 
 	@Override
@@ -197,6 +213,24 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 			}
 		}
 		return columnHeader2;
+	}
+
+	/*
+	 * perform post deserialization logic
+	 */
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	{
+		in.defaultReadObject();
+
+		// logTransformation is a later addition. So if we deserialize this object
+		// and it is null, default it to BASE2.
+		if (this.logTransformation == null)
+		{
+			logTransformation = LogTransformationEnum.BASE2;
+			analysisInfo.getNotes()
+					.add("Logtransformation set to default of: " + LogTransformationEnum.BASE2);
+		}
+
 	}
 
 }

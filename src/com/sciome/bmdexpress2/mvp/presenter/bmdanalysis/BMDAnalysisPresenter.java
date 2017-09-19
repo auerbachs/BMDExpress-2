@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
@@ -80,6 +81,8 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 							return 0;
 						bMDResults.setDoseResponseExperiment(
 								processableData.getProcessableDoseResponseExperiment());
+						if (processableData instanceof PrefilterResults)
+							bMDResults.setPrefilterResults((PrefilterResults) processableData);
 
 						// post a the new result set to the event bus
 

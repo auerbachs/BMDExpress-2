@@ -15,12 +15,11 @@ public class ANOVARunner implements IOneWayANOVAView
 {
 	public OneWayANOVAResults runBMDAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, boolean isLogTransformation, double baseValue, String outputName)
+			String foldFilterValue, String outputName)
 	{
 		OneWayANOVAPresenter presenter = new OneWayANOVAPresenter(this, BMDExpressEventBus.getInstance());
 		OneWayANOVAResults results = presenter.performOneWayANOVA(processableData, pCutOff,
-				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue,
-				isLogTransformation, baseValue);
+				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue);
 
 		if (outputName != null)
 			results.setName(outputName);

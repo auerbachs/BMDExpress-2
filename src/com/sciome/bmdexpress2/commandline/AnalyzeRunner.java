@@ -427,13 +427,6 @@ public class AnalyzeRunner
 		if (preFilterConfig instanceof ANOVAConfig)
 		{
 			ANOVARunner anovaRunner = new ANOVARunner();
-			Double baseValue = 0.0;
-			if (preFilterConfig.getLogTransformationOfData().equals(1))
-				baseValue = 2.0;
-			else if (preFilterConfig.getLogTransformationOfData().equals(2))
-				baseValue = 10.0;
-			else if (preFilterConfig.getLogTransformationOfData().equals(3))
-				baseValue = Math.E;
 
 			// if the user specifies a dose experiment name, then find it and add it.
 			// if the inputname is null, then add all dose response experiments
@@ -450,9 +443,7 @@ public class AnalyzeRunner
 				project.getOneWayANOVAResults().add(anovaRunner.runBMDAnalysis(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()),
-						!new Integer(0).equals(preFilterConfig.getLogTransformationOfData()), baseValue,
-						preFilterConfig.getOutputName()));
+						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
 			}
 		}
 		System.out.println("prefilter analysis");
@@ -470,10 +461,14 @@ public class AnalyzeRunner
 		{
 			for (final File fileEntry : new File(expressionConfig.getInputFileName()).listFiles())
 			{
+				if (fileEntry.isDirectory())
+					continue;
 				// the name stored in project bm2 file should be name of file without the extension
 				String outname = FilenameUtils.removeExtension(fileEntry.getName());
-				project.getDoseResponseExperiments().add((new ExpressionImportRunner())
-						.runExpressionImport(fileEntry, expressionConfig.getPlatform(), outname));
+				project.getDoseResponseExperiments()
+						.add((new ExpressionImportRunner()).runExpressionImport(fileEntry,
+								expressionConfig.getPlatform(), outname,
+								expressionConfig.getLogTransformation()));
 			}
 
 		}
@@ -485,8 +480,10 @@ public class AnalyzeRunner
 			// if config file outputname is set, then override the default
 			if (expressionConfig.getOutputName() != null)
 				outname = expressionConfig.getOutputName();
-			project.getDoseResponseExperiments().add(new ExpressionImportRunner()
-					.runExpressionImport(inputFile, expressionConfig.getPlatform(), outname));
+			project.getDoseResponseExperiments()
+					.add(new ExpressionImportRunner().runExpressionImport(inputFile,
+							expressionConfig.getPlatform(), outname,
+							expressionConfig.getLogTransformation()));
 		}
 
 	}

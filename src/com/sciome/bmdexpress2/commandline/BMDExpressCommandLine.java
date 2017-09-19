@@ -32,6 +32,7 @@ import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 
 public class BMDExpressCommandLine
@@ -153,12 +154,14 @@ public class BMDExpressCommandLine
 		expression1.setInputFileName("/home/japhill/analysis/expressiondata/expression1.txt");
 		expression1.setOutputName("expression1");
 		expression1.setPlatform("GPL1255");
+		expression1.setLogTransformation(LogTransformationEnum.BASE2);
 
 		ExpressionDataConfig expression2 = new ExpressionDataConfig();
 		expression2.setHasHeaders(false);
 		expression2.setInputFileName("/home/japhill/analysis/expressiondata/expression2.txt");
 		expression2.setOutputName("expression2");
 		expression2.setPlatform("GPL1255");
+		expression2.setLogTransformation(LogTransformationEnum.BASE2);
 
 		runConfig.setExpressionDataConfigs(Arrays.asList(expression1, expression2));
 
@@ -169,7 +172,6 @@ public class BMDExpressCommandLine
 		anovaConfig.setFoldChange(2.0);
 		anovaConfig.setInputName("expression1");
 		anovaConfig.setOutputName("expression1_anova");
-		anovaConfig.setLogTransformationOfData(1);
 		anovaConfig.setpValueCutoff(0.05);
 		anovaConfig.setUseFoldChange(true);
 
@@ -179,7 +181,6 @@ public class BMDExpressCommandLine
 		anovaConfig1.setFoldChange(2.0);
 		anovaConfig1.setInputName("expression2");
 		anovaConfig1.setOutputName("expression2_anova");
-		anovaConfig1.setLogTransformationOfData(1);
 		anovaConfig1.setpValueCutoff(0.05);
 		anovaConfig1.setUseFoldChange(true);
 

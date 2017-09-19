@@ -513,6 +513,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 				notes.add("Chip: " + chipInfo.getGeoName());
 				notes.add("Provider: " + chipInfo.getProvider());
 			}
+			notes.add("Log Transformation: " + doseResponseExperiment.getLogTransformation());
 			notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 			notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 			analysisInfo.setNotes(notes);

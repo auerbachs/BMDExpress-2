@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -35,17 +34,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	private CheckBox					useFoldChangeCheckBox;
 
 	@FXML
-	private CheckBox					isLogTransformationData;
-
-	@FXML
 	private TextField					foldChangeValueTextField;
-
-	@FXML
-	private RadioButton					baseTwo;
-	@FXML
-	private RadioButton					baseTen;
-	@FXML
-	private RadioButton					baseNatural;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -106,30 +95,18 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 			pCutOff = Float.valueOf(pCutOffSelectedItem);
 		}
 
-		double baseValue = 2.0;
-		if (baseTen.isSelected())
-		{
-			baseValue = 10.0f;
-		}
-		else if (baseNatural.isSelected())
-		{
-			baseValue = 2.718281828459045;
-		}
-		// gather the parameters and let the presenter do the rest.
-
 		if (processableData.size() > 1)
 		{
 			presenter.performOneWayANOVA(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 					filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
-					foldChangeValueTextField.getText(), isLogTransformationData.isSelected(), baseValue);
+					foldChangeValueTextField.getText());
 		}
 		else
 		{
 			presenter.performOneWayANOVA(
 					(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 					pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
-					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
-					isLogTransformationData.isSelected(), baseValue);
+					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText());
 		}
 
 		closeWindow();
@@ -152,35 +129,12 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		if (this.useFoldChangeCheckBox.isSelected())
 		{
 			this.foldChangeValueTextField.setDisable(false);
-			this.isLogTransformationData.setDisable(false);
-			this.baseTwo.setDisable(false);
-			this.baseTen.setDisable(false);
-			this.baseNatural.setDisable(false);
+
 		}
 		else
 		{
 			this.foldChangeValueTextField.setDisable(true);
-			this.isLogTransformationData.setDisable(true);
-			this.baseTwo.setDisable(true);
-			this.baseTen.setDisable(true);
-			this.baseNatural.setDisable(true);
-		}
 
-	}
-
-	public void handle_LogTransformationClick()
-	{
-		if (this.isLogTransformationData.isSelected())
-		{
-			this.baseTwo.setDisable(false);
-			this.baseTen.setDisable(false);
-			this.baseNatural.setDisable(false);
-		}
-		else
-		{
-			this.baseTwo.setDisable(true);
-			this.baseTen.setDisable(true);
-			this.baseNatural.setDisable(true);
 		}
 
 	}

@@ -1,19 +1,24 @@
 package com.sciome.bmdexpress2.commandline.config.expression;
 
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
+
 public class ExpressionDataConfig
 {
 
 	// name of file containing data
-	private String	inputFileName;
+	private String					inputFileName;
 
 	// name to store the expression data as
-	private String	outputName;
+	private String					outputName;
 
 	// is the first line labels or doses?
-	private Boolean	hasHeaders;
+	private Boolean					hasHeaders;
 
 	// GPL id for most things.
-	private String	platform;
+	private String					platform;
+
+	// specify the log transformation
+	private LogTransformationEnum	logTransformation;
 
 	public String getInputFileName()
 	{
@@ -53,6 +58,16 @@ public class ExpressionDataConfig
 	public void setPlatform(String platform)
 	{
 		this.platform = platform;
+	}
+
+	public LogTransformationEnum getLogTransformation()
+	{
+		return logTransformation;
+	}
+
+	public void setLogTransformation(LogTransformationEnum logTransformationEnum)
+	{
+		this.logTransformation = logTransformationEnum;
 	}
 
 }
