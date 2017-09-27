@@ -81,7 +81,7 @@ public class CategorizationPresenter extends PresenterBase<ICategorizationView>
 						catMapTool = new CategoryMapTool(params, bmdResult, catAnalysisEnum, me,
 								analysisInfo);
 						CategoryAnalysisResults categoryAnalysisResults = catMapTool.startAnalyses();
-
+						categoryAnalysisResults.setBmdResult(bmdResult);
 						categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
 						Platform.runLater(() ->

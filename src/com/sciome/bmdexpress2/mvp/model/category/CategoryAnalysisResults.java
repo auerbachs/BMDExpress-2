@@ -92,6 +92,24 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				CATEGORY_DESCRIPTION		= "Category Description";
 	public static final String				GO_TERM_LEVEL				= "GO Term Level";
 
+	public static final String				OVERALL_DIRECTION			= "Overall Direction";
+
+	// fold change stats
+	public static final String				TOTAL_FOLD_CHANGE			= "Total Fold Change";
+	public static final String				MEAN_FOLD_CHANGE			= "Mean Fold Change";
+	public static final String				MEDIAN_FOLD_CHANGE			= "Median Fold Change";
+	public static final String				MAX_FOLD_CHANGE				= "Max Fold Change";
+	public static final String				MIN_FOLD_CHANGE				= "Min Fold Change";
+	public static final String				STDDEV_FOLD_CHANGE			= "Standard Deviation Fold Change";
+
+	// 95% confidence interval stats
+	public static final String				BMDLOWER95					= "Lower bound of the 95% confidence interval -  BMD";
+	public static final String				BMDUPPER95					= "Upper bound of the 95% confidence interval -  BMD";
+	public static final String				BMDLLOWER95					= "Lower bound of the 95% confidence interval -  BMDL";
+	public static final String				BMDLUPPER95					= "Upper bound of the 95% confidence interval -  BMDL";
+	public static final String				BMDUUPPER95					= "Upper bound of the 95% confidence interval -  BMDU";
+	public static final String				BMDULOWER95					= "Lower bound of the 95% confidence interval -  BMDU";
+
 	@JsonIgnore
 	public Long getID()
 	{
@@ -159,6 +177,10 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	 */
 	private void fillColumnHeader()
 	{
+		// refresh the bmdResults so that any transient values are populated
+		// the category results are using fold change values that are
+		// gotten from the bmdresults. So they need to be avaiable here.
+		this.bmdResult.refreshTableData();
 		columnHeader = new ArrayList<>();
 		if (categoryAnalsyisResults == null || categoryAnalsyisResults.size() == 0)
 		{
@@ -167,6 +189,22 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 		CategoryAnalysisResult catResult = categoryAnalsyisResults.get(0);
 
 		columnHeader = catResult.generateColumnHeader();
+
+		// now add some extras
+
+		columnHeader.add(MEAN_FOLD_CHANGE);
+		columnHeader.add(TOTAL_FOLD_CHANGE);
+		columnHeader.add(MIN_FOLD_CHANGE);
+		columnHeader.add(MAX_FOLD_CHANGE);
+		columnHeader.add(STDDEV_FOLD_CHANGE);
+		columnHeader.add(MEDIAN_FOLD_CHANGE);
+
+		columnHeader.add(BMDLOWER95);
+		columnHeader.add(BMDUPPER95);
+		columnHeader.add(BMDLLOWER95);
+		columnHeader.add(BMDLUPPER95);
+		columnHeader.add(BMDULOWER95);
+		columnHeader.add(BMDUUPPER95);
 	}
 
 	@Override

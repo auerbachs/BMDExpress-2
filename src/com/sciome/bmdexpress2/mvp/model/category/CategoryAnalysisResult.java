@@ -9,6 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -133,7 +139,21 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	// this is calculated and provides a general direction of the dose response curves
 	private transient AdverseDirectionEnum		overallDirection;
 
-	// private transient Double
+	// fold change stats
+	private transient Double					totalFoldChange;
+	private transient Double					meanFoldChange;
+	private transient Double					medianFoldChange;
+	private transient Double					maxFoldChange;
+	private transient Double					minFoldChange;
+	private transient Double					stdDevFoldChange;
+
+	// 95% confidence interval stats
+	private transient Double					bmdLower95;
+	private transient Double					bmdUpper95;
+	private transient Double					bmdlLower95;
+	private transient Double					bmdlUpper95;
+	private transient Double					bmduUpper95;
+	private transient Double					bmduLower95;
 
 	@JsonIgnore
 	public Long getID()
@@ -1270,6 +1290,28 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		row.add(getBMDUConflictList());
 		row.add(calculateStatResultCounts());
 
+		// calculate fold change stats for this row,
+		// then add them
+		calculateFoldChangeStats();
+
+		row.add(this.meanFoldChange);
+		row.add(this.totalFoldChange);
+		row.add(this.minFoldChange);
+		row.add(this.maxFoldChange);
+		row.add(this.stdDevFoldChange);
+		row.add(this.medianFoldChange);
+
+		// calculate 95% confidence intervals for this
+		// row and then ad them.
+		calculate95ConfidenceIntervals();
+
+		row.add(this.bmdLower95);
+		row.add(this.bmdUpper95);
+		row.add(this.bmdlLower95);
+		row.add(this.bmdlUpper95);
+		row.add(this.bmduLower95);
+		row.add(this.bmduUpper95);
+
 	}
 
 	public void setAllGenesPassedAllFilters(Integer number)
@@ -2006,6 +2048,203 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		}
 		geneSymbols = stringBuffer.toString();
 		return stringBuffer.toString();
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.OVERALL_DIRECTION)
+	@Filterable(key = CategoryAnalysisResults.OVERALL_DIRECTION)
+	public AdverseDirectionEnum getOverallDirection()
+	{
+		return overallDirection;
+	}
+
+	// fold change stats
+	@ChartableDataPoint(key = CategoryAnalysisResults.TOTAL_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.TOTAL_FOLD_CHANGE)
+	public Double gettotalFoldChange()
+	{
+		return totalFoldChange;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.MEAN_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.MEAN_FOLD_CHANGE)
+	public Double getmeanFoldChange()
+	{
+		return meanFoldChange;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.MEDIAN_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.MEDIAN_FOLD_CHANGE)
+	public Double getmedianFoldChange()
+	{
+		return medianFoldChange;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.MAX_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.MAX_FOLD_CHANGE)
+	public Double getmaxFoldChange()
+	{
+		return maxFoldChange;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.MIN_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.MIN_FOLD_CHANGE)
+	public Double getminFoldChange()
+	{
+		return minFoldChange;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.STDDEV_FOLD_CHANGE)
+	@Filterable(key = CategoryAnalysisResults.STDDEV_FOLD_CHANGE)
+	public Double getstdDevFoldChange()
+	{
+		return stdDevFoldChange;
+	}
+
+	// 95% confidence interval stats
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLOWER95)
+	@Filterable(key = CategoryAnalysisResults.BMDLOWER95)
+	public Double getbmdLower95()
+	{
+		return bmdLower95;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUPPER95)
+	@Filterable(key = CategoryAnalysisResults.BMDUPPER95)
+	public Double getbmdUpper95()
+	{
+		return bmdUpper95;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLLOWER95)
+	@Filterable(key = CategoryAnalysisResults.BMDLLOWER95)
+	public Double getbmdlLower95()
+	{
+		return bmdlLower95;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLUPPER95)
+	@Filterable(key = CategoryAnalysisResults.BMDLUPPER95)
+	public Double getbmdlUpper95()
+	{
+		return bmdlUpper95;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUUPPER95)
+	@Filterable(key = CategoryAnalysisResults.BMDUUPPER95)
+	public Double getbmduUpper95()
+	{
+		return bmduUpper95;
+	}
+
+	@ChartableDataPoint(key = CategoryAnalysisResults.BMDULOWER95)
+	@Filterable(key = CategoryAnalysisResults.BMDULOWER95)
+	public Double getbmduLower95()
+	{
+		return bmduLower95;
+	}
+
+	/*
+	 * method to calculate fold change stats. these are transient values and should be calculate sometime post
+	 * deserialization or prior to being displayed in a table. This should use the maxfold change per
+	 * bestmodel result
+	 */
+	private void calculateFoldChangeStats()
+	{
+		if (referenceGeneProbeStatResults == null)
+			return;
+
+		DescriptiveStatistics summaryStats = new DescriptiveStatistics();
+		List<Double> bestFoldChanges = new ArrayList<>();
+		for (ReferenceGeneProbeStatResult rp : referenceGeneProbeStatResults)
+			for (ProbeStatResult probeStatResult : rp.getProbeStatResults())
+				if (probeStatResult.getBestABSFoldChange() != null)
+					summaryStats.addValue(probeStatResult.getBestABSFoldChange());
+
+		this.meanFoldChange = summaryStats.getGeometricMean();
+		this.totalFoldChange = summaryStats.getSum();
+		this.minFoldChange = summaryStats.getMin();
+		this.maxFoldChange = summaryStats.getMax();
+		this.stdDevFoldChange = summaryStats.getStandardDeviation();
+		this.medianFoldChange = summaryStats.getPercentile(50);
+
+	}
+
+	/*
+	 * method to calculate 95% confidence intervals for bmd, bmdl and bmdu
+	 */
+	private void calculate95ConfidenceIntervals()
+	{
+		if (this.referenceGeneProbeStatResults == null)
+			return;
+
+		SummaryStatistics statsBMD = new SummaryStatistics();
+		SummaryStatistics statsBMDL = new SummaryStatistics();
+		SummaryStatistics statsBMDU = new SummaryStatistics();
+
+		for (ReferenceGeneProbeStatResult rgp : referenceGeneProbeStatResults)
+		{
+			for (ProbeStatResult probeStatResult : rgp.getProbeStatResults())
+			{
+				if (probeStatResult.getBestStatResult() == null)
+					continue;
+
+				statsBMD.addValue(probeStatResult.getBestBMD());
+				statsBMDL.addValue(probeStatResult.getBestBMDL());
+				statsBMDU.addValue(probeStatResult.getBestBMDU());
+			}
+		}
+
+		// Calculate 95% confidence interval
+		// double ciBMD = calcMeanCI(statsBMD, 0.95);
+		// bmdLower95 = statsBMD.getMean() - ciBMD;
+		// bmdUpper95 = statsBMD.getMean() + ciBMD;
+		bmdLower95 = calculateNormalQuantile(statsBMD, (1 - .95) / 2);
+		bmdUpper95 = calculateNormalQuantile(statsBMD, 1.0 - (1 - .95) / 2);
+
+		// double ciBMDL = calcMeanCI(statsBMDL, 0.95);
+		bmdlLower95 = calculateNormalQuantile(statsBMDL, (1 - .95) / 2);
+		bmdlUpper95 = calculateNormalQuantile(statsBMDL, 1.0 - (1 - .95) / 2);
+		// bmdlLower95 = statsBMDL.getMean() - ciBMDL;
+		// bmdlUpper95 = statsBMDL.getMean() + ciBMDL;
+
+		// double ciBMDU = calcMeanCI(statsBMDU, 0.95);
+		bmduLower95 = calculateNormalQuantile(statsBMDU, (1 - .95) / 2);
+		bmduUpper95 = calculateNormalQuantile(statsBMDU, 1.0 - (1 - .95) / 2);
+		// bmduLower95 = statsBMDU.getMean() - ciBMDU;
+		// bmduUpper95 = statsBMDU.getMean() + ciBMDU;
+
+	}
+
+	private static double calculateNormalQuantile(SummaryStatistics stats, double level)
+	{
+		try
+		{
+			NormalDistribution normDist = new NormalDistribution(stats.getMean(),
+					stats.getStandardDeviation());
+			return normDist.cumulativeProbability(level);
+		}
+		catch (MathIllegalArgumentException e)
+		{
+			return Double.NaN;
+		}
+	}
+
+	private static double calcMeanCI(SummaryStatistics stats, double level)
+	{
+		try
+		{
+			// Create T Distribution with N-1 degrees of freedom
+			// TDistribution tDist = new TDistribution(stats.getN() - 1);
+			TDistribution tDist = new TDistribution(stats.getN() - 1);
+			// Calculate critical value
+			double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - level) / 2);
+			// Calculate confidence interval
+			return critVal * stats.getStandardDeviation() / Math.sqrt(stats.getN());
+		}
+		catch (MathIllegalArgumentException e)
+		{
+			return Double.NaN;
+		}
 	}
 
 	/*

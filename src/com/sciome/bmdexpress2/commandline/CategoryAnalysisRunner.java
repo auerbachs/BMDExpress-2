@@ -32,7 +32,7 @@ public class CategoryAnalysisRunner implements ICategoryMapToolProgress
 		CategoryMapTool catMapTool = new CategoryMapTool(params, bmdResult, catAnalysisEnum, this,
 				analysisInfo);
 		CategoryAnalysisResults categoryAnalysisResults = catMapTool.startAnalyses();
-
+		categoryAnalysisResults.setBmdResult(bmdResult);
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
 		return categoryAnalysisResults;

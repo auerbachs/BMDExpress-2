@@ -27,7 +27,11 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	 */
 	private static final long				serialVersionUID	= 6106646178862193241L;
 	private String							name;
+
+	// this will contain doses.
 	private List<Treatment>					treatments;
+
+	// this is your dose response matrix
 	private List<ProbeResponse>				probeResponses;
 	private List<ReferenceGeneAnnotation>	referenceGeneAnnotations;
 	private ChipInfo						chip;
