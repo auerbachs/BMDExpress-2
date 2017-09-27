@@ -7,7 +7,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 
 /*
@@ -26,7 +25,6 @@ public class BMDProject implements Serializable
 	// Store each of the four analysis results in a map accessible by a String value
 	private List<DoseResponseExperiment>	doseResponseExperiments	= new ArrayList<>();
 	private List<OneWayANOVAResults>		oneWayANOVAResults		= new ArrayList<>();
-	private List<PathwayFilterResults>		pathwayFilterResults	= new ArrayList<>();
 	private List<BMDResult>					bMDResult				= new ArrayList<>();
 	private List<CategoryAnalysisResults>	categoryAnalysisResults	= new ArrayList<>();
 
@@ -80,21 +78,10 @@ public class BMDProject implements Serializable
 		this.categoryAnalysisResults = categoryAnalysisResults;
 	}
 
-	public List<PathwayFilterResults> getPathwayFilterResults()
-	{
-		return pathwayFilterResults;
-	}
-
-	public void setPathwayFilterResults(List<PathwayFilterResults> pathwayFilterResults)
-	{
-		this.pathwayFilterResults = pathwayFilterResults;
-	}
-
 	@JsonIgnore
 	public boolean isProjectEmpty()
 	{
-		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0
-				|| pathwayFilterResults.size() > 0 || bMDResult.size() > 0
+		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0 || bMDResult.size() > 0
 				|| categoryAnalysisResults.size() > 0)
 			return false;
 		return true;

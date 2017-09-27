@@ -7,7 +7,6 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.MatrixData;
@@ -32,10 +31,6 @@ public interface IProjectNavigationView
 	public void performBMDAnalysis();
 
 	public void performCategoryAnalysis(CategoryAnalysisEnum categoryAnalysisEnum);
-
-	void addPathwayFilterResults(PathwayFilterResults pathwayFilterResults, boolean selectIt);
-
-	void performPathwayFilter();
 
 	public void expandTree();
 

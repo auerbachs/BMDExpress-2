@@ -12,8 +12,6 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEve
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterDataLoadedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 
@@ -43,23 +41,10 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 		getView().loadOneWayANOVAAnalysis(event.GetPayload());
 	}
 
-	// handle loading and selecting oneway analysis data.
-	@Subscribe
-	public void onLoadPathWayAnalyis(PathwayFilterDataLoadedEvent event)
-	{
-		getView().loadPathwayFilterAnalysis(event.GetPayload());
-	}
-
 	@Subscribe
 	public void onSelectOneWayAnalysis(OneWayANOVADataSelectedEvent event)
 	{
 		getView().loadOneWayANOVAAnalysis(event.GetPayload());
-	}
-
-	@Subscribe
-	public void onSelectPathwayFilterAnalysis(PathwayFilterSelectedEvent event)
-	{
-		getView().loadPathwayFilterAnalysis(event.GetPayload());
 	}
 
 	// handle loading and selecting bmd result analysis data.

@@ -22,7 +22,6 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.probe.Probe;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
@@ -50,9 +49,6 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterDataLoadedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
@@ -115,8 +111,6 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	{
 		if (dataset instanceof OneWayANOVAResults)
 			getEventBus().post(new OneWayANOVADataSelectedEvent((OneWayANOVAResults) dataset));
-		else if (dataset instanceof PathwayFilterResults)
-			getEventBus().post(new PathwayFilterSelectedEvent((PathwayFilterResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
 			getEventBus().post(new CategoryAnalysisDataSelectedEvent((CategoryAnalysisResults) dataset));
 		else if (dataset instanceof BMDResult)
@@ -177,16 +171,6 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	}
 
 	/*
-	 * load pathway filter results into the view.
-	 */
-	@Subscribe
-	public void onLoadPathwayFilterResults(PathwayFilterDataLoadedEvent event)
-	{
-		getView().addPathwayFilterResults(event.GetPayload(), true);
-		currentProject.getPathwayFilterResults().add(event.GetPayload());
-	}
-
-	/*
 	 * load a bmdresults into the view.
 	 */
 	@Subscribe
@@ -215,17 +199,6 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	{
 
 		getView().performOneWayANOVA();
-
-	}
-
-	/*
-	 * someone asked to perform a pathway filter analysis.
-	 */
-	@Subscribe
-	public void onPathwayFilterAnalysisRequest(PathwayFilterRequestEvent event)
-	{
-
-		getView().performPathwayFilter();
 
 	}
 
@@ -274,12 +247,6 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		for (OneWayANOVAResults oneWayResult : bmdProject.getOneWayANOVAResults())
 		{
 			getView().addOneWayANOVAAnalysis(oneWayResult, false);
-		}
-
-		// populate all the anova data
-		for (PathwayFilterResults pathWayResults : bmdProject.getPathwayFilterResults())
-		{
-			getView().addPathwayFilterResults(pathWayResults, false);
 		}
 
 		// populate all the categorization data
@@ -591,8 +558,6 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			this.currentProject.getbMDResult().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof OneWayANOVAResults)
 			this.currentProject.getOneWayANOVAResults().remove(catAnalysisResults);
-		else if (catAnalysisResults instanceof PathwayFilterResults)
-			this.currentProject.getPathwayFilterResults().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof DoseResponseExperiment)
 			this.currentProject.getDoseResponseExperiments().remove(catAnalysisResults);
 

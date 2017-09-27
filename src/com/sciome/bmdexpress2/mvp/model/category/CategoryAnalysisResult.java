@@ -130,6 +130,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	// let them all use the same object to reduce instantiation
 	private transient StringBuffer				stringBuffer					= new StringBuffer();
 
+	// this is calculated and provides a general direction of the dose response curves
+	private transient AdverseDirectionEnum		overallDirection;
+
+	// private transient Double
+
 	@JsonIgnore
 	public Long getID()
 	{

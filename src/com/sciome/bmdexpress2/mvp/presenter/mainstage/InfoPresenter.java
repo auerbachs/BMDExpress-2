@@ -8,7 +8,6 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 
@@ -35,15 +34,6 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	 */
 	@Subscribe
 	public void onLoadOneWayAnova(OneWayANOVADataSelectedEvent event)
-	{
-		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
-	}
-
-	/*
-	 * listen for loading pathway filter results so we can add it to theproject
-	 */
-	@Subscribe
-	public void onLoadPathwayFilter(PathwayFilterSelectedEvent event)
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}

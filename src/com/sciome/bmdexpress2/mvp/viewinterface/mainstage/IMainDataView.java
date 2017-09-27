@@ -4,7 +4,6 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 
 public interface IMainDataView
@@ -19,8 +18,6 @@ public interface IMainDataView
 	void loadBMDResultAnalysis(BMDResult getPayload);
 
 	void loadCategoryAnalysis(CategoryAnalysisResults getPayload);
-
-	void loadPathwayFilterAnalysis(PathwayFilterResults getPayload);
 
 	void showBMDExpressAnalysisInSeparateWindow(BMDExpressAnalysisDataSet getPayload);
 

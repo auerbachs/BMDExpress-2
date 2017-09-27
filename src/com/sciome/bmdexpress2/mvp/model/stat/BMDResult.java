@@ -56,8 +56,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		FIT_LOG_LIKELIHOOD			= "Best Fit Log-Likelihood";
 	public static final String		PREFILTER_PVALUE			= "Prefilter P-Value";
 	public static final String		PREFILTER_ADJUSTEDPVALUE	= "Prefilter Adjusted P-Value";
-	public static final String		BEST_FOLDCHANGE				= "Best Fold Change";
-	public static final String		BEST_ABSFOLDCHANGE			= "Best Fold Change Absolute Value";
+	public static final String		BEST_FOLDCHANGE				= "Max Fold Change";
+	public static final String		BEST_ABSFOLDCHANGE			= "Max Fold Change Absolute Value";
 
 	@JsonIgnore
 	public Long getID()
@@ -132,6 +132,20 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		columnHeader.add(PREFILTER_ADJUSTEDPVALUE);
 		columnHeader.add(BEST_FOLDCHANGE);
 		columnHeader.add(BEST_ABSFOLDCHANGE);
+
+		// now we want to add the columns for all the
+		// individual fold change values.
+		if (this.prefilterResults != null && this.prefilterResults.getPrefilterResults() != null
+				&& this.prefilterResults.getPrefilterResults().size() > 0
+				&& this.prefilterResults.getPrefilterResults().get(0) != null)
+		{
+			int i = 1;
+			for (Float foldChange : this.prefilterResults.getPrefilterResults().get(0).getFoldChanges())
+			{
+				columnHeader.add("FC Dose Level " + i);
+				i++;
+			}
+		}
 	}
 
 	@Override
@@ -183,6 +197,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			Double adjustedPValue = null;
 			Double pValue = null;
 			Double bestFoldChange = null;
+			List<Float> foldChanges = new ArrayList<>();
 
 			PrefilterResult prefilter = probeToPrefilterMap
 					.get(probeStatResult.getProbeResponse().getProbe().getId());
@@ -194,8 +209,10 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				adjustedPValue = prefilter.getAdjustedPValue();
 				pValue = prefilter.getpValue();
 				bestFoldChange = prefilter.getBestFoldChange().doubleValue();
+				foldChanges = prefilter.getFoldChanges();
 			}
-			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange);
+			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
+					foldChanges);
 		}
 
 	}

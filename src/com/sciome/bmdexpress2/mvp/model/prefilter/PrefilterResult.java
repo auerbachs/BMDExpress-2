@@ -10,8 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-@JsonSubTypes({ @Type(value = OneWayANOVAResult.class, name = "onewayanovaresult"),
-		@Type(value = PathwayFilterResult.class, name = "pathwayfilterresult") })
+@JsonSubTypes({ @Type(value = OneWayANOVAResult.class, name = "onewayanovaresult") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public interface PrefilterResult
 {

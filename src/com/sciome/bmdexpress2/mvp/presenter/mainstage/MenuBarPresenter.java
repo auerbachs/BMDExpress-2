@@ -20,7 +20,6 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEve
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
@@ -172,13 +171,6 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void onOneWayANOVASelected(OneWayANOVADataSelectedEvent event)
 	{
 		getView().oneWayANOVADataSelected();
-	}
-
-	@Subscribe
-	@AllowConcurrentEvents
-	public void onPathwayFilterSelected(PathwayFilterSelectedEvent event)
-	{
-		getView().pathwayFilterSelected();
 	}
 
 	@Subscribe

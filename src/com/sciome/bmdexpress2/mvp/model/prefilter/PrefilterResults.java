@@ -11,8 +11,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
-@JsonSubTypes({ @Type(value = OneWayANOVAResults.class, name = "onewayanovaresults"),
-		@Type(value = PathwayFilterResults.class, name = "pathwayfilterresults") })
+@JsonSubTypes({ @Type(value = OneWayANOVAResults.class, name = "onewayanovaresults") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public interface PrefilterResults
 {

@@ -18,7 +18,6 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -27,7 +26,6 @@ import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView;
 import com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
-import com.sciome.bmdexpress2.mvp.view.prefilter.PathwayFilterView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -82,7 +80,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	// base tree items.
 	private TreeItem<DoseResponseExperiment>	expressionDataTreeItem				= null;
 	private TreeItem<OneWayANOVAResults>		oneWayANOVATreeItem					= null;
-	private TreeItem<PathwayFilterResults>		pathwayFilterTreeItem				= null;
 	private TreeItem<BMDResult>					bMDDoseAnalysesTreeItem				= null;
 	private TreeItem<CategoryAnalysisResults>	functionalClassificationsTreeItem	= null;
 
@@ -125,7 +122,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		oneWayANOVATreeItem = new TreeItem("One-way ANOVA", node2);
 		bMDDoseAnalysesTreeItem = new TreeItem("Benchmark Dose Analyses", node3);
 		functionalClassificationsTreeItem = new TreeItem("Functional Classifications", node4);
-		pathwayFilterTreeItem = new TreeItem("Pathway Filter", node5);
+
 		// add tree items to navigation tree
 		navigationTreeView.getRoot().getChildren().add(expressionDataTreeItem);
 		navigationTreeView.getRoot().getChildren().add(oneWayANOVATreeItem);
@@ -232,13 +229,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 					mouseEvent.getScreenY());
 
 		}
-		else if (selectedItem instanceof PathwayFilterResults)
-		{
-			showPathwayFilterContextMenu((PathwayFilterResults) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
-					mouseEvent.getScreenY());
-
-		}
 		else if (selectedItem instanceof CategoryAnalysisResults)
 		{
 			showCategorizationContextMenu((CategoryAnalysisResults) selectedItem).show(
@@ -268,7 +258,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	{
 		expressionDataTreeItem.getChildren().clear();
 		oneWayANOVATreeItem.getChildren().clear();
-		pathwayFilterTreeItem.getChildren().clear();
 		bMDDoseAnalysesTreeItem.getChildren().clear();
 		functionalClassificationsTreeItem.getChildren().clear();
 
@@ -326,24 +315,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
 		TreeItem<OneWayANOVAResults> newTreeItem = new TreeItem<>(oneWayANOVAResults, docImage);
 		oneWayANOVATreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
-	}
-
-	/*
-	 * put the oneway result into the tree.
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void addPathwayFilterResults(PathwayFilterResults pathwayFilterResults, boolean selectIt)
-	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<PathwayFilterResults> newTreeItem = new TreeItem<>(pathwayFilterResults, docImage);
-		pathwayFilterTreeItem.getChildren().add(newTreeItem);
 		if (selectIt)
 		{
 			navigationTreeView.getSelectionModel().clearSelection();
@@ -437,79 +408,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 						Stage stage = BMDExpressFXUtils.getInstance().generateStage("One Way ANOVA");
 						stage.setScene(new Scene((BorderPane) loader.load()));
 						OneWayANOVAView controller = loader.<OneWayANOVAView> getController();
-						controller.initData(selectedItems, processabeDatas);
-
-						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-							@Override
-							public void handle(WindowEvent event)
-							{
-								controller.close();
-							}
-						});
-						stage.sizeToScene();
-						stage.show();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-		});
-
-	}
-
-	/*
-	 * pathway filter view. pass it the dose response experiement data and start let user do stuff from there.
-	 *
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void performPathwayFilter()
-	{
-		// need to run this on the main ui thread. this is being called from event bus thread..hence the
-		// runlater.
-		Platform.runLater(new Runnable() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run()
-			{
-				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-						.getSelectedItems();
-				List<IStatModelProcessable> selectedItems = new ArrayList<>();
-				for (TreeItem tItem : treeItems)
-				{
-					Object selectedItem = tItem.getValue();
-					if (selectedItem instanceof IStatModelProcessable)
-					{
-						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
-						selectedItems.add(processableData);
-					}
-				}
-				TreeItem treeItem = (TreeItem) navigationTreeView.getSelectionModel().getSelectedItem();
-				if (selectedItems.size() > 0)
-				{
-					// now create a list of doseResponseExperement objects so the oneway anova view can offer
-					// a selection list.
-
-					List<IStatModelProcessable> processabeDatas = new ArrayList<>();
-
-					for (int i = 0; i < treeItem.getParent().getChildren().size(); i++)
-					{
-						TreeItem item = (TreeItem) treeItem.getParent().getChildren().get(i);
-						processabeDatas.add((IStatModelProcessable) item.getValue());
-					}
-					try
-					{
-
-						FXMLLoader loader = new FXMLLoader(
-								getClass().getResource("/fxml/pathwayfilter.fxml"));
-
-						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Pathway Filter");
-						stage.setScene(new Scene((BorderPane) loader.load()));
-						PathwayFilterView controller = loader.<PathwayFilterView> getController();
-
 						controller.initData(selectedItems, processabeDatas);
 
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -746,14 +644,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
 		setContextMenuCommonHandlers("One Way ANOVA", ctxMenu, oneWayResult);
-		return ctxMenu;
-	}
-
-	private ContextMenu showPathwayFilterContextMenu(PathwayFilterResults pathWayResult)
-	{
-		ContextMenu ctxMenu = new ContextMenu();
-		ctxMenu.getItems().addAll(getCommonMenuItems());
-		setContextMenuCommonHandlers("Pathway Filter", ctxMenu, pathWayResult);
 		return ctxMenu;
 	}
 

@@ -10,7 +10,6 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
@@ -93,18 +92,6 @@ public class ExpressionImportRunner implements IProjectNavigationView
 
 	@Override
 	public void performCategoryAnalysis(CategoryAnalysisEnum categoryAnalysisEnum)
-	{
-
-	}
-
-	@Override
-	public void addPathwayFilterResults(PathwayFilterResults pathwayFilterResults, boolean selectIt)
-	{
-
-	}
-
-	@Override
-	public void performPathwayFilter()
 	{
 
 	}

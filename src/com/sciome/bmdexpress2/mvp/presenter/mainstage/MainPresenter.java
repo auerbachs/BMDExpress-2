@@ -8,7 +8,6 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
@@ -45,15 +44,6 @@ public class MainPresenter extends PresenterBase<IMainView>
 	 */
 	@Subscribe
 	public void onSelectOneWayAnova(OneWayANOVADataSelectedEvent event)
-	{
-		getView().updateSelectionLabel(event.GetPayload().getName());
-	}
-
-	/*
-	 * listen for loading pathway filter results so we can add it to theproject
-	 */
-	@Subscribe
-	public void onSelectPathwayFilter(PathwayFilterSelectedEvent event)
 	{
 		getView().updateSelectionLabel(event.GetPayload().getName());
 	}
