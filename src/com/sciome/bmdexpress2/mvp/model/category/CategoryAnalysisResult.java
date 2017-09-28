@@ -138,6 +138,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 	// this is calculated and provides a general direction of the dose response curves
 	private transient AdverseDirectionEnum		overallDirection;
+	private transient Double					percentWithOverallDirectionUP;
+	private transient Double					percentWithOverallDirectionDOWN;
 
 	// fold change stats
 	private transient Double					totalFoldChange;
@@ -1312,6 +1314,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		row.add(this.bmduLower95);
 		row.add(this.bmduUpper95);
 
+		// calculate the overall adverse direction of this pathway
+		calculateOverAllDirection();
+
+		row.add(this.overallDirection);
+		row.add(this.percentWithOverallDirectionUP);
+		row.add(this.percentWithOverallDirectionDOWN);
+
 	}
 
 	public void setAllGenesPassedAllFilters(Integer number)
@@ -2141,6 +2150,50 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	public Double getbmduLower95()
 	{
 		return bmduLower95;
+	}
+
+	private void calculateOverAllDirection()
+	{
+		if (referenceGeneProbeStatResults == null)
+			return;
+
+		int upcount = 0;
+		int downcount = 0;
+		int totalcount = 0;
+
+		for (ReferenceGeneProbeStatResult rp : referenceGeneProbeStatResults)
+			for (ProbeStatResult probeStatResult : rp.getProbeStatResults())
+				if (probeStatResult.getBestStatResult() != null)
+				{
+					if (probeStatResult.getBestStatResult().getAdverseDirection() == 1)
+						upcount++;
+					else if (probeStatResult.getBestStatResult().getAdverseDirection() == -1)
+						downcount++;
+
+					totalcount++;
+
+				}
+
+		if (totalcount > 0)
+		{
+			this.percentWithOverallDirectionDOWN = (double) downcount / (double) totalcount;
+			this.percentWithOverallDirectionUP = (double) upcount / (double) totalcount;
+			if ((float) upcount / totalcount >= 0.6f)
+			{
+				this.overallDirection = AdverseDirectionEnum.UP;
+
+			}
+			else if ((float) downcount / totalcount >= 0.6f)
+			{
+				this.overallDirection = AdverseDirectionEnum.UP;
+
+			}
+			else
+			{
+				this.overallDirection = AdverseDirectionEnum.CONFLICT;
+			}
+		}
+
 	}
 
 	/*
