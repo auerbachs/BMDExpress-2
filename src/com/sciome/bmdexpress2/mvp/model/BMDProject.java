@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 
 /*
@@ -25,6 +26,7 @@ public class BMDProject implements Serializable
 	// Store each of the four analysis results in a map accessible by a String value
 	private List<DoseResponseExperiment>	doseResponseExperiments	= new ArrayList<>();
 	private List<OneWayANOVAResults>		oneWayANOVAResults		= new ArrayList<>();
+	private List<WilliamsTrendResults>		williamsTrendResults	= new ArrayList<>();
 	private List<BMDResult>					bMDResult				= new ArrayList<>();
 	private List<CategoryAnalysisResults>	categoryAnalysisResults	= new ArrayList<>();
 
@@ -57,6 +59,16 @@ public class BMDProject implements Serializable
 	{
 		this.oneWayANOVAResults = oneWayANOVAResults;
 	}
+	
+	public List<WilliamsTrendResults> getWilliamsTrendResults()
+	{
+		return williamsTrendResults;
+	}
+
+	public void setWilliamsTrendResults(List<WilliamsTrendResults> williamsTrendResults)
+	{
+		this.williamsTrendResults = williamsTrendResults;
+	}
 
 	public List<BMDResult> getbMDResult()
 	{
@@ -81,8 +93,8 @@ public class BMDProject implements Serializable
 	@JsonIgnore
 	public boolean isProjectEmpty()
 	{
-		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0 || bMDResult.size() > 0
-				|| categoryAnalysisResults.size() > 0)
+		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0 || williamsTrendResults.size() > 0 ||
+				bMDResult.size() > 0 || categoryAnalysisResults.size() > 0)
 			return false;
 		return true;
 	}

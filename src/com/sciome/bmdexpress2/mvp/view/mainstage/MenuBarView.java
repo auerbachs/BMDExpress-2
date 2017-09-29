@@ -53,8 +53,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	@FXML
 	private MenuItem		oneWayANOVAMenuItem;
 	@FXML
-	private MenuItem		pathwayFilterMenuItem;
-
+	private MenuItem		williamsTrendMenuItem;
 	@FXML
 	private MenuItem		bMDAnalysesMenuItem;
 	@FXML
@@ -278,11 +277,15 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.performOneWayANOVA();
 
 	}
-
-	@Override
-	public void handle_pathwayFilter(ActionEvent event)
+	
+	/*
+	 * one way anova analysis
+	 */
+	public void handle_williamsTrend(ActionEvent event)
 	{
-		presenter.performPathWayFilter();
+
+		presenter.performWilliamsTrend();
+
 	}
 
 	/*
@@ -393,8 +396,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void expressionDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(false);
-		this.pathwayFilterMenuItem.setDisable(true); // keep disabled until published and tested.
+		togglePrefilterMenuItems(false);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -402,11 +404,19 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	}
 
 	@Override
+	public void williamsTrendDataSelected() {
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
+	}
+	
+	@Override
 	public void oneWayANOVADataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);// keep disabled until published and tested.
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -417,8 +427,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void bMDAnalysisDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(false);
 		this.pathwayAnalysesMenuItem.setDisable(false);
 		this.definedCategoryAnalysesMenuItem.setDisable(false);
@@ -429,19 +438,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void functionalCategoryDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
-	}
-
-	@Override
-	public void pathwayFilterSelected()
-	{
-		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(false);
-		this.pathwayFilterMenuItem.setDisable(true);
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -471,6 +468,11 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			presenter.saveProjectAs(selectedFile);
 		}
 
+	}
+
+	private void togglePrefilterMenuItems(boolean disabled) {
+		this.oneWayANOVAMenuItem.setDisable(disabled);
+		this.williamsTrendMenuItem.setDisable(disabled);
 	}
 
 }

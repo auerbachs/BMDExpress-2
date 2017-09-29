@@ -77,6 +77,15 @@
 		    <systemPath>${project.basedir}/lib/jfreechart-1.0.19-fx.jar</systemPath>
 		</dependency>  
 		
+		<!-- sciome commons  This is not available at maven as an fx package, so I include it 
+		in the project lib folder and reference the jar file like this-->
+		<dependency>
+		    <groupId>sciome-commons</groupId>
+		    <artifactId>sciome-commons</artifactId>
+		    <version>0.0.0</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/lib/sciome-commons.jar</systemPath>
+		</dependency>  
 		
 		<!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
 		<dependency>

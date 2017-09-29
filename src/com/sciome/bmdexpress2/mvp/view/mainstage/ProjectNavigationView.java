@@ -18,6 +18,7 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -26,6 +27,7 @@ import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView;
 import com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
+import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -80,6 +82,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	// base tree items.
 	private TreeItem<DoseResponseExperiment>	expressionDataTreeItem				= null;
 	private TreeItem<OneWayANOVAResults>		oneWayANOVATreeItem					= null;
+	private TreeItem<WilliamsTrendResults>		williamsTrendTreeItem				= null;
 	private TreeItem<BMDResult>					bMDDoseAnalysesTreeItem				= null;
 	private TreeItem<CategoryAnalysisResults>	functionalClassificationsTreeItem	= null;
 
@@ -120,12 +123,14 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		expressionDataTreeItem = new TreeItem("Expression Data", node1);
 
 		oneWayANOVATreeItem = new TreeItem("One-way ANOVA", node2);
+		williamsTrendTreeItem = new TreeItem("William's Trend", node5);
 		bMDDoseAnalysesTreeItem = new TreeItem("Benchmark Dose Analyses", node3);
 		functionalClassificationsTreeItem = new TreeItem("Functional Classifications", node4);
 
 		// add tree items to navigation tree
 		navigationTreeView.getRoot().getChildren().add(expressionDataTreeItem);
 		navigationTreeView.getRoot().getChildren().add(oneWayANOVATreeItem);
+		navigationTreeView.getRoot().getChildren().add(williamsTrendTreeItem);
 		// remove pathwayFilterTreeItem
 		// navigationTreeView.getRoot().getChildren().add(pathwayFilterTreeItem);
 		navigationTreeView.getRoot().getChildren().add(bMDDoseAnalysesTreeItem);
@@ -229,6 +234,13 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 					mouseEvent.getScreenY());
 
 		}
+		else if (selectedItem instanceof WilliamsTrendResults)
+		{
+			showWilliamsTrendContextMenu((WilliamsTrendResults) selectedItem).show(
+					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+					mouseEvent.getScreenY());
+
+		}
 		else if (selectedItem instanceof CategoryAnalysisResults)
 		{
 			showCategorizationContextMenu((CategoryAnalysisResults) selectedItem).show(
@@ -258,6 +270,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	{
 		expressionDataTreeItem.getChildren().clear();
 		oneWayANOVATreeItem.getChildren().clear();
+		williamsTrendTreeItem.getChildren().clear();
 		bMDDoseAnalysesTreeItem.getChildren().clear();
 		functionalClassificationsTreeItem.getChildren().clear();
 
@@ -315,6 +328,23 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
 		TreeItem<OneWayANOVAResults> newTreeItem = new TreeItem<>(oneWayANOVAResults, docImage);
 		oneWayANOVATreeItem.getChildren().add(newTreeItem);
+		if (selectIt)
+		{
+			navigationTreeView.getSelectionModel().clearSelection();
+			navigationTreeView.getSelectionModel().select(newTreeItem);
+		}
+	}
+	
+	/*
+	 * put the williams trend result into the tree.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults, boolean selectIt) {
+		Node docImage = new ImageView(
+				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
+		TreeItem<WilliamsTrendResults> newTreeItem = new TreeItem<>(williamsTrendResults, docImage);
+		williamsTrendTreeItem.getChildren().add(newTreeItem);
 		if (selectIt)
 		{
 			navigationTreeView.getSelectionModel().clearSelection();
@@ -428,6 +458,71 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			}
 		});
 
+	}
+	
+	@Override
+	public void performWilliamsTrend() {
+		// need to run this on the main ui thread. this is being called from event bus thread..hence the
+		// runlater.
+		Platform.runLater(new Runnable() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void run()
+			{
+				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
+						.getSelectedItems();
+				List<IStatModelProcessable> selectedItems = new ArrayList<>();
+				for (TreeItem tItem : treeItems)
+				{
+					Object selectedItem = tItem.getValue();
+					if (selectedItem instanceof IStatModelProcessable)
+					{
+						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
+						selectedItems.add(processableData);
+					}
+				}
+				TreeItem treeItem = (TreeItem) navigationTreeView.getSelectionModel().getSelectedItem();
+
+				if (selectedItems.size() > 0)
+				{
+					// now create a list of doseResponseExperement objects so the oneway anova view can offer
+					// a selection list.
+
+					List<IStatModelProcessable> processabeDatas = new ArrayList<>();
+
+					for (int i = 0; i < treeItem.getParent().getChildren().size(); i++)
+					{
+						TreeItem item = (TreeItem) treeItem.getParent().getChildren().get(i);
+						processabeDatas.add((IStatModelProcessable) item.getValue());
+					}
+					try
+					{
+
+						FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/williamstrend.fxml"));
+
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("William's Trend");
+						stage.setScene(new Scene((BorderPane) loader.load()));
+						WilliamsTrendView controller = loader.<WilliamsTrendView> getController();
+						controller.initData(selectedItems, processabeDatas);
+
+						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+							@Override
+							public void handle(WindowEvent event)
+							{
+								controller.close();
+							}
+						});
+						stage.sizeToScene();
+						stage.show();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	/*
@@ -646,6 +741,15 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		setContextMenuCommonHandlers("One Way ANOVA", ctxMenu, oneWayResult);
 		return ctxMenu;
 	}
+	
+	private ContextMenu showWilliamsTrendContextMenu(WilliamsTrendResults williamsTrendResult)
+	{
+		ContextMenu ctxMenu = new ContextMenu();
+		ctxMenu.getItems().addAll(getCommonMenuItems());
+
+		setContextMenuCommonHandlers("William's Trend", ctxMenu, williamsTrendResult);
+		return ctxMenu;
+	}
 
 	private ContextMenu showCategorizationContextMenu(CategoryAnalysisResults categoryAnalysisResult)
 	{
@@ -725,7 +829,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 						handle_DataAnalysisResultsSpreadSheetView(analysisDataSet);
 						break;
 				}
-
 			}
 		});
 	}
@@ -1209,5 +1312,4 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			presenter.destroy();
 
 	}
-
 }

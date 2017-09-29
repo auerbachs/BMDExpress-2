@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.MainDataPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
@@ -16,6 +17,7 @@ import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.BMDExpressDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.CategoryAnalysisDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.ExpressionDataSetDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.OneWayANOVADataView;
+import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.WilliamsTrendDataView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -56,7 +58,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-
+		
 	}
 
 	@Override
@@ -87,6 +89,21 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 
 	}
 
+	@Override
+	public void loadWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults)
+	{
+		// clear data in tableview if it is not null
+		if (spreadSheetTableView != null)
+		{
+			spreadSheetTableView.close();
+		}
+
+		spreadSheetTableView = new WilliamsTrendDataView(williamsTrendResults, "main");
+
+		updateSpreadSheet();
+
+	}
+	
 	@Override
 	public void loadBMDResultAnalysis(BMDResult bMDAnalsyisResults)
 	{
@@ -133,7 +150,6 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void showBMDExpressAnalysisInSeparateWindow(BMDExpressAnalysisDataSet dataSet)
 	{
-
 		BMDExpressDataView tableView = null;
 		String resultDesc = "BMD Analysis Results: ";
 		if (dataSet instanceof BMDResult)
@@ -142,6 +158,11 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 		{
 			tableView = new OneWayANOVADataView((OneWayANOVAResults) dataSet, "spreadsheet");
 			resultDesc = "One Way ANOVA Results: ";
+		}
+		else if (dataSet instanceof WilliamsTrendResults)
+		{
+			tableView = new WilliamsTrendDataView((WilliamsTrendResults) dataSet, "spreadsheet");
+			resultDesc = "William's Trend Results: ";
 		}
 		else if (dataSet instanceof CategoryAnalysisResults)
 		{

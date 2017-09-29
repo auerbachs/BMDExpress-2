@@ -10,6 +10,7 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
@@ -67,6 +68,11 @@ public class ExpressionImportRunner implements IProjectNavigationView
 	}
 
 	@Override
+	public void addWilliamsTrendAnalysis(WilliamsTrendResults getPayload, boolean selectIt) {
+		
+	}
+	
+	@Override
 	public void addBMDAnalysis(BMDResult getPayload, boolean selectIt)
 	{
 
@@ -80,6 +86,12 @@ public class ExpressionImportRunner implements IProjectNavigationView
 
 	@Override
 	public void performOneWayANOVA()
+	{
+
+	}
+	
+	@Override
+	public void performWilliamsTrend()
 	{
 
 	}
@@ -155,8 +167,8 @@ public class ExpressionImportRunner implements IProjectNavigationView
 	@Override
 	public File askForAJSONFileToImport()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

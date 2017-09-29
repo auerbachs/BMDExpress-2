@@ -10,13 +10,11 @@ public interface IMenuBarView
 
 	public void oneWayANOVADataSelected();
 
+	public void williamsTrendDataSelected();
+	
 	public void bMDAnalysisDataSelected();
 
 	public void functionalCategoryDataSelected();
-
-	void handle_pathwayFilter(ActionEvent event);
-
-	public void pathwayFilterSelected();
 
 	public void saveAs();
 

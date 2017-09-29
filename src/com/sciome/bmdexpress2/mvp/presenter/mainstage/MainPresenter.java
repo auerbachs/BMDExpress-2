@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
@@ -47,6 +48,16 @@ public class MainPresenter extends PresenterBase<IMainView>
 	{
 		getView().updateSelectionLabel(event.GetPayload().getName());
 	}
+	
+	/*
+	 * listen for loading oneway anova results so we can add it to theproject
+	 */
+	@Subscribe
+	public void onSelectWilliamsTrend(WilliamsTrendDataSelectedEvent event)
+	{
+		getView().updateSelectionLabel(event.GetPayload().getName());
+	}
+
 
 	/*
 	 * listen for getting a new BMDAnalysisResult set so we can add it to the project

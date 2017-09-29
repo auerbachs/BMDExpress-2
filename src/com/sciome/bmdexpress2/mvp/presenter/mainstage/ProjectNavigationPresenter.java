@@ -22,6 +22,7 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.Probe;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
@@ -51,6 +52,9 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
@@ -111,6 +115,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	{
 		if (dataset instanceof OneWayANOVAResults)
 			getEventBus().post(new OneWayANOVADataSelectedEvent((OneWayANOVAResults) dataset));
+		else if (dataset instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataSelectedEvent((WilliamsTrendResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
 			getEventBus().post(new CategoryAnalysisDataSelectedEvent((CategoryAnalysisResults) dataset));
 		else if (dataset instanceof BMDResult)
@@ -169,6 +175,16 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		getView().addOneWayANOVAAnalysis(event.GetPayload(), true);
 		currentProject.getOneWayANOVAResults().add(event.GetPayload());
 	}
+	
+	/*
+	 * load williams trend results into the view.
+	 */
+	@Subscribe
+	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
+	{
+		getView().addWilliamsTrendAnalysis(event.GetPayload(), true);
+		currentProject.getWilliamsTrendResults().add(event.GetPayload());
+	}
 
 	/*
 	 * load a bmdresults into the view.
@@ -199,6 +215,18 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	{
 
 		getView().performOneWayANOVA();
+
+	}
+	
+	/*
+	 * some one asked to do a williams trend. So let's tell the view about it so it can figure out what objects
+	 * are selected and do the right thing
+	 */
+	@Subscribe
+	public void onWilliamsTrendAnalsyisRequest(WilliamsTrendRequestEvent event)
+	{
+
+		getView().performWilliamsTrend();
 
 	}
 
@@ -247,6 +275,12 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		for (OneWayANOVAResults oneWayResult : bmdProject.getOneWayANOVAResults())
 		{
 			getView().addOneWayANOVAAnalysis(oneWayResult, false);
+		}
+		
+		// populate all the williams trend data
+		for (WilliamsTrendResults williamsTrendResult : bmdProject.getWilliamsTrendResults())
+		{
+			getView().addWilliamsTrendAnalysis(williamsTrendResult, false);
 		}
 
 		// populate all the categorization data
@@ -558,6 +592,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			this.currentProject.getbMDResult().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof OneWayANOVAResults)
 			this.currentProject.getOneWayANOVAResults().remove(catAnalysisResults);
+		else if (catAnalysisResults instanceof WilliamsTrendResults)
+			this.currentProject.getWilliamsTrendResults().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof DoseResponseExperiment)
 			this.currentProject.getDoseResponseExperiments().remove(catAnalysisResults);
 

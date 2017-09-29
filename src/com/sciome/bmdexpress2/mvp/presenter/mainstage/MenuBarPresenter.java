@@ -20,6 +20,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEve
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
@@ -64,6 +66,17 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		{
 			getEventBus().post(new ExpressionDataLoadedEvent(experiements));
 		}
+
+	}
+	
+	/*
+	 * request for someone to perform william's trend analysis
+	 */
+	public void performWilliamsTrend()
+	{
+		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
+		// which dataset to analyze
+		getEventBus().post(new WilliamsTrendRequestEvent(""));
 
 	}
 
@@ -171,6 +184,13 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void onOneWayANOVASelected(OneWayANOVADataSelectedEvent event)
 	{
 		getView().oneWayANOVADataSelected();
+	}
+	
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onWilliamsTrendSelected(WilliamsTrendDataSelectedEvent event)
+	{
+		getView().williamsTrendDataSelected();
 	}
 
 	@Subscribe
