@@ -13,7 +13,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
  */
 public class ANOVARunner implements IOneWayANOVAView
 {
-	public OneWayANOVAResults runBMDAnalysis(IStatModelProcessable processableData, double pCutOff,
+	public OneWayANOVAResults runANOVAFilter(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String outputName)
 	{

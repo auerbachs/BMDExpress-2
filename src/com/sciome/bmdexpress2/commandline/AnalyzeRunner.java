@@ -28,11 +28,13 @@ import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
+import com.sciome.bmdexpress2.commandline.config.prefilter.WilliamsConfig;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
@@ -400,6 +402,13 @@ public class AnalyzeRunner
 				else if (ways.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(ways);
 
+		for (WilliamsTrendResults will : project.getWilliamsTrendResults())
+			if (bmdsConfig.getInputCategory().equalsIgnoreCase("williams"))
+				if (bmdsConfig.getInputName() == null)
+					processables.add(will);
+				else if (will.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
+					processables.add(will);
+		
 		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
 			if (bmdsConfig.getInputCategory().equalsIgnoreCase("expression"))
 				if (bmdsConfig.getInputName() == null)
@@ -440,7 +449,27 @@ public class AnalyzeRunner
 
 			for (IStatModelProcessable processable : processables)
 			{
-				project.getOneWayANOVAResults().add(anovaRunner.runBMDAnalysis(processable,
+				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
+						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
+						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
+						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
+			}
+		} else if(preFilterConfig instanceof WilliamsConfig) {
+			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
+
+			// if the user specifies a dose experiment name, then find it and add it.
+			// if the inputname is null, then add all dose response experiments
+			// to receive the pre filter.
+			List<IStatModelProcessable> processables = new ArrayList<>();
+			for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
+				if (preFilterConfig.getInputName() == null)
+					processables.add(exp);
+				else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
+					processables.add(exp);
+
+			for (IStatModelProcessable processable : processables)
+			{
+				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
 						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
