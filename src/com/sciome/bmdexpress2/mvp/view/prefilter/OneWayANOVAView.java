@@ -118,12 +118,6 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 
 	}
 
-	public void handle_doneButtonPressed(ActionEvent event)
-	{
-		this.closeWindow();
-
-	}
-
 	public void handle_UseFoldChangeFilter()
 	{
 		if (this.useFoldChangeCheckBox.isSelected())

@@ -13,9 +13,9 @@
          <children>
             <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
                <children>
-                  <TitledPane collapsible="false" prefHeight="170.0" prefWidth="600.0" text="William's Trend" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TitledPane collapsible="false" prefHeight="190.0" prefWidth="600.0" text="William's Trend" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <GridPane prefHeight="157.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane prefHeight="180.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="224.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.0" minWidth="10.0" prefWidth="376.0" />
@@ -31,8 +31,9 @@
                            <children>
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="Adjusted P-Value Cutoff:" GridPane.rowIndex="2" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="3" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="4" />
+                              <Label prefHeight="16.0" prefWidth="322.0" text="Number of Permutations" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="4" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="5" />
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
@@ -50,6 +51,14 @@
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <ComboBox fx:id="numberOfPermutationsComboBox" editable="true" layoutY="1.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -57,7 +66,7 @@
                                     <CheckBox fx:id="benAndHochCheckBox" layoutY="8.0" mnemonicParsing="false" text="Benjamini &amp; Hochberg (FDR)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -101,6 +110,7 @@
                                           <Insets left="100.0" />
                                        </GridPane.margin>
                                     </Label>
+                                    <ProgressBar fx:id="williamsTrendProgress" prefWidth="160.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
@@ -108,6 +118,7 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
@@ -123,7 +134,6 @@
                      <children>
                         <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#handle_startButtonPressed" text="Start" />
                         <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handle_cancelButtonPressed" text="Cancel" />
-                        <Button fx:id="doneButton" mnemonicParsing="false" onAction="#handle_doneButtonPressed" text="Done" />
                      </children>
                   </HBox>
                </children>

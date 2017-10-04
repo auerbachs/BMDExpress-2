@@ -123,7 +123,6 @@
                      <children>
                         <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#handle_startButtonPressed" text="Start" />
                         <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handle_cancelButtonPressed" text="Cancel" />
-                        <Button fx:id="doneButton" mnemonicParsing="false" onAction="#handle_doneButtonPressed" text="Done" />
                      </children>
                   </HBox>
                </children>

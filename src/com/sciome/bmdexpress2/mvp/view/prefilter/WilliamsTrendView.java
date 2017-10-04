@@ -16,6 +16,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTrendView, Initializable
@@ -26,15 +28,21 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	@FXML
 	private ComboBox					adjustedPValueCutoffComboBox;
 	@FXML
+	private ComboBox					numberOfPermutationsComboBox;
+	@FXML
 	private CheckBox					benAndHochCheckBox;
 	@FXML
 	private CheckBox					filterControlGenesCheckBox;
-
 	@FXML
 	private CheckBox					useFoldChangeCheckBox;
-
 	@FXML
 	private TextField					foldChangeValueTextField;
+	@FXML
+	private ProgressBar					williamsTrendProgress;
+	@FXML
+	private Button						startButton;
+	@FXML
+	private Button						stopButton;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -70,6 +78,12 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		adjustedPValueCutoffComboBox.getItems().add("None");
 		adjustedPValueCutoffComboBox.getSelectionModel().select(0);
 
+		numberOfPermutationsComboBox.getItems().add("50");
+		numberOfPermutationsComboBox.getItems().add("100");
+		numberOfPermutationsComboBox.getItems().add("250");
+		numberOfPermutationsComboBox.getItems().add("500");
+		numberOfPermutationsComboBox.getSelectionModel().select(1);
+		
 		for (IStatModelProcessable experiment : processableDatas)
 		{
 			expressionDataComboBox.getItems().add(experiment);
@@ -86,42 +100,41 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 
 	public void handle_startButtonPressed(ActionEvent event)
 	{
-
-		float pCutOff = 999999.0f; // initialize with very large value.
-		String pCutOffSelectedItem = adjustedPValueCutoffComboBox.getEditor().getText();
-
-		if (!pCutOffSelectedItem.equals("None"))
-		{
-			pCutOff = Float.valueOf(pCutOffSelectedItem);
+		if(!presenter.hasStartedTask()) {
+			float pCutOff = 999999.0f; // initialize with very large value.
+			String pCutOffSelectedItem = adjustedPValueCutoffComboBox.getEditor().getText();
+	
+			if (!pCutOffSelectedItem.equals("None"))
+			{
+				pCutOff = Float.valueOf(pCutOffSelectedItem);
+			}
+	
+			if (processableData.size() > 1)
+			{
+				presenter.performWilliamsTrend(processableData, pCutOff, benAndHochCheckBox.isSelected(),
+						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
+						foldChangeValueTextField.getText(), numberOfPermutationsComboBox.getEditor().getText());
+			}
+			else
+			{
+				presenter.performWilliamsTrend(
+						(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
+						pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
+						useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
+						numberOfPermutationsComboBox.getEditor().getText());
+			}
+			startButton.setDisable(true);
 		}
-
-		if (processableData.size() > 1)
-		{
-			presenter.performWilliamsTrend(processableData, pCutOff, benAndHochCheckBox.isSelected(),
-					filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
-					foldChangeValueTextField.getText());
-		}
-		else
-		{
-			presenter.performWilliamsTrend(
-					(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
-					pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
-					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText());
-		}
-
-		closeWindow();
 	}
 
 	public void handle_cancelButtonPressed(ActionEvent event)
 	{
-		this.closeWindow();
-
-	}
-
-	public void handle_doneButtonPressed(ActionEvent event)
-	{
-		this.closeWindow();
-
+		if(!presenter.hasStartedTask()) {
+			this.closeWindow();
+		} else {
+			presenter.cancel();
+			startButton.setDisable(false);
+		}
 	}
 
 	public void handle_UseFoldChangeFilter()
@@ -152,7 +165,12 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		this.close();
 		stage.close();
 	}
-
+	
+	@Override
+	public void updateProgress(double progress) {
+		williamsTrendProgress.setProgress(progress);
+	}
+	
 	@Override
 	public void close()
 	{

@@ -456,7 +456,6 @@ public class AnalyzeRunner
 			}
 		} else if(preFilterConfig instanceof WilliamsConfig) {
 			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
-
 			// if the user specifies a dose experiment name, then find it and add it.
 			// if the inputname is null, then add all dose response experiments
 			// to receive the pre filter.
@@ -472,7 +471,9 @@ public class AnalyzeRunner
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
+						String.valueOf(preFilterConfig.getFoldChange()), 
+						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(), 
+						preFilterConfig.getOutputName()));
 			}
 		}
 		System.out.println("prefilter analysis");
