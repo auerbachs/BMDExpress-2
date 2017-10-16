@@ -62,6 +62,10 @@ public class BMDProject implements Serializable
 	
 	public List<WilliamsTrendResults> getWilliamsTrendResults()
 	{
+		// since williams trend test is a new structure, we must check for null in case an older project file is loaded and
+		// the trend test is null.  The rest of the project expects an empty list.
+		if(williamsTrendResults == null)  
+			williamsTrendResults	= new ArrayList<>();
 		return williamsTrendResults;
 	}
 
