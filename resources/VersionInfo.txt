@@ -4,15 +4,16 @@
  BMDExpress 2 
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on August 1, 2017</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on October 16, 2017</h2>
 
 
 
 <h3>
-New Release
+Bug Fixes
 </h3>
 <ul>
-<li>This is the first major release of BMDExpress 2. </li>
+<li>Changed the label on One Way Anova Filter to be P-Value instead of Adjusted P-Value </li>
+<li>Changed the Box and Whisker label to say Range Plot.  We now use a circle instead of a box for the range plot in order to avoid confusion.</li>
 
 
 </body>

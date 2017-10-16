@@ -34,7 +34,7 @@ import com.sciome.filter.DataFilterPack;
 public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
-	private static final String	BOXANDWHISKER		= "Box and Whisker";
+	private static final String	BOXANDWHISKER		= "Range Plot";
 	private static final String	ACCUMULATION_CHARTS	= "Accumulation Charts";
 	private static final String	BMD_BMDL_BARCHARTS	= "BMD and BMDL Bar Charts";
 	private static final String	BEST_MODEL_PIE		= "Best Models Pie Chart";
@@ -47,7 +47,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		super();
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
 
-		chartCache.put(BOXANDWHISKER, new SciomeBoxAndWhiskerChartH("Box and Whisker", new ArrayList<>(),
+		chartCache.put(BOXANDWHISKER, new SciomeBoxAndWhiskerChartH("Range Plot", new ArrayList<>(),
 				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
 				CategoryAnalysisResults.BMD_MEDIAN, null, CategoryAnalysisDataVisualizationView.this));
 

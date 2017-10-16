@@ -100,8 +100,8 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			// classifications on mac and linux.
 			if (os != null && !os.toLowerCase().contains("windows"))
 			{
-				bMDAnalysesMenuItem.setVisible(false);
-				oneWayANOVAMenuItem.setVisible(false);
+				//bMDAnalysesMenuItem.setVisible(false);
+				//oneWayANOVAMenuItem.setVisible(false);
 			}
 		}
 		catch (Exception e)
