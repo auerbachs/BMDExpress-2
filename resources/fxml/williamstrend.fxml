@@ -30,7 +30,7 @@
                           </rowConstraints>
                            <children>
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="Adjusted P-Value Cutoff:" GridPane.rowIndex="2" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="P-Value Cutoff:" GridPane.rowIndex="2" />
                               <Label prefHeight="16.0" prefWidth="322.0" text="Number of Permutations" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="4" />
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="5" />

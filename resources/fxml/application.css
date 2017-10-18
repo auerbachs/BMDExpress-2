@@ -86,6 +86,7 @@
     -fx-background-color: linear-gradient(derive(-demo-bar-fill,-30%), derive(-demo-bar-fill,-40%)),
                           linear-gradient(derive(-demo-bar-fill,100%), derive(-demo-bar-fill, 10%)),
                           linear-gradient(derive(-demo-bar-fill,30%), derive(-demo-bar-fill,-10%));
+    -fx-background-radius: 50%;
     -fx-background-insets: 0,1,2;
 }
 .boxwhisker-box.default-color0 {

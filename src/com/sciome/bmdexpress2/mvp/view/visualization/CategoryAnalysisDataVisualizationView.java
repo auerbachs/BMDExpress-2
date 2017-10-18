@@ -25,7 +25,6 @@ import com.sciome.charts.javafx.SciomeChartBase;
 import com.sciome.charts.javafx.SciomeHistogram;
 import com.sciome.charts.javafx.SciomePieChart;
 import com.sciome.charts.javafx.SciomeScatterChart;
-import com.sciome.charts.jfree.JFreeBubbleChart;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -34,20 +33,20 @@ import com.sciome.filter.DataFilterPack;
 public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
-	private static final String	BOXANDWHISKER		= "Box and Whisker";
-	private static final String	ACCUMULATION_CHARTS	= "Accumulation Charts";
-	private static final String	BMD_BMDL_BARCHARTS	= "BMD and BMDL Bar Charts";
-	private static final String	BEST_MODEL_PIE		= "Best Models Pie Chart";
-	private static final String	MEAN_HISTOGRAMS		= "Mean Histograms";
-	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
-	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
+	private static final String BOXANDWHISKER = "Range Plot";
+	private static final String ACCUMULATION_CHARTS = "Accumulation Charts";
+	private static final String BMD_BMDL_BARCHARTS = "BMD and BMDL Bar Charts";
+	private static final String BEST_MODEL_PIE = "Best Models Pie Chart";
+	private static final String MEAN_HISTOGRAMS = "Mean Histograms";
+	private static final String MEDIAN_HISTOGRAMS = "Median Histograms";
+	private static final String BMD_BMDL_SCATTER = "BMD vs BMDL Scatter Plots";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
 		super();
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
 
-		chartCache.put(BOXANDWHISKER, new SciomeBoxAndWhiskerChartH("Box and Whisker", new ArrayList<>(),
+		chartCache.put(BOXANDWHISKER, new SciomeBoxAndWhiskerChartH("Range Plot", new ArrayList<>(),
 				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
 				CategoryAnalysisResults.BMD_MEDIAN, null, CategoryAnalysisDataVisualizationView.this));
 
@@ -142,7 +141,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				"DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN
 						+ CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG,
 				new SciomeBubbleChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
-					CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG, "Percentage",
+						CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG, "Percentage",
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN + CategoryAnalysisResults.BMDL_MEDIAN,
 				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
