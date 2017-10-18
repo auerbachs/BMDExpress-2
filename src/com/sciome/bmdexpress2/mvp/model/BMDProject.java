@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 
@@ -27,6 +28,7 @@ public class BMDProject implements Serializable
 	private List<DoseResponseExperiment>	doseResponseExperiments	= new ArrayList<>();
 	private List<OneWayANOVAResults>		oneWayANOVAResults		= new ArrayList<>();
 	private List<WilliamsTrendResults>		williamsTrendResults	= new ArrayList<>();
+	private List<OriogenResults>			oriogenResults			= new ArrayList<>();
 	private List<BMDResult>					bMDResult				= new ArrayList<>();
 	private List<CategoryAnalysisResults>	categoryAnalysisResults	= new ArrayList<>();
 
@@ -72,6 +74,20 @@ public class BMDProject implements Serializable
 	public void setWilliamsTrendResults(List<WilliamsTrendResults> williamsTrendResults)
 	{
 		this.williamsTrendResults = williamsTrendResults;
+	}
+	
+	public List<OriogenResults> getOriogenResults()
+	{
+		// since oriogen test is a new structure, we must check for null in case an older project file is loaded and
+		// the trend test is null.  The rest of the project expects an empty list.
+		if(oriogenResults == null)  
+			oriogenResults	= new ArrayList<>();
+		return oriogenResults;
+	}
+
+	public void setOriogenResults(List<OriogenResults> oriogenResults)
+	{
+		this.oriogenResults = oriogenResults;
 	}
 
 	public List<BMDResult> getbMDResult()

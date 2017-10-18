@@ -55,6 +55,8 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	@FXML
 	private MenuItem		williamsTrendMenuItem;
 	@FXML
+	private MenuItem		oriogenMenuItem;
+	@FXML
 	private MenuItem		bMDAnalysesMenuItem;
 	@FXML
 	private MenuItem		GOAnalysesMenuItem;
@@ -279,7 +281,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	}
 	
 	/*
-	 * one way anova analysis
+	 * williams trend analysis
 	 */
 	public void handle_williamsTrend(ActionEvent event)
 	{
@@ -288,6 +290,16 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
+	/*
+	 * oriogen analysis
+	 */
+	public void handle_oriogen(ActionEvent event)
+	{
+
+		presenter.performOriogen();
+
+	}
+	
 	/*
 	 * bmd analysis
 	 */
@@ -402,15 +414,6 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
 
 	}
-
-	@Override
-	public void williamsTrendDataSelected() {
-		this.bMDAnalysesMenuItem.setDisable(false);
-		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
-	}
 	
 	@Override
 	public void oneWayANOVADataSelected()
@@ -421,6 +424,24 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
 
+	}
+	
+	@Override
+	public void williamsTrendDataSelected() {
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
+	}
+	
+	@Override
+	public void oriogenDataSelected() {
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
 	}
 
 	@Override
@@ -470,9 +491,14 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
+	/**
+	 * True to disable all prefilter items and false otherwise
+	 * @param disabled
+	 */
 	private void togglePrefilterMenuItems(boolean disabled) {
 		this.oneWayANOVAMenuItem.setDisable(disabled);
 		this.williamsTrendMenuItem.setDisable(disabled);
+		this.oriogenMenuItem.setDisable(disabled);
 	}
 
 }

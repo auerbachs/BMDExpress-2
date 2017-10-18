@@ -7,7 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IWilliamsTrendView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
@@ -19,37 +19,37 @@ import com.sciome.commons.interfaces.SimpleProgressUpdater;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> implements SimpleProgressUpdater {
+public class OriogenPresenter extends PresenterBase<IOriogenView> implements SimpleProgressUpdater {
 
 	List<WilliamsTrendAnalysis> analyses;
 	private volatile boolean running = false;
 	
-	public WilliamsTrendPresenter(IWilliamsTrendView view, BMDExpressEventBus eventBus)
+	public OriogenPresenter(IOriogenView view, BMDExpressEventBus eventBus)
 	{
 		super(view, eventBus);
 		init();
 	}
 
 	/*
-	 * do williams trend filter
+	 * do oriogen filter
 	 */
-	public void performWilliamsTrend(List<IStatModelProcessable> processableData, double pCutOff,
+	public void performOriogen(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations)
 	{
 
 		for (IStatModelProcessable pData : processableData)
 		{
-			performWilliamsTrend(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
+			performOriogen(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
 					useFoldFilter, foldFilterValue, numberOfPermutations);
 		}
 
 	}
 
 	/*
-	 * do williams trend filter
+	 * do oriogen filter
 	 */
-	public void performWilliamsTrend(IStatModelProcessable processableData, double pCutOff,
+	public void performOriogen(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations)
 	{

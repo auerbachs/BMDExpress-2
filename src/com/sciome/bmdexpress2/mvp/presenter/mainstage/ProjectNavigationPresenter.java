@@ -50,6 +50,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
@@ -185,6 +187,16 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		getView().addWilliamsTrendAnalysis(event.GetPayload(), true);
 		currentProject.getWilliamsTrendResults().add(event.GetPayload());
 	}
+	
+	/*
+	 * load williams trend results into the view.
+	 */
+	@Subscribe
+	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
+	{
+		getView().addOriogenAnalysis(event.GetPayload(), true);
+		currentProject.getOriogenResults().add(event.GetPayload());
+	}
 
 	/*
 	 * load a bmdresults into the view.
@@ -230,6 +242,18 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 
 	}
 
+	/*
+	 * some one asked to do an oriogen test. So let's tell the view about it so it can figure out what objects
+	 * are selected and do the right thing
+	 */
+	@Subscribe
+	public void onOriogenAnalsyisRequest(OriogenRequestEvent event)
+	{
+
+		getView().performOriogen();
+
+	}
+	
 	/*
 	 * some one asked to perform bmd analysis. lets ask the view to figure out what is selected and then do
 	 * it.

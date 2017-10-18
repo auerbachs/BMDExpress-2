@@ -2,10 +2,8 @@ package com.sciome.bmdexpress2.shared.eventbus.analysis;
 
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBase;
 
-public class PathwayFilterRequestEvent extends BMDExpressEventBase<String>
-{
-
-	public PathwayFilterRequestEvent(String payload)
+public class OriogenRequestEvent extends BMDExpressEventBase<String>{
+	public OriogenRequestEvent(String payload)
 	{
 		super(payload);
 	}

@@ -12,6 +12,8 @@ public interface IMenuBarView
 
 	public void williamsTrendDataSelected();
 	
+	public void oriogenDataSelected();
+	
 	public void bMDAnalysisDataSelected();
 
 	public void functionalCategoryDataSelected();

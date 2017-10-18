@@ -10,6 +10,7 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
@@ -168,6 +169,16 @@ public class ExpressionImportRunner implements IProjectNavigationView
 	public File askForAJSONFileToImport()
 	{
 		return null;
+	}
+
+	@Override
+	public void addOriogenAnalysis(OriogenResults getPayload, boolean selectIt) {
+		
+	}
+
+	@Override
+	public void performOriogen() {
+		
 	}
 
 

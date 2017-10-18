@@ -19,7 +19,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
@@ -90,14 +91,11 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		getEventBus().post(new OneWayANOVARequestEvent(""));
 
 	}
-
-	/*
-	 * request for someone to perform pathway filter analysis
-	 */
-	public void performPathWayFilter()
-	{
-		getEventBus().post(new PathwayFilterRequestEvent(""));
-
+	
+	public void performOriogen() {
+		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
+		// which dataset to analyze
+		getEventBus().post(new OriogenRequestEvent(""));
 	}
 
 	/*
@@ -189,6 +187,13 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@Subscribe
 	@AllowConcurrentEvents
 	public void onWilliamsTrendSelected(WilliamsTrendDataSelectedEvent event)
+	{
+		getView().williamsTrendDataSelected();
+	}
+	
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onOriogenSelected(OriogenDataSelectedEvent event)
 	{
 		getView().williamsTrendDataSelected();
 	}

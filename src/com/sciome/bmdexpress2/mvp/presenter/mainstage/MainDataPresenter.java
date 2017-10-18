@@ -12,6 +12,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEve
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
@@ -62,6 +64,19 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 		getView().loadWilliamsTrendAnalysis(event.GetPayload());
 	}
 
+	// handle loading and selecting oriogen analysis data.
+	@Subscribe
+	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
+	{
+		getView().loadOriogenAnalysis(event.GetPayload());
+	}
+
+	@Subscribe
+	public void onSelectOriogenAnalysis(OriogenDataSelectedEvent event)
+	{
+		getView().loadOriogenAnalysis(event.GetPayload());
+	}
+	
 	// handle loading and selecting bmd result analysis data.
 	@Subscribe
 	public void onLoadBMDResultAnalysis(BMDAnalysisDataLoadedEvent event)

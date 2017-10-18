@@ -7,6 +7,7 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
@@ -25,6 +26,8 @@ public interface IProjectNavigationView
 	
 	public void addWilliamsTrendAnalysis(WilliamsTrendResults getPayload, boolean selectIt);
 
+	public void addOriogenAnalysis(OriogenResults getPayload, boolean selectIt);
+
 	public void addBMDAnalysis(BMDResult getPayload, boolean selectIt);
 
 	public void addCategoryAnalysis(CategoryAnalysisResults getPayload, boolean selectIt);
@@ -33,6 +36,8 @@ public interface IProjectNavigationView
 	
 	public void performWilliamsTrend();
 
+	public void performOriogen();
+	
 	public void performBMDAnalysis();
 
 	public void performCategoryAnalysis(CategoryAnalysisEnum categoryAnalysisEnum);

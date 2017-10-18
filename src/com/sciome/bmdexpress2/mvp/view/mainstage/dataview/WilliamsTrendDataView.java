@@ -8,10 +8,7 @@ import com.sciome.bmdexpress2.mvp.view.visualization.WilliamsTrendDataVisualizat
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
-public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResults> implements IBMDExpressDataView{
-
-	// OneWayANOVADataViewPresenter presenter;
-
+public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResults> implements IBMDExpressDataView {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public WilliamsTrendDataView(WilliamsTrendResults williamsTrendResults, String viewTypeKey)
 	{
