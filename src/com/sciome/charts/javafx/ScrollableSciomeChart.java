@@ -10,11 +10,9 @@ import java.util.Set;
 
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.ScrollableSciomeChart.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
@@ -22,7 +20,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
-import javafx.scene.chart.Chart;
 
 /*
  * provide common support for scrolling through chart data. Platform chooser
@@ -33,16 +30,15 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	private Slider						slider;
 	protected CheckBox					showAllCheckBox;
 	protected List<SciomeSeries<X, Y>>	seriesData			= new ArrayList<>();
-	
-	//depending on what type of chart, this boolean will 
+
+	// depending on what type of chart, this boolean will
 	// tell the system to add data to front of what will be displayed and scrolled through.
 	// this is relevent for box and whisker charts where we want the first value to be shown at the top
-	protected boolean addDataAtTop = false;
+	protected boolean					addDataAtTop		= false;
 	private int							maxSlider;
 	final protected int					MAX_NODES			= 300000;
 	private ChangeListener<Number>		sliderChangeListener;
 	private int							currentSliderValue	= 1;
-	
 
 	public ScrollableSciomeChart(String title, List<ChartDataPack> chartDataPacks,
 			SciomeChartListener chartListener)
@@ -77,12 +73,6 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			}
 		});
 	}
-
-
-
-	
-
-
 
 	@Override
 	public void redrawCharts(List<ChartDataPack> chartDataPacks)
@@ -153,7 +143,7 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	{
 
 		int i = 0;
-		((XYChart)getChart()).setAnimated(false);
+		((XYChart) getChart()).setAnimated(false);
 		this.currentSliderValue = slidervalue;
 		for (Series series : ((XYChart<X, Y>) getChart()).getData())
 		{
@@ -197,9 +187,9 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 					XYChart.Data xyData = new XYChart.Data<>(data.xValue, data.yValue);
 					xyData.setNode(getNode(series.name, data.extraValue.toString(), seriesindex));
 					int indextoadd = ((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().size();
-					if(this.addDataAtTop)
+					if (this.addDataAtTop)
 						indextoadd = 0;
-					((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().add(indextoadd,xyData);
+					((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().add(indextoadd, xyData);
 					xyData.setExtraValue(data.getExtraValue());
 
 					if (data.extraValue != null)
@@ -210,11 +200,8 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			totalitemsadded++;
 
 		}
-		
 
 	}
-
-
 
 	/*
 	 * store information about a data point that is "extra" this information has the purpose of being used to
@@ -296,27 +283,32 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 		});
 
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void sortSeriesWithPrimarySeries(SciomeSeries series1, SciomeSeries primarySeries) {
+	protected void sortSeriesWithPrimarySeries(SciomeSeries series1, SciomeSeries primarySeries)
+	{
 		Map<String, Integer> indexMap = new HashMap<>();
-		int i=0;
-		for(Object sd: primarySeries.data)
-			indexMap.put(((SciomeData)sd).getName(), i++);
-		
+		int i = 0;
+		for (Object sd : primarySeries.data)
+			indexMap.put(((SciomeData) sd).getName(), i++);
+
 		series1.data.sort(new Comparator<SciomeData>() {
 
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
 			{
-				if(!indexMap.containsKey(o1.getName()) ||!indexMap.containsKey(o2.getName()) )
-					return ((Double)o1.getxValue()).compareTo(((Double)o2.getxValue()));
-				return indexMap.get(o1.getName()).compareTo(indexMap.get(o2.getName()));
+				if (indexMap.containsKey(o1.getName()) && indexMap.containsKey(o2.getName()))
+					return indexMap.get(o1.getName()).compareTo(indexMap.get(o2.getName()));
+				else if (indexMap.containsKey(o1.getName()) && !indexMap.containsKey(o2.getName()))
+					return 1;
+				else if (indexMap.containsKey(o2.getName()) && !indexMap.containsKey(o1.getName()))
+					return -1;
+				else
+					return 0;
 			}
 		});
-		
-	}
 
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesX(SciomeSeries series1)
@@ -339,6 +331,7 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 		});
 
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesY(SciomeSeries series1)
 	{
@@ -377,13 +370,6 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			resetChart(currentSliderValue);
 		}
 	}
-
-	
-
-
-	
-
-
 
 	/*
 	 * implementing classes must return a node. It should store enough information to return a node based on
