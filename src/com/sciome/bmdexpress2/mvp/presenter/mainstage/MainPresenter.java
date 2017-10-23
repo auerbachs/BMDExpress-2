@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
@@ -41,7 +42,7 @@ public class MainPresenter extends PresenterBase<IMainView>
 	}
 
 	/*
-	 * listen for loading oneway anova results so we can add it to theproject
+	 * listen for loading oneway anova results so we can add it to the project
 	 */
 	@Subscribe
 	public void onSelectOneWayAnova(OneWayANOVADataSelectedEvent event)
@@ -50,14 +51,22 @@ public class MainPresenter extends PresenterBase<IMainView>
 	}
 	
 	/*
-	 * listen for loading oneway anova results so we can add it to theproject
+	 * listen for loading williams trend results so we can add it to the project
 	 */
 	@Subscribe
 	public void onSelectWilliamsTrend(WilliamsTrendDataSelectedEvent event)
 	{
 		getView().updateSelectionLabel(event.GetPayload().getName());
 	}
-
+	
+	/*
+	 * listen for loading oriogen results so we can add it to the project
+	 */
+	@Subscribe
+	public void onSelectOriogen(OriogenDataSelectedEvent event)
+	{
+		getView().updateSelectionLabel(event.GetPayload().getName());
+	}
 
 	/*
 	 * listen for getting a new BMDAnalysisResult set so we can add it to the project

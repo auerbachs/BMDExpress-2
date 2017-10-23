@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
@@ -44,6 +45,15 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	 */
 	@Subscribe
 	public void onLoadWilliamsTrend(WilliamsTrendDataSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+	
+	/*
+	 * listen for loading william's trend results so we can add it to the project
+	 */
+	@Subscribe
+	public void onLoadOriogen(OriogenDataSelectedEvent event)
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}

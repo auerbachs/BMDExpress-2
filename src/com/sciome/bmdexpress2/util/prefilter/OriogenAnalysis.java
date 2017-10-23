@@ -10,35 +10,48 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
-import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResult;
-import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResult;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
-import com.sciome.commons.math.williams.WilliamsTrendTestResult;
-import com.sciome.commons.math.williams.WilliamsTrendTestUtil;
+import com.sciome.commons.math.MathUtil;
+import com.sciome.commons.math.oriogen.Origen_Data;
+import com.sciome.commons.math.oriogen.OriogenTestResult;
+import com.sciome.commons.math.oriogen.OriogenUtil;
 
-public class WilliamsTrendAnalysis {
-	WilliamsTrendTestUtil util = new WilliamsTrendTestUtil();
+public class OriogenAnalysis {
+	private OriogenUtil util = new OriogenUtil();
 	private boolean cancel = false;
 	
-	public WilliamsTrendResults analyzeDoseResponseData(IStatModelProcessable processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermuatations, SimpleProgressUpdater updater) {
+	public OriogenResults analyzeDoseResponseData(IStatModelProcessable processableData, double pCutOff,
+			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps,
+			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
+			String foldFilterValue, SimpleProgressUpdater updater) {
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
+
+		Origen_Data data = new Origen_Data();
 		
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
-		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
+		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10)) {
+			data.setLogTransformType(4);
 			baseValue = 10.0f;
-		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+		}
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL)) {
+			data.setLogTransformType(3);
 			baseValue = 2.718281828459045;
-		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
+		}
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE)) {
+			data.setLogTransformType(1);
 			isLogTransformation = false;
+		} else {
+			data.setLogTransformType(2);
+		}
 		
-		// get a list of williamsTrendResult
+		// get a list of oriogenResult
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
@@ -52,48 +65,77 @@ public class WilliamsTrendAnalysis {
 		}
 		
 		//Fill doseVector
+		double current = doseVector[0];
+		int count = 0;
+		ArrayList<Integer> list = new ArrayList<Integer>();
 		for(int i = 0; i < doseVector.length; i++) {
 			doseVector[i] = treatments.get(i).getDose();
+			if(current == doseVector[i]) {
+				count++;
+			} else {
+				list.add(count);
+				count = 1;
+			}
+			current = doseVector[i];
 		}
 		
-		WilliamsTrendTestResult result = util.williams(MatrixUtils.createRealMatrix(numericMatrix),
-				MatrixUtils.createRealVector(doseVector),
-				23524,
-				Integer.valueOf(numberOfPermuatations),
-				null,
-				updater);
+		data.setInputData(MatrixUtils.createRealMatrix(numericMatrix));
+		data.setNumTimePoints(MathUtil.uniqueValues(MatrixUtils.createRealVector(doseVector)));
+		data.setNumInitialBootStraps(initialBootstraps);
+		data.setFDRLevel(pCutOff);
+		data.setRandomSeed(23524);
+		data.setSubRegionPValue(.1);
+		data.setTranspose(false);
+		data.setMaxNumBootStraps(maxBootstraps);
+		data.setLongitudinalSampling(false);
+		data.setS0Percentile(s0Adjustment);
+		data.setmdFdr(mpc);
+		data.setTwoGroups(false);
+		
+		int[] values = new int[30];
+		for(int i = 0; i < values.length; i++) {
+			if(i < list.size()) {
+				values[i] = list.get(i);
+			} else {
+				values[i] = list.get(list.size() - 1);
+			}
+		}
+		data.setSampleSizeDefault(values);
+		data.setNumGenes(numericMatrix.length);
+		
+		ArrayList<OriogenTestResult> result = util.oriogen(data, updater);
 
 		if(result == null) {
 			updater.setProgress(0);
 			return null;
 		}
 		
-		List<WilliamsTrendResult> williamsTrendResultList = new ArrayList<WilliamsTrendResult>();
-		for(int i = 0; i < result.getTestStatistic().getDimension(); i++) {
+		List<OriogenResult> oriogenResultList = new ArrayList<OriogenResult>();
+		for(int i = 0; i < result.size(); i++) {
 			if(!cancel) {
-				WilliamsTrendResult singleResult = new WilliamsTrendResult();
-				singleResult.setAdjustedPValue(result.getAdjustedPValue().getEntry(i));
-				singleResult.setpValue(result.getpValue().getEntry(i));
+				OriogenResult singleResult = new OriogenResult();
+				singleResult.setAdjustedPValue(result.get(i).getqValue());
+				singleResult.setpValue(result.get(i).getpValue());
 				singleResult.setProbeResponse(responses.get(i));
-				williamsTrendResultList.add(singleResult);
+				oriogenResultList.add(singleResult);
 			} else {
 				updater.setProgress(0);
 				return null;
 			}
 		}
 		// now apply the filters to the list and remove items that don't match up
-		int resultSize = williamsTrendResultList.size();
+		int resultSize = oriogenResultList.size();
 
 		for (int i = 0; i < resultSize; i++)
 		{
 			if(!cancel) {
-				WilliamsTrendResult williamsTrendResult = williamsTrendResultList.get(i);
+				OriogenResult oriogenResult = oriogenResultList.get(i);
 
-				double pValueToCheck = williamsTrendResult.getpValue();
+				double pValueToCheck = oriogenResult.getpValue();
 
 				if (multipleTestingCorrection)
 				{
-					pValueToCheck = williamsTrendResult.getAdjustedPValue();
+					pValueToCheck = oriogenResult.getAdjustedPValue();
 				}
 
 				// check if control gene
@@ -102,11 +144,11 @@ public class WilliamsTrendAnalysis {
 				((Double.isNaN(pValueToCheck) && pCutOff < 9999) || pValueToCheck >= pCutOff) ||
 				// second check if it is a control gene
 						(filterOutControlGenes
-								&& williamsTrendResult.getProbeResponse().getProbe().getId().startsWith("AFFX"))
+								&& oriogenResult.getProbeResponse().getProbe().getId().startsWith("AFFX"))
 
 				)
 				{
-					williamsTrendResultList.remove(i);
+					oriogenResultList.remove(i);
 					i--;
 					resultSize--;
 				}
@@ -116,21 +158,21 @@ public class WilliamsTrendAnalysis {
 			}
 		}
 
-		performFoldFilter(williamsTrendResultList, processableData, Float.valueOf(foldFilterValue),
+		performFoldFilter(oriogenResultList, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
 
-		// create a new WilliamsTrendResults object and put it on the Event BuS
-		WilliamsTrendResults williamsTrendResults = new WilliamsTrendResults();
-		williamsTrendResults.setDoseResponseExperiement(doseResponseExperiment);
-		williamsTrendResults.setWilliamsTrendResults(williamsTrendResultList);
+		// create a new OriogenResults object and put it on the Event BuS
+		OriogenResults oriogenResults = new OriogenResults();
+		oriogenResults.setDoseResponseExperiement(doseResponseExperiment);
+		oriogenResults.setOriogenResults(oriogenResultList);
 
 		DecimalFormat df = new DecimalFormat("#.####");
-		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
+		String name = doseResponseExperiment.getName() + "_oriogen_" + df.format(pCutOff);
 
 		AnalysisInfo analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
-		notes.add("William's Trend");
+		notes.add("Oriogen");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
@@ -158,26 +200,20 @@ public class WilliamsTrendAnalysis {
 		{
 			name += "_nofoldfilter";
 		}
-		williamsTrendResults.setName(name);
+		oriogenResults.setName(name);
 		analysisInfo.setNotes(notes);
-		williamsTrendResults.setAnalysisInfo(analysisInfo);
-		return williamsTrendResults;
+		oriogenResults.setAnalysisInfo(analysisInfo);
+		return oriogenResults;
 	}
-	
-	public void cancel() {
-		cancel = true;
-		util.cancel();
-	}
-	
 	/*
 	 * perform fold filter
 	 */
-	private void performFoldFilter(List<WilliamsTrendResult> williamsTrendResults,
+	private void performFoldFilter(List<OriogenResult> oriogenResults,
 			IStatModelProcessable processableData, Float foldFilterValue, boolean isLogTransformation,
 			double baseValue, boolean useFoldFilter)
 	{
 
-		int resultSize = williamsTrendResults.size();
+		int resultSize = oriogenResults.size();
 
 		FoldChange foldChange = new FoldChange(
 				processableData.getProcessableDoseResponseExperiment().getTreatments(), isLogTransformation,
@@ -185,17 +221,21 @@ public class WilliamsTrendAnalysis {
 		for (int i = 0; i < resultSize; i++)
 		{
 			Float bestFoldChange = foldChange
-					.getBestFoldChangeValue(williamsTrendResults.get(i).getProbeResponse().getResponses());
-			williamsTrendResults.get(i).setBestFoldChange(bestFoldChange);
-			williamsTrendResults.get(i).setFoldChanges(foldChange.getFoldChanges());
+					.getBestFoldChangeValue(oriogenResults.get(i).getProbeResponse().getResponses());
+			oriogenResults.get(i).setBestFoldChange(bestFoldChange);
+			oriogenResults.get(i).setFoldChanges(foldChange.getFoldChanges());
 
 			if (useFoldFilter && Math.abs(bestFoldChange) < Math.abs(foldFilterValue))
 			{
-				williamsTrendResults.remove(i);
+				oriogenResults.remove(i);
 				i--;
 				resultSize--;
 			}
-
 		}
+	}
+	
+	
+	public void cancel() {
+		util.cancel();
 	}
 }

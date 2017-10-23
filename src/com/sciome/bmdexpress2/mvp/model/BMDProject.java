@@ -114,7 +114,7 @@ public class BMDProject implements Serializable
 	public boolean isProjectEmpty()
 	{
 		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0 || williamsTrendResults.size() > 0 ||
-				bMDResult.size() > 0 || categoryAnalysisResults.size() > 0)
+				oriogenResults.size() > 0 || bMDResult.size() > 0 || categoryAnalysisResults.size() > 0)
 			return false;
 		return true;
 	}

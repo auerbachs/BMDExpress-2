@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
-import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.bmdexpress2.util.prefilter.WilliamsTrendAnalysis;
+import com.sciome.bmdexpress2.util.prefilter.OriogenAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
 
 import javafx.application.Platform;
@@ -21,7 +21,7 @@ import javafx.concurrent.Task;
 
 public class OriogenPresenter extends PresenterBase<IOriogenView> implements SimpleProgressUpdater {
 
-	List<WilliamsTrendAnalysis> analyses;
+	List<OriogenAnalysis> analyses;
 	private volatile boolean running = false;
 	
 	public OriogenPresenter(IOriogenView view, BMDExpressEventBus eventBus)
@@ -34,14 +34,16 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * do oriogen filter
 	 */
 	public void performOriogen(List<IStatModelProcessable> processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations)
+			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps, 
+			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
+			boolean useFoldFilter, String foldFilterValue)
 	{
 
 		for (IStatModelProcessable pData : processableData)
 		{
-			performOriogen(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
-					useFoldFilter, foldFilterValue, numberOfPermutations);
+			performOriogen(pData, pCutOff, multipleTestingCorrection, mpc, initialBootstraps,
+					maxBootstraps, s0Adjustment, filterOutControlGenes,
+					useFoldFilter, foldFilterValue);
 		}
 
 	}
@@ -50,8 +52,9 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * do oriogen filter
 	 */
 	public void performOriogen(IStatModelProcessable processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations)
+			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps, 
+			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
+			boolean useFoldFilter, String foldFilterValue)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -61,16 +64,17 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 				running = true;
 				try
 				{
-					WilliamsTrendAnalysis analysis = new WilliamsTrendAnalysis();
+					OriogenAnalysis analysis = new OriogenAnalysis();
 					analyses.add(analysis);
-					WilliamsTrendResults williamsTrendResults = analysis.analyzeDoseResponseData(processableData, pCutOff, multipleTestingCorrection,
-							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me);
+					OriogenResults oriogenResults = analysis.analyzeDoseResponseData(processableData, pCutOff, multipleTestingCorrection,
+							mpc, initialBootstraps, maxBootstraps, s0Adjustment,
+							filterOutControlGenes, useFoldFilter, foldFilterValue, me);
 					
 					// post the new williams object to the event bus so folks can do the right thing.
-					if(williamsTrendResults != null && running) {
+					if(oriogenResults != null && running) {
 						Platform.runLater(() ->
 						{
-							getEventBus().post(new WilliamsTrendDataLoadedEvent(williamsTrendResults));
+							getEventBus().post(new OriogenDataLoadedEvent(oriogenResults));
 						});
 					}
 				}
@@ -101,7 +105,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	
 	public void cancel() {
 		running = false;
-		for(WilliamsTrendAnalysis analysis : analyses)
+		for(OriogenAnalysis analysis : analyses)
 			analysis.cancel();
 	}
 	
@@ -136,6 +140,6 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * private methods
 	 */
 	private void init() {
-		 analyses = new ArrayList<WilliamsTrendAnalysis>();
+		 analyses = new ArrayList<OriogenAnalysis>();
 	}
 }

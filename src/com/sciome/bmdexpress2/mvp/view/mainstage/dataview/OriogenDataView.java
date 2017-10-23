@@ -16,7 +16,6 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 		presenter = new OriogenDataViewPresenter(this, BMDExpressEventBus.getInstance());
 		setUpTableView(oriogenResults);
 		presenter.showVisualizations(oriogenResults);
-
 	}
 
 	@Override

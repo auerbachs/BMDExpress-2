@@ -195,7 +195,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onOriogenSelected(OriogenDataSelectedEvent event)
 	{
-		getView().williamsTrendDataSelected();
+		getView().oriogenDataSelected();
 	}
 
 	@Subscribe

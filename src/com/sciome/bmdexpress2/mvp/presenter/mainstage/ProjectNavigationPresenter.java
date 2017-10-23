@@ -22,6 +22,7 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.Probe;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -51,6 +52,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEven
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
@@ -119,6 +121,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			getEventBus().post(new OneWayANOVADataSelectedEvent((OneWayANOVAResults) dataset));
 		else if (dataset instanceof WilliamsTrendResults)
 			getEventBus().post(new WilliamsTrendDataSelectedEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof OriogenResults)
+			getEventBus().post(new OriogenDataSelectedEvent((OriogenResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
 			getEventBus().post(new CategoryAnalysisDataSelectedEvent((CategoryAnalysisResults) dataset));
 		else if (dataset instanceof BMDResult)
@@ -307,6 +311,12 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			getView().addWilliamsTrendAnalysis(williamsTrendResult, false);
 		}
 
+		//populate all the oriogen data
+		for (OriogenResults oriogenResult : bmdProject.getOriogenResults())
+		{
+			getView().addOriogenAnalysis(oriogenResult, false);
+		}
+		
 		// populate all the categorization data
 		for (CategoryAnalysisResults catResult : bmdProject.getCategoryAnalysisResults())
 		{
@@ -618,6 +628,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			this.currentProject.getOneWayANOVAResults().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof WilliamsTrendResults)
 			this.currentProject.getWilliamsTrendResults().remove(catAnalysisResults);
+		else if (catAnalysisResults instanceof OriogenResults)
+			this.currentProject.getOriogenResults().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof DoseResponseExperiment)
 			this.currentProject.getDoseResponseExperiments().remove(catAnalysisResults);
 

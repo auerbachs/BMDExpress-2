@@ -201,7 +201,7 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 
 	}
 
-	// @Filterable(key = WilliamsTrenResults.FOLD_CHANGE)
+	// @Filterable(key = WilliamsTrendResults.FOLD_CHANGE)
 	// @ChartableDataPoint(key = WilliamsTrendResults.FOLD_CHANGE)
 	public List<Float> getFoldChanges()
 	{
