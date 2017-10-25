@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
@@ -43,6 +42,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 	public static final String			GENE_ID						= "Gene ID";
 	public static final String			GENE_SYMBOL					= "Gene Symbol";
 	public static final String			PROBE_ID					= "Probe ID";
+	public static final String			PROFILE						= "Profile";
 
 	public static final String			NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
 
@@ -57,7 +57,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 		this.id = id;
 	}
 
-	@ChartableData(key = "Williams Trend")
+	@ChartableData(key = "Oriogen")
 	public List<OriogenResult> getOriogenResults()
 	{
 		return oriogenResults;
@@ -68,7 +68,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 		this.oriogenResults = OriogenResults;
 	}
 
-	@ChartableDataLabel(key = "Williams Trend")
+	@ChartableDataLabel(key = "Oriogen")
 	@Override
 	public String getName()
 	{
@@ -115,7 +115,6 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 	/*
 	 * Implement the IStatModelProcessable methods.
 	 */
-
 	@Override
 	@JsonIgnore
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
@@ -186,6 +185,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 			}
 		}
 
+		columnHeader.add("Profile");
 	}
 
 	@Override

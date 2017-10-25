@@ -26,8 +26,8 @@ public class OriogenAnalysis {
 	private boolean cancel = false;
 	
 	public OriogenResults analyzeDoseResponseData(IStatModelProcessable processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps,
-			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
+			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 
+			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, SimpleProgressUpdater updater) {
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
@@ -82,14 +82,14 @@ public class OriogenAnalysis {
 		data.setInputData(MatrixUtils.createRealMatrix(numericMatrix));
 		data.setNumTimePoints(MathUtil.uniqueValues(MatrixUtils.createRealVector(doseVector)));
 		data.setNumInitialBootStraps(initialBootstraps);
-		data.setFDRLevel(pCutOff);
+		data.setFDRLevel(1);
 		data.setRandomSeed(23524);
 		data.setSubRegionPValue(.1);
 		data.setTranspose(false);
 		data.setMaxNumBootStraps(maxBootstraps);
 		data.setLongitudinalSampling(false);
 		data.setS0Percentile(s0Adjustment);
-		data.setmdFdr(mpc);
+		data.setmdFdr(false);
 		data.setTwoGroups(false);
 		
 		int[] values = new int[30];
@@ -117,6 +117,7 @@ public class OriogenAnalysis {
 				singleResult.setAdjustedPValue(result.get(i).getqValue());
 				singleResult.setpValue(result.get(i).getpValue());
 				singleResult.setProbeResponse(responses.get(i));
+				singleResult.setProfile(result.get(i).getProfileString());
 				oriogenResultList.add(singleResult);
 			} else {
 				updater.setProgress(0);
@@ -179,6 +180,9 @@ public class OriogenAnalysis {
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		notes.add("Number of Initial Bootstraps" + String.valueOf(initialBootstraps));
+		notes.add("Number of Maximum Bootstraps" + String.valueOf(maxBootstraps));
+		notes.add("Shrinkage Adjustment Percentile" + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 

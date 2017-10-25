@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = ANOVAConfig.class, name = "anova"),
-				@Type(value = WilliamsConfig.class, name = "williams")})
+				@Type(value = WilliamsConfig.class, name = "williams"),
+				@Type(value = OriogenConfig.class, name = "oriogen")})
 public abstract class PrefilterConfig
 {
 

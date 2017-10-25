@@ -38,6 +38,8 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	protected transient List<Object>	row;
 
 	private Long						id;
+	
+	private String 						profile;
 
 	public ProbeResponse getProbeResponse()
 	{
@@ -191,7 +193,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 				row.add(foldChange);
 			}
 		}
-
+		row.add(profile);
 	}
 
 	// @Filterable(key = OriogenResults.FOLD_CHANGE)
@@ -204,6 +206,16 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	public void setFoldChanges(List<Float> fcs)
 	{
 		this.foldChanges = fcs;
+	}
+	
+	@Filterable(key = OriogenResults.PROFILE)
+	@ChartableDataPoint(key = OriogenResults.PROFILE)
+	public String getProfile() {
+		return this.profile;
+	}
+	
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	@Override

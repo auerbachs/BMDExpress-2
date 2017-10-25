@@ -25,8 +25,6 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	@FXML
 	private ComboBox					expressionDataComboBox;
 	@FXML
-	private ComboBox					analysisTypeComboBox;
-	@FXML
 	private ComboBox					adjustedPValueCutoffComboBox;
 	@FXML
 	private ComboBox					initialBootstrapComboBox;
@@ -76,9 +74,6 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 
 		this.processableData = processableData;
 		this.processableDatas = processableDatas;
-
-		analysisTypeComboBox.getItems().add("Time Course/Dose Response Pattern Analysis");
-		analysisTypeComboBox.getSelectionModel().select(0);
 		
 		adjustedPValueCutoffComboBox.getItems().add("0.05");
 		adjustedPValueCutoffComboBox.getItems().add("0.01");
@@ -124,7 +119,6 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 				pCutOff = Float.valueOf(pCutOffSelectedItem);
 			}
 			
-			boolean mpc = analysisTypeComboBox.getEditor().getText().equals("Multiple Pairwise Comparisons");
 			int initialBootstraps = Integer.parseInt(initialBootstrapComboBox.getEditor().getText());
 			int maxBootstraps = Integer.parseInt(maxBootstrapComboBox.getEditor().getText());
 			float s0Adjustment = Float.parseFloat(s0AdjustmentComboBox.getEditor().getText());
@@ -132,7 +126,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 			if (processableData.size() > 1)
 			{
 				presenter.performOriogen(processableData, pCutOff, benAndHochCheckBox.isSelected(),
-						mpc, initialBootstraps, maxBootstraps, s0Adjustment,
+						initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
 						foldChangeValueTextField.getText());
 			}
@@ -140,7 +134,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 			{
 				presenter.performOriogen(
 						(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
-						pCutOff, benAndHochCheckBox.isSelected(),mpc, initialBootstraps, maxBootstraps, s0Adjustment,
+						pCutOff, benAndHochCheckBox.isSelected(), initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(), 
 						foldChangeValueTextField.getText());
 			}

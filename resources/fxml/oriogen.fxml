@@ -23,7 +23,6 @@
                           <rowConstraints>
                               <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
@@ -34,9 +33,9 @@
                           </rowConstraints>
                            <children>
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="Adjusted P-Value Cutoff:" GridPane.rowIndex="3" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="7" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="8" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="310.0" text="P-Value Cutoff:" GridPane.rowIndex="2" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="341.0" text="Multiple Testing Correction:" GridPane.rowIndex="6" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="305.0" text="Filter Out Control Genes:" GridPane.rowIndex="7" />
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
@@ -45,7 +44,7 @@
                                     <ComboBox fx:id="expressionDataComboBox" layoutX="96.0" layoutY="7.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -53,7 +52,7 @@
                                     <ComboBox fx:id="adjustedPValueCutoffComboBox" editable="true" layoutY="1.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -61,7 +60,7 @@
                                     <CheckBox fx:id="benAndHochCheckBox" layoutY="8.0" mnemonicParsing="false" text="Benjamini &amp; Hochberg (FDR)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="20.0" />
                                  </GridPane.margin>
@@ -69,26 +68,20 @@
                                     <CheckBox fx:id="filterControlGenesCheckBox" layoutX="-10.0" layoutY="5.0" mnemonicParsing="false" selected="true" text="(probes starting with AFFX...)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Analysis Type:" GridPane.rowIndex="2" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Number of Initial Bootstrap Samples:" GridPane.rowIndex="4" />
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Number of Maximum Bootstrap Samples:" GridPane.rowIndex="5" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <children>
-                                    <ComboBox fx:id="analysisTypeComboBox" layoutX="26.0" layoutY="1.0" prefHeight="25.0" prefWidth="300.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Number of Initial Bootstrap Samples:" GridPane.rowIndex="3" />
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Number of Maximum Bootstrap Samples:" GridPane.rowIndex="4" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
                                     <ComboBox fx:id="initialBootstrapComboBox" editable="true" layoutY="1.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <ComboBox fx:id="maxBootstrapComboBox" editable="true" layoutX="96.0" layoutY="7.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="s0 Adjustment Percentile:" GridPane.rowIndex="6" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Shrinkage Adjustment Percentile:" GridPane.rowIndex="5" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
                                     <ComboBox fx:id="s0AdjustmentComboBox" editable="true" layoutY="1.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>

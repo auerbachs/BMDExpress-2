@@ -27,6 +27,7 @@ import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
+import com.sciome.bmdexpress2.commandline.config.prefilter.OriogenConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.WilliamsConfig;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
@@ -433,19 +434,19 @@ public class AnalyzeRunner
 	 */
 	private void doPrefilter(PrefilterConfig preFilterConfig)
 	{
+		// if the user specifies a dose experiment name, then find it and add it.
+		// if the inputname is null, then add all dose response experiments
+		// to receive the pre filter.
+		List<IStatModelProcessable> processables = new ArrayList<>();
+		for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
+			if (preFilterConfig.getInputName() == null)
+				processables.add(exp);
+			else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
+				processables.add(exp);
+		
 		if (preFilterConfig instanceof ANOVAConfig)
 		{
 			ANOVARunner anovaRunner = new ANOVARunner();
-
-			// if the user specifies a dose experiment name, then find it and add it.
-			// if the inputname is null, then add all dose response experiments
-			// to receive the pre filter.
-			List<IStatModelProcessable> processables = new ArrayList<>();
-			for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
-				if (preFilterConfig.getInputName() == null)
-					processables.add(exp);
-				else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
-					processables.add(exp);
 
 			for (IStatModelProcessable processable : processables)
 			{
@@ -456,15 +457,6 @@ public class AnalyzeRunner
 			}
 		} else if(preFilterConfig instanceof WilliamsConfig) {
 			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
-			// if the user specifies a dose experiment name, then find it and add it.
-			// if the inputname is null, then add all dose response experiments
-			// to receive the pre filter.
-			List<IStatModelProcessable> processables = new ArrayList<>();
-			for (DoseResponseExperiment exp : project.getDoseResponseExperiments())
-				if (preFilterConfig.getInputName() == null)
-					processables.add(exp);
-				else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
-					processables.add(exp);
 
 			for (IStatModelProcessable processable : processables)
 			{
@@ -474,6 +466,17 @@ public class AnalyzeRunner
 						String.valueOf(preFilterConfig.getFoldChange()), 
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(), 
 						preFilterConfig.getOutputName()));
+			}
+		} else if(preFilterConfig instanceof OriogenConfig) {
+			OriogenRunner oriogenRunner = new OriogenRunner();
+
+			for (IStatModelProcessable processable : processables)
+			{
+				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable, preFilterConfig.getpValueCutoff(),
+						preFilterConfig.getUseMultipleTestingCorrection(), ((OriogenConfig)preFilterConfig).isMpc(),
+						((OriogenConfig)preFilterConfig).getInitialBootstraps(), ((OriogenConfig)preFilterConfig).getMaxBootstraps(),
+						((OriogenConfig)preFilterConfig).getS0Adjustment(), preFilterConfig.getFilterOutControlGenes(),
+						preFilterConfig.getUseFoldChange(), String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
 			}
 		}
 		System.out.println("prefilter analysis");

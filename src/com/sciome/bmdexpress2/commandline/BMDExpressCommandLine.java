@@ -135,7 +135,7 @@ public class BMDExpressCommandLine
 			System.out.println("Unexpected exception:" + exp.getMessage());
 			exp.printStackTrace();
 		}
-		new BMDExpressCommandLine().createStrawMan();
+//		new BMDExpressCommandLine().createStrawMan();
 
 	}
 

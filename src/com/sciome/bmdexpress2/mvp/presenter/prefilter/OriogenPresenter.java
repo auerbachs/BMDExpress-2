@@ -34,16 +34,15 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * do oriogen filter
 	 */
 	public void performOriogen(List<IStatModelProcessable> processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps, 
+			boolean multipleTestingCorrection, int initialBootstraps, 
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
 			boolean useFoldFilter, String foldFilterValue)
 	{
 
 		for (IStatModelProcessable pData : processableData)
 		{
-			performOriogen(pData, pCutOff, multipleTestingCorrection, mpc, initialBootstraps,
-					maxBootstraps, s0Adjustment, filterOutControlGenes,
-					useFoldFilter, foldFilterValue);
+			performOriogen(pData, pCutOff, multipleTestingCorrection, initialBootstraps, maxBootstraps,
+					s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue);
 		}
 
 	}
@@ -52,7 +51,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * do oriogen filter
 	 */
 	public void performOriogen(IStatModelProcessable processableData, double pCutOff,
-			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps, 
+			boolean multipleTestingCorrection, int initialBootstraps, 
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
 			boolean useFoldFilter, String foldFilterValue)
 	{
@@ -67,10 +66,10 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 					OriogenAnalysis analysis = new OriogenAnalysis();
 					analyses.add(analysis);
 					OriogenResults oriogenResults = analysis.analyzeDoseResponseData(processableData, pCutOff, multipleTestingCorrection,
-							mpc, initialBootstraps, maxBootstraps, s0Adjustment,
+							initialBootstraps, maxBootstraps, s0Adjustment,
 							filterOutControlGenes, useFoldFilter, foldFilterValue, me);
 					
-					// post the new williams object to the event bus so folks can do the right thing.
+					// post the new oriogen object to the event bus so folks can do the right thing.
 					if(oriogenResults != null && running) {
 						Platform.runLater(() ->
 						{
