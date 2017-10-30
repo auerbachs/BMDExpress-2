@@ -23,6 +23,7 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 
 	List<WilliamsTrendAnalysis> analyses;
 	private volatile boolean running = false;
+	private volatile boolean viewClosed = false;
 	
 	public WilliamsTrendPresenter(IWilliamsTrendView view, BMDExpressEventBus eventBus)
 	{
@@ -31,7 +32,7 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 	}
 
 	/*
-	 * do williams trend filter
+	 * do williams trend filter for multiple data sets
 	 */
 	public void performWilliamsTrend(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
@@ -83,11 +84,13 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 					});
 					exception.printStackTrace();
 				}
-				if(running) {
+				//Only close the view if the process was running and the view isn't already closed
+				if(running && !viewClosed) {
 					Platform.runLater(() ->
 					{
 						getView().closeWindow();
 					});
+					viewClosed = true;
 				}
 				return 0;
 			}

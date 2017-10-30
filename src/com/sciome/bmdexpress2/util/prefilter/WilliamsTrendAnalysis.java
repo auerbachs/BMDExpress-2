@@ -25,7 +25,7 @@ public class WilliamsTrendAnalysis {
 	
 	public WilliamsTrendResults analyzeDoseResponseData(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermuatations, SimpleProgressUpdater updater) {
+			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater) {
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		
@@ -59,7 +59,7 @@ public class WilliamsTrendAnalysis {
 		WilliamsTrendTestResult result = util.williams(MatrixUtils.createRealMatrix(numericMatrix),
 				MatrixUtils.createRealVector(doseVector),
 				23524,
-				Integer.valueOf(numberOfPermuatations),
+				Integer.valueOf(numberOfPermutations),
 				null,
 				updater);
 
@@ -136,6 +136,7 @@ public class WilliamsTrendAnalysis {
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
+		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
 		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));

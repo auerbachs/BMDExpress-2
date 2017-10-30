@@ -178,11 +178,10 @@ public class OriogenAnalysis {
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-
 		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
-		notes.add("Number of Initial Bootstraps" + String.valueOf(initialBootstraps));
-		notes.add("Number of Maximum Bootstraps" + String.valueOf(maxBootstraps));
-		notes.add("Shrinkage Adjustment Percentile" + String.valueOf(s0Adjustment));
+		notes.add("Number of Initial Bootstraps: " + String.valueOf(initialBootstraps));
+		notes.add("Number of Maximum Bootstraps: " + String.valueOf(maxBootstraps));
+		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 

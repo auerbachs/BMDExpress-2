@@ -23,6 +23,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 
 	List<OriogenAnalysis> analyses;
 	private volatile boolean running = false;
+	private volatile boolean viewClosed = false;
 	
 	public OriogenPresenter(IOriogenView view, BMDExpressEventBus eventBus)
 	{
@@ -31,7 +32,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	}
 
 	/*
-	 * do oriogen filter
+	 * do oriogen filter for multiple data sets
 	 */
 	public void performOriogen(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, 
@@ -86,11 +87,13 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 					});
 					exception.printStackTrace();
 				}
-				if(running) {
+				//Only close the view if the process was running and the view isn't already closed
+				if(running && !viewClosed) {
 					Platform.runLater(() ->
 					{
 						getView().closeWindow();
 					});
+					viewClosed = true;
 				}
 				return 0;
 			}
@@ -113,7 +116,6 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 		Platform.runLater(() ->
 		{
 			getView().updateProgress(progress);
-
 		});
 	}
 	
