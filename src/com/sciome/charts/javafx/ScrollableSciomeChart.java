@@ -309,9 +309,14 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
 			{
-				if(!indexMap.containsKey(o1.getName()) ||!indexMap.containsKey(o2.getName()) )
-					return ((Double)o1.getxValue()).compareTo(((Double)o2.getxValue()));
-				return indexMap.get(o1.getName()).compareTo(indexMap.get(o2.getName()));
+				if (indexMap.containsKey(o1.getName()) && indexMap.containsKey(o2.getName()))
+					return indexMap.get(o1.getName()).compareTo(indexMap.get(o2.getName()));
+				else if (indexMap.containsKey(o1.getName()) && !indexMap.containsKey(o2.getName()))
+					return 1;
+				else if (indexMap.containsKey(o2.getName()) && !indexMap.containsKey(o1.getName()))
+					return -1;
+				else
+					return 0;
 			}
 		});
 		
