@@ -22,7 +22,6 @@ import com.sciome.bmdexpress2.util.ExperimentFileUtil;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
-import javafx.stage.Window;
 
 public class ExpressionImportRunner implements IProjectNavigationView
 {
@@ -145,12 +144,7 @@ public class ExpressionImportRunner implements IProjectNavigationView
 
 	}
 
-	@Override
-	public Window getWindow()
-	{
 
-		return null;
-	}
 
 	@Override
 	public void getAChip(List<ChipInfo> choices, List<DoseResponseExperiment> doseResponseExperiment,

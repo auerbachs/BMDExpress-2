@@ -1404,7 +1404,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 	}
 
-	@Override
 	public Window getWindow()
 	{
 		return navigationTreeView.getScene().getWindow();

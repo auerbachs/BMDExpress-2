@@ -35,6 +35,7 @@ import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.view.mainstage.ProjectNavigationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.TableViewCache;
@@ -351,7 +352,9 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			{
 				return;
 			}
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+			
+			//TODO this is a hack.  needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
 			BMDProject newProject = loadDialog.loadProject(selectedFile);
 
 			if (newProject != null)
@@ -390,7 +393,9 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			{
 				return;
 			}
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+			
+			//TODO this is a hack.  needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
 			BMDProject newProject = loadDialog.importBMDFile(selectedFile);
 			String newFileName = selectedFile.getAbsolutePath().replace(".bmd", ".bm2");
 
@@ -425,7 +430,9 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			{
 				return;
 			}
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+			
+			//TODO this is a hack.  needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
 			BMDProject newProject = loadDialog.importJSONFile(selectedFile);
 			String newFileName = selectedFile.getAbsolutePath().replace(".json", ".bm2");
 
@@ -477,7 +484,9 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		{
 			return;
 		}
-		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(getView().getWindow());
+		
+		//TODO this is a hack.  needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
 		saveDialog.saveProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;
@@ -493,7 +502,9 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		{
 			return;
 		}
-		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(getView().getWindow());
+		
+		//TODO this is a hack.  needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
 		saveDialog.saveJSONProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;

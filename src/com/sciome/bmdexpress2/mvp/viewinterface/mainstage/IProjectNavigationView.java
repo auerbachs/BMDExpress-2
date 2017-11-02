@@ -14,7 +14,6 @@ import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
-import javafx.stage.Window;
 
 public interface IProjectNavigationView
 {
@@ -53,8 +52,6 @@ public interface IProjectNavigationView
 	public void showMatrixPreview(String string, MatrixData matrixData);
 
 	public void setWindowSizeProperties();
-
-	public Window getWindow();
 
 	public void getAChip(List<ChipInfo> choices, List<DoseResponseExperiment> doseResponseExperiment,
 			FileAnnotation fileAnnotation);
