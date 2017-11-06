@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OriogenPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
+import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
@@ -63,7 +64,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	public OriogenView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new OriogenPresenter(this, eventBus);
+		PrefilterService service = new PrefilterService();
+		presenter = new OriogenPresenter(this, service, eventBus);
 	}
 
 	@SuppressWarnings("unchecked")

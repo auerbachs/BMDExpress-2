@@ -6,6 +6,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OneWayANOVAPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
+import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 /*
@@ -17,8 +18,8 @@ public class ANOVARunner implements IOneWayANOVAView
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String outputName)
 	{
-		OneWayANOVAPresenter presenter = new OneWayANOVAPresenter(this, BMDExpressEventBus.getInstance());
-		OneWayANOVAResults results = presenter.performOneWayANOVA(processableData, pCutOff,
+		PrefilterService service = new PrefilterService();
+		OneWayANOVAResults results = service.oneWayANOVAAnalysis(processableData, pCutOff,
 				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue);
 
 		if (outputName != null)

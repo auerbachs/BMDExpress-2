@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OneWayANOVAPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
+import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
@@ -52,7 +53,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	public OneWayANOVAView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new OneWayANOVAPresenter(this, eventBus);
+		PrefilterService service = new PrefilterService();
+		presenter = new OneWayANOVAPresenter(this, service, eventBus);
 	}
 
 	@SuppressWarnings("unchecked")

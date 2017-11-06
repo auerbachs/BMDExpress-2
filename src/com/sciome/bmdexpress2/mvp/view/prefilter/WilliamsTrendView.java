@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.WilliamsTrendPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IWilliamsTrendView;
+import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
@@ -60,7 +61,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	public WilliamsTrendView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new WilliamsTrendPresenter(this, eventBus);
+		PrefilterService service = new PrefilterService();
+		presenter = new WilliamsTrendPresenter(this, service, eventBus);
 	}
 
 	@SuppressWarnings("unchecked")

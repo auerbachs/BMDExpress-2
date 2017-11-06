@@ -6,28 +6,25 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.PrefilterPresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IWilliamsTrendView;
+import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.bmdexpress2.util.prefilter.WilliamsTrendAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> implements SimpleProgressUpdater {
-
-	List<WilliamsTrendAnalysis> analyses;
+public class WilliamsTrendPresenter extends PrefilterPresenterBase<IWilliamsTrendView, IPrefilterService> implements SimpleProgressUpdater {
 	private volatile boolean running = false;
-	private volatile boolean viewClosed = false;
 	
-	public WilliamsTrendPresenter(IWilliamsTrendView view, BMDExpressEventBus eventBus)
+	public WilliamsTrendPresenter(IWilliamsTrendView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -38,13 +35,52 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations)
 	{
+		SimpleProgressUpdater me = this;
+		Task<Integer> task = new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception
+			{
+				running = true;
+				try
+				{
+					List<WilliamsTrendResults> resultList = new ArrayList<WilliamsTrendResults>();
+					for (IStatModelProcessable pData : processableData)
+					{
+						resultList.add(getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
+								filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me));
+						me.setProgress(0);
+					}
+					
+					// post the new williams object to the event bus so folks can do the right thing.
+					if(resultList != null && resultList.size() > 0 && running) {
+						Platform.runLater(() ->
+						{
+							for(int i = 0; i < resultList.size(); i++) {
+								getEventBus().post(new WilliamsTrendDataLoadedEvent(resultList.get(i)));
+							}
+						});
+					}
+				}
+				catch (Exception exception)
+				{
+					Platform.runLater(() ->
+					{
+						getEventBus().post(new ShowErrorEvent(exception.toString()));
 
-		for (IStatModelProcessable pData : processableData)
-		{
-			performWilliamsTrend(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
-					useFoldFilter, foldFilterValue, numberOfPermutations);
-		}
-
+					});
+					exception.printStackTrace();
+				}
+				//Only close the view if the process was running
+				if(running) {
+					Platform.runLater(() ->
+					{
+						getView().closeWindow();
+					});
+				}
+				return 0;
+			}
+		};
+		new Thread(task).start();
 	}
 
 	/*
@@ -62,9 +98,7 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 				running = true;
 				try
 				{
-					WilliamsTrendAnalysis analysis = new WilliamsTrendAnalysis();
-					analyses.add(analysis);
-					WilliamsTrendResults williamsTrendResults = analysis.analyzeDoseResponseData(processableData, pCutOff, multipleTestingCorrection,
+					WilliamsTrendResults williamsTrendResults = getService().williamsTrendAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me);
 					
 					// post the new williams object to the event bus so folks can do the right thing.
@@ -84,13 +118,12 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 					});
 					exception.printStackTrace();
 				}
-				//Only close the view if the process was running and the view isn't already closed
-				if(running && !viewClosed) {
+				//Only close the view if the process was running
+				if(running) {
 					Platform.runLater(() ->
 					{
 						getView().closeWindow();
 					});
-					viewClosed = true;
 				}
 				return 0;
 			}
@@ -104,8 +137,7 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 	
 	public void cancel() {
 		running = false;
-		for(WilliamsTrendAnalysis analysis : analyses)
-			analysis.cancel();
+		getService().cancel();
 	}
 	
 	@Override
@@ -139,6 +171,5 @@ public class WilliamsTrendPresenter extends PresenterBase<IWilliamsTrendView> im
 	 * private methods
 	 */
 	private void init() {
-		 analyses = new ArrayList<WilliamsTrendAnalysis>();
 	}
 }

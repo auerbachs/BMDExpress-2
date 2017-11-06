@@ -36,12 +36,7 @@ public class OneWayANOVAAnalysis
 
 		for (ProbeResponse probeResponse : processableData.getProcessableProbeResponses())
 		{
-
-			// assign the probe name
-			String probe = probeResponse.getProbe().getId();
-
 			// set up the dose responses
-
 			float[] yy = probeResponse.getResponseArray();
 			// convert it to double
 			double[] yyDouble = new double[yy.length];
