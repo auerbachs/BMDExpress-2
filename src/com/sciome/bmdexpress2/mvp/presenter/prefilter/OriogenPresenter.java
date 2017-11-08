@@ -6,28 +6,25 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.PrefilterPresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
+import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.bmdexpress2.util.prefilter.OriogenAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class OriogenPresenter extends PresenterBase<IOriogenView> implements SimpleProgressUpdater {
-
-	List<OriogenAnalysis> analyses;
+public class OriogenPresenter extends PrefilterPresenterBase<IOriogenView, IPrefilterService> implements SimpleProgressUpdater {
 	private volatile boolean running = false;
-	private volatile boolean viewClosed = false;
 	
-	public OriogenPresenter(IOriogenView view, BMDExpressEventBus eventBus)
+	public OriogenPresenter(IOriogenView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -39,13 +36,50 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
 			boolean useFoldFilter, String foldFilterValue)
 	{
+		SimpleProgressUpdater me = this;
+		Task<Integer> task = new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception
+			{
+				running = true;
+				try
+				{
+					List<OriogenResults> resultList = new ArrayList<OriogenResults>();
+					for(int i = 0; i < processableData.size(); i++) {
+						resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
+								initialBootstraps, maxBootstraps, s0Adjustment,
+								filterOutControlGenes, useFoldFilter, foldFilterValue, me));
+					}
+					// post the new oriogen object to the event bus so folks can do the right thing.
+					if(resultList != null && resultList.size() > 0 && running) {
+						Platform.runLater(() ->
+						{
+							for(int i = 0; i < resultList.size(); i++) {
+								getEventBus().post(new OriogenDataLoadedEvent(resultList.get(i)));
+							}
+						});
+					}
+				}
+				catch (Exception exception)
+				{
+					Platform.runLater(() ->
+					{
+						getEventBus().post(new ShowErrorEvent(exception.toString()));
 
-		for (IStatModelProcessable pData : processableData)
-		{
-			performOriogen(pData, pCutOff, multipleTestingCorrection, initialBootstraps, maxBootstraps,
-					s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue);
-		}
-
+					});
+					exception.printStackTrace();
+				}
+				//Only close the view if the process was running
+				if(running) {
+					Platform.runLater(() ->
+					{
+						getView().closeWindow();
+					});
+				}
+				return 0;
+			}
+		};
+		new Thread(task).start();
 	}
 
 	/*
@@ -64,9 +98,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 				running = true;
 				try
 				{
-					OriogenAnalysis analysis = new OriogenAnalysis();
-					analyses.add(analysis);
-					OriogenResults oriogenResults = analysis.analyzeDoseResponseData(processableData, pCutOff, multipleTestingCorrection,
+					OriogenResults oriogenResults = getService().oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							initialBootstraps, maxBootstraps, s0Adjustment,
 							filterOutControlGenes, useFoldFilter, foldFilterValue, me);
 					
@@ -87,13 +119,12 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 					});
 					exception.printStackTrace();
 				}
-				//Only close the view if the process was running and the view isn't already closed
-				if(running && !viewClosed) {
+				//Only close the view if the process was running
+				if(running) {
 					Platform.runLater(() ->
 					{
 						getView().closeWindow();
 					});
-					viewClosed = true;
 				}
 				return 0;
 			}
@@ -107,8 +138,7 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	
 	public void cancel() {
 		running = false;
-		for(OriogenAnalysis analysis : analyses)
-			analysis.cancel();
+		getService().cancel();
 	}
 	
 	@Override
@@ -141,6 +171,5 @@ public class OriogenPresenter extends PresenterBase<IOriogenView> implements Sim
 	 * private methods
 	 */
 	private void init() {
-		 analyses = new ArrayList<OriogenAnalysis>();
 	}
 }
