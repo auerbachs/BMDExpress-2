@@ -125,8 +125,11 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 					SciomeData<Number, Number> dataPoint = new SciomeData<>(chartData.getDataPointLabel(),
 							(Double) chartData.getDataPoints().get(key1),
 							(Double) chartData.getDataPoints().get(key2),
-							new ChartExtraValue(chartData.getDataPointLabel(),
-									countMap.get(chartData.getDataPointLabel())));
+							new BubbleChartExtraData(chartData.getDataPointLabel(),
+									countMap.get(chartData.getDataPointLabel()),
+									chartData.getCharttableObject(),
+									(Double) chartData.getDataPoints().get(key3) * bubbleScale));
+
 					nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
 							new NodeInformation((Double) chartData.getDataPoints().get(key3) * bubbleScale,
 									scaleValue, chartData.getCharttableObject(), false));
@@ -313,24 +316,22 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
+		for (Object obj : this.seriesData)
 		{
-
-			System.out.println(seriesData.getName());
-			for (Object d : seriesData.getData())
+			SciomeSeries sData = (SciomeSeries) obj;
+			for (Object d : sData.getData())
 			{
-				XYChart.Data xychartData = (XYChart.Data) d;
-				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
+				SciomeData xychartData = (SciomeData) d;
+				BubbleChartExtraData extraValue = (BubbleChartExtraData) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				Double X = (Double) xychartData.getXValue();
-				Double Y = (Double) xychartData.getYValue();
-				StackPane node = (StackPane) xychartData.getNode();
+				Double X = (Double) xychartData.getxValue();
+				Double Y = (Double) xychartData.getyValue();
 
-				sb.append(seriesData.getName());
+				sb.append(sData.getName());
 
 				sb.append("\t");
 
@@ -338,9 +339,9 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 				sb.append("\t");
 				sb.append(Y);
 				sb.append("\t");
-				sb.append(node.getMaxWidth());
+				sb.append(extraValue.bubbleSize);
 				sb.append("\t");
-				sb.append(node.getUserData().toString());
+				sb.append(extraValue.userData);
 
 				returnList.add(sb.toString());
 
@@ -348,6 +349,17 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		}
 
 		return returnList;
+	}
+
+	private class BubbleChartExtraData extends ChartExtraValue
+	{
+		public Double bubbleSize;
+
+		public BubbleChartExtraData(String l, Integer c, Object u, Double bubbleSize)
+		{
+			super(l, c, u);
+			this.bubbleSize = bubbleSize;
+		}
 	}
 
 }

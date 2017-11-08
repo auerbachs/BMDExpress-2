@@ -122,8 +122,7 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 		/**
 		 */
 		@SuppressWarnings("unused")
-		public RangePlot(CategoryAxis yAxis, Axis<Number> xAxis,
-				ObservableList<Series<Number, String>> data)
+		public RangePlot(CategoryAxis yAxis, Axis<Number> xAxis, ObservableList<Series<Number, String>> data)
 		{
 			this(yAxis, xAxis);
 			setData(data);
@@ -447,9 +446,9 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 		private String	description;
 
 		public BoxAndWhiskerExtraValues(String label, Integer count, Double min, Double max, Double high,
-				String description)
+				String description, Object userData)
 		{
-			super(label, count);
+			super(label, count, userData);
 			this.min = min;
 			this.max = max;
 			this.high = high;
@@ -694,7 +693,7 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 						new BoxAndWhiskerExtraValues(chartData.getDataPointLabel(),
 								countMap.get(chartData.getDataPointLabel()), dataPointValueMinKey,
 								dataPointValueMaxKey, dataPointValueMiddleKey,
-								chartData.getCharttableObject().toString()));
+								chartData.getCharttableObject().toString(), chartData.getCharttableObject()));
 
 				series1.getData().add(xyData);
 
@@ -718,7 +717,7 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 				{
 					SciomeData<Number, String> xyData = new SciomeData<>(chartedKey, avg, chartedKey,
 							new BoxAndWhiskerExtraValues(chartedKey, countMap.get(chartedKey), avg, avg, avg,
-									""));
+									"", null));
 
 					series1.getData().add(xyData);
 					nodeInfoMap.put(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
@@ -828,11 +827,9 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 	@Override
 	public List<String> getLinesToExport()
 	{
-		XYChart xyChart = (XYChart) getChart();
 
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-		List<XYChart.Series> data = xyChart.getData();
 
 		sb.append("series");
 		sb.append("\t");
@@ -846,25 +843,22 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 		sb.append("\t");
 		sb.append("component");
 		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
+		for (Object obj : this.seriesData)
 		{
-
-			System.out.println(seriesData.getName());
-			for (Object d : seriesData.getData())
+			SciomeSeries sData = (SciomeSeries) obj;
+			for (Object d : sData.getData())
 			{
-				XYChart.Data xychartData = (XYChart.Data) d;
+				SciomeData xychartData = (SciomeData) d;
 				BoxAndWhiskerExtraValues extraValue = (BoxAndWhiskerExtraValues) xychartData.getExtraValue();
 				if (extraValue.description.equals("")) // this means it's a faked value for showing multiple
 														// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				Double X = (Double) xychartData.getXValue();
-				String Y = (String) xychartData.getYValue();
+				Double X = (Double) xychartData.getxValue();
+				String Y = (String) xychartData.getyValue();
 
-				Node node = xychartData.getNode();
-
-				sb.append(seriesData.getName());
+				sb.append(sData.getName());
 				sb.append("\t");
 				sb.append(Y);
 				sb.append("\t");

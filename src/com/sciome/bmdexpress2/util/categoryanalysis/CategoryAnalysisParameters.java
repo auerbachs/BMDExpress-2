@@ -5,35 +5,38 @@ import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileP
 public class CategoryAnalysisParameters
 {
 
-	private DefinedCategoryFileParameters probeFileParameters;
-	private DefinedCategoryFileParameters categoryFileParameters;
+	private DefinedCategoryFileParameters	probeFileParameters;
+	private DefinedCategoryFileParameters	categoryFileParameters;
 
-	private String goCat;
-	private int goTermIdx;
+	private String							goCat;
+	private int								goTermIdx;
 
-	private String pathwayDB;
+	private String							pathwayDB;
 
-	private boolean removeBMDGreaterHighDose = false;
-	private boolean removePromiscuousProbes = false;
-	private boolean removeBMDPValueLessCuttoff = false;
-	private boolean removeBMDBMDLRatio = false;
-	private boolean removeNFoldBelowLowestDose = false;
-	private double bmdBmdlRatio;
-	private double nFoldbelowLowestDoseValue;
-	private double pValueCutoff;
+	private boolean							removeBMDGreaterHighDose		= false;
+	private boolean							removePromiscuousProbes			= false;
+	private boolean							removeBMDPValueLessCuttoff		= false;
+	private boolean							removeBMDBMDLRatio				= false;
+	private boolean							removeNFoldBelowLowestDose		= false;
+	private double							bmdBmdlRatio;
+	private double							nFoldbelowLowestDoseValue;
+	private double							pValueCutoff;
 
-	private boolean removeBMDUBMDLRatio = false;
-	private double bmduBmdlRatio;
+	private boolean							removeBMDUBMDLRatio				= false;
+	private double							bmduBmdlRatio;
 
-	private boolean removeBMDUBMDRatio = false;
-	private double bmduBmdRatio;
+	private boolean							removeBMDUBMDRatio				= false;
+	private double							bmduBmdRatio;
 
-	private boolean identifyConflictingProbeSets = false;
-	private double correlationCutoffConflictingProbeSets;
+	private boolean							identifyConflictingProbeSets	= false;
+	private double							correlationCutoffConflictingProbeSets;
 
-	private double minDose;
-	private double maxDose;
-	private double minPositiveDose;
+	private boolean							userFoldChangeFilter			= false;
+	private double							maxFoldChange;
+
+	private double							minDose;
+	private double							maxDose;
+	private double							minPositiveDose;
 
 	public DefinedCategoryFileParameters getProbeFileParameters()
 	{
@@ -255,6 +258,26 @@ public class CategoryAnalysisParameters
 	public void setBmduBmdRatio(double bmduBmdRatio)
 	{
 		this.bmduBmdRatio = bmduBmdRatio;
+	}
+
+	public boolean isUserFoldChangeFilter()
+	{
+		return userFoldChangeFilter;
+	}
+
+	public void setUserFoldChangeFilter(boolean userFoldChangeFilter)
+	{
+		this.userFoldChangeFilter = userFoldChangeFilter;
+	}
+
+	public double getMaxFoldChange()
+	{
+		return maxFoldChange;
+	}
+
+	public void setMaxFoldChange(double maxFoldChange)
+	{
+		this.maxFoldChange = maxFoldChange;
 	}
 
 }

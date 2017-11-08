@@ -31,93 +31,99 @@ import javafx.stage.Stage;
 public class CategorizationView extends BMDExpressViewBase implements ICategorizationView, Initializable
 {
 
-	CategorizationPresenter presenter;
+	CategorizationPresenter					presenter;
 
-	private CategoryAnalysisEnum catAnalysisEnum;
-	private DefinedCategoryFileParameters probeFileParameters;
-	private DefinedCategoryFileParameters categoryFileParameters;
+	private CategoryAnalysisEnum			catAnalysisEnum;
+	private DefinedCategoryFileParameters	probeFileParameters;
+	private DefinedCategoryFileParameters	categoryFileParameters;
 
 	// FXML injection
 
 	// checkboxes
 	@FXML
-	private CheckBox BMDUBMDCheckBox;
+	private CheckBox						BMDUBMDCheckBox;
 	@FXML
-	private CheckBox BMDUBMDLCheckBox;
+	private CheckBox						BMDUBMDLCheckBox;
 
 	@FXML
-	private CheckBox bmdFilter4CheckBox;
+	private CheckBox						bmdFilter4CheckBox;
 	@FXML
-	private CheckBox bmdFilter3CheckBox;
+	private CheckBox						bmdFilter3CheckBox;
 	@FXML
-	private CheckBox bmdFilter2CheckBox;
+	private CheckBox						bmdFilter2CheckBox;
 	@FXML
-	private CheckBox bmdFilter1CheckBox;
+	private CheckBox						bmdFilter1CheckBox;
 	@FXML
-	private CheckBox conflictingProbeSetsCheckBox;
+	private CheckBox						conflictingProbeSetsCheckBox;
 	@FXML
-	private CheckBox removePromiscuousProbesCheckBox;
+	private CheckBox						removePromiscuousProbesCheckBox;
 
 	// textfields
 	@FXML
-	private TextField correlationCutoffProbeSetsValue;
+	private TextField						correlationCutoffProbeSetsValue;
 	@FXML
-	private TextField bmdFilter2Value;
+	private TextField						bmdFilter2Value;
 	@FXML
-	private TextField bmdFilter3Value;
+	private TextField						bmdFilter3Value;
 	@FXML
-	private TextField bmdFilter4Value;
+	private TextField						bmdFilter4Value;
 
 	@FXML
-	private TextField BMDUBMDTextbox;
+	private TextField						BMDUBMDTextbox;
 	@FXML
-	private TextField BMDUBMDLTextbox;
+	private TextField						BMDUBMDLTextbox;
 
 	// ComboBoxes
 	@FXML
-	private ComboBox categoryComboBox;
+	private ComboBox						categoryComboBox;
 	@FXML
-	private Label selectionLabel;
+	private Label							selectionLabel;
 
 	@FXML
-	private HBox probeFileHBox;
+	private HBox							probeFileHBox;
 	@FXML
-	private HBox categoryFileHBox;
+	private HBox							categoryFileHBox;
 	@FXML
-	private HBox selectionHBox;
+	private HBox							selectionHBox;
 
 	@FXML
-	private VBox mainVBox;
+	private VBox							mainVBox;
 
 	@FXML
-	private Label probeFileLabel;
+	private Label							probeFileLabel;
 	@FXML
-	private TextField probeFileTextField;
+	private TextField						probeFileTextField;
 	@FXML
-	private Button browseProbeFile;
+	private Button							browseProbeFile;
 
 	@FXML
-	private Label categoryFileLabel;
+	private Label							categoryFileLabel;
 	@FXML
-	private TextField categoryFileTextField;
+	private TextField						categoryFileTextField;
 	@FXML
-	private Button browseCategoryFile;
+	private Button							browseCategoryFile;
 
 	// labels
 	@FXML
-	private Label bMDAnalysisName;
+	private Label							bMDAnalysisName;
 
 	@FXML
-	private ProgressBar progressBar;
+	private ProgressBar						progressBar;
 	@FXML
-	private Label progressLabel;
+	private Label							progressLabel;
 	@FXML
-	private HBox progressHBox;
+	private HBox							progressHBox;
 
 	@FXML
-	private Button startButton;
+	private Button							startButton;
 	@FXML
-	private Button closeButton;
+	private Button							closeButton;
+
+	// ComboBoxes
+	@FXML
+	private CheckBox						bmdFilterMaxFoldChangeCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxFoldChangeValue;
 
 	public CategorizationView()
 	{
@@ -261,6 +267,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setRemoveBMDUBMDRatio(this.BMDUBMDCheckBox.isSelected());
 		params.setBmduBmdRatio(Double.valueOf(this.BMDUBMDTextbox.getText()));
+
+		params.setUserFoldChangeFilter(this.bmdFilterMaxFoldChangeCheckBox.isSelected());
+		params.setMaxFoldChange(Double.valueOf(this.bmdFilterMaxFoldChangeValue.getText()));
 
 		return params;
 

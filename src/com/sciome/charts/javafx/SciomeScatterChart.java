@@ -19,7 +19,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.ScatterChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
@@ -171,8 +170,10 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 				if (dataPointValue1 == null || dataPointValue2 == null)
 					continue;
 				SciomeData<Number, Number> xyData = new SciomeData<>(chartData.getDataPointLabel(),
-						dataPointValue1, dataPointValue2, new ChartExtraValue(chartData.getDataPointLabel(),
-								countMap.get(chartData.getDataPointLabel())));
+						dataPointValue1, dataPointValue2,
+						new ChartExtraValue(chartData.getDataPointLabel(),
+								countMap.get(chartData.getDataPointLabel()),
+								chartData.getCharttableObject()));
 				chartLabelSet.add(chartData.getDataPointLabel());
 				nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
 						new NodeInformation(chartData.getCharttableObject(), false));
@@ -315,11 +316,9 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 	@Override
 	public List<String> getLinesToExport()
 	{
-		XYChart xyChart = (XYChart) getChart();
 
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-		List<XYChart.Series> data = xyChart.getData();
 
 		sb.append("series");
 		sb.append("\t");
@@ -329,24 +328,22 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
+		for (Object obj : this.seriesData)
 		{
-
-			System.out.println(seriesData.getName());
-			for (Object d : seriesData.getData())
+			SciomeSeries sData = (SciomeSeries) obj;
+			for (Object d : sData.getData())
 			{
-				XYChart.Data xychartData = (XYChart.Data) d;
+				SciomeData xychartData = (SciomeData) d;
 				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				Double X = (Double) xychartData.getXValue();
-				Double Y = (Double) xychartData.getYValue();
-				StackPane node = (StackPane) xychartData.getNode();
+				Double X = (Double) xychartData.getxValue();
+				Double Y = (Double) xychartData.getyValue();
 
-				sb.append(seriesData.getName());
+				sb.append(sData.getName());
 
 				sb.append("\t");
 
@@ -354,7 +351,7 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 				sb.append("\t");
 				sb.append(Y);
 				sb.append("\t");
-				sb.append(node.getUserData().toString());
+				sb.append(extraValue.userData.toString());
 
 				returnList.add(sb.toString());
 

@@ -242,6 +242,13 @@ public class CategoryMapTool
 							+ params.getnFoldbelowLowestDoseValue());
 			rstName += "_nfold" + df2.format(params.getnFoldbelowLowestDoseValue());
 		}
+
+		if (params.isUserFoldChangeFilter())
+		{
+			analysisInfo.getNotes().add("Remove Genes With Max Fold Change <: " + params.getMaxFoldChange());
+			rstName += "_foldchange" + df1.format(params.getMaxFoldChange());
+		}
+
 		if (params.isIdentifyConflictingProbeSets())
 		{
 			analysisInfo.getNotes().add(
@@ -452,6 +459,14 @@ public class CategoryMapTool
 				sub = bmdStats.checkNFoldBelowLowestDose(subList, params.getnFoldbelowLowestDoseValue(),
 						subHashG2Ids, removedProbes).size();
 				categoryAnalysisResult.setGenesWithNFoldBelowLowPostiveDoseValue(sub);
+			}
+
+			if (params.isUserFoldChangeFilter())
+			{
+				sub = bmdStats
+						.checkFoldChange(subList, params.getMaxFoldChange(), subHashG2Ids, removedProbes)
+						.size();
+				categoryAnalysisResult.setGenesWithFoldChangeAboveValue(sub);
 			}
 
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);

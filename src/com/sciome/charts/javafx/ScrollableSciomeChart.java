@@ -216,11 +216,13 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	{
 		public String	label;
 		public Integer	count;
+		public Object	userData;
 
-		public ChartExtraValue(String l, Integer c)
+		public ChartExtraValue(String l, Integer c, Object u)
 		{
 			label = l;
 			count = c;
+			userData = u;
 		}
 
 		@Override

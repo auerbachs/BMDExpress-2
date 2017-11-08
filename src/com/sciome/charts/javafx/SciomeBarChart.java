@@ -20,7 +20,6 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.Chart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
@@ -134,8 +133,10 @@ public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataEx
 				if (dataPointValue == null)
 					continue;
 				SciomeData<String, Number> xyData = new SciomeData<>(chartData.getDataPointLabel(),
-						chartData.getDataPointLabel(), dataPointValue, new ChartExtraValue(
-								chartData.getDataPointLabel(), countMap.get(chartData.getDataPointLabel())));
+						chartData.getDataPointLabel(), dataPointValue,
+						new ChartExtraValue(chartData.getDataPointLabel(),
+								countMap.get(chartData.getDataPointLabel()),
+								chartData.getCharttableObject()));
 
 				series1.getData().add(xyData);
 
@@ -159,7 +160,7 @@ public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataEx
 				if (!chartLabelSet.contains(chartedKey))
 				{
 					SciomeData<String, Number> xyData = new SciomeData<>(chartedKey, chartedKey, 0.0,
-							new ChartExtraValue(chartedKey, countMap.get(chartedKey)));
+							new ChartExtraValue(chartedKey, countMap.get(chartedKey), null));
 
 					series1.getData().add(xyData);
 					nodeInfoMap.put(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
@@ -282,11 +283,9 @@ public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataEx
 	@Override
 	public List<String> getLinesToExport()
 	{
-		XYChart xyChart = (XYChart) getChart();
 
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-		List<XYChart.Series> data = xyChart.getData();
 
 		sb.append("series");
 		sb.append("\t");
@@ -296,32 +295,30 @@ public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataEx
 		sb.append("\t");
 		sb.append("component");
 		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
+		for (Object obj : this.seriesData)
 		{
-
-			System.out.println(seriesData.getName());
-			for (Object d : seriesData.getData())
+			SciomeSeries sData = (SciomeSeries) obj;
+			for (Object d : sData.getData())
 			{
-				XYChart.Data xychartData = (XYChart.Data) d;
+				SciomeData xychartData = (SciomeData) d;
 				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
-				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
+				String X = (String) xychartData.getxValue();
+
+				Double Y = (Double) xychartData.getyValue();
+
+				if (extraValue.userData == null) // this means it's a faked value for showing multiple
 													// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				String X = (String) xychartData.getXValue();
-
-				Double Y = (Double) xychartData.getYValue();
-
-				Node node = xychartData.getNode();
-
-				sb.append(seriesData.getName());
+				sb.append(sData.getName());
 				sb.append("\t");
 				sb.append(X);
 				sb.append("\t");
 				sb.append(Y);
 				sb.append("\t");
-				sb.append(node.getUserData().toString());
+
+				sb.append(extraValue.userData.toString());
 
 				returnList.add(sb.toString());
 

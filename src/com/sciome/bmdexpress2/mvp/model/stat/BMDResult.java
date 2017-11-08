@@ -20,6 +20,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
+import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.charts.annotation.ChartableData;
 import com.sciome.charts.annotation.ChartableDataLabel;
 
@@ -192,6 +193,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				probeToGeneMap.put(refGeneAnnotation.getProbe().getId(), refGeneAnnotation);
 			}
 		}
+		int index = 0;
 		for (ProbeStatResult probeStatResult : probeStatResults)
 		{
 			Double adjustedPValue = null;
@@ -211,6 +213,30 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				bestFoldChange = prefilter.getBestFoldChange().doubleValue();
 				foldChanges = prefilter.getFoldChanges();
 			}
+
+			// if we are working of an earlier version of, let's go ahead and calcualte fold change data.
+			// it's not too expensive.
+			if (bestFoldChange == null)
+			{
+				FoldChange fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 2.0);
+				bestFoldChange = fc.getBestFoldChangeValue(probeStatResult.getProbeResponse().getResponses())
+						.doubleValue();
+				foldChanges = fc.getFoldChanges();
+
+				if (index == 0)
+				{
+					// at this point, the header doesn't know about individual fold changes
+					// so we can add it here to the header row
+					int i = 1;
+					for (Float foldChange : foldChanges)
+					{
+						columnHeader.add("FC Dose Level " + i);
+						i++;
+					}
+				}
+			}
+			index++;
+
 			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
 					foldChanges);
 		}

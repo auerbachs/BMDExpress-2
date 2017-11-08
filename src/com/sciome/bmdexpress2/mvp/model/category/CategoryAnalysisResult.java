@@ -61,6 +61,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	private Integer								genesWithBMDUBMDLRatioBelowValue;
 	private Integer								genesWithBMDUBMDRatioBelowValue;
 	private Integer								genesWithNFoldBelowLowPostiveDoseValue;
+	private Integer								genesWithFoldChangeAboveValue;
+
 	private Integer								genesThatPassedAllFilters;
 
 	private Double								fishersExactLeftPValue;
@@ -295,6 +297,17 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	public void setGenesWithNFoldBelowLowPostiveDoseValue(Integer genesWithNFoldBelowLowPostiveDoseValue)
 	{
 		this.genesWithNFoldBelowLowPostiveDoseValue = genesWithNFoldBelowLowPostiveDoseValue;
+	}
+
+	@Filterable(key = "Genes With Max Fold Change >=")
+	public Integer getGenesWithFoldChangeAboveValue()
+	{
+		return genesWithFoldChangeAboveValue;
+	}
+
+	public void setGenesWithFoldChangeAboveValue(Integer genesWithFoldChangeAboveValue)
+	{
+		this.genesWithFoldChangeAboveValue = genesWithFoldChangeAboveValue;
 	}
 
 	@ChartableDataPoint(key = "Percentage")
@@ -1092,6 +1105,9 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		{
 			headers.add("Genes with BMD <= N-Fold Lowest Positive Dose ");
 		}
+
+		if (genesWithFoldChangeAboveValue != null)
+			headers.add("Genes with max Fold Change >=");
 		headers.add("Genes That Passed All Filters");
 
 		headers.add("Fisher's Exact Left P-Value");
@@ -1206,6 +1222,9 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		if (genesWithNFoldBelowLowPostiveDoseValue != null)
 			row.add(this.genesWithNFoldBelowLowPostiveDoseValue);
+
+		if (genesWithFoldChangeAboveValue != null)
+			row.add(genesWithFoldChangeAboveValue);
 		row.add(getAllGenesPassedAllFilters());
 		row.add(this.fishersExactLeftPValue);
 		row.add(this.fishersExactRightPValue);
@@ -1338,30 +1357,20 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		// starting with the top field, check to see the first one that
 		// is not null to be able to figure out which value
 		// represents the number of genes that passed all filters.
-		if (genesWithNFoldBelowLowPostiveDoseValue != null)
-		{
+		if (genesWithFoldChangeAboveValue != null)
+			return genesWithFoldChangeAboveValue;
+		else if (genesWithNFoldBelowLowPostiveDoseValue != null)
 			return genesWithNFoldBelowLowPostiveDoseValue;
-		}
 		else if (genesWithBMDUBMDLRatioBelowValue != null)
-		{
 			return genesWithBMDUBMDLRatioBelowValue;
-		}
 		else if (genesWithBMDUBMDRatioBelowValue != null)
-		{
 			return genesWithBMDUBMDRatioBelowValue;
-		}
 		else if (genesWithBMDBMDLRatioBelowValue != null)
-		{
 			return genesWithBMDBMDLRatioBelowValue;
-		}
 		else if (genesWithBMDpValueGreaterEqualValue != null)
-		{
 			return genesWithBMDpValueGreaterEqualValue;
-		}
 		else if (genesWithBMDLessEqualHighDose != null)
-		{
 			return genesWithBMDLessEqualHighDose;
-		}
 
 		return geneCountSignificantANOVA;
 	}
