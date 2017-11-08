@@ -19,7 +19,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeAccumulationPlot;
 import com.sciome.charts.javafx.SciomeBarChart;
-import com.sciome.charts.javafx.SciomeBoxAndWhiskerChartH;
+import com.sciome.charts.javafx.SciomeRangePlot;
 import com.sciome.charts.javafx.SciomeBubbleChart;
 import com.sciome.charts.javafx.SciomeChartBase;
 import com.sciome.charts.javafx.SciomeHistogram;
@@ -46,7 +46,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		super();
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
 
-		chartCache.put(BOXANDWHISKER, new SciomeBoxAndWhiskerChartH("Range Plot", new ArrayList<>(),
+		chartCache.put(BOXANDWHISKER, new SciomeRangePlot("Range Plot", new ArrayList<>(),
 				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
 				CategoryAnalysisResults.BMD_MEDIAN, null, CategoryAnalysisDataVisualizationView.this));
 

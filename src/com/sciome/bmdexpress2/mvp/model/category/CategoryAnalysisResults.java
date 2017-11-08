@@ -182,7 +182,8 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 		// refresh the bmdResults so that any transient values are populated
 		// the category results are using fold change values that are
 		// gotten from the bmdresults. So they need to be avaiable here.
-		this.bmdResult.refreshTableData();
+		if (bmdResult != null)
+			this.bmdResult.refreshTableData();
 		columnHeader = new ArrayList<>();
 		if (categoryAnalsyisResults == null || categoryAnalsyisResults.size() == 0)
 		{

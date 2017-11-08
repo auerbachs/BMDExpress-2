@@ -13,6 +13,7 @@ import com.sciome.charts.data.ChartDataPack;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
@@ -142,6 +143,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	private void resetChart(int slidervalue)
 	{
 
+		if (getChart() == null)
+			return;
+		if (((XYChart<X, Y>) getChart()).getData() == null)
+			((XYChart<X, Y>) getChart()).setData(FXCollections.observableList(new ArrayList<>()));
 		int i = 0;
 		((XYChart) getChart()).setAnimated(false);
 		this.currentSliderValue = slidervalue;

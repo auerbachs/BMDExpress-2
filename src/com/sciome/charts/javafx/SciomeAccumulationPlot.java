@@ -8,10 +8,12 @@ import java.util.List;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
@@ -24,7 +26,7 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeAccumulationPlot extends SciomeChartBase
+public class SciomeAccumulationPlot extends SciomeChartBase implements ChartDataExporter
 {
 	private final static Integer	MAX_ACCUMULATION_BEFORE_MODULUS	= 300;
 	private final static Integer	MOD_AFTER_REACH_MAX				= 20;
@@ -154,6 +156,7 @@ public class SciomeAccumulationPlot extends SciomeChartBase
 
 						}
 						XYChart.Data theData = new XYChart.Data(currentValue, accumulation);
+						theData.setExtraValue(charttableObjects);
 						theData.setNode(userObjectPane(charttableObjects, accumulation, valuesList, key));
 						series.getData().add(theData);
 						charttableObjects = new ArrayList<>();
@@ -174,6 +177,7 @@ public class SciomeAccumulationPlot extends SciomeChartBase
 			if (currentValue != null)
 			{
 				XYChart.Data theData = new XYChart.Data(currentValue, accumulation);
+				theData.setExtraValue(charttableObjects);
 				theData.setNode(userObjectPane(charttableObjects, accumulation, valuesList, key));
 				series.getData().add(theData);
 			}
@@ -289,6 +293,64 @@ public class SciomeAccumulationPlot extends SciomeChartBase
 	protected void redrawChart()
 	{
 		showChart();
+
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/*
+	 * implement the getting of lines that need to be exported.
+	 */
+	@Override
+	public List<String> getLinesToExport()
+	{
+		XYChart xyChart = (XYChart) getChart();
+
+		List<String> returnList = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		List<XYChart.Series> data = xyChart.getData();
+
+		sb.append("series");
+		sb.append("\t");
+		sb.append("x");
+		sb.append("\t");
+		sb.append("y");
+		sb.append("\t");
+		sb.append("components delimited by ///");
+		returnList.add(sb.toString());
+		for (XYChart.Series seriesData : data)
+		{
+
+			for (Object d : seriesData.getData())
+			{
+				sb.setLength(0);
+				XYChart.Data xychartData = (XYChart.Data) d;
+				Double X = (Double) xychartData.getXValue();
+				Double Y = (Double) xychartData.getYValue();
+				List extraValue = (List) xychartData.getExtraValue();
+				Node node = xychartData.getNode();
+
+				StringBuilder components = new StringBuilder();
+				for (Object obj : extraValue)
+				{
+					if (components.length() > 0)
+						components.append("///");
+					components.append(obj.toString());
+				}
+
+				sb.append(seriesData.getName());
+				sb.append("\t");
+				sb.append(X);
+				sb.append("\t");
+				sb.append(Y);
+				sb.append("\t");
+				sb.append(components.toString());
+
+				returnList.add(sb.toString());
+
+			}
+		}
+
+		return returnList;
 
 	}
 

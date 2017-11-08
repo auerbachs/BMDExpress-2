@@ -11,6 +11,7 @@ import java.util.Set;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;
@@ -37,7 +38,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
-public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
+public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataExporter
 {
 
 	// map that keeps track of enough information to instantiate a node.
@@ -47,8 +48,8 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 	private final int						MAXITEMS	= 20;
 
 	@SuppressWarnings("unchecked")
-	public SciomeBoxAndWhiskerChartH(String title, List<ChartDataPack> chartDataPacks, String minKey,
-			String maxKey, String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
+	public SciomeRangePlot(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
+			String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, chartListener);
 
@@ -94,14 +95,14 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 	/**
 	 *
 	 */
-	private class BoxAndWhiskerChart extends XYChart<Number, String>
+	private class RangePlot extends XYChart<Number, String>
 	{
 
 		// -------------- CONSTRUCTORS ----------------------------------------------
 		/**
 		 */
 		@SuppressWarnings("unchecked")
-		public BoxAndWhiskerChart(CategoryAxis yAxis, Axis<Number> xAxis)
+		public RangePlot(CategoryAxis yAxis, Axis<Number> xAxis)
 		{
 			super(xAxis, yAxis);
 			// super.setMinSize(900, 900);
@@ -111,14 +112,17 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 			yAxis.setAnimated(false);
 
 			// initilaize with empty set of data.
-			setData(FXCollections.observableArrayList(new XYChart.Series<Number, String>()));
+			XYChart.Series<Number, String> nullSeries = new XYChart.Series<Number, String>();
+			nullSeries.setName("nullname");
+			setData(FXCollections.observableArrayList());
+			// setData(FXCollections.observableArrayList(nullSeries));
 			setLegend(createLegend());
 		}
 
 		/**
 		 */
 		@SuppressWarnings("unused")
-		public BoxAndWhiskerChart(CategoryAxis yAxis, Axis<Number> xAxis,
+		public RangePlot(CategoryAxis yAxis, Axis<Number> xAxis,
 				ObservableList<Series<Number, String>> data)
 		{
 			this(yAxis, xAxis);
@@ -135,12 +139,7 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 				return node;
 			for (Series series : getData())
 			{
-				if (seriesIndex == 0) // this represents the first data set added that hacks a fix because of
-										// a null problem
-				{
-					seriesIndex++;
-					continue;
-				}
+
 				int colorIndex = (seriesIndex - 1) % 7;
 				Region bar = new Region();
 				bar.setMinWidth(10.0);
@@ -198,8 +197,6 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 						BoxAndWhisker boxAndWhisker = (BoxAndWhisker) itemNode;
 
 						Double close = null;
-						if (extra.getLow() != null)
-							close = getXAxis().getDisplayPosition(extra.getLow()) - x;
 
 						Double high = null;
 						if (extra.getMax() != null)
@@ -217,15 +214,15 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 							double scaler = 2 * (double) barCount / getMaxGraphItems();
 							if (scaler > .9)
 								scaler = .9;
-							candleWidth = xa.getCategorySpacing() * scaler / (seriesCount - 1);
-							double actualCategorySpacing = candleWidth * (seriesCount - 1);
+							candleWidth = xa.getCategorySpacing() * scaler / (seriesCount);
+							double actualCategorySpacing = candleWidth * (seriesCount);
 							spacingOffset = -actualCategorySpacing / 2 + candleWidth / 2;
 							// / 2;
 							// between ticks
 						}
 						// update candle
 						double theSpacingOffset = 0.0;
-						if (seriesCount - 1 > 1)
+						if (seriesCount > 1)
 							theSpacingOffset = seriesIndex * candleWidth + spacingOffset;
 						boxAndWhisker.update(close, high, low, candleWidth, theSpacingOffset);
 
@@ -446,19 +443,17 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 	{
 		private Double	min;
 		private Double	max;
-		private Double	low;
 		private Double	high;
-		private Double	middle;
+		private String	description;
 
-		public BoxAndWhiskerExtraValues(String label, Integer count, Double min, Double max, Double low,
-				Double high, Double middle)
+		public BoxAndWhiskerExtraValues(String label, Integer count, Double min, Double max, Double high,
+				String description)
 		{
 			super(label, count);
 			this.min = min;
 			this.max = max;
-			this.low = low;
 			this.high = high;
-			this.middle = middle;
+			this.description = description;
 		}
 
 		public Double getMin()
@@ -471,19 +466,9 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 			return max;
 		}
 
-		public Double getLow()
-		{
-			return low;
-		}
-
 		public Double getHigh()
 		{
 			return high;
-		}
-
-		public Double getMiddle()
-		{
-			return middle;
 		}
 
 	}
@@ -644,7 +629,7 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 		xAxis.setLabel("Category");
 		// yAxis.setLabel(minKey + "," + lowKey + "," + key + "," + maxKey);
 		yAxis.setLabel(minKey + "," + key + "," + maxKey);
-		BoxAndWhiskerChart barChart = new BoxAndWhiskerChart(xAxis, yAxis);
+		RangePlot barChart = new RangePlot(xAxis, yAxis);
 
 		barChart.setTitle("Range Plot");
 
@@ -708,8 +693,8 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 						dataPointValue, chartData.getDataPointLabel(),
 						new BoxAndWhiskerExtraValues(chartData.getDataPointLabel(),
 								countMap.get(chartData.getDataPointLabel()), dataPointValueMinKey,
-								dataPointValueMaxKey, dataPointValueLowKey, dataPointValue,
-								dataPointValueMiddleKey));
+								dataPointValueMaxKey, dataPointValueMiddleKey,
+								chartData.getCharttableObject().toString()));
 
 				series1.getData().add(xyData);
 
@@ -733,7 +718,7 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 				{
 					SciomeData<Number, String> xyData = new SciomeData<>(chartedKey, avg, chartedKey,
 							new BoxAndWhiskerExtraValues(chartedKey, countMap.get(chartedKey), avg, avg, avg,
-									avg, avg));
+									""));
 
 					series1.getData().add(xyData);
 					nodeInfoMap.put(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
@@ -834,6 +819,70 @@ public class SciomeBoxAndWhiskerChartH extends ScrollableSciomeChart
 	protected void redrawChart()
 	{
 		initChart();
+
+	}
+
+	/*
+	 * implement the getting of lines that need to be exported.
+	 */
+	@Override
+	public List<String> getLinesToExport()
+	{
+		XYChart xyChart = (XYChart) getChart();
+
+		List<String> returnList = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		List<XYChart.Series> data = xyChart.getData();
+
+		sb.append("series");
+		sb.append("\t");
+		sb.append("y");
+		sb.append("\t");
+		sb.append("min");
+		sb.append("\t");
+		sb.append("value");
+		sb.append("\t");
+		sb.append("max");
+		sb.append("\t");
+		sb.append("component");
+		returnList.add(sb.toString());
+		for (XYChart.Series seriesData : data)
+		{
+
+			System.out.println(seriesData.getName());
+			for (Object d : seriesData.getData())
+			{
+				XYChart.Data xychartData = (XYChart.Data) d;
+				BoxAndWhiskerExtraValues extraValue = (BoxAndWhiskerExtraValues) xychartData.getExtraValue();
+				if (extraValue.description.equals("")) // this means it's a faked value for showing multiple
+														// datasets together. skip it
+					continue;
+				sb.setLength(0);
+
+				Double X = (Double) xychartData.getXValue();
+				String Y = (String) xychartData.getYValue();
+
+				Node node = xychartData.getNode();
+
+				sb.append(seriesData.getName());
+				sb.append("\t");
+				sb.append(Y);
+				sb.append("\t");
+
+				sb.append(extraValue.getMin());
+				sb.append("\t");
+				sb.append(X);
+				sb.append("\t");
+				sb.append(extraValue.getMax());
+				sb.append("\t");
+				sb.append(extraValue.description);
+
+				returnList.add(sb.toString());
+
+			}
+		}
+
+		return returnList;
 
 	}
 

@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +62,14 @@ public class BMDProject implements Serializable
 	{
 		this.oneWayANOVAResults = oneWayANOVAResults;
 	}
-	
+
 	public List<WilliamsTrendResults> getWilliamsTrendResults()
 	{
-		// since williams trend test is a new structure, we must check for null in case an older project file is loaded and
-		// the trend test is null.  The rest of the project expects an empty list.
-		if(williamsTrendResults == null)  
-			williamsTrendResults	= new ArrayList<>();
+		// since williams trend test is a new structure, we must check for null in case an older project file
+		// is loaded and
+		// the trend test is null. The rest of the project expects an empty list.
+		if (williamsTrendResults == null)
+			williamsTrendResults = new ArrayList<>();
 		return williamsTrendResults;
 	}
 
@@ -75,13 +77,14 @@ public class BMDProject implements Serializable
 	{
 		this.williamsTrendResults = williamsTrendResults;
 	}
-	
+
 	public List<OriogenResults> getOriogenResults()
 	{
-		// since oriogen test is a new structure, we must check for null in case an older project file is loaded and
-		// the trend test is null.  The rest of the project expects an empty list.
-		if(oriogenResults == null)  
-			oriogenResults	= new ArrayList<>();
+		// since oriogen test is a new structure, we must check for null in case an older project file is
+		// loaded and
+		// the trend test is null. The rest of the project expects an empty list.
+		if (oriogenResults == null)
+			oriogenResults = new ArrayList<>();
 		return oriogenResults;
 	}
 
@@ -113,10 +116,24 @@ public class BMDProject implements Serializable
 	@JsonIgnore
 	public boolean isProjectEmpty()
 	{
-		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0 || williamsTrendResults.size() > 0 ||
-				oriogenResults.size() > 0 || bMDResult.size() > 0 || categoryAnalysisResults.size() > 0)
+		if (doseResponseExperiments.size() > 0 || oneWayANOVAResults.size() > 0
+				|| williamsTrendResults.size() > 0 || oriogenResults.size() > 0 || bMDResult.size() > 0
+				|| categoryAnalysisResults.size() > 0)
 			return false;
 		return true;
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	{
+
+		in.defaultReadObject();
+
+		if (williamsTrendResults == null)
+			williamsTrendResults = new ArrayList<>();
+
+		if (oriogenResults == null)
+			oriogenResults = new ArrayList<>();
+
 	}
 
 }

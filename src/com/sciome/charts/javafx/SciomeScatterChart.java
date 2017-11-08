@@ -1,5 +1,6 @@
 package com.sciome.charts.javafx;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
@@ -24,7 +27,7 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeScatterChart extends ScrollableSciomeChart
+public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDataExporter
 {
 	// map that keeps track of enough information to instantiate a node.
 	// so we don't have to store 10,000 nodes in memory
@@ -304,5 +307,60 @@ public class SciomeScatterChart extends ScrollableSciomeChart
 	{
 		initChart();
 
+	}
+
+	/*
+	 * implement the getting of lines that need to be exported.
+	 */
+	@Override
+	public List<String> getLinesToExport()
+	{
+		XYChart xyChart = (XYChart) getChart();
+
+		List<String> returnList = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		List<XYChart.Series> data = xyChart.getData();
+
+		sb.append("series");
+		sb.append("\t");
+		sb.append("x");
+		sb.append("\t");
+		sb.append("y");
+		sb.append("\t");
+		sb.append("label");
+		returnList.add(sb.toString());
+		for (XYChart.Series seriesData : data)
+		{
+
+			System.out.println(seriesData.getName());
+			for (Object d : seriesData.getData())
+			{
+				XYChart.Data xychartData = (XYChart.Data) d;
+				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
+				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
+													// datasets together. skip it
+					continue;
+				sb.setLength(0);
+
+				Double X = (Double) xychartData.getXValue();
+				Double Y = (Double) xychartData.getYValue();
+				StackPane node = (StackPane) xychartData.getNode();
+
+				sb.append(seriesData.getName());
+
+				sb.append("\t");
+
+				sb.append(X);
+				sb.append("\t");
+				sb.append(Y);
+				sb.append("\t");
+				sb.append(node.getUserData().toString());
+
+				returnList.add(sb.toString());
+
+			}
+		}
+
+		return returnList;
 	}
 }

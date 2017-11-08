@@ -1,12 +1,14 @@
 package com.sciome.charts.javafx;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +24,7 @@ import javafx.scene.paint.Color;
 /*
  * 
  */
-public class SciomePieChart extends SciomeChartBase
+public class SciomePieChart extends SciomeChartBase implements ChartDataExporter
 {
 
 	private Map<String, Double>			pieDataMap;
@@ -129,6 +131,37 @@ public class SciomePieChart extends SciomeChartBase
 	protected void redrawChart()
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * implement the getting of lines that need to be exported.
+	 */
+	@Override
+	public List<String> getLinesToExport()
+	{
+
+		List<String> returnList = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("label");
+		sb.append("\t");
+		sb.append("value");
+		returnList.add(sb.toString());
+
+		for (final PieChart.Data data : ((PieChart) getChart()).getData())
+		{
+			sb.setLength(0);
+			String label = data.getName().replaceAll("\n", " ");
+			sb.append(label);
+			sb.append("\t");
+			sb.append(data.getPieValue());
+
+			returnList.add(sb.toString());
+
+		}
+
+		return returnList;
 
 	}
 

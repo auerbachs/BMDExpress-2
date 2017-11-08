@@ -1,11 +1,17 @@
 package com.sciome.charts.javafx;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -22,10 +28,12 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
@@ -47,6 +55,8 @@ public abstract class SciomeChartBase extends StackPane
 	protected Label					warningTooManyNodesLabel	= new Label(
 			"There are too many data points to show all.  Please use the slider to scroll through your data.");
 	private VBox					vBox;
+
+	private Button					exportToTextButton;
 	private Button					maxMinButton;
 	private Button					configurationButton;
 	private HBox					checkBoxes;
@@ -61,7 +71,21 @@ public abstract class SciomeChartBase extends StackPane
 		this.chartDataPacks = chartDataPacks;
 		vBox = new VBox();
 		maxMinButton = GlyphsDude.createIconButton(FontAwesomeIcon.EXPAND);
+		maxMinButton.setTooltip(new Tooltip("View this chart in a large separate window."));
 		configurationButton = GlyphsDude.createIconButton(FontAwesomeIcon.GEAR);
+		configurationButton.setTooltip(new Tooltip("Configure the X and Y axis of this chart."));
+		exportToTextButton = GlyphsDude.createIconButton(FontAwesomeIcon.DOWNLOAD);
+		exportToTextButton.setTooltip(new Tooltip("Click to download textual representation of this chart."));
+
+		exportToTextButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e)
+			{
+				performDownload();
+
+			}
+
+		});
 
 		HBox overlayButtons = new HBox();
 
@@ -83,6 +107,12 @@ public abstract class SciomeChartBase extends StackPane
 			}
 
 		});
+
+		// only show the export to text button if this instance is
+		// implementing the ChartDataExporter
+		if (this instanceof ChartDataExporter)
+			overlayButtons.getChildren().addAll(exportToTextButton);
+
 		overlayButtons.getChildren().addAll(configurationButton, maxMinButton);
 		overlayButtons.setAlignment(Pos.TOP_RIGHT);
 		this.getChildren().addAll(overlayButtons, vBox);
@@ -108,6 +138,7 @@ public abstract class SciomeChartBase extends StackPane
 		showLogAxes(allowXLogAxis, allowYLogAxis, allowLockXAxis, allowLockYAxis, new ArrayList<>());
 	}
 
+	@SuppressWarnings("restriction")
 	protected void showLogAxes(boolean allowXLogAxis, boolean allowYLogAxis, boolean allowLockXAxis,
 			boolean allowLockYAxis, List<CheckBox> otherComponents)
 	{
@@ -135,6 +166,7 @@ public abstract class SciomeChartBase extends StackPane
 
 	}
 
+	@SuppressWarnings("restriction")
 	protected void showChart(Label caption2)
 	{
 		vBox.getChildren().remove(chart);
@@ -418,6 +450,41 @@ public abstract class SciomeChartBase extends StackPane
 		{
 			this.chartConfiguration = value.get();
 			redrawChart();
+		}
+
+	}
+
+	/*
+	 * perform data export of the chart first we need to make sure that this implements the ChartDataExporter
+	 * interface. if so, get the lines and send to a file.
+	 */
+	private void performDownload()
+	{
+		if (!(this instanceof ChartDataExporter))
+			return;
+
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle(title);
+		File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
+		if (initialDirectory.exists())
+			fileChooser.setInitialDirectory(initialDirectory);
+		fileChooser.setInitialFileName("chartdataExport.txt");
+		File selectedFile = fileChooser.showSaveDialog(this.getScene().getWindow());
+
+		if (selectedFile == null)
+			return;
+
+		List<String> linesToExport = ((ChartDataExporter) this).getLinesToExport();
+
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+			writer.write(String.join("\n", linesToExport));
+			writer.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 
 	}

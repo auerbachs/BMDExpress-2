@@ -7,6 +7,7 @@ import java.util.List;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.export.ChartDataExporter;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeHistogram extends SciomeChartBase
+public class SciomeHistogram extends SciomeChartBase implements ChartDataExporter
 {
 
 	private Double		bucketsize			= 20.0;
@@ -227,4 +228,62 @@ public class SciomeHistogram extends SciomeChartBase
 		showChart();
 
 	}
+
+	/*
+	 * implement the getting of lines that need to be exported.
+	 */
+	@Override
+	public List<String> getLinesToExport()
+	{
+		XYChart xyChart = (XYChart) getChart();
+
+		List<String> returnList = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		List<XYChart.Series> data = xyChart.getData();
+
+		sb.append("x");
+		sb.append("\t");
+		sb.append("y");
+		sb.append("\t");
+		sb.append("components delimited by ///");
+		returnList.add(sb.toString());
+		for (XYChart.Series seriesData : data)
+		{
+
+			for (Object d : seriesData.getData())
+			{
+				XYChart.Data xychartData = (XYChart.Data) d;
+
+				sb.setLength(0);
+				String X = (String) xychartData.getXValue();
+
+				Double Y = (Double) xychartData.getYValue();
+
+				Node node = xychartData.getNode();
+				List<Object> objects = (List) node.getUserData();
+
+				StringBuilder components = new StringBuilder();
+				for (Object obj : objects)
+				{
+					if (components.length() > 0)
+						components.append("///");
+					components.append(obj.toString());
+				}
+
+				sb.append(X);
+				sb.append("\t");
+				sb.append(Y);
+				sb.append("\t");
+
+				sb.append(components);
+
+				returnList.add(sb.toString());
+
+			}
+		}
+
+		return returnList;
+
+	}
+
 }
