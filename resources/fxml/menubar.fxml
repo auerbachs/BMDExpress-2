@@ -42,9 +42,13 @@
       </Menu>
       <Menu mnemonicParsing="false" text="Tools">
          <items>
-            <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />            
-            <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="William's Trend" />    
-            <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />
+            <Menu mnemonicParsing="false" text="Prefilter">
+              <items>            
+                  <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="William's Trend" />
+                  <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />    
+                  <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />
+              </items>
+            </Menu>
             <MenuItem fx:id="bMDAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalyses" text="Benchmark Dose Analyses" />
             <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
             <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />
