@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -43,6 +44,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	private TextField					foldChangeValueTextField;
 	@FXML
 	private ProgressBar					oriogenProgressBar;
+	@FXML
+	private Label						oriogenProgressMessage;
 	@FXML
 	private Button						startButton;
 	@FXML
@@ -186,6 +189,11 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	@Override
 	public void updateProgress(double progress) {
 		oriogenProgressBar.setProgress(progress);
+	}
+	
+	@Override
+	public void updateMessage(String message) {
+		oriogenProgressMessage.setText(message);
 	}
 	
 	@Override

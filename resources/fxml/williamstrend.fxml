@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="500.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView">
+<BorderPane maxHeight="500.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView">
    <center>
-      <VBox maxHeight="450.0" prefHeight="450.0" prefWidth="600.0">
+      <VBox maxHeight="500.0" prefHeight="500.0" prefWidth="600.0">
          <children>
             <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
                <children>
@@ -81,13 +81,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="158.0" prefWidth="600.0">
+            <AnchorPane maxHeight="200.0" prefHeight="200.0" prefWidth="600.0">
                <children>
-                  <TitledPane collapsible="false" maxHeight="190.0" minHeight="150.0" prefHeight="190.0" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TitledPane collapsible="false" maxHeight="250.0" minHeight="150.0" prefHeight="250.0" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
                            <children>
-                              <GridPane prefHeight="114.0" prefWidth="598.0">
+                              <GridPane prefHeight="174.0" prefWidth="598.0">
                                  <children>
                                     <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <GridPane.margin>
@@ -112,6 +112,7 @@
                                        </GridPane.margin>
                                     </Label>
                                     <ProgressBar fx:id="williamsTrendProgress" prefWidth="160.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label fx:id="williamsProgressMessage" alignment="CENTER" maxWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
@@ -119,6 +120,7 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>

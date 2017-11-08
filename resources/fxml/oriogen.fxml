@@ -92,13 +92,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="158.0" prefWidth="600.0">
+            <AnchorPane prefHeight="200.0" prefWidth="600.0">
                <children>
                   <TitledPane collapsible="false" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
                            <children>
-                              <GridPane prefHeight="114.0" prefWidth="598.0">
+                              <GridPane prefHeight="140.0" prefWidth="598.0">
                                  <children>
                                     <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <GridPane.margin>
@@ -123,6 +123,11 @@
                                        </GridPane.margin>
                                     </Label>
                                     <ProgressBar fx:id="oriogenProgressBar" prefWidth="160.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label fx:id="oriogenProgressMessage" alignment="CENTER" maxWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                    </Label>
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
@@ -130,6 +135,7 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>

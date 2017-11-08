@@ -18,6 +18,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -40,6 +41,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	private TextField					foldChangeValueTextField;
 	@FXML
 	private ProgressBar					williamsTrendProgress;
+	@FXML
+	private Label						williamsProgressMessage;
 	@FXML
 	private Button						startButton;
 	@FXML
@@ -171,6 +174,11 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	@Override
 	public void updateProgress(double progress) {
 		williamsTrendProgress.setProgress(progress);
+	}
+	
+	@Override
+	public void updateMessage(String message) {
+		williamsProgressMessage.setText(message);
 	}
 	
 	@Override

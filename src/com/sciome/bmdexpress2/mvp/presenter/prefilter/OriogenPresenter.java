@@ -45,10 +45,16 @@ public class OriogenPresenter extends PrefilterPresenterBase<IOriogenView, IPref
 				try
 				{
 					List<OriogenResults> resultList = new ArrayList<OriogenResults>();
+					int count = 1;
 					for(int i = 0; i < processableData.size(); i++) {
-						resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
-								initialBootstraps, maxBootstraps, s0Adjustment,
-								filterOutControlGenes, useFoldFilter, foldFilterValue, me));
+						if(running) {
+							setMessage(count + "/" + processableData.size());
+							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
+									initialBootstraps, maxBootstraps, s0Adjustment,
+									filterOutControlGenes, useFoldFilter, foldFilterValue, me));
+							me.setProgress(0);
+							count++;
+						}
 					}
 					// post the new oriogen object to the event bus so folks can do the right thing.
 					if(resultList != null && resultList.size() > 0 && running) {
@@ -139,6 +145,7 @@ public class OriogenPresenter extends PrefilterPresenterBase<IOriogenView, IPref
 	public void cancel() {
 		running = false;
 		getService().cancel();
+		setMessage("");
 	}
 	
 	@Override
@@ -146,6 +153,13 @@ public class OriogenPresenter extends PrefilterPresenterBase<IOriogenView, IPref
 		Platform.runLater(() ->
 		{
 			getView().updateProgress(progress);
+		});
+	}
+	
+	public void setMessage(String message) {
+		Platform.runLater(() ->
+		{
+			getView().updateMessage(message);
 		});
 	}
 	

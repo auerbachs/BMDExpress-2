@@ -412,7 +412,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			// tc.setCellValueFactory(null);
 			splitPane.getItems().remove(splitPaneMain);
 			splitPane.getItems().remove(filtrationNode);
-			if (tableViewChangeListener != null)
+			if (tableViewChangeListener != null && tableView != null)
 				tableView.getSelectionModel().getSelectedItems().removeListener(tableViewChangeListener);
 
 		}

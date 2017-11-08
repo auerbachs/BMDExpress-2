@@ -44,11 +44,17 @@ public class WilliamsTrendPresenter extends PrefilterPresenterBase<IWilliamsTren
 				try
 				{
 					List<WilliamsTrendResults> resultList = new ArrayList<WilliamsTrendResults>();
+					int count = 1;
 					for (IStatModelProcessable pData : processableData)
 					{
-						resultList.add(getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
-								filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me));
-						me.setProgress(0);
+						if(running) {
+							setMessage(count + "/" + processableData.size());
+							resultList.add(getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
+									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me));
+							
+							me.setProgress(0);
+							count++;
+						}
 					}
 					
 					// post the new williams object to the event bus so folks can do the right thing.
@@ -138,6 +144,7 @@ public class WilliamsTrendPresenter extends PrefilterPresenterBase<IWilliamsTren
 	public void cancel() {
 		running = false;
 		getService().cancel();
+		setMessage("");
 	}
 	
 	@Override
@@ -145,6 +152,14 @@ public class WilliamsTrendPresenter extends PrefilterPresenterBase<IWilliamsTren
 		Platform.runLater(() ->
 		{
 			getView().updateProgress(progress);
+
+		});
+	}
+
+	public void setMessage(String message) {
+		Platform.runLater(() ->
+		{
+			getView().updateMessage(message);
 
 		});
 	}
