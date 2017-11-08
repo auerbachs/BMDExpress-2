@@ -11,6 +11,8 @@ import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.BMDAnalysisResultsDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.service.VisualizationService;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeChartBase;
@@ -33,7 +35,8 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	public BMDAnalysisResultsDataVisualizationView()
 	{
 		super();
-		presenter = new BMDAnalysisResultsDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
+		IVisualizationService service = new VisualizationService();
+		presenter = new BMDAnalysisResultsDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(BMDL_HISTOGRAM + "-" + BMDResult.BMDL, new SciomeHistogram("", new ArrayList<>(),
 				BMDResult.BMDL, 20.0, BMDAnalysisResultsDataVisualizationView.this));

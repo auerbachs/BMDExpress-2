@@ -6,6 +6,8 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.WilliamsTrendDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.service.VisualizationService;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeChartBase;
@@ -22,7 +24,8 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 	public WilliamsTrendDataVisualizationView()
 	{
 		super();
-		presenter = new WilliamsTrendDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
+		IVisualizationService service = new VisualizationService();
+		presenter = new WilliamsTrendDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.UNADJUSTED_PVALUE,
 				new SciomeHistogram("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));

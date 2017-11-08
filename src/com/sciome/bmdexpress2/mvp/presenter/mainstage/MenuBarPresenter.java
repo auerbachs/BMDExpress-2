@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMenuBarView;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;

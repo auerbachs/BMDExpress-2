@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
-import com.sciome.bmdexpress2.mvp.presenter.PrefilterPresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -19,7 +19,7 @@ import com.sciome.commons.interfaces.SimpleProgressUpdater;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class OriogenPresenter extends PrefilterPresenterBase<IOriogenView, IPrefilterService> implements SimpleProgressUpdater {
+public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefilterService> implements SimpleProgressUpdater {
 	private volatile boolean running = false;
 	
 	public OriogenPresenter(IOriogenView view, IPrefilterService service, BMDExpressEventBus eventBus)

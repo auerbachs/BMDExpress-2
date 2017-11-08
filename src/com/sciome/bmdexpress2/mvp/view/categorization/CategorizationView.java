@@ -8,6 +8,8 @@ import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.categorization.CategorizationPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.categorization.ICategorizationView;
+import com.sciome.bmdexpress2.service.CategoryAnalysisService;
+import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -136,7 +138,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	public CategorizationView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new CategorizationPresenter(this, eventBus);
+		ICategoryAnalysisService service = new CategoryAnalysisService();
+		presenter = new CategorizationPresenter(this, service, eventBus);
 	}
 
 	@Override

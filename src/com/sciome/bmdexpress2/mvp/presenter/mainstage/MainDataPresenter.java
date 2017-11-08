@@ -1,7 +1,7 @@
 package com.sciome.bmdexpress2.mvp.presenter.mainstage;
 
 import com.google.common.eventbus.Subscribe;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;

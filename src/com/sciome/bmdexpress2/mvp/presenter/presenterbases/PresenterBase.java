@@ -1,4 +1,4 @@
-package com.sciome.bmdexpress2.mvp.presenter;
+package com.sciome.bmdexpress2.mvp.presenter.presenterbases;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;

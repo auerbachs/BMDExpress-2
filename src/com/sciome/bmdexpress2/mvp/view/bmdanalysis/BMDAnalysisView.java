@@ -9,6 +9,8 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.presenter.bmdanalysis.BMDAnalysisPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
+import com.sciome.bmdexpress2.service.BMDAnalysisService;
+import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
@@ -156,7 +158,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	public BMDAnalysisView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new BMDAnalysisPresenter(this, eventBus);
+		IBMDAnalysisService service = new BMDAnalysisService();
+		presenter = new BMDAnalysisPresenter(this, service, eventBus);
 	}
 
 	@Override

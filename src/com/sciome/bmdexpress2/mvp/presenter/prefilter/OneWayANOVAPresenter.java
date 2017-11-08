@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.presenter.PrefilterPresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -14,7 +14,7 @@ import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 
 //Soure
-public class OneWayANOVAPresenter extends PrefilterPresenterBase<IOneWayANOVAView, IPrefilterService>
+public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView, IPrefilterService>
 {
 	public OneWayANOVAPresenter(IOneWayANOVAView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{

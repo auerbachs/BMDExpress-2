@@ -6,6 +6,8 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.OneWayANOVADataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.service.VisualizationService;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeChartBase;
@@ -24,7 +26,8 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 	public OneWayANOVADataVisualizationView()
 	{
 		super();
-		presenter = new OneWayANOVADataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
+		IVisualizationService service = new VisualizationService();
+		presenter = new OneWayANOVADataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + OneWayANOVAResults.UNADJUSTED_PVALUE,
 				new SciomeHistogram("", new ArrayList<>(), OneWayANOVAResults.UNADJUSTED_PVALUE, 20.0, this));

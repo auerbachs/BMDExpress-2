@@ -6,15 +6,16 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 public class CategoryAnalysisDataVisualizationPresenter extends DataVisualizationPresenter
 {
 
-	public CategoryAnalysisDataVisualizationPresenter(IDataVisualizationView view,
+	public CategoryAnalysisDataVisualizationPresenter(IDataVisualizationView view, IVisualizationService service,
 			BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 	}
 
 	@Override

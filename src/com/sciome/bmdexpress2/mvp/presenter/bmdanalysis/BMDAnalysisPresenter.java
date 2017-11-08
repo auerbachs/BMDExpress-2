@@ -7,8 +7,10 @@ import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
+import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
@@ -25,7 +27,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implements IBMDSToolProgress
+public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView, IBMDAnalysisService> implements IBMDSToolProgress
 {
 
 	BMDSTool							bMDSTool;
@@ -36,9 +38,9 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 	 * Constructors
 	 */
 
-	public BMDAnalysisPresenter(IBMDAnalysisView view, BMDExpressEventBus eventBus)
+	public BMDAnalysisPresenter(IBMDAnalysisView view, IBMDAnalysisService service, BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -71,18 +73,7 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 				{
 					try
 					{
-						inputParameters.setObservations(processableData.getProcessableDoseResponseExperiment()
-								.getTreatments().size());
-						bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
-								processableData.getProcessableDoseResponseExperiment().getTreatments(),
-								inputParameters, modelSelectionParameters, modelsToRun, me, processableData);
-						BMDResult bMDResults = bMDSTool.bmdAnalyses();
-						if (bMDResults == null)
-							return 0;
-						bMDResults.setDoseResponseExperiment(
-								processableData.getProcessableDoseResponseExperiment());
-						if (processableData instanceof PrefilterResults)
-							bMDResults.setPrefilterResults((PrefilterResults) processableData);
+						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters, modelSelectionParameters, modelsToRun, me);
 
 						// post a the new result set to the event bus
 

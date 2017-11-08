@@ -15,6 +15,8 @@ import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.CategoryAnalysisDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.service.VisualizationService;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeAccumulationPlot;
@@ -44,7 +46,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	public CategoryAnalysisDataVisualizationView()
 	{
 		super();
-		presenter = new CategoryAnalysisDataVisualizationPresenter(this, BMDExpressEventBus.getInstance());
+		IVisualizationService service = new VisualizationService();
+		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(BOXANDWHISKER, new SciomeRangePlot("Range Plot", new ArrayList<>(),
 				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
