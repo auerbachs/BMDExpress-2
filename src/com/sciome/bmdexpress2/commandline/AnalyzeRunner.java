@@ -55,7 +55,7 @@ import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 
 /*
- * When command line is in "analyze" mode, use this class to run the different anlayses
+ * When command line is in "analyze" mode, use this class to run the different analyses
  * specified in the configuration file that is passed in.
  */
 public class AnalyzeRunner
@@ -430,7 +430,7 @@ public class AnalyzeRunner
 	}
 
 	/*
-	 * do prefilter. currently the only pre filter is one way anova.
+	 * do prefilter
 	 */
 	private void doPrefilter(PrefilterConfig preFilterConfig)
 	{

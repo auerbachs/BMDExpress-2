@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.service.BMDAnalysisService;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
@@ -23,18 +24,8 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
 			ModelInputParameters inputParameters)
 	{
-		inputParameters.setObservations(
-				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
-		BMDSTool bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
-				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
-				modelSelectionParameters, modelsToRun, this, processableData);
-		BMDResult bMDResults = bMDSTool.bmdAnalyses();
-
-		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
-
-		if (processableData instanceof PrefilterResults)
-			bMDResults.setPrefilterResults((PrefilterResults) processableData);
-		return bMDResults;
+		BMDAnalysisService service = new BMDAnalysisService();
+		return service.bmdAnalysis(processableData, inputParameters, modelSelectionParameters, modelsToRun, this);
 	}
 
 	@Override
@@ -50,5 +41,4 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 		// TODO Auto-generated method stub
 
 	}
-
 }
