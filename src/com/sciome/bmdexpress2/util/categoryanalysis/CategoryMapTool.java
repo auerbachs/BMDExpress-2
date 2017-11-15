@@ -249,6 +249,18 @@ public class CategoryMapTool
 			rstName += "_foldchange" + df1.format(params.getMaxFoldChange());
 		}
 
+		if (params.isUserPValueFilter())
+		{
+			analysisInfo.getNotes().add("Remove Genes With P Value >: " + params.getPValue());
+			rstName += "_pvalue" + df1.format(params.getPValue());
+		}
+		
+		if (params.isUserAdjustedPValueFilter())
+		{
+			analysisInfo.getNotes().add("Remove Genes With Adjusted P Value >: " + params.getAdjustedPValue());
+			rstName += "_adjustedpvalue" + df1.format(params.getAdjustedPValue());
+		}
+		
 		if (params.isIdentifyConflictingProbeSets())
 		{
 			analysisInfo.getNotes().add(
@@ -468,6 +480,22 @@ public class CategoryMapTool
 						.size();
 				categoryAnalysisResult.setGenesWithFoldChangeAboveValue(sub);
 			}
+			
+			if (params.isUserPValueFilter())
+			{
+				sub = bmdStats
+						.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
+						.size();
+				categoryAnalysisResult.setGenesWithPValueAboveValue(sub);
+			}
+			
+			if (params.isUserAdjustedPValueFilter())
+			{
+				sub = bmdStats
+						.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids, removedProbes)
+						.size();
+				categoryAnalysisResult.setGenesWithAdjustedPValueAboveValue(sub);
+			}
 
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);
 
@@ -497,9 +525,11 @@ public class CategoryMapTool
 
 			if (i % 10 == 0)
 			{
-				categoryMapProgress.updateProgress(
-						"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
-						(double) i / (double) rows);
+				if(categoryMapProgress != null) {
+					categoryMapProgress.updateProgress(
+							"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
+							(double) i / (double) rows);
+				}
 			}
 
 		}

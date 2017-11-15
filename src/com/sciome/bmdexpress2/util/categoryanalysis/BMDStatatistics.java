@@ -1052,7 +1052,7 @@ public class BMDStatatistics
 
 		}
 
-		boolean bool = genesBMDs.ascendSortBMDandBMDLs();
+		genesBMDs.ascendSortBMDandBMDLs();
 		// System.out.println(size + "Sorted BMDs: " + genesBMDs.maxGenes());
 	}
 
@@ -1268,6 +1268,98 @@ public class BMDStatatistics
 
 						if (probeStatResult.getBestStatResult() == null || minPositiveDose
 								/ probeStatResult.getBestStatResult().getBMD() > nFoldbelowLowestDoseValue)
+						{
+							probes.remove(st);
+							removedProbes.add(st);
+						}
+					}
+				}
+
+				if (probes == null || probes.isEmpty())
+				{
+					// vectGenes.remove(geneId);
+				}
+				else
+				{
+					pcGenes.add(geneId);
+				}
+			}
+		}
+
+		return pcGenes;
+	}
+	
+	public Vector<String> checkPValueBelowDose(Vector<String> vectGenes,
+			double pValue, Hashtable<String, Vector> subHashG2Ids,
+			Set<String> removedProbes)
+	{
+		Vector<String> pcGenes = new Vector<String>();
+
+		if (vectGenes != null && vectGenes.size() > 0)
+		{
+			for (int i = vectGenes.size() - 1; i >= 0; i--)
+			{
+				String geneId = vectGenes.get(i);
+				Vector<String> probes = new Vector<>(subHashG2Ids.get(geneId));
+
+				if (probes != null && probes.size() > 0)
+				{
+					for (int j = probes.size() - 1; j >= 0; j--)
+					{
+						String st = probes.get(j);
+
+						ProbeStatResult probeStatResult = this.probeGeneMaps.getStatResultMap().get(st);
+						if (probeStatResult == null)
+							continue;
+
+						if (probeStatResult.getPrefilterPValue() != null
+								&& Math.abs(probeStatResult.getPrefilterPValue()) > pValue)
+						{
+							probes.remove(st);
+							removedProbes.add(st);
+						}
+					}
+				}
+
+				if (probes == null || probes.isEmpty())
+				{
+					// vectGenes.remove(geneId);
+				}
+				else
+				{
+					pcGenes.add(geneId);
+				}
+			}
+		}
+
+		return pcGenes;
+	}
+	
+	public Vector<String> checkAdjustedPValueBelowDose(Vector<String> vectGenes,
+			double adjustedPValue, Hashtable<String, Vector> subHashG2Ids,
+			Set<String> removedProbes)
+	{
+		Vector<String> pcGenes = new Vector<String>();
+
+		if (vectGenes != null && vectGenes.size() > 0)
+		{
+			for (int i = vectGenes.size() - 1; i >= 0; i--)
+			{
+				String geneId = vectGenes.get(i);
+				Vector<String> probes = new Vector<>(subHashG2Ids.get(geneId));
+
+				if (probes != null && probes.size() > 0)
+				{
+					for (int j = probes.size() - 1; j >= 0; j--)
+					{
+						String st = probes.get(j);
+
+						ProbeStatResult probeStatResult = this.probeGeneMaps.getStatResultMap().get(st);
+						if (probeStatResult == null)
+							continue;
+
+						if (probeStatResult.getPrefilterAdjustedPValue() != null
+								&& Math.abs(probeStatResult.getPrefilterAdjustedPValue()) > adjustedPValue)
 						{
 							probes.remove(st);
 							removedProbes.add(st);

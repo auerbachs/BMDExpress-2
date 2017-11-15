@@ -126,6 +126,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private CheckBox						bmdFilterMaxFoldChangeCheckBox;
 	@FXML
 	private TextField						bmdFilterMaxFoldChangeValue;
+	@FXML
+	private CheckBox						bmdFilterMaxPValueCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxPValueChangeValue;
+	@FXML
+	private CheckBox						bmdFilterMaxAdjustedPValueCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
 
 	public CategorizationView()
 	{
@@ -273,6 +281,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setUserFoldChangeFilter(this.bmdFilterMaxFoldChangeCheckBox.isSelected());
 		params.setMaxFoldChange(Double.valueOf(this.bmdFilterMaxFoldChangeValue.getText()));
+		
+		params.setUserPValueFilter(this.bmdFilterMaxPValueCheckBox.isSelected());
+		params.setPValue(Double.valueOf(this.bmdFilterMaxPValueChangeValue.getText()));
+		
+		params.setUserAdjustedPValueFilter(this.bmdFilterMaxAdjustedPValueCheckBox.isSelected());
+		params.setAdjustedPValue(Double.valueOf(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
 
 		return params;
 

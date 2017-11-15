@@ -13,26 +13,32 @@ public class CategoryAnalysisParameters
 
 	private String							pathwayDB;
 
-	private boolean							removeBMDGreaterHighDose		= false;
-	private boolean							removePromiscuousProbes			= false;
-	private boolean							removeBMDPValueLessCuttoff		= false;
-	private boolean							removeBMDBMDLRatio				= false;
-	private boolean							removeNFoldBelowLowestDose		= false;
+	private boolean							removeBMDGreaterHighDose			= false;
+	private boolean							removePromiscuousProbes				= false;
+	private boolean							removeBMDPValueLessCuttoff			= false;
+	private boolean							removeBMDBMDLRatio					= false;
+	private boolean							removeNFoldBelowLowestDose			= false;
 	private double							bmdBmdlRatio;
 	private double							nFoldbelowLowestDoseValue;
 	private double							pValueCutoff;
 
-	private boolean							removeBMDUBMDLRatio				= false;
+	private boolean							removeBMDUBMDLRatio					= false;
 	private double							bmduBmdlRatio;
 
-	private boolean							removeBMDUBMDRatio				= false;
+	private boolean							removeBMDUBMDRatio					= false;
 	private double							bmduBmdRatio;
 
-	private boolean							identifyConflictingProbeSets	= false;
+	private boolean							identifyConflictingProbeSets		= false;
 	private double							correlationCutoffConflictingProbeSets;
 
-	private boolean							userFoldChangeFilter			= false;
+	private boolean							userFoldChangeFilter				= false;
 	private double							maxFoldChange;
+	
+	private boolean							userPValueFilter					= false;
+	private double							pValue;
+	
+	private boolean							userAdjustedPValueFilter			= false;
+	private double							adjustedPValue;
 
 	private double							minDose;
 	private double							maxDose;
@@ -278,6 +284,45 @@ public class CategoryAnalysisParameters
 	public void setMaxFoldChange(double maxFoldChange)
 	{
 		this.maxFoldChange = maxFoldChange;
+	}
+
+	public boolean isUserPValueFilter() {
+		return userPValueFilter;
+	}
+
+	public void setUserPValueFilter(boolean userPValueFilter) 
+	{
+		this.userPValueFilter = userPValueFilter;
+	}
+
+	public double getPValue() 
+	{
+		return pValue;
+	}
+
+	public void setPValue(double pValue) 
+	{
+		this.pValue = pValue;
+	}
+
+	public boolean isUserAdjustedPValueFilter()
+	{
+		return userAdjustedPValueFilter;
+	}
+
+	public void setUserAdjustedPValueFilter(boolean userAdjustedPValueFilter) 
+	{
+		this.userAdjustedPValueFilter = userAdjustedPValueFilter;
+	}
+
+	public double getAdjustedPValue() 
+	{
+		return adjustedPValue;
+	}
+
+	public void setAdjustedPValue(double adjustedPValue) 
+	{
+		this.adjustedPValue = adjustedPValue;
 	}
 
 }

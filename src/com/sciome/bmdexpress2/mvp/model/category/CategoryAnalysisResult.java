@@ -62,6 +62,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	private Integer								genesWithBMDUBMDRatioBelowValue;
 	private Integer								genesWithNFoldBelowLowPostiveDoseValue;
 	private Integer								genesWithFoldChangeAboveValue;
+	private Integer								genesWithPValueAboveValue;
+	private Integer								genesWithAdjustedPValueAboveValue;
 
 	private Integer								genesThatPassedAllFilters;
 
@@ -308,6 +310,24 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	public void setGenesWithFoldChangeAboveValue(Integer genesWithFoldChangeAboveValue)
 	{
 		this.genesWithFoldChangeAboveValue = genesWithFoldChangeAboveValue;
+	}
+
+	@Filterable(key = "Genes With P Value >=")
+	public Integer getGenesWithPValueAboveValue() {
+		return genesWithPValueAboveValue;
+	}
+
+	public void setGenesWithPValueAboveValue(Integer genesWithPValueAboveValue) {
+		this.genesWithPValueAboveValue = genesWithPValueAboveValue;
+	}
+
+	@Filterable(key = "Genes With Adjusted P Value >=")
+	public Integer getGenesWithAdjustedPValueAboveValue() {
+		return genesWithAdjustedPValueAboveValue;
+	}
+
+	public void setGenesWithAdjustedPValueAboveValue(Integer genesWithAdjustedPValueAboveValue) {
+		this.genesWithAdjustedPValueAboveValue = genesWithAdjustedPValueAboveValue;
 	}
 
 	@ChartableDataPoint(key = "Percentage")
@@ -1108,6 +1128,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		if (genesWithFoldChangeAboveValue != null)
 			headers.add("Genes with max Fold Change >=");
+		
+		if (genesWithPValueAboveValue != null)
+			headers.add("Genes with p value <=");
+		
+		if (genesWithAdjustedPValueAboveValue != null)
+			headers.add("Genes with adjusted p value <=");
+		
 		headers.add("Genes That Passed All Filters");
 
 		headers.add("Fisher's Exact Left P-Value");
@@ -1225,6 +1252,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		if (genesWithFoldChangeAboveValue != null)
 			row.add(genesWithFoldChangeAboveValue);
+		
+		if (genesWithPValueAboveValue != null)
+			row.add(genesWithPValueAboveValue);
+		
+		if (genesWithAdjustedPValueAboveValue != null)
+			row.add(genesWithAdjustedPValueAboveValue);
+		
 		row.add(getAllGenesPassedAllFilters());
 		row.add(this.fishersExactLeftPValue);
 		row.add(this.fishersExactRightPValue);
