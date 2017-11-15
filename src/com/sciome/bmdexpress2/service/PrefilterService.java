@@ -155,7 +155,12 @@ public class PrefilterService implements IPrefilterService {
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
-		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		
+		if(multipleTestingCorrection)
+			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		else
+			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
+		
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
@@ -341,7 +346,12 @@ public class PrefilterService implements IPrefilterService {
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		
+		if(multipleTestingCorrection)
+			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		else
+			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
+		
 		notes.add("Number of Initial Bootstraps: " + String.valueOf(initialBootstraps));
 		notes.add("Number of Maximum Bootstraps: " + String.valueOf(maxBootstraps));
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
@@ -447,7 +457,11 @@ public class PrefilterService implements IPrefilterService {
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
-		notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		if(multipleTestingCorrection)
+			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		else
+			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
+		
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
