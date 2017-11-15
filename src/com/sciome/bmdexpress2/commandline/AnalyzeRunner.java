@@ -35,6 +35,7 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -204,7 +205,31 @@ public class AnalyzeRunner
 			params.setpValueCutoff(catConfig.getBmdPValueCutoff());
 			params.setRemoveBMDPValueLessCuttoff(true);
 		}
-
+		
+		if (catConfig.getMaxFoldChange() == null)
+			params.setUserFoldChangeFilter(false);
+		else
+		{
+			params.setMaxFoldChange(catConfig.getMaxFoldChange());
+			params.setUserFoldChangeFilter(true);
+		}
+		
+		if (catConfig.getpValueMin() == null)
+			params.setUserPValueFilter(false);
+		else
+		{
+			params.setPValue(catConfig.getpValueMin());
+			params.setUserPValueFilter(true);
+		}
+		
+		if (catConfig.getAdjustedPValueMin() == null)
+			params.setUserAdjustedPValueFilter(false);
+		else
+		{
+			params.setAdjustedPValue(catConfig.getAdjustedPValueMin());
+			params.setUserAdjustedPValueFilter(true);
+		}
+		
 		if (catConfig.getCorrelationCutoffForConflictingProbeSets() != null)
 			params.setCorrelationCutoffConflictingProbeSets(
 					catConfig.getCorrelationCutoffForConflictingProbeSets());
@@ -409,6 +434,13 @@ public class AnalyzeRunner
 					processables.add(will);
 				else if (will.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(will);
+		
+		for (OriogenResults ori : project.getOriogenResults())
+			if (bmdsConfig.getInputCategory().equalsIgnoreCase("oriogen"))
+				if (bmdsConfig.getInputName() == null)
+					processables.add(ori);
+				else if (ori.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
+					processables.add(ori);
 		
 		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
 			if (bmdsConfig.getInputCategory().equalsIgnoreCase("expression"))

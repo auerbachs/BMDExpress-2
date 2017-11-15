@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 		@Type(value = GOConfig.class, name = "go"), @Type(value = PathwayConfig.class, name = "pathway") })
 public abstract class CategoryConfig
 {
-
 	// name of bmdanalysis to cateogorize
 	private String	inputName;
 
@@ -25,6 +24,9 @@ public abstract class CategoryConfig
 	private Double	bmduBMDRatioMin;
 	private Double	bmduBMDLRatioMin;
 	private Double	nFoldBelowLowestDose;
+	private Double 	maxFoldChange;
+	private Double	pValueMin;
+	private Double	adjustedPValueMin;
 
 	private Boolean	identifyConflictingProbeSets;
 	private Double	correlationCutoffForConflictingProbeSets;
@@ -117,6 +119,30 @@ public abstract class CategoryConfig
 	public void setnFoldBelowLowestDose(Double nFoldBelowLowestDose)
 	{
 		this.nFoldBelowLowestDose = nFoldBelowLowestDose;
+	}
+
+	public Double getMaxFoldChange() {
+		return maxFoldChange;
+	}
+
+	public void setMaxFoldChange(Double maxFoldChange) {
+		this.maxFoldChange = maxFoldChange;
+	}
+
+	public Double getpValueMin() {
+		return pValueMin;
+	}
+
+	public void setpValueMin(Double pValueMin) {
+		this.pValueMin = pValueMin;
+	}
+
+	public Double getAdjustedPValueMin() {
+		return adjustedPValueMin;
+	}
+
+	public void setAdjustedPValueMin(Double adjustedPValueMin) {
+		this.adjustedPValueMin = adjustedPValueMin;
 	}
 
 	public Boolean getIdentifyConflictingProbeSets()

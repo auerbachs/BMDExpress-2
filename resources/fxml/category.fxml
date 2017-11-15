@@ -65,19 +65,19 @@
                             </HBox>
                             <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0" VBox.vgrow="NEVER">
                               <children>
-                                <CheckBox fx:id="bmdFilter3CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove genes with BMD/BMDL &gt;" />
+                                <CheckBox fx:id="bmdFilter3CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMD/BMDL &gt;" />
                                 <TextField fx:id="bmdFilter3Value" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="20" />
                               </children>
                             </HBox>
                             <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0">
                               <children>
-                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove genes with BMDU/BMD &gt;" />
+                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMDU/BMD &gt;" />
                                 <TextField id="bmdFilter3Value" fx:id="BMDUBMDTextbox" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="20" />
                               </children>
                             </HBox>
                             <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0">
                               <children>
-                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDLCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove genes with BMDU/BMDL &gt;" />
+                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDLCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMDU/BMDL &gt;" />
                                 <TextField id="bmdFilter3Value" fx:id="BMDUBMDLTextbox" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="40" />
                               </children>
                             </HBox>
