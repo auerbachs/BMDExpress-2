@@ -95,13 +95,13 @@
                                           </HBox>
                                           <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
                                              <children>
-                                                <CheckBox fx:id="bmdFilterMaxPValueCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With P Value &gt;" wrapText="true" />
+                                                <CheckBox fx:id="bmdFilterMaxPValueCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With Prefilter p-Value &gt;" wrapText="true" />
                                                 <TextField fx:id="bmdFilterMaxPValueChangeValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".05" />
                                              </children>
                                           </HBox>
                                           <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
                                              <children>
-                                                <CheckBox fx:id="bmdFilterMaxAdjustedPValueCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With Adjusted P Value &gt;" wrapText="true" />
+                                                <CheckBox fx:id="bmdFilterMaxAdjustedPValueCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With Adjusted Prefilter p-Value &gt;" wrapText="true" />
                                                 <TextField fx:id="bmdFilterMaxAdjustedPValueChangeValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".5" />
                                              </children>
                                           </HBox>
