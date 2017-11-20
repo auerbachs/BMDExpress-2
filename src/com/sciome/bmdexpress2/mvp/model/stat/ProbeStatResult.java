@@ -189,11 +189,11 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getBMD() / bestStatResult.getBMDL());
 		}
 
-		row.add(adjustedPValue);
-		this.prefilterAdjustedPValue = adjustedPValue;
-
 		row.add(pValue);
 		this.prefilterPvalue = pValue;
+
+		row.add(adjustedPValue);
+		this.prefilterAdjustedPValue = adjustedPValue;
 
 		row.add(bestFoldChange);
 		this.prefilterBestFoldChange = bestFoldChange;
