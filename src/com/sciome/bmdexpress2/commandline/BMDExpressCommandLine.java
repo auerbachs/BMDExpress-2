@@ -11,7 +11,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -49,6 +48,14 @@ public class BMDExpressCommandLine
 	public final static String	QUERY				= "query";
 	public final static String	EXPORT				= "export";
 	public final static String	DELETE				= "delete";
+	
+	//Analysis Group names
+	public final static String	EXPRESSION			= "expression";
+	public final static String	ONE_WAY_ANOVA		= "anova";
+	public final static String	WILLIAMS			= "williams";
+	public final static String	ORIOGEN				= "oriogen";
+	public final static String	BMD_ANALYSIS		= "bmd";
+	public final static String	CATEGORICAL			= "categorical";
 
 	public static void main(String[] args)
 	{
@@ -62,12 +69,10 @@ public class BMDExpressCommandLine
 		Options deleteOptions = new Options();
 
 		Options queryOptions = new Options();
-
-		final OptionGroup analyzeGroup = new OptionGroup();
+		
 		analyzeOptions
 				.addOption(Option.builder().longOpt(CONFIG_FILE).hasArg().argName("JSON").required().build());
 
-		exportOptions.addOption(Option.builder().longOpt(OUTPUT_FORMAT).hasArg().argName("FORMAT").build());
 		exportOptions.addOption(
 				Option.builder().longOpt(INPUT_BM2).hasArg().required().argName("BM2FILE").build());
 		exportOptions.addOption(Option.builder().longOpt(ANALYSIS_GROUP).hasArg().argName("GROUP").build());
@@ -85,7 +90,6 @@ public class BMDExpressCommandLine
 		queryOptions.addOption(
 				Option.builder().longOpt(INPUT_BM2).hasArg().required().argName("BM2FILE").build());
 		queryOptions.addOption(Option.builder().longOpt(ANALYSIS_GROUP).hasArg().argName("GROUP").build());
-		queryOptions.addOption(Option.builder().longOpt(ANALYSIS_NAME).hasArg().argName("NAME").build());
 		HelpFormatter formatter = new HelpFormatter();
 
 		formatter.setWidth(160);
@@ -95,7 +99,11 @@ public class BMDExpressCommandLine
 
 		formatter.printHelp("bmdexpress2 " + DELETE, "", deleteOptions, "", true);
 		formatter.printHelp("bmdexpress2 " + QUERY, "", queryOptions, "", true);
-
+		
+		//List of group possibilities
+		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " +
+				ORIOGEN + ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
+ 
 		try
 		{
 
@@ -103,16 +111,15 @@ public class BMDExpressCommandLine
 			if (args[0].equals(ANALYZE))
 			{
 				CommandLine cmd = parser.parse(analyzeOptions, theArgs);
-				AnalyzeRunner aRounder = new AnalyzeRunner();
-				aRounder.analyze(cmd.getOptionValue(CONFIG_FILE));
+				AnalyzeRunner aRunner = new AnalyzeRunner();
+				aRunner.analyze(cmd.getOptionValue(CONFIG_FILE));
 			}
 			else if (args[0].equals(EXPORT))
 			{
 				CommandLine cmd = parser.parse(exportOptions, theArgs);
 				ExportRunner eRunner = new ExportRunner();
 				eRunner.analyze(cmd.getOptionValue(INPUT_BM2), cmd.getOptionValue(OUTPUT_FILE_NAME),
-						cmd.getOptionValue(OUTPUT_FORMAT), cmd.getOptionValue(ANALYSIS_GROUP),
-						cmd.getOptionValue(ANALYSIS_NAME));
+						cmd.getOptionValue(ANALYSIS_GROUP), cmd.getOptionValue(ANALYSIS_NAME));
 			}
 			else if (args[0].equals(DELETE))
 			{
@@ -125,8 +132,7 @@ public class BMDExpressCommandLine
 			{
 				CommandLine cmd = parser.parse(queryOptions, theArgs);
 				QueryRunner qRunner = new QueryRunner();
-				qRunner.analyze(cmd.getOptionValue(INPUT_BM2), cmd.getOptionValue(ANALYSIS_GROUP),
-						cmd.getOptionValue(ANALYSIS_NAME));
+				qRunner.analyze(cmd.getOptionValue(INPUT_BM2), cmd.getOptionValue(ANALYSIS_GROUP));
 			}
 
 		}

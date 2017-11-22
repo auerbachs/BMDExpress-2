@@ -31,6 +31,8 @@ import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.service.ProjectNavigationService;
+import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
@@ -102,7 +104,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	public ProjectNavigationView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new ProjectNavigationPresenter(this, eventBus);
+		IProjectNavigationService service = new ProjectNavigationService();
+		presenter = new ProjectNavigationPresenter(this, service, eventBus);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
