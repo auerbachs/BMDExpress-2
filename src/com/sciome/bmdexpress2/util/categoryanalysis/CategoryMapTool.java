@@ -486,7 +486,7 @@ public class CategoryMapTool
 				sub = bmdStats
 						.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
 						.size();
-				categoryAnalysisResult.setGenesWithPValueAboveValue(sub);
+				categoryAnalysisResult.setGenesWithPrefilterPValueAboveValue(sub);
 			}
 			
 			if (params.isUserAdjustedPValueFilter())
@@ -494,7 +494,7 @@ public class CategoryMapTool
 				sub = bmdStats
 						.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids, removedProbes)
 						.size();
-				categoryAnalysisResult.setGenesWithAdjustedPValueAboveValue(sub);
+				categoryAnalysisResult.setGenesWithPrefilterAdjustedPValueAboveValue(sub);
 			}
 
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);

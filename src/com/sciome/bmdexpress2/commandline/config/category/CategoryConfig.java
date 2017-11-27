@@ -25,8 +25,8 @@ public abstract class CategoryConfig
 	private Double	bmduBMDLRatioMin;
 	private Double	nFoldBelowLowestDose;
 	private Double 	maxFoldChange;
-	private Double	pValueMin;
-	private Double	adjustedPValueMin;
+	private Double	prefilterPValueMin;
+	private Double	prefilterAdjustedPValueMin;
 
 	private Boolean	identifyConflictingProbeSets;
 	private Double	correlationCutoffForConflictingProbeSets;
@@ -129,20 +129,20 @@ public abstract class CategoryConfig
 		this.maxFoldChange = maxFoldChange;
 	}
 
-	public Double getpValueMin() {
-		return pValueMin;
+	public Double getPrefilterPValueMin() {
+		return prefilterPValueMin;
 	}
 
-	public void setpValueMin(Double pValueMin) {
-		this.pValueMin = pValueMin;
+	public void setPrefilterPValueMin(Double pValueMin) {
+		this.prefilterPValueMin = pValueMin;
 	}
 
-	public Double getAdjustedPValueMin() {
-		return adjustedPValueMin;
+	public Double getPrefilterAdjustedPValueMin() {
+		return prefilterAdjustedPValueMin;
 	}
 
-	public void setAdjustedPValueMin(Double adjustedPValueMin) {
-		this.adjustedPValueMin = adjustedPValueMin;
+	public void setPrefilterAdjustedPValueMin(Double adjustedPValueMin) {
+		this.prefilterAdjustedPValueMin = adjustedPValueMin;
 	}
 
 	public Boolean getIdentifyConflictingProbeSets()

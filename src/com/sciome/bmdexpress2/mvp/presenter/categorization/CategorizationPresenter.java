@@ -28,7 +28,6 @@ public class CategorizationPresenter extends ServicePresenterBase<ICategorizatio
 		implements ICategoryMapToolProgress
 {
 	private List<BMDResult>			bmdResults;
-	private CategoryMapTool			catMapTool;
 
 	private CategoryAnalysisEnum	catAnalysisEnum;
 

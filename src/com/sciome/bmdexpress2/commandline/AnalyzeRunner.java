@@ -214,19 +214,19 @@ public class AnalyzeRunner
 			params.setUserFoldChangeFilter(true);
 		}
 		
-		if (catConfig.getpValueMin() == null)
+		if (catConfig.getPrefilterPValueMin() == null)
 			params.setUserPValueFilter(false);
 		else
 		{
-			params.setPValue(catConfig.getpValueMin());
+			params.setPValue(catConfig.getPrefilterPValueMin());
 			params.setUserPValueFilter(true);
 		}
 		
-		if (catConfig.getAdjustedPValueMin() == null)
+		if (catConfig.getPrefilterAdjustedPValueMin() == null)
 			params.setUserAdjustedPValueFilter(false);
 		else
 		{
-			params.setAdjustedPValue(catConfig.getAdjustedPValueMin());
+			params.setAdjustedPValue(catConfig.getPrefilterAdjustedPValueMin());
 			params.setUserAdjustedPValueFilter(true);
 		}
 		

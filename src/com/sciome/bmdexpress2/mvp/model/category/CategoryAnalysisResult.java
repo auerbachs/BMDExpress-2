@@ -62,8 +62,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	private Integer								genesWithBMDUBMDRatioBelowValue;
 	private Integer								genesWithNFoldBelowLowPostiveDoseValue;
 	private Integer								genesWithFoldChangeAboveValue;
-	private Integer								genesWithPValueAboveValue;
-	private Integer								genesWithAdjustedPValueAboveValue;
+	private Integer								genesWithPrefilterPValueAboveValue;
+	private Integer								genesWithPrefilterAdjustedPValueAboveValue;
 
 	private Integer								genesThatPassedAllFilters;
 
@@ -312,22 +312,22 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		this.genesWithFoldChangeAboveValue = genesWithFoldChangeAboveValue;
 	}
 
-	@Filterable(key = "Genes With P Value >=")
-	public Integer getGenesWithPValueAboveValue() {
-		return genesWithPValueAboveValue;
+	@Filterable(key = "Genes With Prefilter P-Value >=")
+	public Integer getGenesWithPrefilterPValueAboveValue() {
+		return genesWithPrefilterPValueAboveValue;
 	}
 
-	public void setGenesWithPValueAboveValue(Integer genesWithPValueAboveValue) {
-		this.genesWithPValueAboveValue = genesWithPValueAboveValue;
+	public void setGenesWithPrefilterPValueAboveValue(Integer genesWithPValueAboveValue) {
+		this.genesWithPrefilterPValueAboveValue = genesWithPValueAboveValue;
 	}
 
-	@Filterable(key = "Genes With Adjusted P Value >=")
-	public Integer getGenesWithAdjustedPValueAboveValue() {
-		return genesWithAdjustedPValueAboveValue;
+	@Filterable(key = "Genes With Prefilter Adjusted P-Value >=")
+	public Integer getGenesWithPrefilterAdjustedPValueAboveValue() {
+		return genesWithPrefilterAdjustedPValueAboveValue;
 	}
 
-	public void setGenesWithAdjustedPValueAboveValue(Integer genesWithAdjustedPValueAboveValue) {
-		this.genesWithAdjustedPValueAboveValue = genesWithAdjustedPValueAboveValue;
+	public void setGenesWithPrefilterAdjustedPValueAboveValue(Integer genesWithAdjustedPValueAboveValue) {
+		this.genesWithPrefilterAdjustedPValueAboveValue = genesWithAdjustedPValueAboveValue;
 	}
 
 	@ChartableDataPoint(key = "Percentage")
@@ -1129,11 +1129,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		if (genesWithFoldChangeAboveValue != null)
 			headers.add("Genes with max Fold Change >=");
 		
-		if (genesWithPValueAboveValue != null)
-			headers.add("Genes with p value <=");
+		if (genesWithPrefilterPValueAboveValue != null)
+			headers.add("Genes with Prefilter P-Value <=");
 		
-		if (genesWithAdjustedPValueAboveValue != null)
-			headers.add("Genes with adjusted p value <=");
+		if (genesWithPrefilterAdjustedPValueAboveValue != null)
+			headers.add("Genes with Prefilter Adjusted P-Value <=");
 		
 		headers.add("Genes That Passed All Filters");
 
@@ -1253,11 +1253,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 		if (genesWithFoldChangeAboveValue != null)
 			row.add(genesWithFoldChangeAboveValue);
 		
-		if (genesWithPValueAboveValue != null)
-			row.add(genesWithPValueAboveValue);
+		if (genesWithPrefilterPValueAboveValue != null)
+			row.add(genesWithPrefilterPValueAboveValue);
 		
-		if (genesWithAdjustedPValueAboveValue != null)
-			row.add(genesWithAdjustedPValueAboveValue);
+		if (genesWithPrefilterAdjustedPValueAboveValue != null)
+			row.add(genesWithPrefilterAdjustedPValueAboveValue);
 		
 		row.add(getAllGenesPassedAllFilters());
 		row.add(this.fishersExactLeftPValue);

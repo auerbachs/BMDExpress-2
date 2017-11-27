@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 
 import org.ciit.io.ProjectReader;
 
@@ -60,7 +61,7 @@ public class DialogWithThreadProcess
 						public void run()
 						{
 							BMDExpressEventBus.getInstance()
-									.post(new ShowErrorEvent("Error saveing file. " + i.toString()));
+									.post(new ShowErrorEvent("Error saving file. " + i.toString()));
 
 						}
 					});
@@ -128,7 +129,7 @@ public class DialogWithThreadProcess
 						public void run()
 						{
 							BMDExpressEventBus.getInstance()
-									.post(new ShowErrorEvent("Error saveing file. " + i.toString()));
+									.post(new ShowErrorEvent("Error saving file. " + i.toString()));
 
 						}
 					});
@@ -190,6 +191,16 @@ public class DialogWithThreadProcess
 				}
 				catch (IOException i)
 				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file corrupted. " + i.toString()));
+
+						}
+					});
 					i.printStackTrace();
 				}
 				catch (ClassNotFoundException c)
