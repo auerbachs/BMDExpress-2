@@ -11,9 +11,9 @@ import com.sciome.bmdexpress2.mvp.presenter.visualization.DataVisualizationPrese
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeChartListener;
-import com.sciome.charts.javafx.ScrollableSciomeChart;
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.ScrollableSciomeChart;
 import com.sciome.filter.DataFilterPack;
 
 import javafx.beans.value.ChangeListener;

@@ -1,24 +1,23 @@
 package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.SciomeScatterChart;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
@@ -26,66 +25,21 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDataExporter
+public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDataExporter
 {
-	// map that keeps track of enough information to instantiate a node.
-	// so we don't have to store 10,000 nodes in memory
-	private Map<String, NodeInformation>	nodeInfoMap		= new HashMap<>();
-	private Tooltip							toolTip			= new Tooltip("");
-
-	private ScatterChart					schart;
-	private String							key1;
-	private String							key2;
-	boolean									allowXLogAxis	= true;
-	boolean									allowYLogAxis	= true;
-	private final int						MAXITEMS		= 2500;
-	private int								nodeCount;
 
 	@SuppressWarnings("rawtypes")
-	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
-
-		this.key1 = key1;
-		this.key2 = key2;
-
-		chartableKeys = new String[] { key1, key2 };
-		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
-		initChart();
-
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-
+		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, key1, key2, true, true, chartListener);
-	}
-
-	private void initChart()
-	{
-		seriesData.clear();
-		setMaxGraphItems(MAXITEMS);
-		showChart();
-		intializeScrollableChart();
-
 	}
 
 	/*
@@ -140,18 +94,13 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 
 		scatterChart.setTitle(key1 + " Vs. " + key2);
 
-		// create count map because in multiple data comparison, I only care about
-		// shared data labels
-		Map<String, Integer> countMap = getCountMap();
-		// Now put the data in a bucket
-		int maxPerPack = 0;
-		if (chartDataPacks.size() > 0)
-			maxPerPack = MAX_NODES / chartDataPacks.size();
 		int nodecount = 0;
 		int totalnodecount = 0;
 		for (ChartDataPack chartDataPack : chartDataPacks)
 		{
-			SciomeSeries<Number, Number> series1 = new SciomeSeries<>(chartDataPack.getName());
+
+			XYChart.Series series = new XYChart.Series();
+			series.setName(chartDataPack.getName());
 
 			int count = 0;
 			Set<String> chartLabelSet = new HashSet<>();
@@ -160,8 +109,7 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 				if (cancel)
 					return null;
 				totalnodecount++;
-				if (nodecount > getMaxGraphItems() - 1 && !this.showAllCheckBox.isSelected())
-					continue;
+
 				nodecount++;
 				count++;
 				Double dataPointValue1 = (Double) chartData.getDataPoints().get(key1);
@@ -169,37 +117,27 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 
 				if (dataPointValue1 == null || dataPointValue2 == null)
 					continue;
-				SciomeData<Number, Number> xyData = new SciomeData<>(chartData.getDataPointLabel(),
-						dataPointValue1, dataPointValue2,
-						new ChartExtraValue(chartData.getDataPointLabel(),
-								countMap.get(chartData.getDataPointLabel()),
-								chartData.getCharttableObject()));
+
+				XYChart.Data theData = new XYChart.Data(dataPointValue1, dataPointValue2);
+				theData.setExtraValue(new ChartExtraValue(chartData.getDataPointLabel(), 0,
+						chartData.getCharttableObject()));
+				theData.setNode(userObjectPane(chartData.getCharttableObject(), false));
+
 				chartLabelSet.add(chartData.getDataPointLabel());
-				nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
-						new NodeInformation(chartData.getCharttableObject(), false));
-				series1.getData().add(xyData);
+
+				series.getData().add(theData);
 
 			}
 			toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");
-			if (seriesData.size() > 0)
-				sortSeriesWithPrimarySeries(series1, (SciomeSeries) (seriesData.get(0)));
-			else
-				sortSeriesX(series1);
-			seriesData.add(series1);
-
-			if (nodecount > getMaxGraphItems() - 1 && !this.showAllCheckBox.isSelected())
+			scatterChart.getData().add(series);
+			if (nodecount > getMaxGraphItems() - 1)
 				break;
 
 		}
 
 		this.warningTooManyNodesLabel.setText("WARNING: Only showing " + MAXITEMS + " of " + totalnodecount
 				+ " items in chart.  To view all, maximize and select \"Show All Nodes\"");
-		if (nodecount < getMaxGraphItems() - 1)
-			showTooManyNodes(false);
-		else if (nodecount > getMaxGraphItems() - 1 && !this.showAllCheckBox.isSelected())
-			showTooManyNodes(true);
 
-		this.nodeCount = totalnodecount;
 		return scatterChart;
 	}
 
@@ -273,43 +211,6 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 		}
 	}
 
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		if (showshowall && getMaxGraphItems() < this.nodeCount)
-			super.setShowShowAll(showshowall);
-		else
-			super.setShowShowAll(false);
-	}
-
-	@Override
-	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
-	{
-		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
-
-		return userObjectPane(nI.object, nI.invisible);
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		initChart();
-
-	}
-
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */
@@ -319,7 +220,8 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-
+		XYChart xyChart = (XYChart) getChart();
+		List<XYChart.Series> data = xyChart.getData();
 		sb.append("series");
 		sb.append("\t");
 		sb.append("x");
@@ -328,22 +230,23 @@ public class SciomeScatterChart extends ScrollableSciomeChart implements ChartDa
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (Object obj : this.seriesData)
+		for (XYChart.Series seriesData : data)
 		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
+
+			for (Object d : seriesData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
+				sb.setLength(0);
+				XYChart.Data xychartData = (XYChart.Data) d;
 				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				Double X = (Double) xychartData.getxValue();
-				Double Y = (Double) xychartData.getyValue();
+				Double X = (Double) xychartData.getXValue();
+				Double Y = (Double) xychartData.getYValue();
 
-				sb.append(sData.getName());
+				sb.append(seriesData.getName());
 
 				sb.append("\t");
 

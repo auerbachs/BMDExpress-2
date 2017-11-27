@@ -1,4 +1,4 @@
-package com.sciome.charts.javafx;
+package com.sciome.charts;
 
 public interface SciomeChartListener
 {

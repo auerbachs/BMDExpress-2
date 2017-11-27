@@ -12,11 +12,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeChartListener;
 
 import javafx.scene.layout.HBox;
 

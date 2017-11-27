@@ -4,10 +4,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.SciomeHistogram;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -24,19 +27,13 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeHistogram extends SciomeChartBase implements ChartDataExporter
+public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExporter
 {
 
-	private Double		bucketsize			= 20.0;
-	private final int	MAX_TOOL_TIP_SHOWS	= 20;
-
-	public SciomeHistogram(String title, List<ChartDataPack> chartDataPacks, String key, Double bucketsize,
+	public SciomeHistogramFX(String title, List<ChartDataPack> chartDataPacks, String key, Double bucketsize,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
-		this.bucketsize = bucketsize;
-		chartableKeys = new String[] { key };
-		showChart();
+		super(title, chartDataPacks, key, bucketsize, chartListener);
 
 	}
 
@@ -177,56 +174,12 @@ public class SciomeHistogram extends SciomeChartBase implements ChartDataExporte
 		return barChart;
 	}
 
-	private String joinAllObjects(List<Object> objects)
-	{
-		return joinObjects(objects, 2000000000);
-
-	}
-
-	private String joinObjects(List<Object> objects, int max)
-	{
-		StringBuilder sb = new StringBuilder();
-
-		int i = 0;
-		for (Object obj : objects)
-		{
-			sb.append(obj);
-			sb.append("\n");
-			if (i >= max)
-			{
-				sb.append("....");
-				break;
-			}
-			i++;
-		}
-		return sb.toString();
-	}
-
 	private StackPane userObjectPane(Object object)
 	{
 
 		StackPane returnPane = new StackPane();
 		returnPane.setUserData(object);
 		return returnPane;
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return false;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return false;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		showChart();
-
 	}
 
 	/*

@@ -1,19 +1,19 @@
 package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.sciome.charts.SciomeBubbleChart;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.Chart;
@@ -26,28 +26,16 @@ import javafx.scene.shape.Ellipse;
 /*
  * 
  */
-public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDataExporter
+public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataExporter
 {
-
-	private static Double					BUBBLE_SCALE_FRACTION	= 8.0;
-
-	private Tooltip							toolTip					= new Tooltip("");
-	private final int						MAXITEMS				= 2500;
 
 	// map that keeps track of enough information to instantiate a node.
 	// so we don't have to store 10,000 nodes in memory
-	private Map<String, NodeInformation>	nodeInfoMap				= new HashMap<>();
 
-	private int								nodeCount;
-
-	public SciomeBubbleChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeBubbleChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			String key3, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
-		chartableKeys = new String[] { key1, key2, key3 };
-		showChart();
-		this.setMaxGraphItems(MAXITEMS);
-		intializeScrollableChart();
+		super(title, chartDataPacks, key1, key2, key3, chartListener);
 
 	}
 
@@ -96,20 +84,18 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		Double scaleValue = max2 / max1;
 		Double bubbleScale = (1.0 / BUBBLE_SCALE_FRACTION) / (max3 / max1);
 
-		// create count map because in multiple data comparison, I only care about
-		// shared data labels
-		Map<String, Integer> countMap = getCountMap();
-
 		int maxPerPack = 0;
-		if (chartDataPacks.size() > 0)
-			maxPerPack = MAX_NODES / chartDataPacks.size();
 		int nodecount = 0;
 		int totalnodecount = 0;
 		for (ChartDataPack chartDataPack : chartDataPacks)
 		{
-			SciomeSeries<Number, Number> series1 = new SciomeSeries<>(chartDataPack.getName());
+
+			XYChart.Series series = new XYChart.Series();
+			series.setName(chartDataPack.getName());
+
 			int count = 0;
 			Set<String> chartLabelSet = new HashSet<>();
+
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
 				if (cancel)
@@ -117,49 +103,39 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 
 				totalnodecount++;
 				// too many nodes
-				if (nodecount > getMaxGraphItems() - 1 && !this.showAllCheckBox.isSelected())
+				if (nodecount > getMaxGraphItems() - 1)
 					continue;
 				if (chartData.getDataPoints().containsKey(key1) && chartData.getDataPoints().containsKey(key2)
 						&& chartData.getDataPoints().containsKey(key3))
 				{
-					SciomeData<Number, Number> dataPoint = new SciomeData<>(chartData.getDataPointLabel(),
-							(Double) chartData.getDataPoints().get(key1),
-							(Double) chartData.getDataPoints().get(key2),
-							new BubbleChartExtraData(chartData.getDataPointLabel(),
-									countMap.get(chartData.getDataPointLabel()),
-									chartData.getCharttableObject(),
-									(Double) chartData.getDataPoints().get(key3) * bubbleScale));
+
+					XYChart.Data theData = new XYChart.Data((Double) chartData.getDataPoints().get(key1),
+							(Double) chartData.getDataPoints().get(key2));
+					theData.setExtraValue(new BubbleChartExtraData(chartData.getDataPointLabel(), 0,
+							chartData.getCharttableObject(),
+							(Double) chartData.getDataPoints().get(key3) * bubbleScale));
+					theData.setNode(bubblePane((Double) chartData.getDataPoints().get(key3) * bubbleScale,
+							scaleValue, chartData.getCharttableObject(), false));
+					series.getData().add(theData);
 
 					nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
 							new NodeInformation((Double) chartData.getDataPoints().get(key3) * bubbleScale,
 									scaleValue, chartData.getCharttableObject(), false));
-					series1.getData().add(dataPoint);
 					chartLabelSet.add(chartData.getDataPointLabel());
 					count++;
 					nodecount++;
 
 				}
-
 			}
 
-			if (seriesData.size() > 0)
-				sortSeriesWithPrimarySeries(series1, (SciomeSeries) (seriesData.get(0)));
-			else
-				sortSeriesX(series1);
-			seriesData.add(series1);
+			blc.getData().add(series);
 
 		}
 
 		this.warningTooManyNodesLabel.setText("WARNING: Only showing " + MAXITEMS + " of " + totalnodecount
 				+ " items in chart.  To view all, maximize and select \"Show All Nodes\"");
 
-		if (nodecount < getMaxGraphItems() - 1)
-			showTooManyNodes(false);
-		else if (nodecount > getMaxGraphItems() - 1 && !this.showAllCheckBox.isSelected())
-			showTooManyNodes(true);
-
 		toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");;
-		this.nodeCount = totalnodecount;
 		return blc;
 
 	}
@@ -232,68 +208,6 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		return node;
 	}
 
-	private class NodeInformation
-	{
-		public Double	bubbleSize;
-		public Double	scaleValue;
-		public Object	object;
-		public boolean	invisible;
-
-		public NodeInformation(Double b, Double s, Object o, boolean i)
-		{
-			bubbleSize = b;
-			scaleValue = s;
-			object = o;
-			invisible = i;
-		}
-	}
-
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		if (showshowall && getMaxGraphItems() < this.nodeCount)
-			super.setShowShowAll(showshowall);
-		else
-			super.setShowShowAll(false);
-	}
-
-	@Override
-	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
-	{
-		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
-
-		return (bubblePane(nI.bubbleSize, nI.scaleValue, nI.object, nI.invisible));
-
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		initChart();
-
-	}
-
-	private void initChart()
-	{
-		seriesData.clear();
-		showChart();
-		setMaxGraphItems(MAXITEMS);
-		intializeScrollableChart();
-	}
-
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */
@@ -316,22 +230,21 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (Object obj : this.seriesData)
+		for (XYChart.Series seriesData : data)
 		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
+			for (Object d : seriesData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
+				XYChart.Data xychartData = (XYChart.Data) d;
 				BubbleChartExtraData extraValue = (BubbleChartExtraData) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it
 					continue;
 				sb.setLength(0);
 
-				Double X = (Double) xychartData.getxValue();
-				Double Y = (Double) xychartData.getyValue();
+				Double X = (Double) xychartData.getXValue();
+				Double Y = (Double) xychartData.getYValue();
 
-				sb.append(sData.getName());
+				sb.append(seriesData.getName());
 
 				sb.append("\t");
 
@@ -349,17 +262,6 @@ public class SciomeBubbleChart extends ScrollableSciomeChart implements ChartDat
 		}
 
 		return returnList;
-	}
-
-	private class BubbleChartExtraData extends ChartExtraValue
-	{
-		public Double bubbleSize;
-
-		public BubbleChartExtraData(String l, Integer c, Object u, Double bubbleSize)
-		{
-			super(l, c, u);
-			this.bubbleSize = bubbleSize;
-		}
 	}
 
 }

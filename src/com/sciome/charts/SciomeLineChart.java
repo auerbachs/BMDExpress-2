@@ -1,16 +1,22 @@
-package com.sciome.charts.javafx;
+package com.sciome.charts;
 
 import java.util.List;
 
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 
 import javafx.scene.chart.Chart;
 
-public class SciomeHeatMap extends SciomeChartBase
+/*
+ * 
+ */
+public abstract class SciomeLineChart extends SciomeChartBase
 {
 
-	public SciomeHeatMap(String title, List<ChartDataPack> chartDataPacks, SciomeChartListener chartListener)
+	public SciomeLineChart(String title, List<ChartDataPack> chartDataPacks,
+			SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, chartListener);
 		// TODO Auto-generated constructor stub
@@ -26,15 +32,13 @@ public class SciomeHeatMap extends SciomeChartBase
 	@Override
 	protected boolean isXAxisDefineable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected boolean isYAxisDefineable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

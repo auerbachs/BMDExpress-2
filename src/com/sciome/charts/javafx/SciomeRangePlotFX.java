@@ -1,21 +1,21 @@
 package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.SciomeRangePlot;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.animation.FadeTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,58 +38,15 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
-public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataExporter
+public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExporter
 {
 
-	// map that keeps track of enough information to instantiate a node.
-	// so we don't have to store large amounts of nodes in memory
-	private Map<String, NodeInformation>	nodeInfoMap	= new HashMap<>();
-	private Tooltip							toolTip		= new Tooltip("");
-	private final int						MAXITEMS	= 20;
-
 	@SuppressWarnings("unchecked")
-	public SciomeRangePlot(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
+	public SciomeRangePlotFX(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
 			String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
+		super(title, chartDataPacks, minKey, maxKey, lowKey, highKey, middleKey, chartListener);
 
-		this.chartDataPacks = chartDataPacks;
-		this.addDataAtTop = true;
-
-		chartableKeys = new String[] { minKey, maxKey, lowKey, highKey, middleKey };
-
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-		lockXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-
-		showLogAxes(true, false, true, false);
-		initChart();
-	}
-
-	private void initChart()
-	{
-		seriesData.clear();
-		showChart();
-		setMaxGraphItems(MAXITEMS);
-		intializeScrollableChart();
-	}
-
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		super.setShowShowAll(false);
 	}
 
 	/**
@@ -781,44 +738,12 @@ public class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataE
 		return boxAndWhiskerNode;
 	}
 
-	private class NodeInformation
-	{
-
-		public Object	object;
-		public boolean	invisible;
-
-		public NodeInformation(Object o, boolean i)
-		{
-			object = o;
-			invisible = i;
-		}
-	}
-
 	@Override
 	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
 	{
 		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
 
 		return userObjectPane(nI.object, nI.invisible, seriesIndex);
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return false;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		initChart();
-
 	}
 
 	/*

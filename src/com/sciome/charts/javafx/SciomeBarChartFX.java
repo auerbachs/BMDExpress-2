@@ -1,19 +1,17 @@
 package com.sciome.charts.javafx;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.charts.SciomeBarChart;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
@@ -27,55 +25,14 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataExporter
+public class SciomeBarChartFX extends SciomeBarChart
 {
 
-	// map that keeps track of enough information to instantiate a node.
-	// so we don't have to store 10,000 nodes in memory
-	private Map<String, NodeInformation>	nodeInfoMap	= new HashMap<>();
-	private Tooltip							toolTip		= new Tooltip("");
-	private final int						MAXITEMS	= 50;
-
-	public SciomeBarChart(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeBarChartFX(String title, List<ChartDataPack> chartDataPacks, String key,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
-		chartableKeys = new String[] { key };
-		showLogAxes(false, true, false, true);
+		super(title, chartDataPacks, key, chartListener);
 
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-		lockYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				initChart();
-			}
-		});
-
-		initChart();
-		intializeScrollableChart();
-		setShowShowAll(false);
-	}
-
-	private void initChart()
-	{
-		seriesData.clear();
-		showChart();
-		setMaxGraphItems(MAXITEMS);
-		intializeScrollableChart();
-	}
-
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		super.setShowShowAll(false);
 	}
 
 	/*
@@ -237,96 +194,12 @@ public class SciomeBarChart extends ScrollableSciomeChart implements ChartDataEx
 		return node;
 	}
 
-	private class NodeInformation
-	{
-
-		public Object	object;
-		public boolean	invisible;
-
-		public NodeInformation(Object o, boolean i)
-		{
-			object = o;
-			invisible = i;
-		}
-	}
-
 	@Override
 	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
 	{
 		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
 
 		return userObjectPane(nI.object, nI.invisible);
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return false;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		initChart();
-
-	}
-
-	/*
-	 * implement the getting of lines that need to be exported.
-	 */
-	@Override
-	public List<String> getLinesToExport()
-	{
-
-		List<String> returnList = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("series");
-		sb.append("\t");
-		sb.append("x");
-		sb.append("\t");
-		sb.append("y");
-		sb.append("\t");
-		sb.append("component");
-		returnList.add(sb.toString());
-		for (Object obj : this.seriesData)
-		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
-			{
-				SciomeData xychartData = (SciomeData) d;
-				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
-				String X = (String) xychartData.getxValue();
-
-				Double Y = (Double) xychartData.getyValue();
-
-				if (extraValue.userData == null) // this means it's a faked value for showing multiple
-													// datasets together. skip it
-					continue;
-				sb.setLength(0);
-
-				sb.append(sData.getName());
-				sb.append("\t");
-				sb.append(X);
-				sb.append("\t");
-				sb.append(Y);
-				sb.append("\t");
-
-				sb.append(extraValue.userData.toString());
-
-				returnList.add(sb.toString());
-
-			}
-		}
-
-		return returnList;
-
 	}
 
 }

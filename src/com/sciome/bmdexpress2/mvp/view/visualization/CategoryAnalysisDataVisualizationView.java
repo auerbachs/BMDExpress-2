@@ -18,15 +18,15 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeAccumulationPlot;
-import com.sciome.charts.javafx.SciomeBarChart;
-import com.sciome.charts.javafx.SciomeRangePlot;
-import com.sciome.charts.javafx.SciomeBubbleChart;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeHistogram;
-import com.sciome.charts.javafx.SciomePieChart;
-import com.sciome.charts.javafx.SciomeScatterChart;
+import com.sciome.charts.javafx.SciomeAccumulationPlotFX;
+import com.sciome.charts.javafx.SciomeBarChartFX;
+import com.sciome.charts.javafx.SciomeRangePlotFX;
+import com.sciome.charts.javafx.SciomeBubbleChartFX;
+import com.sciome.charts.javafx.SciomeHistogramFX;
+import com.sciome.charts.javafx.SciomePieChartFX;
+import com.sciome.charts.javafx.SciomeScatterChartFX;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -49,111 +49,111 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		IVisualizationService service = new VisualizationService();
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
-		chartCache.put(BOXANDWHISKER, new SciomeRangePlot("Range Plot", new ArrayList<>(),
+		chartCache.put(BOXANDWHISKER, new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
 				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
 				CategoryAnalysisResults.BMD_MEDIAN, null, CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMD_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMD_MEAN, 0.0, this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDL_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDL_MEAN, 0.0, this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEDIAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDU_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEAN,
-				new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDU_MEAN, 0.0, this));
 
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMDU_MEAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMD_FIFTH_MEAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMD_FIFTH_MEAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_FIFTH_MEAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMD_TENTH_MEAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMD_TENTH_MEAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_TENTH_MEAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(MEDIAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEDIAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEDIAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEDIAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(MEDIAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMDU_MEDIAN,
-				new SciomeHistogram("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN, 20.0,
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEDIAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEDIAN,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDU_MEDIAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEAN,
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDU_MEAN,
-				new SciomeBarChart("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
+				new SciomeBarChartFX("BarChart", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMD_MEDIAN
 						+ CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMD_MEAN + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEAN,
 						CategoryAnalysisResults.BMDL_MEAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMDU_MEAN + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
 						CategoryAnalysisResults.BMD_MEAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMDU_MEAN
 						+ CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
 						CategoryAnalysisResults.BMDL_MEAN, CategoryAnalysisDataVisualizationView.this));
 
-		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlot("Accumulation", new ArrayList<>(),
+		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
 				CategoryAnalysisResults.BMD_MEDIAN, 0.0, this));
 		chartCache.put(
 				"DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN
 						+ CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG,
-				new SciomeBubbleChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeBubbleChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG, "Percentage",
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + CategoryAnalysisResults.BMDU_MEDIAN + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
 						CategoryAnalysisResults.BMD_MEDIAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + CategoryAnalysisResults.BMDU_MEDIAN + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeScatterChart("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
+				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEDIAN,
 						CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisDataVisualizationView.this));
 
 	}
@@ -207,7 +207,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		}
 		else if (chartKey.equals(BEST_MODEL_PIE))
 		{
-			chartsList.add(new SciomePieChart(
+			chartsList.add(new SciomePieChartFX(
 					getBMDStatResultCountsFromCatAnalysis(results, pack, selectedIds, true), null,
 					chartDataPacks, "BMDS Model Counts (unique)",
 					CategoryAnalysisDataVisualizationView.this));

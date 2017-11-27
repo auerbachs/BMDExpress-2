@@ -9,10 +9,10 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeHistogram;
-import com.sciome.charts.javafx.SciomeScatterChart;
+import com.sciome.charts.javafx.SciomeHistogramFX;
+import com.sciome.charts.javafx.SciomeScatterChartFX;
 import com.sciome.filter.DataFilterPack;
 
 public class WilliamsTrendDataVisualizationView extends DataVisualizationView implements IDataVisualizationView{
@@ -28,26 +28,26 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 		presenter = new WilliamsTrendDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.UNADJUSTED_PVALUE,
-				new SciomeHistogram("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(ADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.ADJUSTED_PVALUE,
-				new SciomeHistogram("", new ArrayList<>(), WilliamsTrendResults.ADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.ADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE,
-				new SciomeHistogram("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE, 20.0, this));
+				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE_ABS,
-				new SciomeHistogram("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE_ABS, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE_ABS, 20.0,
 						this));
 
 		chartCache.put(
 				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE + WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE,
-				new SciomeScatterChart("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
 						WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE, false, true, this));
 		chartCache.put(
 				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE
 						+ WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE,
-				new SciomeScatterChart("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
 						WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE, false, true, this));
 
 	}

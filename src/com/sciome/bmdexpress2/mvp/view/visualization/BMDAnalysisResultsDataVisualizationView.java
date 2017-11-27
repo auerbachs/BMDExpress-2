@@ -14,11 +14,11 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeHistogram;
-import com.sciome.charts.javafx.SciomePieChart;
-import com.sciome.charts.javafx.SciomeScatterChart;
+import com.sciome.charts.javafx.SciomeHistogramFX;
+import com.sciome.charts.javafx.SciomePieChartFX;
+import com.sciome.charts.javafx.SciomeScatterChartFX;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -38,21 +38,21 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		IVisualizationService service = new VisualizationService();
 		presenter = new BMDAnalysisResultsDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
-		chartCache.put(BMDL_HISTOGRAM + "-" + BMDResult.BMDL, new SciomeHistogram("", new ArrayList<>(),
+		chartCache.put(BMDL_HISTOGRAM + "-" + BMDResult.BMDL, new SciomeHistogramFX("", new ArrayList<>(),
 				BMDResult.BMDL, 20.0, BMDAnalysisResultsDataVisualizationView.this));
-		chartCache.put(BMDU_HISTOGRAM + "-" + BMDResult.BMDU, new SciomeHistogram("", new ArrayList<>(),
+		chartCache.put(BMDU_HISTOGRAM + "-" + BMDResult.BMDU, new SciomeHistogramFX("", new ArrayList<>(),
 				BMDResult.BMDU, 20.0, BMDAnalysisResultsDataVisualizationView.this));
-		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE, new SciomeHistogram("",
+		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE, new SciomeHistogramFX("",
 				new ArrayList<>(), BMDResult.FIT_PVALUE, 20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.FIT_LOG_LIKELIHOOD,
-				new SciomeHistogram("", new ArrayList<>(), BMDResult.FIT_LOG_LIKELIHOOD, 20.0,
+				new SciomeHistogramFX("", new ArrayList<>(), BMDResult.FIT_LOG_LIKELIHOOD, 20.0,
 						BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
-				new SciomeScatterChart("", new ArrayList<>(), BMDResult.BMD, BMDResult.BMDL,
+				new SciomeScatterChartFX("", new ArrayList<>(), BMDResult.BMD, BMDResult.BMDL,
 						BMDAnalysisResultsDataVisualizationView.this));
-		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogram("", new ArrayList<>(), BMDResult.BMD,
+		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogramFX("", new ArrayList<>(), BMDResult.BMD,
 				20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 	}
@@ -97,7 +97,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		}
 		else
 		{
-			chartsList.add(new SciomePieChart(
+			chartsList.add(new SciomePieChartFX(
 					BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, pack,
 							selectedIds),
 					null, chartDataPacks, "BMDS Model Counts", BMDAnalysisResultsDataVisualizationView.this));

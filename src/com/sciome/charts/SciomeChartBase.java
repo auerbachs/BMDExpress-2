@@ -1,4 +1,4 @@
-package com.sciome.charts.javafx;
+package com.sciome.charts;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -485,6 +485,31 @@ public abstract class SciomeChartBase extends StackPane
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}
+
+	}
+
+	/*
+	 * store information about a data point that is "extra" this information has the purpose of being used to
+	 * sort the data.
+	 */
+	protected class ChartExtraValue
+	{
+		public String	label;
+		public Integer	count;
+		public Object	userData;
+
+		public ChartExtraValue(String l, Integer c, Object u)
+		{
+			label = l;
+			count = c;
+			userData = u;
+		}
+
+		@Override
+		public String toString()
+		{
+			return label;
 		}
 
 	}

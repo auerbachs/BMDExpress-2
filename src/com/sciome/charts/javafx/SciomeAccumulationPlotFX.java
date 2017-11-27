@@ -1,24 +1,22 @@
 package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import com.sciome.charts.SciomeAccumulationPlot;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.StackPane;
@@ -26,49 +24,13 @@ import javafx.scene.layout.StackPane;
 /*
  * 
  */
-public class SciomeAccumulationPlot extends SciomeChartBase implements ChartDataExporter
+public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 {
-	private final static Integer	MAX_ACCUMULATION_BEFORE_MODULUS	= 300;
-	private final static Integer	MOD_AFTER_REACH_MAX				= 20;
-	private final static Integer	MAX_TO_POPUP					= 100;
-	private final static Integer	MAX_PREV_OBJECTS_TO_STORE		= 0;
-	private CheckBox				unBinCheckBox					= new CheckBox("Show All Data");
-	private Tooltip					toolTip							= new Tooltip("");
 
-	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeAccumulationPlotFX(String title, List<ChartDataPack> chartDataPacks, String key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
-
-		logXAxis.setSelected(true);
-		logYAxis.setSelected(false);
-		this.chartableKeys = new String[] { key };
-		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox));
-		showChart();
-
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				showChart();
-			}
-		});
-
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				showChart();
-			}
-		});
-
-		unBinCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				showChart();
-			}
-		});
+		super(title, chartDataPacks, key, bucketsize, chartListener);
 
 	}
 
@@ -240,60 +202,6 @@ public class SciomeAccumulationPlot extends SciomeChartBase implements ChartData
 		});
 
 		return returnPane;
-	}
-
-	// join objects together to show a list of lines that show values of the points being plotted
-	// the objects and values need to be in alignment to ensure that the value they represent
-	// is properly appended next to it in the popup.
-	private String joinObjects(List<Object> objects, Double accumulation, List<Double> values, String key,
-			int max)
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("Accumulation = ");
-		sb.append(accumulation);
-		sb.append("\n");
-		int i = 0;
-		for (Object obj : objects)
-		{
-			sb.append(obj);
-			sb.append("  ");
-			sb.append(key);
-			sb.append(" = ");
-			sb.append(values.get(i));
-			sb.append(System.getProperty("line.separator"));
-			if (i > max)
-			{
-				sb.append("....");
-				break;
-			}
-			i++;
-		}
-		return sb.toString();
-	}
-
-	private String joinAllObjects(List<Object> objects, Double accumulation, List<Double> values, String key)
-	{
-		return joinObjects(objects, accumulation, values, key, 2000000000);
-
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		showChart();
-
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
