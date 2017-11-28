@@ -1,6 +1,5 @@
 package com.sciome.charts.javafx;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,9 +7,10 @@ import java.util.Set;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeScatterChart;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.model.SciomeData;
+import com.sciome.charts.model.SciomeSeries;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
@@ -45,6 +45,7 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 	/*
 	 * generate a histogram bar chart
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
@@ -94,42 +95,24 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 
 		scatterChart.setTitle(key1 + " Vs. " + key2);
 
-		int nodecount = 0;
-		int totalnodecount = 0;
-		for (ChartDataPack chartDataPack : chartDataPacks)
+		for (SciomeSeries<Number, Number> sciomeSeriesData : getSeriesData())
 		{
-
 			XYChart.Series series = new XYChart.Series();
-			series.setName(chartDataPack.getName());
+			series.setName(sciomeSeriesData.getName());
 
 			Set<String> chartLabelSet = new HashSet<>();
-			for (ChartData chartData : chartDataPack.getChartData())
+			for (Object chartDataObj : sciomeSeriesData.getData())
 			{
-				if (cancel)
-					return null;
-				totalnodecount++;
+				SciomeData<Number, Number> chartData = (SciomeData<Number, Number>) chartDataObj;
 
-				nodecount++;
-				Double dataPointValue1 = (Double) chartData.getDataPoints().get(key1);
-				Double dataPointValue2 = (Double) chartData.getDataPoints().get(key2);
-
-				if (dataPointValue1 == null || dataPointValue2 == null)
-					continue;
-
-				XYChart.Data theData = new XYChart.Data(dataPointValue1, dataPointValue2);
-				theData.setExtraValue(new ChartExtraValue(chartData.getDataPointLabel(), 0,
-						chartData.getCharttableObject()));
-				theData.setNode(userObjectPane(chartData.getCharttableObject(), false));
-
-				chartLabelSet.add(chartData.getDataPointLabel());
-
+				XYChart.Data theData = new XYChart.Data(chartData.getXValue(), chartData.getYValue());
+				theData.setExtraValue(chartData.getExtraValue());
+				theData.setNode(
+						userObjectPane(((ChartExtraValue) chartData.getExtraValue()).userData, false));
 				series.getData().add(theData);
-
 			}
 			toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");
 			scatterChart.getData().add(series);
-			if (nodecount > getMaxGraphItems() - 1)
-				break;
 
 		}
 
@@ -206,56 +189,4 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 		}
 	}
 
-	/*
-	 * implement the getting of lines that need to be exported.
-	 */
-	@Override
-	public List<String> getLinesToExport()
-	{
-
-		List<String> returnList = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-		XYChart xyChart = (XYChart) getChart();
-		List<XYChart.Series> data = xyChart.getData();
-		sb.append("series");
-		sb.append("\t");
-		sb.append("x");
-		sb.append("\t");
-		sb.append("y");
-		sb.append("\t");
-		sb.append("label");
-		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
-		{
-
-			for (Object d : seriesData.getData())
-			{
-				sb.setLength(0);
-				XYChart.Data xychartData = (XYChart.Data) d;
-				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
-				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
-													// datasets together. skip it
-					continue;
-				sb.setLength(0);
-
-				Double X = (Double) xychartData.getXValue();
-				Double Y = (Double) xychartData.getYValue();
-
-				sb.append(seriesData.getName());
-
-				sb.append("\t");
-
-				sb.append(X);
-				sb.append("\t");
-				sb.append(Y);
-				sb.append("\t");
-				sb.append(extraValue.userData.toString());
-
-				returnList.add(sb.toString());
-
-			}
-		}
-
-		return returnList;
-	}
 }

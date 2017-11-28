@@ -2,19 +2,17 @@ package com.sciome.charts;
 
 import java.util.List;
 
-import com.sciome.charts.SciomeChartBase;
-import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 
 import javafx.scene.chart.Chart;
 
-public abstract class SciomeHeatMap extends SciomeChartBase
+public abstract class SciomeHeatMap extends SciomeChartBase<String, String>
 {
 
 	public SciomeHeatMap(String title, List<ChartDataPack> chartDataPacks, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
+		super(title, chartDataPacks, new String[] {}, chartListener);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -43,6 +41,15 @@ public abstract class SciomeHeatMap extends SciomeChartBase
 	protected void redrawChart()
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * fill up the sciome series data structure so implementing classes can use it to create charts
+	 */
+	@Override
+	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	{
 
 	}
 

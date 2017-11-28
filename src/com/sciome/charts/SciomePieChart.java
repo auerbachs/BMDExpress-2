@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 /*
  * 
  */
-public abstract class SciomePieChart extends SciomeChartBase implements ChartDataExporter
+public abstract class SciomePieChart extends SciomeChartBase<Number, Number> implements ChartDataExporter
 {
 
 	protected Map<String, Double>		pieDataMap;
@@ -21,10 +21,9 @@ public abstract class SciomePieChart extends SciomeChartBase implements ChartDat
 	public SciomePieChart(Map<String, Double> pieDataMap, Map<String, List<Object>> pieObjectMap,
 			List<ChartDataPack> packs, String title, SciomeChartListener listener)
 	{
-		super(title, packs, listener);
+		super(title, packs, new String[] {}, listener);
 		this.pieDataMap = pieDataMap;
 		this.pieObjectMap = pieObjectMap;
-		chartableKeys = new String[] {};
 
 		showChart(caption);
 
@@ -46,6 +45,15 @@ public abstract class SciomePieChart extends SciomeChartBase implements ChartDat
 	protected void redrawChart()
 	{
 		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * fill up the sciome series data structure so implementing classes can use it to create charts
+	 */
+	@Override
+	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	{
 
 	}
 

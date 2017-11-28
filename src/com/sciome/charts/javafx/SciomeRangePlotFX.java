@@ -1,16 +1,12 @@
 package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeRangePlot;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
@@ -391,42 +387,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		}
 	}
 
-	/** Data extra values for storing close, high and low. */
-	@SuppressWarnings("rawtypes")
-	private class RangePlotExtraValue extends ChartExtraValue
-	{
-		private Double	min;
-		private Double	max;
-		private Double	high;
-		private String	description;
-
-		public RangePlotExtraValue(String label, Integer count, Double min, Double max, Double high,
-				String description, Object userData)
-		{
-			super(label, count, userData);
-			this.min = min;
-			this.max = max;
-			this.high = high;
-			this.description = description;
-		}
-
-		public Double getMin()
-		{
-			return min;
-		}
-
-		public Double getMax()
-		{
-			return max;
-		}
-
-		public Double getHigh()
-		{
-			return high;
-		}
-
-	}
-
 	/** Candle node used for drawing a candle */
 	private class RangeForPlot extends Group
 	{
@@ -550,9 +510,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 		String minKey = keys[0];
 		String maxKey = keys[1];
-		String lowKey = keys[2];
 		String key = keys[3];
-		String middleKey = keys[4];
 		Double axisMin = getMinMin(minKey);
 		Double dataMin = axisMin;
 		Double axisMax = getMaxMax(maxKey);
@@ -584,106 +542,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		RangePlot barChart = new RangePlot(xAxis, yAxis);
 
 		barChart.setTitle("Range Plot");
-
-		// Now put the data in a bucket
-
-		// create count map because in multiple data comparison, I only care about
-		// shared data labels
-		Map<String, Integer> countMap = getCountMap();
-
-		int maxPerPack = 0;
-		if (chartDataPacks.size() > 0)
-			maxPerPack = MAX_NODES / chartDataPacks.size();
-		Double sum = 0.0;
-		int count = 0;
-		for (ChartDataPack chartDataPack : chartDataPacks)
-		{
-			SciomeSeries<Number, String> series1 = new SciomeSeries<>(chartDataPack.getName());
-
-			Set<String> chartLabelSet = new HashSet<>();
-
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				if (cancel)
-					return null;
-				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-				if (dataPointValue != null)
-					sum += dataPointValue;
-
-				count++;
-			}
-		}
-
-		Double avg = 0.0;
-		if (count > 0)
-			avg = sum / count;
-
-		for (ChartDataPack chartDataPack : chartDataPacks)
-		{
-			SciomeSeries<Number, String> series1 = new SciomeSeries<>(chartDataPack.getName());
-
-			Set<String> chartLabelSet = new HashSet<>();
-
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				if (cancel)
-					return null;
-				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-
-				if (dataPointValue == null)
-					continue;
-
-				sum += dataPointValue;
-
-				Double dataPointValueMinKey = (Double) chartData.getDataPoints().get(minKey);
-				Double dataPointValueLowKey = (Double) chartData.getDataPoints().get(lowKey);
-				Double dataPointValueMaxKey = (Double) chartData.getDataPoints().get(maxKey);
-				Double dataPointValueMiddleKey = (Double) chartData.getDataPoints().get(middleKey);
-
-				chartLabelSet.add(chartData.getDataPointLabel());
-				SciomeData<Number, String> xyData = new SciomeData<>(chartData.getDataPointLabel(),
-						dataPointValue, chartData.getDataPointLabel(),
-						new RangePlotExtraValue(chartData.getDataPointLabel(),
-								countMap.get(chartData.getDataPointLabel()), dataPointValueMinKey,
-								dataPointValueMaxKey, dataPointValueMiddleKey,
-								chartData.getCharttableObject().toString(), chartData.getCharttableObject()));
-
-				series1.getData().add(xyData);
-
-				putNodeInformation(chartDataPack.getName() + chartData.getDataPointLabel(),
-						new NodeInformation(chartData.getCharttableObject(), false));
-
-				// too many nodes
-				if (count > maxPerPack)
-					break;
-
-			}
-
-			// add empty values for multiple datasets. When comparing multiple
-			// data sets, it comes in handy for scrolling to just have empty
-			// data points when the data set doesn't represent a label
-			for (String chartedKey : countMap.keySet())
-			{
-				if (cancel)
-					return null;
-				if (!chartLabelSet.contains(chartedKey))
-				{
-					SciomeData<Number, String> xyData = new SciomeData<>(chartedKey, avg, chartedKey,
-							new RangePlotExtraValue(chartedKey, countMap.get(chartedKey), avg, avg, avg, "",
-									null));
-
-					series1.getData().add(xyData);
-					putNodeInformation(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
-				}
-			}
-
-			if (seriesData.size() > 0)
-				sortSeriesWithPrimarySeries(series1, (SciomeSeries) (seriesData.get(0)));
-			else
-				sortSeriesX(series1);
-			seriesData.add(series1);
-
-		}
 
 		toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");
 
@@ -740,65 +598,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		NodeInformation nI = getNodeInformation(seriesName + dataPointLabel);
 
 		return userObjectPane(nI.object, nI.invisible, seriesIndex);
-	}
-
-	/*
-	 * implement the getting of lines that need to be exported.
-	 */
-	@Override
-	public List<String> getLinesToExport()
-	{
-
-		List<String> returnList = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("series");
-		sb.append("\t");
-		sb.append("y");
-		sb.append("\t");
-		sb.append("min");
-		sb.append("\t");
-		sb.append("value");
-		sb.append("\t");
-		sb.append("max");
-		sb.append("\t");
-		sb.append("component");
-		returnList.add(sb.toString());
-		for (Object obj : this.seriesData)
-		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
-			{
-				SciomeData xychartData = (SciomeData) d;
-				RangePlotExtraValue extraValue = (RangePlotExtraValue) xychartData.getExtraValue();
-				if (extraValue.description.equals("")) // this means it's a faked value for showing multiple
-														// datasets together. skip it
-					continue;
-				sb.setLength(0);
-
-				Double X = (Double) xychartData.getxValue();
-				String Y = (String) xychartData.getyValue();
-
-				sb.append(sData.getName());
-				sb.append("\t");
-				sb.append(Y);
-				sb.append("\t");
-
-				sb.append(extraValue.getMin());
-				sb.append("\t");
-				sb.append(X);
-				sb.append("\t");
-				sb.append(extraValue.getMax());
-				sb.append("\t");
-				sb.append(extraValue.description);
-
-				returnList.add(sb.toString());
-
-			}
-		}
-
-		return returnList;
-
 	}
 
 }

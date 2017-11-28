@@ -1,14 +1,10 @@
 package com.sciome.charts.javafx;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.sciome.charts.SciomeBarChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
@@ -67,71 +63,6 @@ public class SciomeBarChartFX extends SciomeBarChart
 		barChart.setTitle("Multiple Data Viewer: " + key);
 		barChart.setBarGap(0.0);
 		barChart.setCategoryGap(3.0);
-		// Now put the data in a bucket
-
-		// create count map because in multiple data comparison, I only care about
-		// shared data labels
-		Map<String, Integer> countMap = getCountMap();
-
-		int maxPerPack = 0;
-		if (chartDataPacks.size() > 0)
-			maxPerPack = MAX_NODES / chartDataPacks.size();
-		for (ChartDataPack chartDataPack : chartDataPacks)
-		{
-			SciomeSeries<String, Number> series1 = new SciomeSeries<>(chartDataPack.getName());
-
-			Set<String> chartLabelSet = new HashSet<>();
-			int count = 0;
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				if (cancel)
-					return null;
-				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-				if (dataPointValue == null)
-					continue;
-				SciomeData<String, Number> xyData = new SciomeData<>(chartData.getDataPointLabel(),
-						chartData.getDataPointLabel(), dataPointValue,
-						new ChartExtraValue(chartData.getDataPointLabel(),
-								countMap.get(chartData.getDataPointLabel()),
-								chartData.getCharttableObject()));
-
-				series1.getData().add(xyData);
-
-				chartLabelSet.add(chartData.getDataPointLabel());
-				putNodeInformation(chartDataPack.getName() + chartData.getDataPointLabel(),
-						new NodeInformation(chartData.getCharttableObject(), false));
-				count++;
-				// too many nodes
-				if (count > maxPerPack)
-					break;
-
-			}
-
-			// add empty values for multiple datasets. When comparing multiple
-			// data sets, it comes in handy for scrolling to just have empty
-			// data points when the data set doesn't represent a label
-			for (String chartedKey : countMap.keySet())
-			{
-				if (cancel)
-					return null;
-				if (!chartLabelSet.contains(chartedKey))
-				{
-					SciomeData<String, Number> xyData = new SciomeData<>(chartedKey, chartedKey, 0.0,
-							new ChartExtraValue(chartedKey, countMap.get(chartedKey), null));
-
-					series1.getData().add(xyData);
-					putNodeInformation(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
-				}
-			}
-
-			if (seriesData.size() > 0)
-				sortSeriesWithPrimarySeries(series1, (SciomeSeries) (seriesData.get(0)));
-			else
-				sortSeriesY(series1);
-			seriesData.add(series1);
-
-		}
-
 		toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");
 
 		return barChart;

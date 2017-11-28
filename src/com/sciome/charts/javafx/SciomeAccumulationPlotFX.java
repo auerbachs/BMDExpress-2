@@ -1,14 +1,12 @@
 package com.sciome.charts.javafx;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.model.SciomeSeries;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
@@ -59,91 +57,31 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 		lineChart.setTitle(key + " Accumulation Plot");
 		// defining a series
 
-		for (ChartDataPack chartDataPack : chartDataPacks)
+		try
 		{
-			List<ChartData> doubleList = new ArrayList<>();
-			for (ChartData chartData : chartDataPack.getChartData())
+			for (SciomeSeries sciomeSeries : getSeriesData())
 			{
-				if (cancel)
-					return null;
-				Double dataPoint = (Double) chartData.getDataPoints().get(key);
-				if (dataPoint == null)
-					continue;
-				doubleList.add(chartData);
-			}
+				XYChart.Series series = new XYChart.Series();
+				series.setName(sciomeSeries.getName());
 
-			doubleList.sort(new Comparator<ChartData>() {
-				@Override
-				public int compare(ChartData o1, ChartData o2)
+				for (Object objValue : sciomeSeries.getData())
 				{
-					return ((Double) o1.getDataPoints().get(key))
-							.compareTo((Double) o2.getDataPoints().get(key));
+					AccumulationData value = (AccumulationData) objValue;
+
+					XYChart.Data theData = new XYChart.Data(value.getXValue(), value.getYValue());
+					theData.setExtraValue(value.getExtraValue());
+					theData.setNode(userObjectPane(value.getExtraValue(), value.getYValue().doubleValue(),
+							value.getValuesList(), key));
+					series.getData().add(theData);
+
 				}
-			});
+				lineChart.getData().add(series);
 
-			int i = 0;
-			XYChart.Series series = new XYChart.Series();
-			series.setName(chartDataPack.getName());
-			Double accumulation = 0.0;
-
-			int count = 0;
-			Double currentValue = null;
-			List<Object> charttableObjectsMasterList = new ArrayList<>();
-			List<Object> charttableObjects = new ArrayList<>();
-			/*
-			 * start adding accumulation values
-			 */
-
-			// a list that will store the values associated with the object.
-			List<Double> valuesList = new ArrayList<>();
-			for (ChartData value : doubleList)
-			{
-				Double newValue = (Double) value.getDataPoints().get(key);
-				if (!newValue.equals(currentValue) && currentValue != null)
-				{
-					if (unBinCheckBox.isSelected() || count < MAX_ACCUMULATION_BEFORE_MODULUS
-							|| (count >= MAX_ACCUMULATION_BEFORE_MODULUS && i % MOD_AFTER_REACH_MAX == 0))
-					{
-						if (charttableObjects.size() == 1) // we are in the area before the modulus kicks in.
-						{
-							int adds = 0;
-							int j = i - 1;
-							while (adds < MAX_PREV_OBJECTS_TO_STORE && j >= 0)
-							{
-								charttableObjects.add(charttableObjectsMasterList.get(j));
-								j--;
-								adds++;
-							}
-
-						}
-						XYChart.Data theData = new XYChart.Data(currentValue, accumulation);
-						theData.setExtraValue(charttableObjects);
-						theData.setNode(userObjectPane(charttableObjects, accumulation, valuesList, key));
-						series.getData().add(theData);
-						charttableObjects = new ArrayList<>();
-						valuesList = new ArrayList<>();
-
-					}
-
-					count++;
-				}
-				valuesList.add(newValue);
-				charttableObjects.add(value.getCharttableObject());
-				charttableObjectsMasterList.add(value.getCharttableObject());
-				accumulation++;
-				currentValue = newValue;
-				i++;
 			}
-			// get the last one
-			if (currentValue != null)
-			{
-				XYChart.Data theData = new XYChart.Data(currentValue, accumulation);
-				theData.setExtraValue(charttableObjects);
-				theData.setNode(userObjectPane(charttableObjects, accumulation, valuesList, key));
-				series.getData().add(theData);
-			}
-			lineChart.getData().add(series);
-
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
 		return lineChart;
@@ -201,63 +139,6 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 		});
 
 		return returnPane;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	/*
-	 * implement the getting of lines that need to be exported.
-	 */
-	@Override
-	public List<String> getLinesToExport()
-	{
-		XYChart xyChart = (XYChart) getChart();
-
-		List<String> returnList = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-		List<XYChart.Series> data = xyChart.getData();
-
-		sb.append("series");
-		sb.append("\t");
-		sb.append("x");
-		sb.append("\t");
-		sb.append("y");
-		sb.append("\t");
-		sb.append("components delimited by ///");
-		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
-		{
-
-			for (Object d : seriesData.getData())
-			{
-				sb.setLength(0);
-				XYChart.Data xychartData = (XYChart.Data) d;
-				Double X = (Double) xychartData.getXValue();
-				Double Y = (Double) xychartData.getYValue();
-				List extraValue = (List) xychartData.getExtraValue();
-
-				StringBuilder components = new StringBuilder();
-				for (Object obj : extraValue)
-				{
-					if (components.length() > 0)
-						components.append("///");
-					components.append(obj.toString());
-				}
-
-				sb.append(seriesData.getName());
-				sb.append("\t");
-				sb.append(X);
-				sb.append("\t");
-				sb.append(Y);
-				sb.append("\t");
-				sb.append(components.toString());
-
-				returnList.add(sb.toString());
-
-			}
-		}
-
-		return returnList;
-
 	}
 
 }

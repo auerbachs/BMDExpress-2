@@ -12,7 +12,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 
-import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeBubbleChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartData;
@@ -20,7 +20,7 @@ import com.sciome.charts.data.ChartDataPack;
 
 import javafx.scene.layout.HBox;
 
-public class JFreeBubbleChart extends SciomeChartBase
+public class JFreeBubbleChart extends SciomeBubbleChart
 {
 
 	private static Double BUBBLE_SCALE_FRACTION = 8.0;
@@ -28,9 +28,8 @@ public class JFreeBubbleChart extends SciomeChartBase
 	public JFreeBubbleChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			String key3, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
+		super(title, chartDataPacks, key1, key2, key3, chartListener);
 		HBox hbox = new HBox();
-		chartableKeys = new String[] { key1, key2, key3 };
 		showChart();
 	}
 
@@ -53,7 +52,7 @@ public class JFreeBubbleChart extends SciomeChartBase
 
 		DefaultXYZDataset dataset = new DefaultXYZDataset();
 
-		for (ChartDataPack chartDataPack : chartDataPacks)
+		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
 			int count = 0;
 			for (ChartData chartData : chartDataPack.getChartData())
@@ -151,6 +150,13 @@ public class JFreeBubbleChart extends SciomeChartBase
 	{
 		showChart();
 
+	}
+
+	@Override
+	public List<String> getLinesToExport()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

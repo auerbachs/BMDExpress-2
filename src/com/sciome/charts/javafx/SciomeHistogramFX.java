@@ -1,15 +1,14 @@
 package com.sciome.charts.javafx;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeHistogram;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
@@ -44,8 +43,6 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
 		String key = keys[0];
-		Double max = getMaxMax(key);
-		Double min = getMinMin(key);
 
 		final Axis xAxis = new CategoryAxis();
 
@@ -54,57 +51,18 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 		xAxis.setLabel(key);
 		yAxis.setLabel("Count");
 
-		Double bucketSize = (max - min) / bucketsize;
-		List<Double> dataPointCounts = new ArrayList<Double>(bucketsize.intValue());
-
-		List<List<Object>> bucketObjects = new ArrayList<>();
-		for (int i = 0; i <= bucketsize.intValue(); i++)
-		{
-			bucketObjects.add(new ArrayList<>());
-		}
-
-		List<Double> xDataPoints = new ArrayList<Double>(bucketsize.intValue());
-		for (int i = 0; i <= bucketsize.intValue(); i++)
-		{
-			xDataPoints.add(min + bucketSize * i);
-			dataPointCounts.add(0.0);
-		}
-
-		// Now put the data in a bucket
-		for (ChartDataPack chartDataPack : chartDataPacks)
-		{
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				if (cancel)
-					return null;
-				Double dataPoint = (Double) chartData.getDataPoints().get(key);
-				if (dataPoint == null)
-					continue;
-
-				// which bin?
-				for (int i = 0; i <= bucketsize.intValue(); i++)
-				{
-					if (dataPoint <= min + bucketSize * i)
-					{
-						dataPointCounts.set(i, dataPointCounts.get(i) + 1.0);
-						bucketObjects.get(i).add(chartData.getCharttableObject());
-						break;
-					}
-				}
-			}
-		}
-
 		XYChart.Series<String, Number> series1 = new XYChart.Series<>();
 		series1.setName(key);
 
 		DecimalFormat df = new DecimalFormat("#.###");
-		for (int i = 0; i <= bucketsize.intValue(); i++)
+
+		for (Object sciomeDataObj : getSeriesData().get(0).getData())
 		{
-			XYChart.Data data = new XYChart.Data(df.format(xDataPoints.get(i)), dataPointCounts.get(i));
-
-			data.setNode(userObjectPane(bucketObjects.get(i)));
+			SciomeData<String, Number> sciomeData = (SciomeData<String, Number>) sciomeDataObj;
+			XYChart.Data data = new XYChart.Data(sciomeData.getXValue(),
+					sciomeData.getYValue().doubleValue());
+			data.setNode(userObjectPane(data.getExtraValue()));
 			series1.getData().add(data);
-
 		}
 
 		BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
@@ -180,63 +138,6 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 		StackPane returnPane = new StackPane();
 		returnPane.setUserData(object);
 		return returnPane;
-	}
-
-	/*
-	 * implement the getting of lines that need to be exported.
-	 */
-	@Override
-	public List<String> getLinesToExport()
-	{
-		XYChart xyChart = (XYChart) getChart();
-
-		List<String> returnList = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-		List<XYChart.Series> data = xyChart.getData();
-
-		sb.append("x");
-		sb.append("\t");
-		sb.append("y");
-		sb.append("\t");
-		sb.append("components delimited by ///");
-		returnList.add(sb.toString());
-		for (XYChart.Series seriesData : data)
-		{
-
-			for (Object d : seriesData.getData())
-			{
-				XYChart.Data xychartData = (XYChart.Data) d;
-
-				sb.setLength(0);
-				String X = (String) xychartData.getXValue();
-
-				Double Y = (Double) xychartData.getYValue();
-
-				Node node = xychartData.getNode();
-				List<Object> objects = (List) node.getUserData();
-
-				StringBuilder components = new StringBuilder();
-				for (Object obj : objects)
-				{
-					if (components.length() > 0)
-						components.append("///");
-					components.append(obj.toString());
-				}
-
-				sb.append(X);
-				sb.append("\t");
-				sb.append(Y);
-				sb.append("\t");
-
-				sb.append(components);
-
-				returnList.add(sb.toString());
-
-			}
-		}
-
-		return returnList;
-
 	}
 
 }

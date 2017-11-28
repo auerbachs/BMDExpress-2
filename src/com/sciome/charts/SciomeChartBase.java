@@ -12,6 +12,7 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.model.SciomeSeries;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -40,35 +41,41 @@ import javafx.util.Callback;
 /*
  * 
  */
-public abstract class SciomeChartBase extends StackPane
+public abstract class SciomeChartBase<X, Y> extends StackPane
 {
-	protected String				title;
-	protected SciomeChartListener	chartListener;
-	protected List<ChartDataPack>	chartDataPacks;
-	private int						maxGraphItems				= 2000000;
-	protected boolean				cancel						= false;
-	private Node					chart;
-	protected CheckBox				logXAxis					= new CheckBox("Log X Axis");
-	protected CheckBox				logYAxis					= new CheckBox("Log Y Axis");
-	protected CheckBox				lockXAxis					= new CheckBox("Lock X Axis");
-	protected CheckBox				lockYAxis					= new CheckBox("Lock Y Axis");
-	protected Label					warningTooManyNodesLabel	= new Label(
+	protected String					title;
+	protected SciomeChartListener		chartListener;
+	private List<ChartDataPack>			chartDataPacks;
+	private int							maxGraphItems				= 2000000;
+	protected boolean					cancel						= false;
+	private Node						chart;
+	protected CheckBox					logXAxis					= new CheckBox("Log X Axis");
+	protected CheckBox					logYAxis					= new CheckBox("Log Y Axis");
+	protected CheckBox					lockXAxis					= new CheckBox("Lock X Axis");
+	protected CheckBox					lockYAxis					= new CheckBox("Lock Y Axis");
+	protected Label						warningTooManyNodesLabel	= new Label(
 			"There are too many data points to show all.  Please use the slider to scroll through your data.");
-	private VBox					vBox;
+	private VBox						vBox;
 
-	private Button					exportToTextButton;
-	private Button					maxMinButton;
-	private Button					configurationButton;
-	private HBox					checkBoxes;
-	protected String[]				chartableKeys;
-	private ChartConfiguration		chartConfiguration;
+	private Button						exportToTextButton;
+	private Button						maxMinButton;
+	private Button						configurationButton;
+	private HBox						checkBoxes;
+	private String[]					chartableKeys;
+	private ChartConfiguration			chartConfiguration;
 
-	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks,
+	private List<SciomeSeries<X, Y>>	seriesData					= new ArrayList<>();
+
+	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, String[] keys,
 			SciomeChartListener chartListener)
 	{
 		this.title = title;
+		this.chartableKeys = keys;
 		this.chartListener = chartListener;
 		this.chartDataPacks = chartDataPacks;
+
+		this.convertChartDataPacksToSciomeSeries(chartableKeys, chartDataPacks);
+
 		vBox = new VBox();
 		maxMinButton = GlyphsDude.createIconButton(FontAwesomeIcon.EXPAND);
 		maxMinButton.setTooltip(new Tooltip("View this chart in a large separate window."));
@@ -287,6 +294,10 @@ public abstract class SciomeChartBase extends StackPane
 	{
 
 		this.chartDataPacks = chartDataPacks;
+		// recreate the sciome series
+		if (this instanceof SciomeAccumulationPlot)
+			System.out.println();
+		this.convertChartDataPacksToSciomeSeries(chartableKeys, chartDataPacks);
 		showChart();
 
 	}
@@ -342,13 +353,35 @@ public abstract class SciomeChartBase extends StackPane
 		return chart;
 	}
 
+	protected List<SciomeSeries<X, Y>> getSeriesData()
+	{
+		return seriesData;
+	}
+
+	protected void setSeriesData(List<SciomeSeries<X, Y>> sd)
+	{
+		seriesData = sd;
+	}
+
+	protected List<ChartDataPack> getChartDataPacks()
+	{
+		return chartDataPacks;
+	}
+
 	protected abstract Node generateChart(String[] keys, ChartConfiguration chartConfiguration);
 
 	protected abstract boolean isXAxisDefineable();
 
 	protected abstract boolean isYAxisDefineable();
 
+	// The implementing chart will implement this method to redraw itself
 	protected abstract void redrawChart();
+
+	// the subclass needs to conver the charted data packs to a sciome series.
+	// then the actual chart implementation can use the SciomeSeries and SciomeData
+	// to construct the chart
+	protected abstract void convertChartDataPacksToSciomeSeries(String[] keys,
+			List<ChartDataPack> chartPacks);
 
 	// show the configuration to the user.
 	private void showConfiguration()

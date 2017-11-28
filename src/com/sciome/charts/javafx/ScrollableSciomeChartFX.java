@@ -1,4 +1,4 @@
-package com.sciome.charts;
+package com.sciome.charts.javafx;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.model.SciomeData;
+import com.sciome.charts.model.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,7 +29,7 @@ import javafx.scene.control.Slider;
 /*
  * provide common support for scrolling through chart data. Platform chooser
  */
-public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
+public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y>
 {
 
 	// map that keeps track of enough information to instantiate a node.
@@ -34,7 +38,6 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 
 	private Slider							slider;
 	protected CheckBox						showAllCheckBox;
-	protected List<SciomeSeries<X, Y>>		seriesData			= new ArrayList<>();
 
 	// depending on what type of chart, this boolean will
 	// tell the system to add data to front of what will be displayed and scrolled through.
@@ -45,10 +48,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	private ChangeListener<Number>			sliderChangeListener;
 	private int								currentSliderValue	= 1;
 
-	public ScrollableSciomeChart(String title, List<ChartDataPack> chartDataPacks,
+	public ScrollableSciomeChartFX(String title, List<ChartDataPack> chartDataPacks, String[] keys,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, chartListener);
+		super(title, chartDataPacks, keys, chartListener);
 
 		slider = new Slider();
 		slider.setOrientation(Orientation.HORIZONTAL);
@@ -63,14 +66,14 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 
 				if (new_val)
 				{
-					seriesData.clear();
+					getSeriesData().clear();
 					showChart();
 					warningTooManyNodesLabel.setVisible(false);
 					intializeScrollableChart();
 				}
 				else
 				{
-					seriesData.clear();
+					getSeriesData().clear();
 					showChart();
 					warningTooManyNodesLabel.setVisible(true);
 					intializeScrollableChart();
@@ -82,7 +85,7 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	@Override
 	public void redrawCharts(List<ChartDataPack> chartDataPacks)
 	{
-		seriesData.clear();
+		this.getSeriesData().clear();
 		super.redrawCharts(chartDataPacks);
 		slider.valueProperty().removeListener(sliderChangeListener);
 		intializeScrollableChart();
@@ -93,10 +96,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 
 		int max = 0;
 
-		for (SciomeSeries<X, Y> series : seriesData)
+		for (SciomeSeries<X, Y> series : getSeriesData())
 		{
 			int countofthings = 0;
-			for (SciomeData d : series.data)
+			for (SciomeData d : series.getData())
 			{
 				countofthings++;
 			}
@@ -128,10 +131,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 		slider.valueProperty().addListener(sliderChangeListener);
 
 		// initialize series.
-		for (SciomeSeries series : seriesData)
+		for (SciomeSeries series : getSeriesData())
 		{
 			Series newSeries = new Series();
-			newSeries.setName(series.name);
+			newSeries.setName(series.getName());
 
 			// a hack to deal with scatter chart not showing legend braphic
 			if (getChart() instanceof ScatterChart)
@@ -168,7 +171,7 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 		// can be correct.
 		if (componentIsVisible(showAllCheckBox) && showAllCheckBox.isSelected())
 		{
-			for (SciomeSeries<X, Y> series : seriesData)
+			for (SciomeSeries<X, Y> series : getSeriesData())
 			{
 				if (series.getData().size() > maxg)
 				{
@@ -183,26 +186,27 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			if (cancel)
 				return;
 			int seriesindex = 0;
-			for (SciomeSeries<X, Y> series : seriesData)
+			for (SciomeSeries<X, Y> series : getSeriesData())
 			{
-				if (i < series.data.size() && i >= 0)
+				if (i < series.getData().size() && i >= 0)
 				{
-					SciomeData data = series.data.get(i);
+					SciomeData data = series.getData().get(i);
 					if (totalitemsadded > maxg)
 					{
-						if (data.extraValue != null && !labelSet.contains(data.extraValue.toString()))
+						if (data.getExtraValue() != null
+								&& !labelSet.contains(data.getExtraValue().toString()))
 							continue;
 					}
-					XYChart.Data xyData = new XYChart.Data<>(data.xValue, data.yValue);
-					xyData.setNode(getNode(series.name, data.extraValue.toString(), seriesindex));
+					XYChart.Data xyData = new XYChart.Data<>(data.getXValue(), data.getYValue());
+					xyData.setNode(getNode(series.getName(), data.getExtraValue().toString(), seriesindex));
 					int indextoadd = ((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().size();
 					if (this.addDataAtTop)
 						indextoadd = 0;
 					((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().add(indextoadd, xyData);
 					xyData.setExtraValue(data.getExtraValue());
 
-					if (data.extraValue != null)
-						labelSet.add(data.extraValue.toString());
+					if (data.getExtraValue() != null)
+						labelSet.add(data.getExtraValue().toString());
 				}
 				seriesindex++;
 			}
@@ -221,10 +225,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 		// shared data labels
 		Map<String, Integer> countMap = new HashMap<>();
 		int maxPerPack = 0;
-		if (chartDataPacks.size() > 0)
-			maxPerPack = MAX_NODES / chartDataPacks.size();
+		if (getChartDataPacks().size() > 0)
+			maxPerPack = MAX_NODES / getChartDataPacks().size();
 
-		for (ChartDataPack chartDataPack : chartDataPacks)
+		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
 			int count = 0;
 			for (ChartData chartData : chartDataPack.getChartData())
@@ -253,14 +257,14 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesWithExtraValue(SciomeSeries series1)
 	{
-		series1.data.sort(new Comparator<SciomeData>() {
+		series1.getData().sort(new Comparator<SciomeData>() {
 
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
 			{
 				int c;
-				ChartExtraValue ce2 = (ChartExtraValue) o2.extraValue;
-				ChartExtraValue ce1 = (ChartExtraValue) o1.extraValue;
+				ChartExtraValue ce2 = (ChartExtraValue) o2.getExtraValue();
+				ChartExtraValue ce1 = (ChartExtraValue) o1.getExtraValue();
 				c = ce2.count.compareTo(ce1.count);
 				if (c == 0)
 					c = ce1.label.compareTo(ce2.label);
@@ -275,10 +279,10 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	{
 		Map<String, Integer> indexMap = new HashMap<>();
 		int i = 0;
-		for (Object sd : primarySeries.data)
+		for (Object sd : primarySeries.getData())
 			indexMap.put(((SciomeData) sd).getName(), i++);
 
-		series1.data.sort(new Comparator<SciomeData>() {
+		series1.getData().sort(new Comparator<SciomeData>() {
 
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
@@ -299,16 +303,16 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesX(SciomeSeries series1)
 	{
-		series1.data.sort(new Comparator<SciomeData>() {
+		series1.getData().sort(new Comparator<SciomeData>() {
 
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
 			{
 				int c;
-				ChartExtraValue ce2 = (ChartExtraValue) o2.extraValue;
-				ChartExtraValue ce1 = (ChartExtraValue) o1.extraValue;
-				Double value2 = (Double) o2.getxValue();
-				Double value1 = (Double) o1.getxValue();
+				ChartExtraValue ce2 = (ChartExtraValue) o2.getExtraValue();
+				ChartExtraValue ce1 = (ChartExtraValue) o1.getExtraValue();
+				Double value2 = (Double) o2.getXValue();
+				Double value1 = (Double) o1.getXValue();
 				c = value1.compareTo(value2);
 				if (c == 0)
 					c = ce1.label.compareTo(ce2.label);
@@ -321,16 +325,16 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesY(SciomeSeries series1)
 	{
-		series1.data.sort(new Comparator<SciomeData>() {
+		series1.getData().sort(new Comparator<SciomeData>() {
 
 			@Override
 			public int compare(SciomeData o1, SciomeData o2)
 			{
 				int c;
-				ChartExtraValue ce2 = (ChartExtraValue) o2.extraValue;
-				ChartExtraValue ce1 = (ChartExtraValue) o1.extraValue;
-				Double value2 = (Double) o2.getyValue();
-				Double value1 = (Double) o1.getyValue();
+				ChartExtraValue ce2 = (ChartExtraValue) o2.getExtraValue();
+				ChartExtraValue ce1 = (ChartExtraValue) o1.getExtraValue();
+				Double value2 = (Double) o2.getYValue();
+				Double value1 = (Double) o1.getYValue();
 				c = value1.compareTo(value2);
 				if (c == 0)
 					c = ce1.label.compareTo(ce2.label);
@@ -362,73 +366,6 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 	 * the seriesname and the data point label
 	 */
 	protected abstract Node getNode(String seriesName, String dataPointLabel, int seriesIndx);
-
-	/*
-	 * create an object to store series data. javafx series data takes up too much space..especially when
-	 * there are lots of data
-	 */
-	protected static class SciomeSeries<X, Y>
-	{
-		private String					name;
-		private List<SciomeData<X, Y>>	data	= new ArrayList<>();
-
-		public SciomeSeries(String n)
-		{
-			name = n;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
-
-		public List<SciomeData<X, Y>> getData()
-		{
-			return data;
-		}
-
-	}
-
-	/*
-	 * store objects in custom object. Create javafx data objects as needed because they are expensive. this
-	 * object is cheap.
-	 */
-	protected static class SciomeData<X, Y>
-	{
-		private String	name;
-		private Object	extraValue;
-		private X		xValue;
-		private Y		yValue;
-
-		public SciomeData(String n, X x, Y y, Object o)
-		{
-			name = n;
-			xValue = x;
-			yValue = y;
-			extraValue = o;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
-
-		public Object getExtraValue()
-		{
-			return extraValue;
-		}
-
-		public X getxValue()
-		{
-			return xValue;
-		}
-
-		public Y getyValue()
-		{
-			return yValue;
-		}
-
-	}
 
 	protected void putNodeInformation(String key, NodeInformation ni)
 	{
