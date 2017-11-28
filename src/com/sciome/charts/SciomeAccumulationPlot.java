@@ -60,6 +60,9 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
+				// clear the series and recreate it
+				getSeriesData().clear();
+				convertChartDataPacksToSciomeSeries(new String[] { key }, getChartDataPacks());
 				showChart();
 			}
 		});
