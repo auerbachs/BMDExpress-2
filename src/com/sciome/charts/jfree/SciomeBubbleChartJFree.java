@@ -37,7 +37,6 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		String key3 = keys[2];
 		Double max1 = getMaxMax(key1);
 		Double max2 = getMaxMax(key2);
-
 		Double min1 = getMinMin(key1);
 		Double min2 = getMinMin(key2);
 

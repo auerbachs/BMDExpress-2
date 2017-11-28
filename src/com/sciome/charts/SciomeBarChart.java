@@ -84,6 +84,7 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getLinesToExport()
 	{
@@ -99,12 +100,10 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 		sb.append("\t");
 		sb.append("component");
 		returnList.add(sb.toString());
-		for (Object obj : this.getSeriesData())
+		for (SciomeSeries<String, Number> sData : getSeriesData())
 		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
+			for (SciomeData<String, Number> xychartData : sData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
 				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
 				String X = (String) xychartData.getXValue();
 

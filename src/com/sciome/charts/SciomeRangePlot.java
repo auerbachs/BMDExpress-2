@@ -259,12 +259,10 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		sb.append("\t");
 		sb.append("component");
 		returnList.add(sb.toString());
-		for (Object obj : getSeriesData())
+		for (SciomeSeries<Number, String> sData : getSeriesData())
 		{
-			SciomeSeries sData = (SciomeSeries) obj;
-			for (Object d : sData.getData())
+			for (SciomeData<Number, String> xychartData : sData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
 				RangePlotExtraValue extraValue = (RangePlotExtraValue) xychartData.getExtraValue();
 				if (extraValue.getDescription().equals("")) // this means it's a faked value for showing
 															// multiple

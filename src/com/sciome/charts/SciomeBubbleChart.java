@@ -93,13 +93,9 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				// too many nodes
-				if (nodecount > getMaxGraphItems() - 1)
-					continue;
 				if (chartData.getDataPoints().containsKey(key1) && chartData.getDataPoints().containsKey(key2)
 						&& chartData.getDataPoints().containsKey(key3))
 				{
-
 					SciomeData<Number, Number> theData = new SciomeData<>(chartData.getDataPointLabel(),
 							(Double) chartData.getDataPoints().get(key1),
 							(Double) chartData.getDataPoints().get(key2),
@@ -138,11 +134,10 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (SciomeSeries seriesData : getSeriesData())
+		for (SciomeSeries<Number, Number> seriesData : getSeriesData())
 		{
-			for (Object d : seriesData.getData())
+			for (SciomeData<Number, Number> xychartData : seriesData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
 				BubbleChartExtraData extraValue = (BubbleChartExtraData) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it

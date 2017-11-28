@@ -153,13 +153,10 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		sb.append("\t");
 		sb.append("components delimited by ///");
 		returnList.add(sb.toString());
-		for (SciomeSeries seriesData : getSeriesData())
+		for (SciomeSeries<String, Number> seriesData : getSeriesData())
 		{
-
-			for (Object d : seriesData.getData())
+			for (SciomeData<String, Number> xychartData : seriesData.getData())
 			{
-				SciomeData xychartData = (SciomeData) d;
-
 				sb.setLength(0);
 				String X = (String) xychartData.getXValue();
 

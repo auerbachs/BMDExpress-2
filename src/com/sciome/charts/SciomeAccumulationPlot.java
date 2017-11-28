@@ -238,7 +238,6 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */
@@ -257,15 +256,13 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		sb.append("\t");
 		sb.append("components delimited by ///");
 		returnList.add(sb.toString());
-		for (SciomeSeries seriesData : getSeriesData())
+		for (SciomeSeries<Number, Number> seriesData : getSeriesData())
 		{
-
-			for (Object d : seriesData.getData())
+			for (SciomeData<Number, Number> xychartData : seriesData.getData())
 			{
 				sb.setLength(0);
-				SciomeData xychartData = (SciomeData) d;
-				Double X = (Double) xychartData.getXValue();
-				Double Y = (Double) xychartData.getYValue();
+				Double X = xychartData.getXValue().doubleValue();
+				Double Y = xychartData.getYValue().doubleValue();
 				List extraValue = (List) xychartData.getExtraValue();
 
 				StringBuilder components = new StringBuilder();

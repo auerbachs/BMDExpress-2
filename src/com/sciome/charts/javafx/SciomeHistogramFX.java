@@ -60,7 +60,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 			SciomeData<String, Number> sciomeData = (SciomeData<String, Number>) sciomeDataObj;
 			XYChart.Data<String, Number> data = new XYChart.Data<>(sciomeData.getXValue(),
 					sciomeData.getYValue().doubleValue());
-			data.setNode(userObjectPane(data.getExtraValue()));
+			data.setNode(userObjectPane(sciomeData.getExtraValue()));
 			series1.getData().add(data);
 		}
 

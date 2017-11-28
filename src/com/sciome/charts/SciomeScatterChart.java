@@ -135,6 +135,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getLinesToExport()
 	{
@@ -149,12 +150,11 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 		sb.append("\t");
 		sb.append("label");
 		returnList.add(sb.toString());
-		for (SciomeSeries seriesData : getSeriesData())
+		for (SciomeSeries<Number, Number> seriesData : getSeriesData())
 		{
-			for (Object d : seriesData.getData())
+			for (SciomeData<Number, Number> xychartData : seriesData.getData())
 			{
 				sb.setLength(0);
-				SciomeData xychartData = (SciomeData) d;
 				ChartExtraValue extraValue = (ChartExtraValue) xychartData.getExtraValue();
 				if (extraValue.label.equals("")) // this means it's a faked value for showing multiple
 													// datasets together. skip it
