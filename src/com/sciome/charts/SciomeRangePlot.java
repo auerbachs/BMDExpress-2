@@ -33,14 +33,14 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 
 		this.addDataAtTop = true;
 
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLogXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
 				initChart();
 			}
 		});
-		lockXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLockXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -57,13 +57,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		showChart();
 		setMaxGraphItems(MAXITEMS);
 		intializeScrollableChart();
-	}
-
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		super.setShowShowAll(false);
 	}
 
 	@Override
@@ -97,7 +90,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		String key = keys[3];
 		String middleKey = keys[4];
 		Double axisMin = getMinMin(minKey);
-		Double dataMin = axisMin;
 		Double axisMax = getMaxMax(maxKey);
 		if (axisMax == 0.0)
 			axisMax = getMaxMax(key);
@@ -121,10 +113,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		int count = 0;
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
-			SciomeSeries<Number, String> series1 = new SciomeSeries<>(chartDataPack.getName());
-
-			Set<String> chartLabelSet = new HashSet<>();
-
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
 				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
@@ -156,7 +144,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 				sum += dataPointValue;
 
 				Double dataPointValueMinKey = (Double) chartData.getDataPoints().get(minKey);
-				Double dataPointValueLowKey = (Double) chartData.getDataPoints().get(lowKey);
 				Double dataPointValueMaxKey = (Double) chartData.getDataPoints().get(maxKey);
 				Double dataPointValueMiddleKey = (Double) chartData.getDataPoints().get(middleKey);
 

@@ -13,7 +13,6 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
-import com.sciome.charts.javafx.ScrollableSciomeChartFX;
 import com.sciome.filter.DataFilterPack;
 
 import javafx.beans.value.ChangeListener;
@@ -367,15 +366,11 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void expand(SciomeChartBase chart)
 	{
 		chart.setOnMouseClicked(null);
-		if (chart instanceof ScrollableSciomeChartFX)
-			((ScrollableSciomeChartFX) chart).setShowShowAll(true);
 		Dialog dialog = createChartDialog(chart);
 		dialog.getDialogPane().setPrefWidth(cBox.getScene().getWidth());
 		dialog.getDialogPane().setPrefHeight(cBox.getScene().getHeight());
 		dialog.showAndWait();
 		chart.chartMinimized();
-		if (chart instanceof ScrollableSciomeChartFX)
-			((ScrollableSciomeChartFX) chart).setShowShowAll(false);
 		showCharts();
 	}
 

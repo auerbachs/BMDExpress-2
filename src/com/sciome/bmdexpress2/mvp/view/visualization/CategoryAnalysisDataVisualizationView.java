@@ -22,11 +22,11 @@ import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeAccumulationPlotFX;
 import com.sciome.charts.javafx.SciomeBarChartFX;
-import com.sciome.charts.javafx.SciomeRangePlotFX;
-import com.sciome.charts.javafx.SciomeBubbleChartFX;
 import com.sciome.charts.javafx.SciomeHistogramFX;
 import com.sciome.charts.javafx.SciomePieChartFX;
+import com.sciome.charts.javafx.SciomeRangePlotFX;
 import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -35,23 +35,25 @@ import com.sciome.filter.DataFilterPack;
 public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
-	private static final String BOXANDWHISKER = "Range Plot";
-	private static final String ACCUMULATION_CHARTS = "Accumulation Charts";
-	private static final String BMD_BMDL_BARCHARTS = "BMD and BMDL Bar Charts";
-	private static final String BEST_MODEL_PIE = "Best Models Pie Chart";
-	private static final String MEAN_HISTOGRAMS = "Mean Histograms";
-	private static final String MEDIAN_HISTOGRAMS = "Median Histograms";
-	private static final String BMD_BMDL_SCATTER = "BMD vs BMDL Scatter Plots";
+	private static final String	BOXANDWHISKER		= "Range Plot";
+	private static final String	ACCUMULATION_CHARTS	= "Accumulation Charts";
+	private static final String	BMD_BMDL_BARCHARTS	= "BMD and BMDL Bar Charts";
+	private static final String	BEST_MODEL_PIE		= "Best Models Pie Chart";
+	private static final String	MEAN_HISTOGRAMS		= "Mean Histograms";
+	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
+	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
 		super();
 		IVisualizationService service = new VisualizationService();
-		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
+		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service,
+				BMDExpressEventBus.getInstance());
 
-		chartCache.put(BOXANDWHISKER, new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
-				CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisResults.BMDU_MEDIAN, null,
-				CategoryAnalysisResults.BMD_MEDIAN, null, CategoryAnalysisDataVisualizationView.this));
+		chartCache.put(BOXANDWHISKER,
+				new SciomeRangePlotFX("Range Plot", new ArrayList<>(), CategoryAnalysisResults.BMDL_MEDIAN,
+						CategoryAnalysisResults.BMDU_MEDIAN, null, CategoryAnalysisResults.BMD_MEDIAN, null,
+						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
 				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
@@ -143,7 +145,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		chartCache.put(
 				"DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN
 						+ CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG,
-				new SciomeBubbleChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeBubbleChartJFree("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG, "Percentage",
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN + CategoryAnalysisResults.BMDL_MEDIAN,

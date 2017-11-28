@@ -33,14 +33,14 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 		super(title, chartDataPacks, new String[] { key }, chartListener);
 		showLogAxes(false, true, false, true);
 
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
 				initChart();
 			}
 		});
-		lockYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLockYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -50,7 +50,6 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 
 		initChart();
 		intializeScrollableChart();
-		setShowShowAll(false);
 	}
 
 	private void initChart()
@@ -59,13 +58,6 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 		showChart();
 		setMaxGraphItems(MAXITEMS);
 		intializeScrollableChart();
-	}
-
-	// never show all for this. because it's like a bar chart
-	@Override
-	public void setShowShowAll(boolean showshowall)
-	{
-		super.setShowShowAll(false);
 	}
 
 	@Override

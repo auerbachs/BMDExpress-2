@@ -1,9 +1,7 @@
 package com.sciome.charts;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
@@ -32,7 +30,8 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
 		initChart();
 
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		// re init the chart when users click log x axis
+		getLogXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -40,7 +39,8 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 			}
 		});
 
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		// re init the chart when users click log y axis
+		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -60,7 +60,6 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	private void initChart()
 	{
 		showChart();
-
 	}
 
 	protected class NodeInformation
@@ -92,7 +91,6 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	protected void redrawChart()
 	{
 		initChart();
-
 	}
 
 	/*
@@ -103,17 +101,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	{
 		String key1 = keys[0];
 		String key2 = keys[1];
-		Double max1 = getMaxMax(key1);
-		Double min1 = getMinMin(key1);
 
-		Double max2 = getMaxMax(key2);
-		Double min2 = getMinMin(key2);
-
-		Double dataMin1 = min1;
-		Double dataMin2 = min2;
-
-		int nodecount = 0;
-		int totalnodecount = 0;
 		List<SciomeSeries<Number, Number>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
@@ -121,12 +109,8 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 			SciomeSeries<Number, Number> series = new SciomeSeries<>();
 			series.setName(chartDataPack.getName());
 
-			Set<String> chartLabelSet = new HashSet<>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				totalnodecount++;
-
-				nodecount++;
 				Double dataPointValue1 = (Double) chartData.getDataPoints().get(key1);
 				Double dataPointValue2 = (Double) chartData.getDataPoints().get(key2);
 
@@ -166,7 +150,6 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 		returnList.add(sb.toString());
 		for (SciomeSeries seriesData : getSeriesData())
 		{
-
 			for (Object d : seriesData.getData())
 			{
 				sb.setLength(0);
@@ -179,19 +162,14 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 
 				Double X = (Double) xychartData.getXValue();
 				Double Y = (Double) xychartData.getYValue();
-
 				sb.append(seriesData.getName());
-
 				sb.append("\t");
-
 				sb.append(X);
 				sb.append("\t");
 				sb.append(Y);
 				sb.append("\t");
 				sb.append(extraValue.userData.toString());
-
 				returnList.add(sb.toString());
-
 			}
 		}
 

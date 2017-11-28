@@ -1,4 +1,4 @@
-package com.sciome.charts;
+package com.sciome.charts.javafx;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -139,14 +139,7 @@ public class LogarithmicAxis extends ValueAxis<Number>
 					logUpperBound = upperBound.doubleValue();
 				if (logLowerBound == 0.0)
 					logLowerBound = LOGZEROVALUE;
-				// for (double i = lowerBound.doubleValue(); i <= upperBound.doubleValue(); i = i * 10)
-				// {
-				// for (double j = 0; j <= 9; j += (1. / minorTickMarkCount))
-				// {
-				// double value = j * Math.pow(10, i);
-				// minorTickMarksPositions.add(value);
-				// }
-				// }
+
 			}
 		}
 		catch (Exception e)

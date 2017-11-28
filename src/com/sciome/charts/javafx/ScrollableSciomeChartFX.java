@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 
 /*
@@ -37,7 +36,6 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 	private Map<String, NodeInformation>	nodeInfoMap			= new HashMap<>();
 
 	private Slider							slider;
-	protected CheckBox						showAllCheckBox;
 
 	// depending on what type of chart, this boolean will
 	// tell the system to add data to front of what will be displayed and scrolled through.
@@ -55,31 +53,8 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 
 		slider = new Slider();
 		slider.setOrientation(Orientation.HORIZONTAL);
-		showAllCheckBox = new CheckBox(
-				"Show all graph nodes.  (The application may slow down if the dataset is huge) ");
 		addComponentToEnd(slider);
 
-		showAllCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-
-				if (new_val)
-				{
-					getSeriesData().clear();
-					showChart();
-					warningTooManyNodesLabel.setVisible(false);
-					intializeScrollableChart();
-				}
-				else
-				{
-					getSeriesData().clear();
-					showChart();
-					warningTooManyNodesLabel.setVisible(true);
-					intializeScrollableChart();
-				}
-			}
-		});
 	}
 
 	@Override
@@ -91,6 +66,7 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		intializeScrollableChart();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void intializeScrollableChart()
 	{
 
@@ -99,10 +75,8 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		for (SciomeSeries<X, Y> series : getSeriesData())
 		{
 			int countofthings = 0;
-			for (SciomeData d : series.getData())
-			{
+			for (SciomeData<X, Y> d : series.getData())
 				countofthings++;
-			}
 			if (countofthings > max)
 				max = countofthings;
 
@@ -112,8 +86,8 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		{
 			slider.setMin(1);
 			slider.setMax(max - getMaxGraphItems());
-			if (!showAllCheckBox.isSelected())
-				addComponentToEnd(slider);
+
+			addComponentToEnd(slider);
 			maxSlider = max - getMaxGraphItems();
 		}
 		else
@@ -131,22 +105,23 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		slider.valueProperty().addListener(sliderChangeListener);
 
 		// initialize series.
-		for (SciomeSeries series : getSeriesData())
+		for (SciomeSeries<X, Y> series : getSeriesData())
 		{
-			Series newSeries = new Series();
+			Series<X, Y> newSeries = new Series<>();
 			newSeries.setName(series.getName());
 
 			// a hack to deal with scatter chart not showing legend braphic
 			if (getChart() instanceof ScatterChart)
 				newSeries.getData().add(new XYChart.Data<>());
 
-			((XYChart) getChart()).getData().add(newSeries);
+			((XYChart<X, Y>) getChart()).getData().add(newSeries);
 		}
 		resetChart(1);
 		slider.setValue(1);
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void resetChart(int slidervalue)
 	{
 
@@ -157,7 +132,7 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		int i = 0;
 		((XYChart) getChart()).setAnimated(false);
 		this.currentSliderValue = slidervalue;
-		for (Series series : ((XYChart<X, Y>) getChart()).getData())
+		for (Series<X, Y> series : ((XYChart<X, Y>) getChart()).getData())
 		{
 			series.getData().clear();
 		}
@@ -166,38 +141,21 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 		int maxg = getMaxGraphItems();
 		int maxgwithSlider = (int) slider.getMax() + getMaxGraphItems();
 
-		// This means that we are not showing the "showAll" check box. which
-		// really means show all. So we reset the max values such that the loop
-		// can be correct.
-		if (componentIsVisible(showAllCheckBox) && showAllCheckBox.isSelected())
-		{
-			for (SciomeSeries<X, Y> series : getSeriesData())
-			{
-				if (series.getData().size() > maxg)
-				{
-					maxg += series.getData().size();
-					maxgwithSlider = (int) slider.getMax() + series.getData().size();
-				}
-			}
-		}
-
 		for (i = slidervalue - 1; i < maxgwithSlider; i++)
 		{
-			if (cancel)
-				return;
 			int seriesindex = 0;
 			for (SciomeSeries<X, Y> series : getSeriesData())
 			{
 				if (i < series.getData().size() && i >= 0)
 				{
-					SciomeData data = series.getData().get(i);
+					SciomeData<X, Y> data = series.getData().get(i);
 					if (totalitemsadded > maxg)
 					{
 						if (data.getExtraValue() != null
 								&& !labelSet.contains(data.getExtraValue().toString()))
 							continue;
 					}
-					XYChart.Data xyData = new XYChart.Data<>(data.getXValue(), data.getYValue());
+					XYChart.Data<X, Y> xyData = new XYChart.Data<>(data.getXValue(), data.getYValue());
 					xyData.setNode(getNode(series.getName(), data.getExtraValue().toString(), seriesindex));
 					int indextoadd = ((XYChart<X, Y>) getChart()).getData().get(seriesindex).getData().size();
 					if (this.addDataAtTop)
@@ -342,23 +300,6 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 			}
 		});
 
-	}
-
-	public void setShowShowAll(boolean showAll)
-	{
-		if (!showAll)
-		{
-			removeComponent(showAllCheckBox);
-			warningTooManyNodesLabel.setVisible(true);
-			// slider.setVisible(true);
-			showAllCheckBox.setSelected(false);
-			// resetChart(1);
-		}
-		else
-		{
-			addComponentToTop(showAllCheckBox);
-			resetChart(currentSliderValue);
-		}
 	}
 
 	/*

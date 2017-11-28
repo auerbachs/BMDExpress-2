@@ -37,7 +37,6 @@ import javafx.util.Duration;
 public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExporter
 {
 
-	@SuppressWarnings("unchecked")
 	public SciomeRangePlotFX(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
 			String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
 	{
@@ -54,7 +53,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		// -------------- CONSTRUCTORS ----------------------------------------------
 		/**
 		 */
-		@SuppressWarnings("unchecked")
 		public RangePlot(CategoryAxis yAxis, Axis<Number> xAxis)
 		{
 			super(xAxis, yAxis);
@@ -89,9 +87,8 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			int seriesIndex = 0;
 			if (getData() == null)
 				return node;
-			for (Series series : getData())
+			for (Series<Number, String> series : getData())
 			{
-
 				int colorIndex = seriesIndex % 7;
 				Region bar = new Region();
 				bar.setMinWidth(10.0);
@@ -127,9 +124,10 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			// update candle positions
 			int seriesCount = getData().size();
 			int barCount = 0;
-			for (Series series : getData())
+			for (Series<Number, String> series : getData())
 			{
-				for (Object data : series.getData())
+				for (@SuppressWarnings("unused")
+				Object data : series.getData())
 					barCount++;
 			}
 			for (int seriesIndex = 0; seriesIndex < getData().size(); seriesIndex++)
@@ -316,9 +314,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 				rangePlotNode = new RangeForPlot("series" + seriesIndex, "data" + itemIndex, seriesIndex);
 				item.setNode(rangePlotNode);
 
-				Series<Number, String> series = getData().get(seriesIndex);
-				String key = series.getName() + series.getData().get(itemIndex).getYValue();
-
 			}
 			return rangePlotNode;
 		}
@@ -425,12 +420,8 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		{
 			// openAboveClose = closeOffset > 0;
 			updateStyleClasses();
-			Double barX = 0.0;
 			if (closeOffset == null)
-			{
 				closeOffset = candleWidth;
-				barX = candleWidth / 2;
-			}
 
 			if (lowOffset == null)
 				lowOffset = closeOffset;
@@ -525,7 +516,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 		CategoryAxis xAxis = new CategoryAxis();
 
-		if (!lockXAxis.isSelected())
+		if (!getLockXAxis().isSelected())
 		{
 			if (chartConfig != null && chartConfig.getMaxX() != null && chartConfig.getMinX() != null)
 			{
@@ -534,7 +525,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			}
 		}
 		final Axis yAxis;
-		yAxis = SciomeNumberAxisGenerator.generateAxis(logXAxis.isSelected(), axisMin, axisMax, dataMin);
+		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(), axisMin, axisMax, dataMin);
 
 		xAxis.setLabel("Category");
 		// yAxis.setLabel(minKey + "," + lowKey + "," + key + "," + maxKey);

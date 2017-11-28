@@ -15,71 +15,52 @@ import org.jfree.data.xy.DefaultXYZDataset;
 import com.sciome.charts.SciomeBubbleChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.model.SciomeData;
+import com.sciome.charts.model.SciomeSeries;
 
-import javafx.scene.layout.HBox;
-
-public class JFreeBubbleChart extends SciomeBubbleChart
+public class SciomeBubbleChartJFree extends SciomeBubbleChart
 {
 
-	private static Double BUBBLE_SCALE_FRACTION = 8.0;
-
-	public JFreeBubbleChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeBubbleChartJFree(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			String key3, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, key3, chartListener);
-		HBox hbox = new HBox();
 		showChart();
 	}
 
 	@Override
 	protected ChartViewer generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
-
 		String key1 = keys[0];
 		String key2 = keys[1];
 		String key3 = keys[2];
 		Double max1 = getMaxMax(key1);
 		Double max2 = getMaxMax(key2);
-		Double max3 = getMaxMax(key3);
 
 		Double min1 = getMinMin(key1);
 		Double min2 = getMinMin(key2);
 
 		Double scaleValue = max2 / max1;
-		Double bubbleScale = (1.0 / BUBBLE_SCALE_FRACTION) / (max3 / max1);
 
 		DefaultXYZDataset dataset = new DefaultXYZDataset();
 
-		for (ChartDataPack chartDataPack : getChartDataPacks())
+		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
-			int count = 0;
-			for (ChartData chartData : chartDataPack.getChartData())
-				if (chartData.getDataPoints().containsKey(key1) && chartData.getDataPoints().containsKey(key2)
-						&& chartData.getDataPoints().containsKey(key3))
-					count++;
-
-			double[] domains = new double[count];
-			double[] ranges = new double[count];
-			double[] bubbles = new double[count];
+			double[] domains = new double[series.getData().size()];
+			double[] ranges = new double[series.getData().size()];
+			double[] bubbles = new double[series.getData().size()];
 			int i = 0;
-			for (ChartData chartData : chartDataPack.getChartData())
+			for (SciomeData<Number, Number> chartData : series.getData())
 			{
-
-				if (chartData.getDataPoints().containsKey(key1) && chartData.getDataPoints().containsKey(key2)
-						&& chartData.getDataPoints().containsKey(key3))
-				{
-					double domainvalue = ((Double) chartData.getDataPoints().get(key1)).doubleValue();
-					double rangevalue = ((Double) chartData.getDataPoints().get(key2)).doubleValue();
-					double bubblesize = Math
-							.log(((Double) chartData.getDataPoints().get(key3)).doubleValue());
-					domains[i] = domainvalue;
-					ranges[i] = rangevalue;
-					bubbles[i++] = bubblesize;
-				}
+				double domainvalue = chartData.getXValue().doubleValue();
+				double rangevalue = chartData.getYValue().doubleValue();
+				double bubblesize = ((BubbleChartExtraData) chartData.getExtraValue()).bubbleSize;
+				domains[i] = domainvalue;
+				ranges[i] = rangevalue;
+				bubbles[i++] = bubblesize * scaleValue;
 			}
-			dataset.addSeries(chartDataPack.getName(), new double[][] { domains, ranges, bubbles });
+			dataset.addSeries(series.getName(), new double[][] { domains, ranges, bubbles });
 
 		}
 
@@ -131,32 +112,6 @@ public class JFreeBubbleChart extends SciomeBubbleChart
 		range.setLabel(key2);
 
 		return chartView;
-	}
-
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		showChart();
-
-	}
-
-	@Override
-	public List<String> getLinesToExport()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

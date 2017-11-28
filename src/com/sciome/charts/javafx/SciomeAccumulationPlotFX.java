@@ -42,10 +42,10 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 		final Axis yAxis;
 		final Axis xAxis;
 
-		yAxis = SciomeNumberAxisGenerator.generateAxis(logYAxis.isSelected(),
+		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(),
 				(chartConfig == null ? null : chartConfig.getMinY()),
 				chartConfig == null ? null : chartConfig.getMaxY(), 1.0);
-		xAxis = SciomeNumberAxisGenerator.generateAxis(logXAxis.isSelected(),
+		xAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(),
 				chartConfig == null ? null : chartConfig.getMinX(),
 				chartConfig == null ? null : chartConfig.getMaxX(), dataMin);
 
@@ -99,9 +99,9 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 			public void handle(javafx.scene.input.MouseEvent arg0)
 			{
 				returnPane.setEffect(new Glow());
-				Object object = returnPane.getUserData();
 
-				List<Object> objects = (List) returnPane.getUserData();
+				@SuppressWarnings("unchecked")
+				List<Object> objects = (List<Object>) returnPane.getUserData();
 				if (objects != null)
 					toolTip.setText(
 							String.valueOf(joinObjects(objects, accumulation, values, key, MAX_TO_POPUP)));
@@ -130,7 +130,8 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 			@Override
 			public void handle(javafx.scene.input.MouseEvent mouseEvent)
 			{
-				List<Object> objects = (List) returnPane.getUserData();
+				@SuppressWarnings("unchecked")
+				List<Object> objects = (List<Object>) returnPane.getUserData();
 				if (objects != null)
 					showObjectText(String.valueOf(joinAllObjects(objects, accumulation, values, key)));
 

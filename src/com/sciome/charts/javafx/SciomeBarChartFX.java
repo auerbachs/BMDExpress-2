@@ -45,7 +45,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 
 		CategoryAxis xAxis = new CategoryAxis();
 
-		if (!lockYAxis.isSelected())
+		if (!getLockXAxis().isSelected())
 		{
 			if (chartConfig != null && chartConfig.getMaxY() != null && chartConfig.getMinY() != null)
 			{
@@ -54,7 +54,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 			}
 		}
 		final Axis yAxis;
-		yAxis = SciomeNumberAxisGenerator.generateAxis(logYAxis.isSelected(), min, max, dataMin);
+		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), min, max, dataMin);
 
 		xAxis.setLabel("Category");
 		yAxis.setLabel(key);

@@ -34,12 +34,12 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	{
 		super(title, chartDataPacks, new String[] { key }, chartListener);
 
-		logXAxis.setSelected(true);
-		logYAxis.setSelected(false);
+		getLogXAxis().setSelected(true);
+		getLogYAxis().setSelected(false);
 		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox));
 		showChart();
 
-		logXAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLogXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -47,7 +47,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 			}
 		});
 
-		logYAxis.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
@@ -128,7 +128,6 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	{
 
 		String key = keys[0];
-		Double dataMin = getMinMin(key);
 		List<SciomeSeries<Number, Number>> seriesData = new ArrayList<>();
 
 		for (ChartDataPack chartDataPack : getChartDataPacks())
@@ -216,6 +215,10 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 	}
 
+	/*
+	 * extend the SciomeData object so we can store a list of values associated with the Object (which is a
+	 * list of categories)
+	 */
 	protected class AccumulationData extends SciomeData<Number, Number>
 	{
 
@@ -234,7 +237,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	/*
 	 * implement the getting of lines that need to be exported.
 	 */

@@ -1,6 +1,5 @@
 package com.sciome.charts.javafx;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 import com.sciome.charts.SciomeChartListener;
@@ -39,6 +38,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 	/*
 	 * generate a histogram bar chart
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
@@ -46,7 +46,8 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 
 		final Axis xAxis = new CategoryAxis();
 
-		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(logYAxis.isSelected(), null, null, null);
+		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), null, null,
+				null);
 
 		xAxis.setLabel(key);
 		yAxis.setLabel("Count");
@@ -54,12 +55,10 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 		XYChart.Series<String, Number> series1 = new XYChart.Series<>();
 		series1.setName(key);
 
-		DecimalFormat df = new DecimalFormat("#.###");
-
 		for (Object sciomeDataObj : getSeriesData().get(0).getData())
 		{
 			SciomeData<String, Number> sciomeData = (SciomeData<String, Number>) sciomeDataObj;
-			XYChart.Data data = new XYChart.Data(sciomeData.getXValue(),
+			XYChart.Data<String, Number> data = new XYChart.Data<>(sciomeData.getXValue(),
 					sciomeData.getYValue().doubleValue());
 			data.setNode(userObjectPane(data.getExtraValue()));
 			series1.getData().add(data);
@@ -75,7 +74,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 
 		for (Series<String, Number> seriesData : barChart.getData())
 		{
-			for (final XYChart.Data data : seriesData.getData())
+			for (final XYChart.Data<String, Number> data : seriesData.getData())
 			{
 				Node node = data.getNode();
 				Tooltip toolTip = new Tooltip("");
@@ -88,7 +87,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 					{
 						node.setEffect(new Glow());
 
-						List<Object> objects = (List) node.getUserData();
+						List<Object> objects = (List<Object>) node.getUserData();
 						if (objects != null)
 							toolTip.setText(String.valueOf(joinObjects(objects, MAX_TOOL_TIP_SHOWS)));
 
@@ -118,7 +117,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 					{
 						node.setEffect(new Glow());
 
-						List<Object> objects = (List) node.getUserData();
+						List<Object> objects = (List<Object>) node.getUserData();
 						if (objects != null)
 							showObjectText(String.valueOf(joinAllObjects(objects)));
 

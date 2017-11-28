@@ -39,22 +39,21 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 
 /*
- * 
+ * The Chart Base class will contain all the things that make a chart a chart.
+ * All charts will inherit from this base class.  This class contains the raw data: (chartDataPacks) which
+ * is used by the intermediate specific chart implementations to create a generic Series data object.
  */
 public abstract class SciomeChartBase<X, Y> extends StackPane
 {
-	protected String					title;
-	protected SciomeChartListener		chartListener;
+	private String						title;
+	private SciomeChartListener			chartListener;
 	private List<ChartDataPack>			chartDataPacks;
-	private int							maxGraphItems				= 2000000;
-	protected boolean					cancel						= false;
+	private int							maxGraphItems	= 2000000;
 	private Node						chart;
-	protected CheckBox					logXAxis					= new CheckBox("Log X Axis");
-	protected CheckBox					logYAxis					= new CheckBox("Log Y Axis");
-	protected CheckBox					lockXAxis					= new CheckBox("Lock X Axis");
-	protected CheckBox					lockYAxis					= new CheckBox("Lock Y Axis");
-	protected Label						warningTooManyNodesLabel	= new Label(
-			"There are too many data points to show all.  Please use the slider to scroll through your data.");
+	private CheckBox					logXAxis		= new CheckBox("Log X Axis");
+	private CheckBox					logYAxis		= new CheckBox("Log Y Axis");
+	private CheckBox					lockXAxis		= new CheckBox("Lock X Axis");
+	private CheckBox					lockYAxis		= new CheckBox("Lock Y Axis");
 	private VBox						vBox;
 
 	private Button						exportToTextButton;
@@ -64,7 +63,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private String[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
 
-	private List<SciomeSeries<X, Y>>	seriesData					= new ArrayList<>();
+	private List<SciomeSeries<X, Y>>	seriesData		= new ArrayList<>();
 
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, String[] keys,
 			SciomeChartListener chartListener)
@@ -76,6 +75,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 		this.convertChartDataPacksToSciomeSeries(chartableKeys, chartDataPacks);
 
+		// set up the main components that are associated wtih the chart
 		vBox = new VBox();
 		maxMinButton = GlyphsDude.createIconButton(FontAwesomeIcon.EXPAND);
 		maxMinButton.setTooltip(new Tooltip("View this chart in a large separate window."));
@@ -84,6 +84,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		exportToTextButton = GlyphsDude.createIconButton(FontAwesomeIcon.DOWNLOAD);
 		exportToTextButton.setTooltip(new Tooltip("Click to download textual representation of this chart."));
 
+		// export button triggers a perfrom download when clicked. this will reach out to the implementation
+		// specific
+		// methods to get the downloadable chart data.
 		exportToTextButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e)
@@ -96,6 +99,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 		HBox overlayButtons = new HBox();
 
+		// maximize the chart. Tell the chartListener object to expand it.
 		maxMinButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e)
@@ -106,6 +110,8 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			}
 		});
 
+		// open a configuration diaglog and then redraw the chart.
+		// currently this only allows you to set the x/y axis ranges.
 		configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e)
@@ -127,17 +133,26 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.setPickOnBounds(false);
 		vBox.setSpacing(5.0);
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
-		warningTooManyNodesLabel.setWrapText(true);
 	}
 
-	protected void showTooManyNodes(boolean b)
-	{
-		if (b && !vBox.getChildren().contains(warningTooManyNodesLabel))
-			vBox.getChildren().add(0, warningTooManyNodesLabel);
-		else if (!b)
-			vBox.getChildren().remove(warningTooManyNodesLabel);
+	/* abstract methods */
 
-	}
+	protected abstract Node generateChart(String[] keys, ChartConfiguration chartConfiguration);
+
+	protected abstract boolean isXAxisDefineable();
+
+	protected abstract boolean isYAxisDefineable();
+
+	// The implementing chart will implement this method to redraw itself
+	protected abstract void redrawChart();
+
+	// the subclass needs to conver the charted data packs to a sciome series.
+	// then the actual chart implementation can use the SciomeSeries and SciomeData
+	// to construct the chart
+	protected abstract void convertChartDataPacksToSciomeSeries(String[] keys,
+			List<ChartDataPack> chartPacks);
+
+	/* end of abstract methods */
 
 	protected void showLogAxes(boolean allowXLogAxis, boolean allowYLogAxis, boolean allowLockXAxis,
 			boolean allowLockYAxis)
@@ -154,8 +169,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		checkBoxes = new HBox();
 		checkBoxes.setSpacing(10.0);
 		int insertIndex = 0;
-		if (vBox.getChildren().contains(warningTooManyNodesLabel))
-			insertIndex = 1;
 		if (allowXLogAxis)
 			checkBoxes.getChildren().addAll(logXAxis);
 
@@ -179,8 +192,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		vBox.getChildren().remove(chart);
 		chart = generateChart(this.chartableKeys, chartConfiguration);
 		int insertIndex = 0;
-		if (vBox.getChildren().contains(warningTooManyNodesLabel))
-			insertIndex++;
 
 		if (vBox.getChildren().contains(checkBoxes))
 			insertIndex++;
@@ -199,20 +210,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	{
 
 		showChart(null);
-	}
-
-	protected boolean componentIsVisible(Node showAllCheckBox2)
-	{
-		if (vBox.getChildren().contains(showAllCheckBox2))
-			return true;
-		return false;
-	}
-
-	protected void addComponentToTop(Node node)
-	{
-		if (!vBox.getChildren().contains(node))
-			vBox.getChildren().add(0, node);
-
 	}
 
 	protected void removeComponent(Node node)
@@ -285,23 +282,23 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.maxGraphItems = maxGraphItems;
 	}
 
-	public void cancel()
-	{
-		cancel = true;
-	}
-
 	public void redrawCharts(List<ChartDataPack> chartDataPacks)
 	{
 
 		this.chartDataPacks = chartDataPacks;
 		// recreate the sciome series
-		if (this instanceof SciomeAccumulationPlot)
-			System.out.println();
+		// the main classes will take the raw chart data packs and turn them into
+		// series and data objects that can be used by implementing classes to
+		// draw the charts
 		this.convertChartDataPacksToSciomeSeries(chartableKeys, chartDataPacks);
 		showChart();
 
 	}
 
+	/*
+	 * when a user clicks on a graph node, this method may be called to show the contents of that node so the
+	 * user can copy the data
+	 */
 	protected void showObjectText(String value)
 	{
 		Dialog<String> dialog = new Dialog<>();
@@ -348,6 +345,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.maxMinButton.setVisible(true);
 	}
 
+	/*
+	 * return the chart. This is really the java
+	 */
 	protected Node getChart()
 	{
 		return chart;
@@ -368,22 +368,38 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		return chartDataPacks;
 	}
 
-	protected abstract Node generateChart(String[] keys, ChartConfiguration chartConfiguration);
+	protected String getTitle()
+	{
+		return title;
+	}
 
-	protected abstract boolean isXAxisDefineable();
+	protected SciomeChartListener getChartListener()
+	{
+		return chartListener;
+	}
 
-	protected abstract boolean isYAxisDefineable();
+	protected CheckBox getLogXAxis()
+	{
+		return logXAxis;
+	}
 
-	// The implementing chart will implement this method to redraw itself
-	protected abstract void redrawChart();
+	protected CheckBox getLogYAxis()
+	{
+		return logYAxis;
+	}
 
-	// the subclass needs to conver the charted data packs to a sciome series.
-	// then the actual chart implementation can use the SciomeSeries and SciomeData
-	// to construct the chart
-	protected abstract void convertChartDataPacksToSciomeSeries(String[] keys,
-			List<ChartDataPack> chartPacks);
+	protected CheckBox getLockXAxis()
+	{
+		return lockXAxis;
+	}
+
+	protected CheckBox getLockYAxis()
+	{
+		return lockYAxis;
+	}
 
 	// show the configuration to the user.
+	//
 	private void showConfiguration()
 	{
 		Dialog<ChartConfiguration> dialog = new Dialog<>();

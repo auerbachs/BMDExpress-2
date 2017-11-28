@@ -1,8 +1,6 @@
 package com.sciome.charts.javafx;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeScatterChart;
@@ -27,15 +25,12 @@ import javafx.scene.layout.StackPane;
  */
 public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDataExporter
 {
-
-	@SuppressWarnings("rawtypes")
 	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
 			SciomeChartListener chartListener)
 	{
@@ -83,29 +78,29 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 			max2 = chartConfig.getMaxY();
 			min2 = chartConfig.getMinY();
 		}
-		final Axis xAxis = SciomeNumberAxisGenerator.generateAxis(logXAxis.isSelected(), min1, max1,
+		final Axis xAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(), min1, max1,
 				dataMin1);
-		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(logYAxis.isSelected(), min2, max2,
+		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), min2, max2,
 				dataMin2);
 
 		xAxis.setLabel(key1);
 		yAxis.setLabel(key2);
 
-		ScatterChart scatterChart = new ScatterChart(xAxis, yAxis);
+		ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
 
 		scatterChart.setTitle(key1 + " Vs. " + key2);
 
 		for (SciomeSeries<Number, Number> sciomeSeriesData : getSeriesData())
 		{
-			XYChart.Series series = new XYChart.Series();
+			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(sciomeSeriesData.getName());
 
-			Set<String> chartLabelSet = new HashSet<>();
 			for (Object chartDataObj : sciomeSeriesData.getData())
 			{
 				SciomeData<Number, Number> chartData = (SciomeData<Number, Number>) chartDataObj;
 
-				XYChart.Data theData = new XYChart.Data(chartData.getXValue(), chartData.getYValue());
+				XYChart.Data<Number, Number> theData = new XYChart.Data<>(chartData.getXValue(),
+						chartData.getYValue());
 				theData.setExtraValue(chartData.getExtraValue());
 				theData.setNode(
 						userObjectPane(((ChartExtraValue) chartData.getExtraValue()).userData, false));
@@ -174,19 +169,6 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 
 		}
 		return node;
-	}
-
-	private class NodeInformation
-	{
-
-		public Object	object;
-		public boolean	invisible;
-
-		public NodeInformation(Object o, boolean i)
-		{
-			object = o;
-			invisible = i;
-		}
 	}
 
 }

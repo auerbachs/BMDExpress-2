@@ -3,6 +3,10 @@ package com.sciome.charts.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * generic series representation.  The individual chart implementations will use data in this object
+ * to create the implementation specific data representation.
+ */
 public class SciomeSeries<X, Y>
 {
 	private String					name;

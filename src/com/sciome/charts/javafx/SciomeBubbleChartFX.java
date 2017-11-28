@@ -40,6 +40,7 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 	/*
 	 * generate bubble chart
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
@@ -65,9 +66,9 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 			max2 = chartConfig.getMaxY();
 			min2 = chartConfig.getMinY();
 		}
-		final Axis xAxis = SciomeNumberAxisGenerator.generateAxis(logXAxis.isSelected(), min1, max1,
+		final Axis xAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(), min1, max1,
 				dataMin1);
-		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(logYAxis.isSelected(), min2, max2,
+		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), min2, max2,
 				dataMin2);
 
 		// LogarithmicAxis yAxis = new LogarithmicAxis();
@@ -80,17 +81,18 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 
 		Double scaleValue = max2 / max1;
 
-		for (SciomeSeries sciomeSeries : getSeriesData())
+		for (SciomeSeries<Number, Number> sciomeSeries : getSeriesData())
 		{
 
-			XYChart.Series series = new XYChart.Series();
+			XYChart.Series<Number, Number> series = new XYChart.Series<>();
 			series.setName(sciomeSeries.getName());
 
 			for (Object chartDataObj : sciomeSeries.getData())
 			{
-				SciomeData chartData = (SciomeData) chartDataObj;
+				SciomeData<Number, Number> chartData = (SciomeData<Number, Number>) chartDataObj;
 
-				XYChart.Data theData = new XYChart.Data(chartData.getXValue(), chartData.getYValue());
+				XYChart.Data<Number, Number> theData = new XYChart.Data<>(chartData.getXValue(),
+						chartData.getYValue());
 				theData.setExtraValue(chartData.getExtraValue());
 				theData.setNode(bubblePane(((BubbleChartExtraData) chartData.getExtraValue()).bubbleSize,
 						scaleValue, ((BubbleChartExtraData) chartData.getExtraValue()).userData, false));

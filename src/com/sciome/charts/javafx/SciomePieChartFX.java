@@ -62,7 +62,7 @@ public class SciomePieChartFX extends SciomePieChart implements ChartDataExporte
 		}
 		PieChart chart = new PieChart(pieChartData);
 
-		chart.setTitle(title);
+		chart.setTitle(getTitle());
 
 		caption.setTextFill(Color.DARKORANGE);
 		caption.setStyle("-fx-font: 24 arial;");
