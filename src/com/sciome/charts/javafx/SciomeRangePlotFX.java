@@ -96,7 +96,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			for (Series series : getData())
 			{
 
-				int colorIndex = (seriesIndex - 1) % 7;
+				int colorIndex = seriesIndex % 7;
 				Region bar = new Region();
 				bar.setMinWidth(10.0);
 				bar.setMinHeight(10.0);
