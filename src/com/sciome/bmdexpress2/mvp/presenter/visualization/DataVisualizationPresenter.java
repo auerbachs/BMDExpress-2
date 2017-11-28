@@ -16,8 +16,8 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.GiveMeProjectRequest;
 import com.sciome.bmdexpress2.shared.eventbus.project.HeresYourProjectEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
-import com.sciome.charts.ChartDataPackMaker;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.data.ChartDataPackMaker;
 import com.sciome.filter.DataFilterPack;
 
 public abstract class DataVisualizationPresenter extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>

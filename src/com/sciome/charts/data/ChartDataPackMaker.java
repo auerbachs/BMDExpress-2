@@ -1,4 +1,4 @@
-package com.sciome.charts;
+package com.sciome.charts.data;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,9 +9,6 @@ import java.util.List;
 import com.sciome.charts.annotation.ChartableData;
 import com.sciome.charts.annotation.ChartableDataLabel;
 import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.charts.data.ChartData;
-import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.data.GenericChartDataExtractor;
 import com.sciome.filter.DataFilterPack;
 
 /*

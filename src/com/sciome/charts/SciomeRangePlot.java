@@ -48,6 +48,7 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 			}
 		});
 
+		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(true, false, true, false);
 		initChart();
 	}

@@ -27,6 +27,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	{
 		super(title, chartDataPacks, new String[] { key1, key2 }, chartListener);
 
+		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
 		initChart();
 

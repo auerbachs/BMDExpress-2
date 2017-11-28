@@ -37,6 +37,8 @@ public class LogarithmicAxis extends ValueAxis<Number>
 	// use this to define the ticks for log axis. try to keep it clean
 	private final double[]			CENTURIES			= { 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001,
 			0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
+
+	// log of zero is no good. So let this very small number represent log of zero
 	private final double			LOGZEROVALUE		= 0.00000001;
 
 	public LogarithmicAxis()

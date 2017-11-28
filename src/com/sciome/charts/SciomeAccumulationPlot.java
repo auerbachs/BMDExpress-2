@@ -36,6 +36,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 		getLogXAxis().setSelected(true);
 		getLogYAxis().setSelected(false);
+		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox));
 		showChart();
 

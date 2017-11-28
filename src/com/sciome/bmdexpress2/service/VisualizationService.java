@@ -5,8 +5,8 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
-import com.sciome.charts.ChartDataPackMaker;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.data.ChartDataPackMaker;
 import com.sciome.filter.DataFilterPack;
 
 public class VisualizationService implements IVisualizationService{

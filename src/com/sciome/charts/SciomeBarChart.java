@@ -31,6 +31,8 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 			SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, new String[] { key }, chartListener);
+
+		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(false, true, false, true);
 
 		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
