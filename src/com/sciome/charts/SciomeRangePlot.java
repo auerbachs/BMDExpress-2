@@ -60,42 +60,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChart implements C
 		super.setShowShowAll(false);
 	}
 
-	/** Data extra values for storing close, high and low. */
-	@SuppressWarnings("rawtypes")
-	protected class BoxAndWhiskerExtraValues extends ChartExtraValue
-	{
-		private Double	min;
-		private Double	max;
-		private Double	high;
-		private String	description;
-
-		public BoxAndWhiskerExtraValues(String label, Integer count, Double min, Double max, Double high,
-				String description, Object userData)
-		{
-			super(label, count, userData);
-			this.min = min;
-			this.max = max;
-			this.high = high;
-			this.description = description;
-		}
-
-		public Double getMin()
-		{
-			return min;
-		}
-
-		public Double getMax()
-		{
-			return max;
-		}
-
-		public Double getHigh()
-		{
-			return high;
-		}
-
-	}
-
 	@Override
 	protected boolean isXAxisDefineable()
 	{

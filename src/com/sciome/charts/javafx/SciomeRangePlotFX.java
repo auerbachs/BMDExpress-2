@@ -147,10 +147,10 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 					double x = getXAxis().getDisplayPosition(getCurrentDisplayedXValue(item));
 					double y = getYAxis().getDisplayPosition(getCurrentDisplayedYValue(item));
 					Node itemNode = item.getNode();
-					BoxAndWhiskerExtraValues extra = (BoxAndWhiskerExtraValues) item.getExtraValue();
-					if (itemNode instanceof BoxAndWhisker && extra != null)
+					RangePlotExtraValue extra = (RangePlotExtraValue) item.getExtraValue();
+					if (itemNode instanceof RangeForPlot && extra != null)
 					{
-						BoxAndWhisker boxAndWhisker = (BoxAndWhisker) itemNode;
+						RangeForPlot rangeForPlot = (RangeForPlot) itemNode;
 
 						Double close = null;
 
@@ -180,11 +180,11 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 						double theSpacingOffset = 0.0;
 						if (seriesCount > 1)
 							theSpacingOffset = seriesIndex * candleWidth + spacingOffset;
-						boxAndWhisker.update(close, high, low, candleWidth, theSpacingOffset);
+						rangeForPlot.update(close, high, low, candleWidth, theSpacingOffset);
 
 						// position the candle
-						boxAndWhisker.setLayoutX(x);
-						boxAndWhisker.setLayoutY(y);
+						rangeForPlot.setLayoutX(x);
+						rangeForPlot.setLayoutY(y);
 					}
 				}
 			}
@@ -198,7 +198,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		@Override
 		protected void dataItemAdded(Series<Number, String> series, int itemIndex, Data<Number, String> item)
 		{
-			Node candle = createBoxAndWhiskerNode(getData().indexOf(series), item, itemIndex);
+			Node candle = createRangePlotNode(getData().indexOf(series), item, itemIndex);
 			if (shouldAnimate())
 			{
 				candle.setOpacity(0);
@@ -252,7 +252,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			for (int j = 0; j < series.getData().size(); j++)
 			{
 				Data item = series.getData().get(j);
-				Node candle = createBoxAndWhiskerNode(seriesIndex, item, j);
+				Node candle = createRangePlotNode(seriesIndex, item, j);
 				if (shouldAnimate())
 				{
 					candle.setOpacity(0);
@@ -306,26 +306,25 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 		/**
 		 */
-		private Node createBoxAndWhiskerNode(int seriesIndex, final Data item, int itemIndex)
+		private Node createRangePlotNode(int seriesIndex, final Data item, int itemIndex)
 		{
-			Node boxAndWhiskerNode = item.getNode();
+			Node rangePlotNode = item.getNode();
 			// check if candle has already been created
-			if (boxAndWhiskerNode instanceof BoxAndWhisker)
+			if (rangePlotNode instanceof RangeForPlot)
 			{
-				((BoxAndWhisker) boxAndWhiskerNode).setSeriesAndDataStyleClasses("series" + seriesIndex,
+				((RangeForPlot) rangePlotNode).setSeriesAndDataStyleClasses("series" + seriesIndex,
 						"data" + itemIndex);
 			}
 			else
 			{
-				boxAndWhiskerNode = new BoxAndWhisker("series" + seriesIndex, "data" + itemIndex,
-						seriesIndex);
-				item.setNode(boxAndWhiskerNode);
+				rangePlotNode = new RangeForPlot("series" + seriesIndex, "data" + itemIndex, seriesIndex);
+				item.setNode(rangePlotNode);
 
 				Series<Number, String> series = getData().get(seriesIndex);
 				String key = series.getName() + series.getData().get(itemIndex).getYValue();
 
 			}
-			return boxAndWhiskerNode;
+			return rangePlotNode;
 		}
 
 		/**
@@ -363,7 +362,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 						}
 						if (xData != null)
 						{
-							BoxAndWhiskerExtraValues extras = (BoxAndWhiskerExtraValues) data.getExtraValue();
+							RangePlotExtraValue extras = (RangePlotExtraValue) data.getExtraValue();
 							if (extras.getMax() != null)
 							{
 								xData.add(extras.getMax());
@@ -394,14 +393,14 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 	/** Data extra values for storing close, high and low. */
 	@SuppressWarnings("rawtypes")
-	private class BoxAndWhiskerExtraValues extends ChartExtraValue
+	private class RangePlotExtraValue extends ChartExtraValue
 	{
 		private Double	min;
 		private Double	max;
 		private Double	high;
 		private String	description;
 
-		public BoxAndWhiskerExtraValues(String label, Integer count, Double min, Double max, Double high,
+		public RangePlotExtraValue(String label, Integer count, Double min, Double max, Double high,
 				String description, Object userData)
 		{
 			super(label, count, userData);
@@ -429,25 +428,23 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 	}
 
 	/** Candle node used for drawing a candle */
-	private class BoxAndWhisker extends Group
+	private class RangeForPlot extends Group
 	{
-		private Line	highLowLine		= new Line();
-		private Line	topWhisker		= new Line();
-		private Line	bottomWhisker	= new Line();
-		private Region	bar				= new Region();
+		private Line	highLowLine	= new Line();
+		private Line	topLine		= new Line();
+		private Line	bottomLine	= new Line();
+		private Region	bar			= new Region();
 		private String	seriesStyleClass;
 		private String	dataStyleClass;
-		private boolean	openAboveClose	= true;
-		private Tooltip	tooltip			= new Tooltip();
-		private int		seriesIndex		= 0;
+		private int		seriesIndex	= 0;
 
-		private BoxAndWhisker(String seriesStyleClass, String dataStyleClass, int sI)
+		private RangeForPlot(String seriesStyleClass, String dataStyleClass, int sI)
 		{
 			setAutoSizeChildren(false);
 
-			topWhisker.resizeRelocate(0.0, 0.0, 0.0, 0.0);
-			bottomWhisker.resizeRelocate(0.0, 0.0, 0.0, 0.0);
-			getChildren().addAll(highLowLine, bar, topWhisker, bottomWhisker);
+			topLine.resizeRelocate(0.0, 0.0, 0.0, 0.0);
+			bottomLine.resizeRelocate(0.0, 0.0, 0.0, 0.0);
+			getChildren().addAll(highLowLine, bar, topLine, bottomLine);
 			this.seriesStyleClass = seriesStyleClass;
 			this.dataStyleClass = dataStyleClass;
 			this.seriesIndex = sI;
@@ -505,25 +502,25 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 			if (highOffset != closeOffset && highOffset > 0)
 			{
-				topWhisker.setStartY(seriesOffset);
-				topWhisker.setEndY(candleWidth / 2 + seriesOffset);
-				topWhisker.resizeRelocate(highOffset, -candleWidth / 4 + seriesOffset, candleWidth / 2,
+				topLine.setStartY(seriesOffset);
+				topLine.setEndY(candleWidth / 2 + seriesOffset);
+				topLine.resizeRelocate(highOffset, -candleWidth / 4 + seriesOffset, candleWidth / 2,
 						candleWidth / 2);
 			}
 			else
 			{
-				topWhisker.setVisible(false);
+				topLine.setVisible(false);
 			}
 
 			if (lowOffset != closeOffset)
 			{
-				bottomWhisker.setStartY(seriesOffset);
-				bottomWhisker.setEndY(candleWidth / 2 + seriesOffset);
-				bottomWhisker.resizeRelocate(lowOffset, -candleWidth / 4 + seriesOffset, candleWidth / 2,
+				bottomLine.setStartY(seriesOffset);
+				bottomLine.setEndY(candleWidth / 2 + seriesOffset);
+				bottomLine.resizeRelocate(lowOffset, -candleWidth / 4 + seriesOffset, candleWidth / 2,
 						candleWidth / 2);
 			}
 			else
-				bottomWhisker.setVisible(false);
+				bottomLine.setVisible(false);
 
 		}
 
@@ -535,9 +532,9 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 					"default-color" + colorIndex);
 			bar.getStyleClass().setAll("boxwhisker-box", seriesStyleClass, dataStyleClass,
 					"default-color" + colorIndex);
-			topWhisker.getStyleClass().setAll("boxwhisker-line", seriesStyleClass, dataStyleClass,
+			topLine.getStyleClass().setAll("boxwhisker-line", seriesStyleClass, dataStyleClass,
 					"default-color" + colorIndex);
-			bottomWhisker.getStyleClass().setAll("boxwhisker-line", seriesStyleClass, dataStyleClass,
+			bottomLine.getStyleClass().setAll("boxwhisker-line", seriesStyleClass, dataStyleClass,
 					"default-color" + colorIndex);
 
 		}
@@ -646,7 +643,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 				chartLabelSet.add(chartData.getDataPointLabel());
 				SciomeData<Number, String> xyData = new SciomeData<>(chartData.getDataPointLabel(),
 						dataPointValue, chartData.getDataPointLabel(),
-						new BoxAndWhiskerExtraValues(chartData.getDataPointLabel(),
+						new RangePlotExtraValue(chartData.getDataPointLabel(),
 								countMap.get(chartData.getDataPointLabel()), dataPointValueMinKey,
 								dataPointValueMaxKey, dataPointValueMiddleKey,
 								chartData.getCharttableObject().toString(), chartData.getCharttableObject()));
@@ -672,8 +669,8 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 				if (!chartLabelSet.contains(chartedKey))
 				{
 					SciomeData<Number, String> xyData = new SciomeData<>(chartedKey, avg, chartedKey,
-							new BoxAndWhiskerExtraValues(chartedKey, countMap.get(chartedKey), avg, avg, avg,
-									"", null));
+							new RangePlotExtraValue(chartedKey, countMap.get(chartedKey), avg, avg, avg, "",
+									null));
 
 					series1.getData().add(xyData);
 					putNodeInformation(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
@@ -693,48 +690,48 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		return barChart;
 	}
 
-	private BoxAndWhisker userObjectPane(Object object, boolean invisible, int seriesIndex)
+	private RangeForPlot userObjectPane(Object object, boolean invisible, int seriesIndex)
 	{
 
-		BoxAndWhisker boxAndWhiskerNode = new BoxAndWhisker("series" + seriesIndex, "data", seriesIndex);
-		boxAndWhiskerNode.setUserData(object);
+		RangeForPlot rangeNode = new RangeForPlot("series" + seriesIndex, "data", seriesIndex);
+		rangeNode.setUserData(object);
 
 		if (invisible)
-			boxAndWhiskerNode.setVisible(false);
+			rangeNode.setVisible(false);
 		else
 		{
-			Tooltip.install(boxAndWhiskerNode, toolTip);
+			Tooltip.install(rangeNode, toolTip);
 
-			boxAndWhiskerNode.setOnMouseEntered(new EventHandler<javafx.scene.input.MouseEvent>() {
+			rangeNode.setOnMouseEntered(new EventHandler<javafx.scene.input.MouseEvent>() {
 				@Override
 				public void handle(javafx.scene.input.MouseEvent arg0)
 				{
-					boxAndWhiskerNode.setEffect(new Glow());
-					Object object = boxAndWhiskerNode.getUserData();
+					rangeNode.setEffect(new Glow());
+					Object object = rangeNode.getUserData();
 					if (object != null)
-						toolTip.setText(String.valueOf(boxAndWhiskerNode.getUserData().toString()));
+						toolTip.setText(String.valueOf(rangeNode.getUserData().toString()));
 
 				}
 			});
 
 			// OnMouseExited
-			boxAndWhiskerNode.setOnMouseExited(new EventHandler<javafx.scene.input.MouseEvent>() {
+			rangeNode.setOnMouseExited(new EventHandler<javafx.scene.input.MouseEvent>() {
 				@Override
 				public void handle(javafx.scene.input.MouseEvent arg0)
 				{
-					boxAndWhiskerNode.setEffect(null);
+					rangeNode.setEffect(null);
 				}
 			});
 
 			// OnMouseReleased
-			boxAndWhiskerNode.setOnMouseReleased(new EventHandler<javafx.scene.input.MouseEvent>() {
+			rangeNode.setOnMouseReleased(new EventHandler<javafx.scene.input.MouseEvent>() {
 				@Override
 				public void handle(javafx.scene.input.MouseEvent mouseEvent)
 				{
 				}
 			});
 		}
-		return boxAndWhiskerNode;
+		return rangeNode;
 	}
 
 	@Override
@@ -773,7 +770,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			for (Object d : sData.getData())
 			{
 				SciomeData xychartData = (SciomeData) d;
-				BoxAndWhiskerExtraValues extraValue = (BoxAndWhiskerExtraValues) xychartData.getExtraValue();
+				RangePlotExtraValue extraValue = (RangePlotExtraValue) xychartData.getExtraValue();
 				if (extraValue.description.equals("")) // this means it's a faked value for showing multiple
 														// datasets together. skip it
 					continue;
