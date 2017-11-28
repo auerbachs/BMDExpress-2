@@ -28,18 +28,22 @@ import javafx.scene.control.Slider;
 public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 {
 
-	private Slider						slider;
-	protected CheckBox					showAllCheckBox;
-	protected List<SciomeSeries<X, Y>>	seriesData			= new ArrayList<>();
+	// map that keeps track of enough information to instantiate a node.
+	// so we don't have to store large amounts of nodes in memory for scrolling
+	private Map<String, NodeInformation>	nodeInfoMap			= new HashMap<>();
+
+	private Slider							slider;
+	protected CheckBox						showAllCheckBox;
+	protected List<SciomeSeries<X, Y>>		seriesData			= new ArrayList<>();
 
 	// depending on what type of chart, this boolean will
 	// tell the system to add data to front of what will be displayed and scrolled through.
 	// this is relevent for box and whisker charts where we want the first value to be shown at the top
-	protected boolean					addDataAtTop		= false;
-	private int							maxSlider;
-	final protected int					MAX_NODES			= 300000;
-	private ChangeListener<Number>		sliderChangeListener;
-	private int							currentSliderValue	= 1;
+	protected boolean						addDataAtTop		= false;
+	private int								maxSlider;
+	final protected int						MAX_NODES			= 300000;
+	private ChangeListener<Number>			sliderChangeListener;
+	private int								currentSliderValue	= 1;
 
 	public ScrollableSciomeChart(String title, List<ChartDataPack> chartDataPacks,
 			SciomeChartListener chartListener)
@@ -424,6 +428,29 @@ public abstract class ScrollableSciomeChart<X, Y> extends SciomeChartBase
 			return yValue;
 		}
 
+	}
+
+	protected void putNodeInformation(String key, NodeInformation ni)
+	{
+		nodeInfoMap.put(key, ni);
+	}
+
+	protected NodeInformation getNodeInformation(String key)
+	{
+		return nodeInfoMap.get(key);
+	}
+
+	protected class NodeInformation
+	{
+
+		public Object	object;
+		public boolean	invisible;
+
+		public NodeInformation(Object o, boolean i)
+		{
+			object = o;
+			invisible = i;
+		}
 	}
 
 }

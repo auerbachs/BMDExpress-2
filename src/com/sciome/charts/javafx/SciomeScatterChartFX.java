@@ -102,7 +102,6 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 			XYChart.Series series = new XYChart.Series();
 			series.setName(chartDataPack.getName());
 
-			int count = 0;
 			Set<String> chartLabelSet = new HashSet<>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
@@ -111,7 +110,6 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 				totalnodecount++;
 
 				nodecount++;
-				count++;
 				Double dataPointValue1 = (Double) chartData.getDataPoints().get(key1);
 				Double dataPointValue2 = (Double) chartData.getDataPoints().get(key2);
 
@@ -134,9 +132,6 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 				break;
 
 		}
-
-		this.warningTooManyNodesLabel.setText("WARNING: Only showing " + MAXITEMS + " of " + totalnodecount
-				+ " items in chart.  To view all, maximize and select \"Show All Nodes\"");
 
 		return scatterChart;
 	}

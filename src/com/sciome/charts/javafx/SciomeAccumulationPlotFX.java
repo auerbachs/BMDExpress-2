@@ -12,7 +12,6 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
@@ -235,7 +234,6 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 				Double X = (Double) xychartData.getXValue();
 				Double Y = (Double) xychartData.getYValue();
 				List extraValue = (List) xychartData.getExtraValue();
-				Node node = xychartData.getNode();
 
 				StringBuilder components = new StringBuilder();
 				for (Object obj : extraValue)

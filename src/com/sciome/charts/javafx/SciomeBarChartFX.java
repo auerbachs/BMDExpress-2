@@ -98,7 +98,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 				series1.getData().add(xyData);
 
 				chartLabelSet.add(chartData.getDataPointLabel());
-				nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
+				putNodeInformation(chartDataPack.getName() + chartData.getDataPointLabel(),
 						new NodeInformation(chartData.getCharttableObject(), false));
 				count++;
 				// too many nodes
@@ -120,7 +120,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 							new ChartExtraValue(chartedKey, countMap.get(chartedKey), null));
 
 					series1.getData().add(xyData);
-					nodeInfoMap.put(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
+					putNodeInformation(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
 				}
 			}
 
@@ -197,7 +197,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 	@Override
 	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
 	{
-		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
+		NodeInformation nI = getNodeInformation(seriesName + dataPointLabel);
 
 		return userObjectPane(nI.object, nI.invisible);
 	}

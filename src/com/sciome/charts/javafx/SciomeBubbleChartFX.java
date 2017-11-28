@@ -118,9 +118,6 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 							scaleValue, chartData.getCharttableObject(), false));
 					series.getData().add(theData);
 
-					nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
-							new NodeInformation((Double) chartData.getDataPoints().get(key3) * bubbleScale,
-									scaleValue, chartData.getCharttableObject(), false));
 					chartLabelSet.add(chartData.getDataPointLabel());
 					count++;
 					nodecount++;
@@ -131,9 +128,6 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 			blc.getData().add(series);
 
 		}
-
-		this.warningTooManyNodesLabel.setText("WARNING: Only showing " + MAXITEMS + " of " + totalnodecount
-				+ " items in chart.  To view all, maximize and select \"Show All Nodes\"");
 
 		toolTip.setStyle("-fx-font: 14 arial;  -fx-font-smoothing-type: lcd;");;
 		return blc;

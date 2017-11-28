@@ -1,8 +1,6 @@
 package com.sciome.charts;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -17,11 +15,8 @@ import javafx.scene.shape.Line;
 public abstract class SciomeRangePlot extends ScrollableSciomeChart implements ChartDataExporter
 {
 
-	// map that keeps track of enough information to instantiate a node.
-	// so we don't have to store large amounts of nodes in memory
-	protected Map<String, NodeInformation>	nodeInfoMap	= new HashMap<>();
-	protected Tooltip						toolTip		= new Tooltip("");
-	protected final int						MAXITEMS	= 20;
+	protected Tooltip	toolTip		= new Tooltip("");
+	protected final int	MAXITEMS	= 20;
 
 	@SuppressWarnings("unchecked")
 	public SciomeRangePlot(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
@@ -216,19 +211,6 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChart implements C
 			bottomWhisker.getStyleClass().setAll("boxwhisker-line", seriesStyleClass, dataStyleClass,
 					"default-color" + colorIndex);
 
-		}
-	}
-
-	protected class NodeInformation
-	{
-
-		public Object	object;
-		public boolean	invisible;
-
-		public NodeInformation(Object o, boolean i)
-		{
-			object = o;
-			invisible = i;
 		}
 	}
 

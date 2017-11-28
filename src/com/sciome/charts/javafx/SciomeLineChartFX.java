@@ -29,23 +29,4 @@ public class SciomeLineChartFX extends SciomeLineChart
 		return null;
 	}
 
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		return true;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

@@ -1,8 +1,6 @@
 package com.sciome.charts;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -16,11 +14,8 @@ import javafx.scene.control.Tooltip;
  */
 public abstract class SciomeScatterChart extends SciomeChartBase implements ChartDataExporter
 {
-	// map that keeps track of enough information to instantiate a node.
-	// so we don't have to store 10,000 nodes in memory
-	protected Map<String, NodeInformation>	nodeInfoMap	= new HashMap<>();
-	protected Tooltip						toolTip		= new Tooltip("");
-	protected final int						MAXITEMS	= 2500;
+
+	protected Tooltip toolTip = new Tooltip("");
 
 	@SuppressWarnings("rawtypes")
 	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
@@ -59,7 +54,6 @@ public abstract class SciomeScatterChart extends SciomeChartBase implements Char
 
 	private void initChart()
 	{
-		setMaxGraphItems(MAXITEMS);
 		showChart();
 
 	}

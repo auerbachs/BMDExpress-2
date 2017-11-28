@@ -26,25 +26,4 @@ public class SciomeHeatMapFX extends SciomeHeatMap
 		return null;
 	}
 
-	@Override
-	protected boolean isXAxisDefineable()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected boolean isYAxisDefineable()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected void redrawChart()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

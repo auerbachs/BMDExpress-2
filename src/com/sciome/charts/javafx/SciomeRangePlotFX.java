@@ -323,7 +323,6 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 				Series<Number, String> series = getData().get(seriesIndex);
 				String key = series.getName() + series.getData().get(itemIndex).getYValue();
-				NodeInformation nI = nodeInfoMap.get(key);
 
 			}
 			return boxAndWhiskerNode;
@@ -654,7 +653,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 				series1.getData().add(xyData);
 
-				nodeInfoMap.put(chartDataPack.getName() + chartData.getDataPointLabel(),
+				putNodeInformation(chartDataPack.getName() + chartData.getDataPointLabel(),
 						new NodeInformation(chartData.getCharttableObject(), false));
 
 				// too many nodes
@@ -677,7 +676,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 									"", null));
 
 					series1.getData().add(xyData);
-					nodeInfoMap.put(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
+					putNodeInformation(chartDataPack.getName() + chartedKey, new NodeInformation(null, true));
 				}
 			}
 
@@ -741,7 +740,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 	@Override
 	protected Node getNode(String seriesName, String dataPointLabel, int seriesIndex)
 	{
-		NodeInformation nI = nodeInfoMap.get(seriesName + dataPointLabel);
+		NodeInformation nI = getNodeInformation(seriesName + dataPointLabel);
 
 		return userObjectPane(nI.object, nI.invisible, seriesIndex);
 	}

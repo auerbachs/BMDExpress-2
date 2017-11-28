@@ -45,7 +45,7 @@ public abstract class SciomeChartBase extends StackPane
 	protected String				title;
 	protected SciomeChartListener	chartListener;
 	protected List<ChartDataPack>	chartDataPacks;
-	private int						maxGraphItems				= 200;
+	private int						maxGraphItems				= 2000000;
 	protected boolean				cancel						= false;
 	private Node					chart;
 	protected CheckBox				logXAxis					= new CheckBox("Log X Axis");
