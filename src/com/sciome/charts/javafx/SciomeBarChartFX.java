@@ -6,7 +6,6 @@ import com.sciome.charts.SciomeBarChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;

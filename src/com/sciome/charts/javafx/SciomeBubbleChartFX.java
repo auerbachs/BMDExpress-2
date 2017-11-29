@@ -9,7 +9,6 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
-import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.event.EventHandler;
 import javafx.scene.chart.Axis;

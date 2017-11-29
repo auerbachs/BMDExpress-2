@@ -9,7 +9,6 @@ import com.sciome.charts.SciomeRangePlot;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
-import com.sciome.charts.utils.SciomeNumberAxisGenerator;
 
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;

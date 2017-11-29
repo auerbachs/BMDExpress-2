@@ -1,6 +1,4 @@
-package com.sciome.charts.utils;
-
-import com.sciome.charts.javafx.LogarithmicAxis;
+package com.sciome.charts.javafx;
 
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.NumberAxis;
