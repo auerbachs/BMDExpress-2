@@ -12,7 +12,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeHistogramFX;
-import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
 public class OriogenDataVisualizationView extends DataVisualizationView implements IDataVisualizationView{
@@ -42,12 +42,12 @@ public class OriogenDataVisualizationView extends DataVisualizationView implemen
 
 		chartCache.put(
 				"DEFAULT-" + OriogenResults.BEST_FOLD_CHANGE + OriogenResults.NEG_LOG_ADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), OriogenResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), OriogenResults.BEST_FOLD_CHANGE,
 						OriogenResults.NEG_LOG_ADJUSTED_PVALUE, false, true, this));
 		chartCache.put(
 				"DEFAULT-" + OriogenResults.BEST_FOLD_CHANGE
 						+ OriogenResults.NEG_LOG_UNADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), OriogenResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), OriogenResults.BEST_FOLD_CHANGE,
 						OriogenResults.NEG_LOG_UNADJUSTED_PVALUE, false, true, this));
 
 	}

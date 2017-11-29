@@ -23,6 +23,8 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
+import javafx.scene.input.MouseButton;
+
 public class SciomeBubbleChartJFree extends SciomeBubbleChart
 {
 
@@ -70,6 +72,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		// Create chart
 		JFreeChart chart = ChartFactory.createBubbleChart(key1 + " Vs. " + key2 + ": Bubble Size=" + key3,
 				key1, key2, dataset, PlotOrientation.VERTICAL, true, true, false);
+		
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
@@ -127,7 +130,9 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 
 			@Override
 			public void chartMouseClicked(ChartMouseEventFX e) {
-				showObjectText(e.getEntity().getToolTipText());
+				if(e.getEntity() != null && e.getEntity().getToolTipText() != null //Check to see if an entity was clicked
+						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) //Check to see if it was the left mouse button clicked
+					showObjectText(e.getEntity().getToolTipText());
 			}
 
 			@Override

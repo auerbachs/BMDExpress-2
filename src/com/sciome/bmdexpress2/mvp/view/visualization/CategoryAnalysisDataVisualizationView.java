@@ -25,7 +25,7 @@ import com.sciome.charts.javafx.SciomeBarChartFX;
 import com.sciome.charts.javafx.SciomeHistogramFX;
 import com.sciome.charts.javafx.SciomePieChartFX;
 import com.sciome.charts.javafx.SciomeRangePlotFX;
-import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
 import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
@@ -57,24 +57,24 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMD_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMD_MEAN, 0.0, this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDL_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDL_MEAN, 0.0, this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEDIAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDU_MEDIAN, 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEAN,
-				new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 						CategoryAnalysisResults.BMDU_MEAN, 0.0, this));
 
 		chartCache.put(MEAN_HISTOGRAMS + "-" + CategoryAnalysisResults.BMD_MEAN,
@@ -125,7 +125,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMD_MEDIAN
 						+ CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeScatterChartFX("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
+				new SciomeScatterChartJFree("", new ArrayList<>(), CategoryAnalysisResults.BMD_MEDIAN,
 						CategoryAnalysisResults.BMDL_MEDIAN, CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(
 				BMD_BMDL_SCATTER + "-" + CategoryAnalysisResults.BMD_MEAN + CategoryAnalysisResults.BMDL_MEAN,
@@ -141,7 +141,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				new SciomeScatterChartJFree("", new ArrayList<>(), CategoryAnalysisResults.BMDU_MEAN,
 						CategoryAnalysisResults.BMDL_MEAN, CategoryAnalysisDataVisualizationView.this));
 
-		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotFX("Accumulation", new ArrayList<>(),
+		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(),
 				CategoryAnalysisResults.BMD_MEDIAN, 0.0, this));
 		chartCache.put(
 				"DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN

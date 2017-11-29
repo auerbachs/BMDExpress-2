@@ -18,7 +18,7 @@ import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeHistogramFX;
 import com.sciome.charts.javafx.SciomePieChartFX;
-import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -50,7 +50,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 						BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
-				new SciomeScatterChartFX("", new ArrayList<>(), BMDResult.BMD, BMDResult.BMDL,
+				new SciomeScatterChartJFree("", new ArrayList<>(), BMDResult.BMD, BMDResult.BMDL,
 						BMDAnalysisResultsDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogramFX("", new ArrayList<>(), BMDResult.BMD,
 				20.0, BMDAnalysisResultsDataVisualizationView.this));

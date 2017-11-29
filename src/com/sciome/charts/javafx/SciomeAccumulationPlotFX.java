@@ -34,26 +34,27 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
 	{
-		String key = keys[0];
-		Double dataMin = getMinMin(key);
+		String key1 = keys[0];
+		String key2 = "Accumulation";
+		Double dataMin = getMinMin(key1);
 		// final NumberAxis xAxis = new NumberAxis();
 		// final LogarithmicAxis yAxis = new LogarithmicAxis();
 		final Axis yAxis;
 		final Axis xAxis;
 
-		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(),
+		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(),
 				(chartConfig == null ? null : chartConfig.getMinY()),
 				chartConfig == null ? null : chartConfig.getMaxY(), 1.0);
-		xAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(),
+		xAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogXAxis().isSelected(),
 				chartConfig == null ? null : chartConfig.getMinX(),
 				chartConfig == null ? null : chartConfig.getMaxX(), dataMin);
 
-		xAxis.setLabel(key);
-		yAxis.setLabel("Accumulation");
+		xAxis.setLabel(key1);
+		yAxis.setLabel(key2);
 		// creating the chart
 		final LineChart<Number, Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
 
-		lineChart.setTitle(key + " Accumulation Plot");
+		lineChart.setTitle(key1 + " Accumulation Plot");
 		// defining a series
 
 		try
@@ -70,7 +71,7 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 					XYChart.Data theData = new XYChart.Data(value.getXValue(), value.getYValue());
 					theData.setExtraValue(value.getExtraValue());
 					theData.setNode(userObjectPane(value.getExtraValue(), value.getYValue().doubleValue(),
-							value.getValuesList(), key));
+							value.getValuesList(), key1));
 					series.getData().add(theData);
 
 				}

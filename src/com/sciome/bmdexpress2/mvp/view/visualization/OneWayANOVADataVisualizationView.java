@@ -12,7 +12,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeHistogramFX;
-import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
 public class OneWayANOVADataVisualizationView extends DataVisualizationView implements IDataVisualizationView
@@ -44,12 +44,12 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 
 		chartCache.put(
 				"DEFAULT-" + OneWayANOVAResults.BEST_FOLD_CHANGE + OneWayANOVAResults.NEG_LOG_ADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE,
 						OneWayANOVAResults.NEG_LOG_ADJUSTED_PVALUE, false, true, this));
 		chartCache.put(
 				"DEFAULT-" + OneWayANOVAResults.BEST_FOLD_CHANGE
 						+ OneWayANOVAResults.NEG_LOG_UNADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE,
 						OneWayANOVAResults.NEG_LOG_UNADJUSTED_PVALUE, false, true, this));
 
 	}

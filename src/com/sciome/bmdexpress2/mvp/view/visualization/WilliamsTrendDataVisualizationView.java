@@ -12,10 +12,10 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeHistogramFX;
-import com.sciome.charts.javafx.SciomeScatterChartFX;
+import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
-public class WilliamsTrendDataVisualizationView extends DataVisualizationView implements IDataVisualizationView{
+public class WilliamsTrendDataVisualizationView extends DataVisualizationView implements IDataVisualizationView {
 	private static final String	UNADJUSTED_PVALUE_HISTOGRAM			= "Unadjusted P-Value Histogram";
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
 	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Best Fold Change Histogram";
@@ -42,12 +42,12 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 
 		chartCache.put(
 				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE + WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
 						WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE, false, true, this));
 		chartCache.put(
 				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE
 						+ WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE,
-				new SciomeScatterChartFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
+				new SciomeScatterChartJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
 						WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE, false, true, this));
 
 	}
