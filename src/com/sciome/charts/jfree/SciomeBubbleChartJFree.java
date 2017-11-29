@@ -7,10 +7,14 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.fx.interaction.ChartMouseEventFX;
+import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
+import org.jfree.data.xy.XYDataset;
 
 import com.sciome.charts.SciomeBubbleChart;
 import com.sciome.charts.SciomeChartListener;
@@ -58,9 +62,9 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 				domains[i] = domainvalue;
 				ranges[i] = rangevalue;
 				bubbles[i++] = bubblesize * scaleValue;
+				
 			}
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges, bubbles });
-
 		}
 
 		// Create chart
@@ -82,7 +86,8 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		}
 
 		domain.setRange(min1.doubleValue(), max1.doubleValue());
-
+		
+		
 		// Set range for Y-Axis
 		NumberAxis range = (NumberAxis) plot.getRangeAxis();
 		if (min2.equals(max2))
@@ -99,6 +104,16 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		XYBubbleRenderer renderer = ((XYBubbleRenderer) plot.getRenderer());
 
 		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .3f));
+		
+		//Set tooltip string
+		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()
+		{
+			@Override
+			public String generateToolTip(XYDataset dataset, int series, int item) {
+				return ((BubbleChartExtraData)getSeriesData().get(series).getData().get(item).getExtraValue()).userData.toString();
+			}
+		};
+		renderer.setBaseToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
 		chart.getPlot().setForegroundAlpha(0.1f);
 
@@ -106,7 +121,18 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		ChartViewer chartView = new ChartViewer(chart);
 
 		// LogarithmicAxis yAxis = new LogarithmicAxis();
+		chartView.addChartMouseListener(new ChartMouseListenerFX() {
 
+			@Override
+			public void chartMouseClicked(ChartMouseEventFX e) {
+				showObjectText(e.getEntity().getToolTipText());
+			}
+
+			@Override
+			public void chartMouseMoved(ChartMouseEventFX e) {
+				//ignore for now
+			}
+		});
 		domain.setLabel(key1);
 		range.setLabel(key2);
 
