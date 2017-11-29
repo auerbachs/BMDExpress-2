@@ -45,7 +45,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 
 		final Axis xAxis = new CategoryAxis();
 
-		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), null, null,
+		final Axis yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), null, null,
 				null);
 
 		xAxis.setLabel(key);

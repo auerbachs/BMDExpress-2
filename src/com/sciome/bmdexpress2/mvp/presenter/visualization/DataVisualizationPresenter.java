@@ -77,10 +77,14 @@ public abstract class DataVisualizationPresenter extends ServicePresenterBase<ID
 	@Subscribe
 	public void onShowBMDAnalysisDataSet(ShowBMDAnalysisDataSetVisualizationsEvent event)
 	{
-		if (!drawn)
-			getView().drawResults(event.GetPayload());
-
-		drawn = true;
+		try {
+			if (!drawn)
+				getView().drawResults(event.GetPayload());
+	
+			drawn = true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Subscribe

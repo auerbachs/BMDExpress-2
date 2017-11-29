@@ -524,7 +524,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			}
 		}
 		final Axis yAxis;
-		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(), axisMin, axisMax, dataMin);
+		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogXAxis().isSelected(), axisMin, axisMax, dataMin);
 
 		xAxis.setLabel("Category");
 		// yAxis.setLabel(minKey + "," + lowKey + "," + key + "," + maxKey);

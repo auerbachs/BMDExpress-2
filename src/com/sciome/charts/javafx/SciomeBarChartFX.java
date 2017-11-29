@@ -53,7 +53,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 			}
 		}
 		final Axis yAxis;
-		yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), min, max, dataMin);
+		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), min, max, dataMin);
 
 		xAxis.setLabel("Category");
 		yAxis.setLabel(key);

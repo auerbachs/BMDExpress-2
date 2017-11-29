@@ -65,9 +65,9 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 			max2 = chartConfig.getMaxY();
 			min2 = chartConfig.getMinY();
 		}
-		final Axis xAxis = SciomeNumberAxisGenerator.generateAxis(getLogXAxis().isSelected(), min1, max1,
+		final Axis xAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogXAxis().isSelected(), min1, max1,
 				dataMin1);
-		final Axis yAxis = SciomeNumberAxisGenerator.generateAxis(getLogYAxis().isSelected(), min2, max2,
+		final Axis yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), min2, max2,
 				dataMin2);
 
 		// LogarithmicAxis yAxis = new LogarithmicAxis();

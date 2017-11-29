@@ -3,7 +3,7 @@ package com.sciome.charts.javafx;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.NumberAxis;
 
-public class SciomeNumberAxisGenerator
+public class SciomeNumberAxisGeneratorFX
 {
 	private static Double[] decades = { .00000000001, .0000000001, .000000001, .00000001, .0000001, .000001,
 			.00001, .0001, .001, .01, .1, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0,
@@ -12,7 +12,7 @@ public class SciomeNumberAxisGenerator
 	public static Axis generateAxis(boolean isLog, Double min, Double max, Double dataMin)
 	{
 		if (isLog && max != null && max > min && dataMin != null && dataMin > 0.0 && min.equals(0.0))
-			min = SciomeNumberAxisGenerator.firstDecadeBelow(dataMin);
+			min = SciomeNumberAxisGeneratorFX.firstDecadeBelow(dataMin);
 
 		if (isLog && min != null && max != null && max > min)
 			return new LogarithmicAxis(min, max);

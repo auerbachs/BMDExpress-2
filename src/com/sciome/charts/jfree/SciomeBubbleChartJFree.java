@@ -74,6 +74,8 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
+		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected()));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected()));
 		NumberAxis domain = (NumberAxis) plot.getDomainAxis();
 		if (min1.equals(max1))
 		{
@@ -120,7 +122,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		// Create Panel
 		ChartViewer chartView = new ChartViewer(chart);
 
-		// LogarithmicAxis yAxis = new LogarithmicAxis();
+		//Add plot point clicking interaction
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {
 
 			@Override
