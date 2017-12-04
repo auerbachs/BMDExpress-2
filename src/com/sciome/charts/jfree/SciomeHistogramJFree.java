@@ -57,11 +57,11 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 					continue;
 				ranges[i++] = dataPoint.doubleValue();
 			}
-			dataset.addSeries(key, ranges, (int)bucketsize.doubleValue());
+			dataset.addSeries(chartDataPack.getName(), ranges, (int)bucketsize.doubleValue());
 		}
 		
 		// Create chart
-		JFreeChart chart = ChartFactory.createHistogram(key + "Histogram", key, "Count", dataset, PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createHistogram(key + " Histogram", key, "Count", dataset, PlotOrientation.VERTICAL, true, true, false);
 		
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
