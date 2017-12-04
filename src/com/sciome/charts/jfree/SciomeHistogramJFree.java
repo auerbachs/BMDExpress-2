@@ -137,28 +137,24 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 
 		List<SciomeSeries<String, Number>> seriesData = new ArrayList<>();
 		
-		
-		//Add objects to list for mapping objects to each histogram bar
-		List<List<Object>> bucketObjects = new ArrayList<>();
-		if(bucketsize != null) {
-			for (int i = 0; i < bucketsize.intValue(); i++)
-				bucketObjects.add(new ArrayList<>());
-		}
-		
 		for(int i = 0; i < dataset.getSeriesCount(); i++) {
+			List<List<Object>> bucketObjects = new ArrayList<>();
+			if(bucketsize != null) {
+				for (int j = 0; j < bucketsize.intValue(); j++)
+					bucketObjects.add(new ArrayList<>());
+			}
 			//Loop through all the data points and put them into the appropriate bucket
 			for(ChartData data : getChartDataPacks().get(i).getChartData()) {
 				Double dataPoint = (Double)(data.getDataPoints().get(key));
-				for(int j = 0; j < bucketsize.intValue(); j++) {
-					if(dataPoint > dataset.getStartX(i, j).doubleValue() && dataPoint < dataset.getEndX(i, j).doubleValue()) {
-						bucketObjects.get(j).add(data.getCharttableObject());
+				if(dataPoint != null) {
+					for(int j = 0; j < bucketsize.intValue(); j++) {
+						if(dataPoint > dataset.getStartX(i, j).doubleValue() && dataPoint < dataset.getEndX(i, j).doubleValue()) {
+							bucketObjects.get(j).add(data.getCharttableObject());
+						}
 					}
 				}
 			}
-		}
-		
-		//Create the sciome data object for each series
-		for(int i = 0; i < dataset.getSeriesCount(); i++) {
+			
 			SciomeSeries<String, Number> series = new SciomeSeries<>();
 			series.setName(key);
 
