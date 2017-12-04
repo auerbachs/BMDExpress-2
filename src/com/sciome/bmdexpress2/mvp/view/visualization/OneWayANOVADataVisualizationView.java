@@ -11,7 +11,7 @@ import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeHistogramFX;
+import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -30,16 +30,16 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 		presenter = new OneWayANOVADataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + OneWayANOVAResults.UNADJUSTED_PVALUE,
-				new SciomeHistogramFX("", new ArrayList<>(), OneWayANOVAResults.UNADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), OneWayANOVAResults.UNADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(ADJUSTED_PVALUE_HISTOGRAM + "-" + OneWayANOVAResults.ADJUSTED_PVALUE,
-				new SciomeHistogramFX("", new ArrayList<>(), OneWayANOVAResults.ADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), OneWayANOVAResults.ADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_HISTOGRAM + "-" + OneWayANOVAResults.BEST_FOLD_CHANGE,
-				new SciomeHistogramFX("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + OneWayANOVAResults.BEST_FOLD_CHANGE_ABS,
-				new SciomeHistogramFX("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE_ABS, 20.0,
+				new SciomeHistogramJFree("", new ArrayList<>(), OneWayANOVAResults.BEST_FOLD_CHANGE_ABS, 20.0,
 						this));
 
 		chartCache.put(

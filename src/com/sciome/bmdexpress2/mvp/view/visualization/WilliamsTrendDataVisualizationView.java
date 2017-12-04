@@ -11,7 +11,7 @@ import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeHistogramFX;
+import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -28,16 +28,16 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 		presenter = new WilliamsTrendDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.UNADJUSTED_PVALUE,
-				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(ADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.ADJUSTED_PVALUE,
-				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.ADJUSTED_PVALUE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.ADJUSTED_PVALUE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE,
-				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE, 20.0, this));
+				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE, 20.0, this));
 
 		chartCache.put(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE_ABS,
-				new SciomeHistogramFX("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE_ABS, 20.0,
+				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE_ABS, 20.0,
 						this));
 
 		chartCache.put(

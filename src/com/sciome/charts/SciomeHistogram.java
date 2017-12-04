@@ -83,7 +83,7 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		String key = keys[0];
 		Double max = getMaxMax(key);
 		Double min = getMinMin(key);
-
+		
 		if (bucketsize == null)
 			bucketsize = 20.0;
 		Double bucketSize = (max - min) / bucketsize;
