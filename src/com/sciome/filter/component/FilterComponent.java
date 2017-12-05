@@ -3,6 +3,7 @@ package com.sciome.filter.component;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterType;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
@@ -26,6 +27,8 @@ public class FilterComponent
 	private ComboBox<DataFilterType>	cBox;
 	private DataFilterComponentListener	dataFilterComponentListener;
 	private Class						filterFieldClass;
+	private boolean						filterChangeInProgress;
+	private boolean						fireFilter;
 
 	public String getFilterKey()
 	{
@@ -58,6 +61,7 @@ public class FilterComponent
 
 		initValues(df);
 		initListener();
+
 	}
 
 	private void initValues(DataFilter df)
@@ -133,18 +137,73 @@ public class FilterComponent
 					between.setVisible(false);
 					value2.setVisible(false);
 				}
-				dataFilterComponentListener.dataFilterChanged();
+
+				// only fire the update if a value is present
+				if (!value1.getText().equals(""))
+					if (value2.isVisible() && !value2.getText().equals(""))
+						doDelayedFilterChange();
 			}
 
 		});
 		value1.textProperty().addListener((observable, oldValue, newValue) ->
 		{
-			dataFilterComponentListener.dataFilterChanged();
+			if (!value1.getStyleClass().contains("textboxfilterchanged"))
+				value1.getStyleClass().add("textboxfilterchanged");
+			doDelayedFilterChange();
 		});
 		value2.textProperty().addListener((observable, oldValue, newValue) ->
 		{
-			dataFilterComponentListener.dataFilterChanged();
+			if (!value2.getStyleClass().contains("textboxfilterchanged"))
+				value2.getStyleClass().add("textboxfilterchanged");
+			doDelayedFilterChange();
 		});
+	}
+
+	/*
+	 * when user types new filter, try to delay for one second before doing the datafilterchanged if the user
+	 * types data before filter is fired, then this will wait before firing off filter.
+	 */
+	public void doDelayedFilterChange()
+	{
+		fireFilter = true;
+		if (!filterChangeInProgress)
+		{
+			filterChangeInProgress = true;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					while (fireFilter)
+					{
+						fireFilter = false; // set his global variable to false.
+						try
+						{
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							dataFilterComponentListener.dataFilterChanged();
+							value1.getStyleClass().remove("textboxfilterchanged");
+							value2.getStyleClass().remove("textboxfilterchanged");
+							filterChangeInProgress = false;
+						}
+					});
+
+				}
+			}).start();
+
+		}
+
 	}
 
 	public String getValueOne()
