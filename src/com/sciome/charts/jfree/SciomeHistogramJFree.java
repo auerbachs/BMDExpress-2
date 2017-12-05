@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -39,10 +39,8 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 	}
 
 	@Override
-	protected Node generateChart(String[] keys, ChartConfiguration chartConfiguration) {
+	protected Node generateChart(String[] keys, ChartConfiguration chartConfig) {
 		String key = keys[0];
-
-		final ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected());
 
 		//Create dataset
 		HistogramDataset dataset = new HistogramDataset();
@@ -63,16 +61,15 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		// Create chart
 		JFreeChart chart = ChartFactory.createHistogram(key + " Histogram", key, "Count", dataset, PlotOrientation.VERTICAL, true, true, false);
 		
+		//Set plot parameters
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected()));
-
-		XYBarRenderer renderer = ((XYBarRenderer) plot.getRenderer());
-
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .3f));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key));
 		
+		//Set renderer parameters
+		XYBarRenderer renderer = ((XYBarRenderer) plot.getRenderer());
 		//Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()
 		{
@@ -82,15 +79,18 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				return String.valueOf(joinAllObjects(objects));
 			}
 		};
-		renderer.setBaseToolTipGenerator(tooltipGenerator);
+		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, 1.0f, 1.0f));
+		renderer.setSeriesFillPaint(0, Color.white);
+		renderer.setDefaultOutlinePaint(Color.black);
+		renderer.setDefaultToolTipGenerator(tooltipGenerator);
         renderer.setBarPainter(new StandardXYBarPainter());
         renderer.setShadowVisible(false);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.1f);
-
-		// Create Panel
-		ChartViewer chartView = new ChartViewer(chart);
-
+		chart.getPlot().setForegroundAlpha(0.5f);
+		
+		// Create Custom ChartViewer to deal with zooming
+		SciomeChartViewer chartView = new SciomeChartViewer(chart);
+		
 		//Add plot point clicking interaction
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {
 
@@ -106,7 +106,7 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				//ignore for now
 			}
 		});
-
+		
 		return chartView;
 	}
 	

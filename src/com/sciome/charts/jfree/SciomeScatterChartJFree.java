@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -74,40 +74,52 @@ public class SciomeScatterChartJFree extends SciomeScatterChart {
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected()));
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected()));
-		ValueAxis domain = (ValueAxis) plot.getDomainAxis();
-		if (max1 <= min1)
-		{
-			max1 = 1.0;
-			min1 = 0.1;
-		}
-
-		if (max2 <= min2)
-		{
-			max2 = 1.0;
-			min2 = 0.1;
-		}
-		domain.setRange(min1.doubleValue(), max1.doubleValue());
+		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key2));
 		
-		// Set range for Y-Axis
-		ValueAxis range = (ValueAxis) plot.getRangeAxis();
-		if (min2.equals(max2))
-		{
-			min2 -= 1;
+		//Only want to zoom in if we any values have been set in chartConfig
+		if(chartConfig != null) {
+			//Find the values for the min and max values for x and y
+			if (chartConfig.getMaxX() != null && chartConfig.getMinX() != null)
+			{
+				max1 = chartConfig.getMaxX();
+				min1 = chartConfig.getMinX();
+			}
+		
+			if (chartConfig.getMaxY() != null && chartConfig.getMinY() != null)
+			{
+				max2 = chartConfig.getMaxY();
+				min2 = chartConfig.getMinY();
+			}
+			if (min1.equals(max1))
+			{
+				min1 -= 1;
+			}
+			else if (min1 > max1)
+			{
+				min1 = 0.0;
+				max1 = 0.1;
+			}
+			if (min2.equals(max2))
+			{
+				min2 -= 1;
+			}
+			else if (min2 > max2)
+			{
+				min2 = 0.0;
+				max2 = 0.1;
+			}
+			
+			// Set the domain and range based on these x and y values
+			NumberAxis range = (NumberAxis) plot.getRangeAxis();
+			NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+			domain.setRange(min1, max1);
+			range.setRange(min2, max2);
 		}
-		else if (min2 > max2)
-		{
-			min2 = 0.0;
-			max2 = 0.1;
-		}
-		range.setRange(min2.doubleValue(), max2.doubleValue());
-		domain.setLabel(key1);
-		range.setLabel(key2);
 		
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
 
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .3f));
+		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .5f));
 		
 		//Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()
@@ -117,12 +129,12 @@ public class SciomeScatterChartJFree extends SciomeScatterChart {
 				return ((ChartExtraValue)getSeriesData().get(series).getData().get(item).getExtraValue()).userData.toString();
 			}
 		};
-		renderer.setBaseToolTipGenerator(tooltipGenerator);
+		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.1f);
+		chart.getPlot().setForegroundAlpha(0.5f);
 
 		// Create Panel
-		ChartViewer chartView = new ChartViewer(chart);
+		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 
 		//Add plot point clicking interaction
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {

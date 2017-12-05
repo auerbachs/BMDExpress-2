@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -37,7 +37,10 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot{
 	protected Node generateChart(String[] keys, ChartConfiguration chartConfig) {
 		String key1 = keys[0];
 		String key2 = "Accumulation";
-		Double min = getMinMin(key1);
+		Double min1 = getMinMin(key1);
+		Double min2 = 0.0;
+		Double max1 = 0.0;
+		Double max2 = 0.0;
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		
@@ -64,18 +67,58 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot{
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected()));
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected()));
+		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key2));
+		
+		//Only want to zoom in if we any values have been set in chartConfig
+		if(chartConfig != null) {
+			//Find the values for the min and max values for x and y
+			if (chartConfig.getMaxX() != null && chartConfig.getMinX() != null)
+			{
+				max1 = chartConfig.getMaxX();
+				min1 = chartConfig.getMinX();
+			}
+		
+			if (chartConfig.getMaxY() != null && chartConfig.getMinY() != null)
+			{
+				max2 = chartConfig.getMaxY();
+				min2 = chartConfig.getMinY();
+			}
+			if (min1.equals(max1))
+			{
+				min1 -= 1;
+			}
+			else if (min1 > max1)
+			{
+				min1 = 0.0;
+				max1 = 0.1;
+			}
+			if (min2.equals(max2))
+			{
+				min2 -= 1;
+			}
+			else if (min2 > max2)
+			{
+				min2 = 0.0;
+				max2 = 0.1;
+			}
+			
+			// Set the domain and range based on these x and y values
+			NumberAxis range = (NumberAxis) plot.getRangeAxis();
+			NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+			domain.setRange(min1, max1);
+			range.setRange(min2, max2);
+		}
 		
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
-		renderer.setBaseShapesVisible(true);
+		renderer.setDefaultShapesVisible(true);
 		renderer.setDrawOutlines(true);
 		renderer.setUseFillPaint(true);
-        renderer.setBaseFillPaint(Color.white);
+        renderer.setDefaultFillPaint(Color.white);
         renderer.setSeriesStroke(0, new BasicStroke(3.0f));
         renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
         renderer.setSeriesShape(0, new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0));
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .3f));
+		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .5f));
 		
 		//Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()
@@ -88,12 +131,12 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot{
 						data.getValuesList(), key1, MAX_TO_POPUP));
 			}
 		};
-		renderer.setBaseToolTipGenerator(tooltipGenerator);
+		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.1f);
+		chart.getPlot().setForegroundAlpha(0.5f);
 
 		// Create Panel
-		ChartViewer chartView = new ChartViewer(chart);
+		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 
 		// LogarithmicAxis yAxis = new LogarithmicAxis();
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {

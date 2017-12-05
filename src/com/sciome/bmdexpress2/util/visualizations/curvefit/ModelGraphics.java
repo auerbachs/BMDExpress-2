@@ -58,6 +58,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTick;
+import org.jfree.chart.axis.TickType;
 import org.jfree.chart.editor.ChartEditor;
 import org.jfree.chart.editor.ChartEditorManager;
 import org.jfree.chart.plot.PlotOrientation;
@@ -215,8 +216,8 @@ public class ModelGraphics extends JPanel
 		oneway.setVariablesXX(0, doses);
 
 		// init const holders
-		CHART_HEIGHT = 325;
-		CHART_WIDTH = 550;
+		CHART_HEIGHT = 400;
+		CHART_WIDTH = 900;
 		NUM_SERIES = 0;
 		DATA = 0;
 		POWER = 1;
@@ -272,6 +273,7 @@ public class ModelGraphics extends JPanel
 		plot.setRenderer(renderer);
 
 		cP = new ChartPanel(chart);
+		cP.setMaximumSize(new Dimension(CHART_WIDTH,CHART_HEIGHT));
 
 		// setAlwaysOnTop(true);
 
@@ -433,8 +435,8 @@ public class ModelGraphics extends JPanel
 		comboBoxReader();
 
 		// Set up the panel to display charts
-		// jPanel2.setSize(CHART_WIDTH,CHART_HEIGHT);
-		jPanel2.add(cP);
+		 jPanel2.setSize(CHART_WIDTH,CHART_HEIGHT);
+//		jPanel2.add(cP);
 		jSep1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
 		// Setup for the frame layouts
@@ -1691,40 +1693,41 @@ public class ModelGraphics extends JPanel
 
 	private class CustomLogAxis extends LogAxis
 	{
-		@Override
-		protected List refreshTicksHorizontal(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge)
-		{
+		
+//		protected List refreshTicksHorizontal(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge)
+//		{
 
-			Range range = getRange();
-			List<NumberTick> ticks = new ArrayList<NumberTick>();
-			double start = Math.floor(calculateLog(getLowerBound()));
-			double end = Math.ceil(calculateLog(getUpperBound()));
-			for (int i = (int) start; i < end; i++)
-			{
-				double v = Math.pow(this.getBase(), i);
-				for (double j = 1; j <= this.getBase(); j++)
-				{
-					AttributedString s = createTickLabel(j * v);
-					StringBuilder sb = new StringBuilder();
-					AttributedCharacterIterator iterator = s.getIterator();
-					char c = iterator.first();
-					while (c != CharacterIterator.DONE)
-					{
-						sb.append(c);
-						c = iterator.next();
-					}
-					String l = sb.toString();
-					if (j != this.getBase())
-						l = "";
-					if (range.contains(j * v))
-					{
-						ticks.add(new NumberTick(new Double(j * v), l, TextAnchor.TOP_CENTER,
-								TextAnchor.CENTER, 0.0));
-					}
-				}
-			}
-			return ticks;
-		}
+//			Range range = getRange();
+//			List<NumberTick> ticks = new ArrayList<NumberTick>();
+//			double start = Math.floor(calculateLog(getLowerBound()));
+//			double end = Math.ceil(calculateLog(getUpperBound()));
+//			for (int i = (int) start; i < end; i++)
+//			{
+//				double v = Math.pow(this.getBase(), i);
+//				for (double j = 1; j <= this.getBase(); j++)
+//				{
+//					AttributedString s = createTickLabel(j * v);
+//					StringBuilder sb = new StringBuilder();
+//					AttributedCharacterIterator iterator = s.getIterator();
+//					char c = iterator.first();
+//					while (c != CharacterIterator.DONE)
+//					{
+//						sb.append(c);
+//						c = iterator.next();
+//					}
+//					String l = sb.toString();
+//					if (j != this.getBase())
+//						l = "";
+//					if (range.contains(j * v))
+//					{
+//						NumberTick numberTick = new NumberTick(null, j, l, null, null, j);
+//						ticks.add(new NumberTick(new Double(j * v), l, TextAnchor.TOP_CENTER,
+//								TextAnchor.CENTER, 0.0));
+//					}
+//				}
+//			}
+//			return ticks;
+//		}
 	}
 
 }

@@ -73,42 +73,56 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		JFreeChart chart = ChartFactory.createBubbleChart(key1 + " Vs. " + key2 + ": Bubble Size=" + key3,
 				key1, key2, dataset, PlotOrientation.VERTICAL, true, true, false);
 		
+		//Set plot parameters
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
-		plot.setDomainPannable(true);
-		plot.setRangePannable(true);
-		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected()));
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected()));
-		NumberAxis domain = (NumberAxis) plot.getDomainAxis();
-		if (min1.equals(max1))
-		{
-			min1 -= 1;
-		}
-		else if (min1 > max1)
-		{
-			min1 = 0.0;
-			max1 = 0.1;
-		}
-
-		domain.setRange(min1.doubleValue(), max1.doubleValue());
+		plot.setDomainPannable(false);
+		plot.setRangePannable(false);
+		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key2));
 		
+		//Only want to zoom in if we any values have been set in chartConfig
+		if(chartConfig != null) {
+			//Find the values for the min and max values for x and y
+			if (chartConfig.getMaxX() != null && chartConfig.getMinX() != null)
+			{
+				max1 = chartConfig.getMaxX();
+				min1 = chartConfig.getMinX();
+			}
 		
-		// Set range for Y-Axis
-		NumberAxis range = (NumberAxis) plot.getRangeAxis();
-		if (min2.equals(max2))
-		{
-			min2 -= 1;
+			if (chartConfig.getMaxY() != null && chartConfig.getMinY() != null)
+			{
+				max2 = chartConfig.getMaxY();
+				min2 = chartConfig.getMinY();
+			}
+			if (min1.equals(max1))
+			{
+				min1 -= 1;
+			}
+			else if (min1 > max1)
+			{
+				min1 = 0.0;
+				max1 = 0.1;
+			}
+			if (min2.equals(max2))
+			{
+				min2 -= 1;
+			}
+			else if (min2 > max2)
+			{
+				min2 = 0.0;
+				max2 = 0.1;
+			}
+			
+			// Set the domain and range based on these x and y values
+			NumberAxis range = (NumberAxis) plot.getRangeAxis();
+			NumberAxis domain = (NumberAxis) plot.getDomainAxis();
+			domain.setRange(min1, max1);
+			range.setRange(min2, max2);
 		}
-		else if (min2 > max2)
-		{
-			min2 = 0.0;
-			max2 = 0.1;
-		}
-		range.setRange(min2.doubleValue(), max2.doubleValue());
 
 		XYBubbleRenderer renderer = ((XYBubbleRenderer) plot.getRenderer());
-
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .3f));
+		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .5f));
 		
 		//Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()
@@ -118,18 +132,19 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 				return ((BubbleChartExtraData)getSeriesData().get(series).getData().get(item).getExtraValue()).userData.toString();
 			}
 		};
-		renderer.setBaseToolTipGenerator(tooltipGenerator);
+		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.1f);
-
+		chart.getPlot().setForegroundAlpha(.5f);
+		
 		// Create Panel
-		ChartViewer chartView = new ChartViewer(chart);
-
+		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 		//Add plot point clicking interaction
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {
 
 			@Override
 			public void chartMouseClicked(ChartMouseEventFX e) {
+				System.out.println("X: " + e.getTrigger().getX());
+				System.out.println("Y: " + e.getTrigger().getY());
 				if(e.getEntity() != null && e.getEntity().getToolTipText() != null //Check to see if an entity was clicked
 						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) //Check to see if it was the left mouse button clicked
 					showObjectText(e.getEntity().getToolTipText());
@@ -140,8 +155,6 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 				//ignore for now
 			}
 		});
-		domain.setLabel(key1);
-		range.setLabel(key2);
 
 		return chartView;
 	}
