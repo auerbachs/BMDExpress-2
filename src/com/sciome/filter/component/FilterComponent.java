@@ -140,8 +140,14 @@ public class FilterComponent
 
 				// only fire the update if a value is present
 				if (!value1.getText().equals(""))
-					if (!value2.isVisible() && !value2.getText().equals(""))
+				{
+					value1.getStyleClass().add("textboxfilterchanged");
+					value2.getStyleClass().add("textboxfilterchanged");
+					if (!value2.isVisible())
 						doDelayedFilterChange();
+					if (value2.isVisible() && !value2.getText().equals(""))
+						doDelayedFilterChange();
+				}
 			}
 
 		});
