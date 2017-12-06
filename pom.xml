@@ -79,9 +79,13 @@
 		    <artifactId>jfreechart</artifactId>
 		    <version>1.5.0</version>
 		</dependency>
-
-         
-         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart-fx -->
+		<!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
+		<dependency>
+		    <groupId>org.jfree</groupId>
+		    <artifactId>jcommon</artifactId>
+		    <version>1.0.24</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart-fx -->
 		<dependency>
 		    <groupId>org.jfree</groupId>
 		    <artifactId>jfreechart-fx</artifactId>
@@ -95,12 +99,6 @@
              <version>1.00.02</version>
          </dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
-		<dependency>
-		    <groupId>org.jfree</groupId>
-		    <artifactId>jcommon</artifactId>
-		    <version>${jcommon.version}</version>
-		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx -->
 		<dependency>

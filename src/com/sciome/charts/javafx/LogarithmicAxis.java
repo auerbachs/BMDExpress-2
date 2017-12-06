@@ -35,7 +35,7 @@ public class LogarithmicAxis extends ValueAxis<Number>
 	private final DoubleProperty	logLowerBound		= new SimpleDoubleProperty();
 
 	// use this to define the ticks for log axis. try to keep it clean
-	private final double[]			CENTURIES			= { 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001,
+	private final double[]			DECADES			= { 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001,
 			0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
 
 	// log of zero is no good. So let this very small number represent log of zero
@@ -167,9 +167,9 @@ public class LogarithmicAxis extends ValueAxis<Number>
 
 				// for (double i = 0; i <= logUpperBound; i += 1)
 
-				double lowcentury = getLowerCentury(lowerBound.doubleValue());
-				double uppercentury = getUpperCentury(upperBound.doubleValue());
-				for (double i = lowcentury; i < uppercentury; i *= 10)
+				double lowdecade = getLowerdecade(lowerBound.doubleValue());
+				double upperdecade = getUpperdecade(upperBound.doubleValue());
+				for (double i = lowdecade; i < upperdecade; i *= 10)
 					tickPositions.add(i);
 
 			}
@@ -181,27 +181,27 @@ public class LogarithmicAxis extends ValueAxis<Number>
 		return tickPositions;
 	}
 
-	private double getUpperCentury(double upperBound)
+	private double getUpperdecade(double upperBound)
 	{
 		if (upperBound == 0)
 			return 10;
 
-		for (double century : CENTURIES)
+		for (double decade : DECADES)
 		{
-			if (century > upperBound)
-				return century;
+			if (decade > upperBound)
+				return decade;
 		}
 
 		return 0;
 	}
 
-	private double getLowerCentury(double lowerBound)
+	private double getLowerdecade(double lowerBound)
 	{
 		if (lowerBound == 0)
 			return 1;
-		for (int i = CENTURIES.length - 1; i > 0; i--)
-			if (CENTURIES[i] < lowerBound)
-				return CENTURIES[i];
+		for (int i = DECADES.length - 1; i > 0; i--)
+			if (DECADES[i] < lowerBound)
+				return DECADES[i];
 
 		return LOGZEROVALUE;
 	}
@@ -233,26 +233,26 @@ public class LogarithmicAxis extends ValueAxis<Number>
 			minValue = LOGZEROVALUE;
 
 		//
-		double centuryMin = minValue;
+		double decadeMin = minValue;
 		for (int i = 10; i > -20; i--)
 		{
 			if (minValue > Math.pow(10.0, i))
 			{
-				centuryMin = Math.pow(10.0, i);
+				decadeMin = Math.pow(10.0, i);
 				break;
 			}
 		}
 
-		double centuryMax = maxValue;
+		double decadeMax = maxValue;
 		for (int i = -10; i < 20; i++)
 		{
 			if (maxValue < Math.pow(10.0, i))
 			{
-				centuryMax = Math.pow(10.0, i);
+				decadeMax = Math.pow(10.0, i);
 				break;
 			}
 		}
-		Number[] range = new Number[] { Double.valueOf(centuryMin), Double.valueOf(centuryMax) };
+		Number[] range = new Number[] { Double.valueOf(decadeMin), Double.valueOf(decadeMax) };
 		return range;
 
 	}

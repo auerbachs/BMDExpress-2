@@ -12,8 +12,8 @@ public class SciomeNumberAxisGeneratorJFree
 		ValueAxis axis;
 		if (isLog)
 		{
-			axis = new LogarithmicAxis(label);
-			((LogarithmicAxis) axis).setStrictValuesFlag(false);
+			axis = new CustomJFreeLogarithmicAxis(label);
+			((CustomJFreeLogarithmicAxis) axis).setStrictValuesFlag(false);
 		}
 		else
 			axis = new NumberAxis(label);
