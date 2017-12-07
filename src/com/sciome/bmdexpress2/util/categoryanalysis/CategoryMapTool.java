@@ -251,13 +251,13 @@ public class CategoryMapTool
 
 		if (params.isUserPValueFilter())
 		{
-			analysisInfo.getNotes().add("Remove Genes With P Value >: " + params.getPValue());
+			analysisInfo.getNotes().add("Remove Genes With Prefilter P Value >: " + params.getPValue());
 			rstName += "_pvalue" + df1.format(params.getPValue());
 		}
 		
 		if (params.isUserAdjustedPValueFilter())
 		{
-			analysisInfo.getNotes().add("Remove Genes With Adjusted P Value >: " + params.getAdjustedPValue());
+			analysisInfo.getNotes().add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
 			rstName += "_adjustedpvalue" + df1.format(params.getAdjustedPValue());
 		}
 		
