@@ -2435,6 +2435,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		for (ReferenceGeneProbeStatResult rg : referenceGeneProbeStatResults)
 			if (genes.contains(rg.getReferenceGene().getId()))
 				genesContained.add(rg.getReferenceGene().getId());
+			else if (genes.contains(rg.getReferenceGene().getGeneSymbol().toLowerCase()))
+				genesContained.add(rg.getReferenceGene().getGeneSymbol());
 
 		return genesContained;
 	}

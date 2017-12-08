@@ -363,7 +363,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 			genesToHighLight.clear();
 			for (String line : genesTextField.getText().split("\\n"))
 				for (String word : line.split("\\s+"))
-					genesToHighLight.add(word);
+					genesToHighLight.add(word.toLowerCase());
 			redrawChart();
 		}
 
@@ -379,6 +379,21 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 					return true;
 		}
 		return false;
+	}
+
+	protected String getLabelIfNeedHighlighting(List<Object> objects)
+	{
+		String returnValue = "";
+		for (Object object : objects)
+		{
+			if (object instanceof IGeneContainer)
+			{
+				Set<String> genestohighlight = ((IGeneContainer) object).containsGenes(genesToHighLight);
+				if (genestohighlight.size() > 0)
+					return String.join(",", genestohighlight);
+			}
+		}
+		return returnValue;
 	}
 
 }

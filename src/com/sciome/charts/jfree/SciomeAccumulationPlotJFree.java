@@ -11,10 +11,14 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.util.ShapeUtilities;
@@ -141,6 +145,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				else
 					return super.getItemPaint(row, col);
 			}
+
 		});
 
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
@@ -150,6 +155,23 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		renderer.setDefaultFillPaint(Color.white);
 		renderer.setSeriesStroke(0, new BasicStroke(3.0f));
 		renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
+		renderer.setDefaultItemLabelsVisible(true);
+		renderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator() {
+
+			@Override
+			public String generateLabel(XYDataset dataset, int series, int item)
+			{
+				AccumulationData data = (AccumulationData) getSeriesData().get(series).getData().get(item);
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				String label = getLabelIfNeedHighlighting(objects);
+				return label;
+			}
+		});
+
+		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
+				TextAnchor.BOTTOM_CENTER);
+		renderer.setDefaultNegativeItemLabelPosition(position1);
+		renderer.setDefaultPositiveItemLabelPosition(position1);
 
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {

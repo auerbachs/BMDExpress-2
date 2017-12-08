@@ -479,6 +479,10 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		for (String gene : geneSet)
 			if (genes.contains(gene))
 				genesContained.add(gene);
+
+		for (String gene : geneSymbolSet)
+			if (genes.contains(gene.toLowerCase()))
+				genesContained.add(gene);
 		return genesContained;
 	}
 
