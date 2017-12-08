@@ -2,6 +2,7 @@ package com.sciome.charts.jfree;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.util.List;
@@ -141,7 +142,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
 				if (objectsNeedHighlighting(objects))
-					return Color.BLACK;
+					return Color.ORANGE;
 				else
 					return super.getItemPaint(row, col);
 			}
@@ -168,10 +169,11 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			}
 		});
 
-		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
-				TextAnchor.BOTTOM_CENTER);
-		renderer.setDefaultNegativeItemLabelPosition(position1);
-		renderer.setDefaultPositiveItemLabelPosition(position1);
+		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.TOP_RIGHT);
+		renderer.setDefaultNegativeItemLabelPosition(position1, true);
+		renderer.setDefaultPositiveItemLabelPosition(position1, true);
+		Font font = new Font("Courier New", Font.BOLD, 16);
+		renderer.setDefaultItemLabelFont(font, true);
 
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
