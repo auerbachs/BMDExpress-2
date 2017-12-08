@@ -1,6 +1,5 @@
 package com.sciome.charts.jfree;
 
-import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 

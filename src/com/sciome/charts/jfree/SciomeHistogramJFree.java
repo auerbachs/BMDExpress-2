@@ -156,7 +156,7 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 			}
 			
 			SciomeSeries<String, Number> series = new SciomeSeries<>();
-			series.setName(key);
+			series.setName(getChartDataPacks().get(i).getName());
 
 			//Create the SciomeData object for each
 			DecimalFormat df = new DecimalFormat("#.###");

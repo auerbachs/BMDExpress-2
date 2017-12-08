@@ -143,16 +143,18 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 	@Override
 	public List<String> getLinesToExport()
 	{
-
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-
+		
+		sb.append("series");
+		sb.append("\t");
 		sb.append("x");
 		sb.append("\t");
 		sb.append("y");
 		sb.append("\t");
 		sb.append("components delimited by ///");
 		returnList.add(sb.toString());
+		
 		for (SciomeSeries<String, Number> seriesData : getSeriesData())
 		{
 			for (SciomeData<String, Number> xychartData : seriesData.getData())
@@ -171,7 +173,9 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 						components.append("///");
 					components.append(obj.toString());
 				}
-
+				
+				sb.append(seriesData.getName());
+				sb.append("\t");
 				sb.append(X);
 				sb.append("\t");
 				sb.append(Y);
@@ -185,7 +189,5 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		}
 
 		return returnList;
-
 	}
-
 }
