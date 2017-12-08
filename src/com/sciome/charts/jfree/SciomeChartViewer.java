@@ -1,6 +1,9 @@
 package com.sciome.charts.jfree;
 
+import java.awt.Color;
+
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.fx.ChartCanvas;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ZoomHandlerFX;
@@ -11,6 +14,11 @@ public class SciomeChartViewer extends ChartViewer {
 	
 	public SciomeChartViewer(JFreeChart chart) {
 		super(chart);
+		//Change the background color of the chart to be the same grey color as the program
+		Color grey = new Color(244, 244, 244);
+		chart.setBackgroundPaint(grey);
+		chart.getPlot().setBackgroundPaint(grey);
+		chart.getLegend().setBackgroundPaint(grey);
 		ChartCanvas canvas = getCanvas();
 		
 		//Remove the preivous zoom handler and add one that activates only when you hold shift

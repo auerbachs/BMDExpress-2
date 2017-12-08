@@ -131,7 +131,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.getChildren().addAll(overlayButtons, vBox);
 		StackPane.setAlignment(overlayButtons, Pos.TOP_RIGHT);
 		this.setPickOnBounds(false);
-		vBox.setSpacing(5.0);
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
 

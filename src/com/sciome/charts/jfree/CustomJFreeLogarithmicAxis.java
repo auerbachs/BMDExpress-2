@@ -81,75 +81,75 @@ public class CustomJFreeLogarithmicAxis extends LogarithmicAxis
 	@Override
 	protected List refreshTicksHorizontal(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge)
 	{
-		 List ticks = new java.util.ArrayList();
-	        Range range = getRange();
+		List ticks = new java.util.ArrayList();
+        Range range = getRange();
 
-	        //get lower bound value:
-	        double lowerBoundVal = range.getLowerBound();
-	              //if small log values and lower bound value too small
-	              // then set to a small value (don't allow <= 0):
-	        if (this.smallLogFlag && lowerBoundVal < SMALL_LOG_VALUE) {
-	            lowerBoundVal = SMALL_LOG_VALUE;
-	        }
+        //get lower bound value:
+        double lowerBoundVal = range.getLowerBound();
+              //if small log values and lower bound value too small
+              // then set to a small value (don't allow <= 0):
+        if (this.smallLogFlag && lowerBoundVal < SMALL_LOG_VALUE) {
+            lowerBoundVal = SMALL_LOG_VALUE;
+        }
 
-	        //get upper bound value
-	        double upperBoundVal = range.getUpperBound();
+        //get upper bound value
+        double upperBoundVal = range.getUpperBound();
 
-	        //get log10 version of lower bound and round to integer:
-	        int iBegCount = (int) Math.rint(switchedLog10(lowerBoundVal));
-	        //get log10 version of upper bound and round to integer:
-	        int iEndCount = (int) Math.rint(switchedLog10(upperBoundVal));
+        //get log10 version of lower bound and round to integer:
+        int iBegCount = (int) Math.rint(switchedLog10(lowerBoundVal));
+        //get log10 version of upper bound and round to integer:
+        int iEndCount = (int) Math.rint(switchedLog10(upperBoundVal));
 
-	        if (iBegCount == iEndCount && iBegCount > 0
-	                && Math.pow(10, iBegCount) > lowerBoundVal) {
-	              //only 1 power of 10 value, it's > 0 and its resulting
-	              // tick value will be larger than lower bound of data
-	            --iBegCount;       //decrement to generate more ticks
-	        }
+        if (iBegCount == iEndCount && iBegCount > 0
+                && Math.pow(10, iBegCount) > lowerBoundVal) {
+              //only 1 power of 10 value, it's > 0 and its resulting
+              // tick value will be larger than lower bound of data
+            --iBegCount;       //decrement to generate more ticks
+        }
 
-	        double currentTickValue;
-			double upperdecade = getUpperdecade(upperBoundVal);
-			int lowerIndex = getLowerdecadeIndex(lowerBoundVal);
-			
-			int i=lowerIndex;	
-			while(DECADES[i] < upperdecade)
-	        {
-	            currentTickValue = DECADES[i];
-	            if (currentTickValue >= lowerBoundVal - SMALL_LOG_VALUE) {
-                    //tick value not below lowest data value
-                    TextAnchor anchor;
-                    TextAnchor rotationAnchor;
-                    double angle = 0.0;
-                    if (isVerticalTickLabels()) {
-                        anchor = TextAnchor.CENTER_RIGHT;
-                        rotationAnchor = TextAnchor.CENTER_RIGHT;
-                        if (edge == RectangleEdge.TOP) {
-                            angle = Math.PI / 2.0;
-                        }
-                        else {
-                            angle = -Math.PI / 2.0;
-                        }
+        double currentTickValue;
+		double upperdecade = getUpperdecade(upperBoundVal);
+		int lowerIndex = getLowerdecadeIndex(lowerBoundVal);
+		
+		int i=lowerIndex;	
+		while(DECADES[i] < upperdecade)
+        {
+            currentTickValue = DECADES[i];
+            if (currentTickValue >= lowerBoundVal - SMALL_LOG_VALUE) {
+                //tick value not below lowest data value
+                TextAnchor anchor;
+                TextAnchor rotationAnchor;
+                double angle = 0.0;
+                if (isVerticalTickLabels()) {
+                    anchor = TextAnchor.CENTER_RIGHT;
+                    rotationAnchor = TextAnchor.CENTER_RIGHT;
+                    if (edge == RectangleEdge.TOP) {
+                        angle = Math.PI / 2.0;
                     }
                     else {
-                        if (edge == RectangleEdge.TOP) {
-                            anchor = TextAnchor.BOTTOM_CENTER;
-                            rotationAnchor = TextAnchor.BOTTOM_CENTER;
-                        }
-                        else {
-                            anchor = TextAnchor.TOP_CENTER;
-                            rotationAnchor = TextAnchor.TOP_CENTER;
-                        }
+                        angle = -Math.PI / 2.0;
                     }
+                }
+                else {
+                    if (edge == RectangleEdge.TOP) {
+                        anchor = TextAnchor.BOTTOM_CENTER;
+                        rotationAnchor = TextAnchor.BOTTOM_CENTER;
+                    }
+                    else {
+                        anchor = TextAnchor.TOP_CENTER;
+                        rotationAnchor = TextAnchor.TOP_CENTER;
+                    }
+                }
 
-                    Tick tick = new NumberTick(new Double(currentTickValue),
-                    		Double.valueOf(currentTickValue).toString() , anchor, rotationAnchor, angle);
-                    ticks.add(tick);
-                    
-                   
-	            }
-	            i++;
-	        }
-	        return ticks;
+                Tick tick = new NumberTick(new Double(currentTickValue),
+                		Double.valueOf(currentTickValue).toString() , anchor, rotationAnchor, angle);
+                ticks.add(tick);
+                
+               
+            }
+            i++;
+        }
+        return ticks;
 	}
 	
 	@Override
