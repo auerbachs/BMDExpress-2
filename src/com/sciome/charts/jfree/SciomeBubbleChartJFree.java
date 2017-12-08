@@ -122,7 +122,6 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		}
 
 		XYBubbleRenderer renderer = ((XYBubbleRenderer) plot.getRenderer());
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .5f));
 		
 		//Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator()

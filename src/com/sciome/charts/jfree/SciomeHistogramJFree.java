@@ -92,7 +92,6 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				return String.valueOf(joinAllObjects(objects));
 			}
 		};
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, 1.0f, 1.0f));
 		renderer.setSeriesFillPaint(0, Color.white);
 		renderer.setDefaultOutlinePaint(Color.black);
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);

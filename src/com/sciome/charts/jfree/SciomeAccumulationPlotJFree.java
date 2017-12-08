@@ -122,9 +122,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		renderer.setDefaultFillPaint(Color.white);
 		renderer.setSeriesStroke(0, new BasicStroke(3.0f));
 		renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
-		renderer.setSeriesShape(0, new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0));
-		renderer.setSeriesPaint(0, new Color(0.0f, 0.0f, .82f, .5f));
-
+		
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
 			@Override
