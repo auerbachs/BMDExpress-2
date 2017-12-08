@@ -58,7 +58,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
-	private Button						configurationButton;
+	protected Button					configurationButton;
 	private HBox						checkBoxes;
 	private String[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
