@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -131,7 +132,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.getChildren().addAll(overlayButtons, vBox);
 		StackPane.setAlignment(overlayButtons, Pos.TOP_RIGHT);
 		this.setPickOnBounds(false);
-		vBox.setSpacing(5.0);
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
 
@@ -162,7 +162,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	@SuppressWarnings("restriction")
 	protected void showLogAxes(boolean allowXLogAxis, boolean allowYLogAxis, boolean allowLockXAxis,
-			boolean allowLockYAxis, List<CheckBox> otherComponents)
+			boolean allowLockYAxis, List<Control> otherComponents)
 	{
 
 		vBox.getChildren().remove(checkBoxes);

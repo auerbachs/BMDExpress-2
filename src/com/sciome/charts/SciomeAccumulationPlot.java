@@ -3,8 +3,12 @@ package com.sciome.charts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -13,8 +17,17 @@ import com.sciome.charts.model.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
+import javafx.stage.Modality;
+import javafx.util.Callback;
 
 /*
  * 
@@ -27,7 +40,10 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	protected final static Integer	MAX_TO_POPUP					= 100;
 	protected final static Integer	MAX_PREV_OBJECTS_TO_STORE		= 0;
 	protected CheckBox				unBinCheckBox					= new CheckBox("Show All Data");
+	protected Button				genesButton						= new Button("Genes");
 	protected Tooltip				toolTip							= new Tooltip("");
+
+	protected Set<String>			genesToHighLight				= new HashSet<>();
 
 	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, String key,
 			Double bucketsize, SciomeChartListener chartListener)
@@ -37,7 +53,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		getLogXAxis().setSelected(true);
 		getLogYAxis().setSelected(false);
 		// this chart defines how the axes can be edited by the user in the chart configuration.
-		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox));
+		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox, genesButton));
 		showChart();
 
 		getLogXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -65,6 +81,17 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 				convertChartDataPacksToSciomeSeries(new String[] { key }, getChartDataPacks());
 				showChart();
 			}
+		});
+
+		// open a configuration diaglog and then redraw the chart.
+		// currently this only allows you to set the x/y axis ranges.
+		genesButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e)
+			{
+				specifyGenesToHighlight();
+			}
+
 		});
 
 	}
@@ -291,6 +318,67 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 		return returnList;
 
+	}
+
+	// show the configuration to the user.
+	//
+	private void specifyGenesToHighlight()
+	{
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setTitle("Chart Configuration");
+		dialog.setResizable(true);
+		dialog.initOwner(this.getScene().getWindow());
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.setResizable(false);
+		TextArea genesTextField = new TextArea();
+		genesTextField.setMaxWidth(300.0);
+		genesTextField.setMinHeight(300.0);
+
+		String defaultText = String.join("\n", genesToHighLight);
+		genesTextField.setText(defaultText);
+
+		dialog.getDialogPane().setContent(genesTextField);
+		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+		dialog.setResultConverter(new Callback<ButtonType, String>() {
+			@Override
+			public String call(ButtonType b)
+			{
+				if (b == buttonTypeOk)
+					return genesTextField.getText();
+
+				return null;
+			}
+		});
+
+		dialog.getDialogPane().setPrefSize(400, 400);
+		dialog.getDialogPane().autosize();
+		Optional<String> value = dialog.showAndWait();
+
+		if (value.isPresent())
+		{
+			genesToHighLight.clear();
+			for (String line : genesTextField.getText().split("\\n"))
+				for (String word : line.split("\\s+"))
+					genesToHighLight.add(word);
+			redrawChart();
+		}
+
+	}
+
+	protected boolean objectsNeedHighlighting(List<Object> objects)
+	{
+
+		for (Object object : objects)
+		{
+			if (object instanceof IGeneContainer)
+				if (((IGeneContainer) object).containsGenes(genesToHighLight).size() > 0)
+					return true;
+		}
+		return false;
 	}
 
 }

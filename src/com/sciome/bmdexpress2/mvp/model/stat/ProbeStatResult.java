@@ -2,8 +2,10 @@ package com.sciome.bmdexpress2.mvp.model.stat;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
@@ -20,7 +23,7 @@ import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
-public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable
+public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable, IGeneContainer
 {
 
 	/**
@@ -38,6 +41,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	private transient List<Object>	row;
 	private transient String		genes;
 	private transient String		geneSymbols;
+	private transient Set<String>	geneSet				= new HashSet<>();
+	private transient Set<String>	geneSymbolSet		= new HashSet<>();
 
 	private transient Double		prefilterAdjustedPValue;
 	private transient Double		prefilterPvalue;
@@ -114,6 +119,10 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	{
 		row = new ArrayList<Object>();
 		row.add(probeResponse.getProbe().getId());
+		if (geneSet == null)
+			geneSet = new HashSet<>();
+		if (geneSymbolSet == null)
+			geneSymbolSet = new HashSet<>();
 
 		// Add the gene and gene symbol information to the data.
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
@@ -133,6 +142,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 				}
 				genes.append(refGene.getId());
 				geneSymbols.append(refGene.getGeneSymbol());
+				geneSet.add(refGene.getId());
+				geneSymbolSet.add(refGene.getGeneSymbol());
 			}
 		}
 		row.add(genes.toString());
@@ -458,6 +469,16 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public String toString()
 	{
 		return getProbeResponse().getProbe().getId() + " : " + genes + " : " + geneSymbols;
+	}
+
+	@Override
+	public Set<String> containsGenes(Set<String> genes)
+	{
+		Set<String> genesContained = new HashSet<>();
+		for (String gene : geneSet)
+			if (genes.contains(gene))
+				genesContained.add(gene);
+		return genesContained;
 	}
 
 }

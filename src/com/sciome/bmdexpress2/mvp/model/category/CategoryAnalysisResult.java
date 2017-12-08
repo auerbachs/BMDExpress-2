@@ -6,8 +6,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
@@ -37,7 +40,8 @@ import com.sciome.filter.annotation.Filterable;
 		@Type(value = PathwayAnalysisResult.class, name = "pathway"),
 		@Type(value = DefinedCategoryAnalysisResult.class, name = "defined") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
-public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow implements Serializable
+public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
+		implements Serializable, IGeneContainer
 {
 
 	/**
@@ -313,20 +317,24 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 	}
 
 	@Filterable(key = "Genes With Prefilter P-Value >=")
-	public Integer getGenesWithPrefilterPValueAboveValue() {
+	public Integer getGenesWithPrefilterPValueAboveValue()
+	{
 		return genesWithPrefilterPValueAboveValue;
 	}
 
-	public void setGenesWithPrefilterPValueAboveValue(Integer genesWithPValueAboveValue) {
+	public void setGenesWithPrefilterPValueAboveValue(Integer genesWithPValueAboveValue)
+	{
 		this.genesWithPrefilterPValueAboveValue = genesWithPValueAboveValue;
 	}
 
 	@Filterable(key = "Genes With Prefilter Adjusted P-Value >=")
-	public Integer getGenesWithPrefilterAdjustedPValueAboveValue() {
+	public Integer getGenesWithPrefilterAdjustedPValueAboveValue()
+	{
 		return genesWithPrefilterAdjustedPValueAboveValue;
 	}
 
-	public void setGenesWithPrefilterAdjustedPValueAboveValue(Integer genesWithAdjustedPValueAboveValue) {
+	public void setGenesWithPrefilterAdjustedPValueAboveValue(Integer genesWithAdjustedPValueAboveValue)
+	{
 		this.genesWithPrefilterAdjustedPValueAboveValue = genesWithAdjustedPValueAboveValue;
 	}
 
@@ -1128,13 +1136,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		if (genesWithFoldChangeAboveValue != null)
 			headers.add("Genes with max Fold Change >=");
-		
+
 		if (genesWithPrefilterPValueAboveValue != null)
 			headers.add("Genes with Prefilter P-Value <=");
-		
+
 		if (genesWithPrefilterAdjustedPValueAboveValue != null)
 			headers.add("Genes with Prefilter Adjusted P-Value <=");
-		
+
 		headers.add("Genes That Passed All Filters");
 
 		headers.add("Fisher's Exact Left P-Value");
@@ -1252,13 +1260,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		if (genesWithFoldChangeAboveValue != null)
 			row.add(genesWithFoldChangeAboveValue);
-		
+
 		if (genesWithPrefilterPValueAboveValue != null)
 			row.add(genesWithPrefilterPValueAboveValue);
-		
+
 		if (genesWithPrefilterAdjustedPValueAboveValue != null)
 			row.add(genesWithPrefilterAdjustedPValueAboveValue);
-		
+
 		row.add(getAllGenesPassedAllFilters());
 		row.add(this.fishersExactLeftPValue);
 		row.add(this.fishersExactRightPValue);
@@ -2418,6 +2426,17 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow imple
 
 		return String.valueOf(i);
 
+	}
+
+	@Override
+	public Set<String> containsGenes(Set<String> genes)
+	{
+		Set<String> genesContained = new HashSet<>();
+		for (ReferenceGeneProbeStatResult rg : referenceGeneProbeStatResults)
+			if (genes.contains(rg.getReferenceGene().getId()))
+				genesContained.add(rg.getReferenceGene().getId());
+
+		return genesContained;
 	}
 
 }

@@ -2,7 +2,8 @@ package com.sciome.charts.jfree;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.geom.Ellipse2D;
+import java.awt.Paint;
+import java.awt.Shape;
 import java.util.List;
 
 import org.jfree.chart.ChartFactory;
@@ -16,6 +17,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.util.ShapeUtilities;
 
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
@@ -65,7 +67,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		}
 
 		// Create chart
-		JFreeChart chart = ChartFactory.createXYLineChart(key1 + "Accumulation Plot", key1, key2, dataset,
+		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1, key2, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
@@ -115,6 +117,32 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			range.setRange(min2, max2);
 		}
 
+		plot.setRenderer(new XYLineAndShapeRenderer(true, true) {
+
+			@Override
+			public Shape getItemShape(int row, int col)
+			{
+
+				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				if (objectsNeedHighlighting(objects))
+					return ShapeUtilities.createDiagonalCross(5, 5);
+				else
+					return super.getItemShape(row, col);
+			}
+
+			@Override
+			public Paint getItemPaint(int row, int col)
+			{
+				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				if (objectsNeedHighlighting(objects))
+					return Color.BLACK;
+				else
+					return super.getItemPaint(row, col);
+			}
+		});
+
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
 		renderer.setDefaultShapesVisible(true);
 		renderer.setDrawOutlines(true);
@@ -122,7 +150,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		renderer.setDefaultFillPaint(Color.white);
 		renderer.setSeriesStroke(0, new BasicStroke(3.0f));
 		renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
-		
+
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
 			@Override
