@@ -77,6 +77,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			return;
 
 		chartsList = new ArrayList<>();
+
+		// this is needed becasue there are transient fiels that need to be initialized.
+		for (BMDExpressAnalysisDataSet result : results)
+			if (result instanceof BMDResult)
+				((BMDResult) result).refreshTableData();
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
 				selectedIds);
 

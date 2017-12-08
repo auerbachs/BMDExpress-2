@@ -475,6 +475,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public Set<String> containsGenes(Set<String> genes)
 	{
 		Set<String> genesContained = new HashSet<>();
+
 		for (String gene : geneSet)
 			if (genes.contains(gene))
 				genesContained.add(gene);
