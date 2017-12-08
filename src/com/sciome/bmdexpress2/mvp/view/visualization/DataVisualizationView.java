@@ -189,7 +189,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 				hBox = new HBox();
 				hBox.setMaxWidth(1000);
 			}
-			chart.setStyle("-fx-border-color: black;");
+			chart.setStyle("-fx-border-color: black;" + "-fx-padding: 0 0 20 0;");
 			hBox.getChildren().add(chart);
 			hBox.setSpacing(10.0);
 			i++;
