@@ -2,11 +2,18 @@ package com.sciome.charts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
+import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.charts.data.ChartData;
@@ -17,15 +24,20 @@ import com.sciome.charts.model.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
@@ -35,15 +47,17 @@ import javafx.util.Callback;
 public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Number>
 		implements ChartDataExporter
 {
-	protected final static Integer	MAX_ACCUMULATION_BEFORE_MODULUS	= 300;
-	protected final static Integer	MOD_AFTER_REACH_MAX				= 20;
-	protected final static Integer	MAX_TO_POPUP					= 100;
-	protected final static Integer	MAX_PREV_OBJECTS_TO_STORE		= 0;
-	protected CheckBox				unBinCheckBox					= new CheckBox("Show All Data");
-	protected Button				genesButton						= new Button("Genes");
-	protected Tooltip				toolTip							= new Tooltip("");
+	protected final static Integer					MAX_ACCUMULATION_BEFORE_MODULUS	= 300;
+	protected final static Integer					MOD_AFTER_REACH_MAX				= 20;
+	protected final static Integer					MAX_TO_POPUP					= 100;
+	protected final static Integer					MAX_PREV_OBJECTS_TO_STORE		= 0;
+	protected CheckBox								unBinCheckBox					= new CheckBox(
+			"Show All Data");
+	protected Button								genesButton						= new Button("Genes");
+	protected Tooltip								toolTip							= new Tooltip("");
 
-	protected Set<String>			genesToHighLight				= new HashSet<>();
+	protected Set<String>							genesToHighLight				= new HashSet<>();
+	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSet;
 
 	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, String key,
 			Double bucketsize, SciomeChartListener chartListener)
@@ -320,24 +334,89 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 	}
 
+	public void setdbToPathwayToGeneSet(Map<String, Map<String, Set<String>>> dbToPathwayToGeneSet)
+	{
+		this.dbToPathwayToGeneSet = dbToPathwayToGeneSet;
+	}
+
 	// show the configuration to the user.
 	//
 	private void specifyGenesToHighlight()
 	{
+		TextArea genesTextField = new TextArea();
 		Dialog<String> dialog = new Dialog<>();
 		dialog.setTitle("Chart Configuration");
 		dialog.setResizable(true);
 		dialog.initOwner(this.getScene().getWindow());
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.setResizable(false);
-		TextArea genesTextField = new TextArea();
-		genesTextField.setMaxWidth(300.0);
-		genesTextField.setMinHeight(300.0);
+
+		VBox vbox = new VBox();
+		if (dbToPathwayToGeneSet != null)
+		{
+			List<String> pathways = new ArrayList<>();
+			HBox hbox = new HBox();
+
+			ComboBox<String> dbCombo = new ComboBox<>();
+			TextField pathwayTextField = new TextField();
+			pathwayTextField.setMinWidth(400);
+			TextFields.bindAutoCompletion(pathwayTextField,
+					new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
+
+						@Override
+						public Collection<String> call(ISuggestionRequest param)
+						{
+							List<String> returnList = new ArrayList<>();
+							for (String p : pathways)
+								if (p.toLowerCase().contains(param.getUserText().toLowerCase()))
+									returnList.add(p);
+
+							return returnList;
+						}
+					});
+			List<String> dbList = new ArrayList<>(dbToPathwayToGeneSet.keySet());
+			Collections.sort(dbList);
+			dbCombo.setItems(FXCollections.observableArrayList(dbList));
+
+			dbCombo.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				@Override
+				public void changed(ObservableValue ov, String t, String t1)
+				{
+					pathways.clear();
+					pathways.addAll(dbToPathwayToGeneSet.get(t1).keySet());
+					Collections.sort(pathways);
+
+				}
+			});
+			pathwayTextField.textProperty().addListener((observable, oldValue, newValue) ->
+			{
+				if (newValue == null)
+					return;
+
+				Set<String> genes = dbToPathwayToGeneSet.get(dbCombo.getValue()).get(newValue);
+				if (genes == null)
+					return;
+				List<String> geneSymbols = new ArrayList<>(genes);
+				Collections.sort(geneSymbols);
+				genesTextField.setText(String.join("\n", geneSymbols));
+
+			});
+
+			hbox.getChildren().addAll(dbCombo, pathwayTextField);
+			vbox.getChildren().add(hbox);
+			dbCombo.getSelectionModel().select(0);
+		}
+
+		genesTextField.setMinWidth(600.0);
+		genesTextField.setMinHeight(400.0);
 
 		String defaultText = String.join("\n", genesToHighLight);
 		genesTextField.setText(defaultText);
 
-		dialog.getDialogPane().setContent(genesTextField);
+		vbox.getChildren().add(genesTextField);
+
+		dialog.getDialogPane().setContent(vbox);
 		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 		dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
@@ -354,7 +433,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 			}
 		});
 
-		dialog.getDialogPane().setPrefSize(400, 400);
+		dialog.getDialogPane().setPrefSize(600, 400);
 		dialog.getDialogPane().autosize();
 		Optional<String> value = dialog.showAndWait();
 

@@ -75,7 +75,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1, key2, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setForegroundAlpha(0.1f);
+		// plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
 		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1));
@@ -131,7 +131,9 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
 				if (objectsNeedHighlighting(objects))
+				{
 					return ShapeUtilities.createDiagonalCross(5, 5);
+				}
 				else
 					return super.getItemShape(row, col);
 			}
@@ -142,9 +144,25 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
 				if (objectsNeedHighlighting(objects))
-					return Color.ORANGE;
+					return new Color(0, 0, 0, 125);
 				else
-					return super.getItemPaint(row, col);
+				{
+					Color c = (Color) super.getItemPaint(row, col);
+					return new Color(c.getRed(), c.getBlue(), c.getGreen(), 100);
+				}
+			}
+
+			@Override
+			public Paint getItemFillPaint(int row, int column)
+			{
+				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(column);
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				if (objectsNeedHighlighting(objects))
+					return Color.yellow;
+				else
+				{
+					return super.getItemFillPaint(row, column);
+				}
 			}
 
 		});
@@ -153,10 +171,12 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		renderer.setDefaultShapesVisible(true);
 		renderer.setDrawOutlines(true);
 		renderer.setUseFillPaint(true);
+		renderer.setDefaultShapesFilled(true);
 		renderer.setDefaultFillPaint(Color.white);
 		renderer.setSeriesStroke(0, new BasicStroke(3.0f));
 		renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
 		renderer.setDefaultItemLabelsVisible(true);
+
 		renderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator() {
 
 			@Override
@@ -172,7 +192,9 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.TOP_RIGHT);
 		renderer.setDefaultNegativeItemLabelPosition(position1, true);
 		renderer.setDefaultPositiveItemLabelPosition(position1, true);
-		Font font = new Font("Courier New", Font.BOLD, 16);
+		Color fontColor = new Color(0, 0, 0, 255);
+		renderer.setDefaultItemLabelPaint(fontColor);
+		Font font = new Font("Courier New", Font.BOLD, 12);
 		renderer.setDefaultItemLabelFont(font, true);
 
 		// Set tooltip string
@@ -188,7 +210,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.5f);
+		// chart.getPlot().setForegroundAlpha(0.5f);
 
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
@@ -14,6 +15,8 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
+import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomePieChartFX;
@@ -28,11 +31,13 @@ import com.sciome.filter.DataFilterPack;
 public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
-	private static final String	ACCUMULATION_CHARTS				= "Accumulation Charts";
-	private final static String	BMDL_HISTOGRAM					= "BMDL Histogram";
-	private final static String	BMDU_HISTOGRAM					= "BMDU Histogram";
-	private final static String	FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
-	private final static String	FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
+	private static final String						ACCUMULATION_CHARTS				= "Accumulation Charts";
+	private final static String						BMDL_HISTOGRAM					= "BMDL Histogram";
+	private final static String						BMDU_HISTOGRAM					= "BMDU Histogram";
+	private final static String						FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
+	private final static String						FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
+
+	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSymboles;
 
 	public BMDAnalysisResultsDataVisualizationView()
 	{
@@ -79,6 +84,9 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		chartsList = new ArrayList<>();
 
 		// this is needed becasue there are transient fiels that need to be initialized.
+		dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
+				.getdbToPathwaytoGeneSet(((BMDResult) results.get(0)));
+
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
 				((BMDResult) result).refreshTableData();
@@ -114,15 +122,17 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		{
 			SciomeChartBase chart1 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDL);
 			chartsList.add(chart1);
+			((SciomeAccumulationPlot) chart1).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 			chart1.redrawCharts(chartDataPacks);
 
 			SciomeChartBase chart2 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMD);
 			chartsList.add(chart2);
 			chart2.redrawCharts(chartDataPacks);
-
+			((SciomeAccumulationPlot) chart2).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 			SciomeChartBase chart3 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDU);
 			chartsList.add(chart3);
 			chart3.redrawCharts(chartDataPacks);
+			((SciomeAccumulationPlot) chart3).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 		}
 		else
 		{
@@ -193,4 +203,5 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		returnList.add(FIT_LOG_LIKELIHOOD_HISTOGRAM);
 		return returnList;
 	}
+
 }
