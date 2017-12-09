@@ -83,13 +83,14 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 
 		chartsList = new ArrayList<>();
 
-		// this is needed becasue there are transient fiels that need to be initialized.
+		// this is needed becasue there are transient fields that need to be initialized.
+		// don;t like how this work as it leads to null pointers. need to look into architecture
 		dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
 				.getdbToPathwaytoGeneSet(((BMDResult) results.get(0)));
 
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
-				((BMDResult) result).refreshTableData();
+				((BMDResult) result).getColumnHeader();
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
 				selectedIds);
 
@@ -120,6 +121,9 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		}
 		else if (chartKey.equals(ACCUMULATION_CHARTS))
 		{
+			// accumulation charts take a complex map so user
+			// can select pathways that will ultimately highlight genes in
+			// in accumulation chart
 			SciomeChartBase chart1 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDL);
 			chartsList.add(chart1);
 			((SciomeAccumulationPlot) chart1).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
