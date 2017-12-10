@@ -17,6 +17,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest
 import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
@@ -54,7 +55,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	protected final static Integer					MAX_PREV_OBJECTS_TO_STORE		= 0;
 	// protected CheckBox unBinCheckBox = new CheckBox(
 	// "Show All Data");
-	protected Button								genesButton						= new Button("Genes");
+	protected Button								genesButton						= new Button("Gene Sets");
 	protected Tooltip								toolTip							= new Tooltip("");
 
 	protected Set<String>							genesToHighLight				= new HashSet<>();
@@ -327,12 +328,15 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	}
 
 	// show the configuration to the user.
+	// this too coupled to the model
+	// we will need to make the highlighting of genes or categories more generic
+	// This will take a little more thought and reengineering.
 	//
 	private void specifyGenesToHighlight()
 	{
 		TextArea genesTextField = new TextArea();
 		Dialog<String> dialog = new Dialog<>();
-		dialog.setTitle("Chart Configuration");
+		dialog.setTitle("Select Gene Sets To Highlight");
 		dialog.setResizable(true);
 		dialog.initOwner(this.getScene().getWindow());
 		dialog.initModality(Modality.WINDOW_MODAL);
@@ -346,6 +350,15 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 			ComboBox<String> dbCombo = new ComboBox<>();
 			TextField pathwayTextField = new TextField();
+			Button clearButton = new Button("Clear");
+			clearButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					genesTextField.clear();
+				}
+
+			});
 			pathwayTextField.setMinWidth(400);
 			TextFields.bindAutoCompletion(pathwayTextField,
 					new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
@@ -386,11 +399,21 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 					return;
 				List<String> geneSymbols = new ArrayList<>(genes);
 				Collections.sort(geneSymbols);
-				genesTextField.setText(String.join("\n", geneSymbols));
+
+				// this is too coupled to the category analysis results need to redesign how this data is
+				// gotten
+				if (getChartDataPacks().size() > 0 && getChartDataPacks().get(0).getChartData().size() > 0
+						&& getChartDataPacks().get(0).getChartData().get(0)
+								.getCharttableObject() instanceof CategoryAnalysisResult)
+				{
+					genesTextField.setText(newValue + "\n" + genesTextField.getText());
+				}
+				else
+					genesTextField.setText(String.join("\n", geneSymbols) + "\n" + genesTextField.getText());
 
 			});
 
-			hbox.getChildren().addAll(dbCombo, pathwayTextField);
+			hbox.getChildren().addAll(dbCombo, pathwayTextField, clearButton);
 			vbox.getChildren().add(hbox);
 			dbCombo.getSelectionModel().select(0);
 		}
@@ -428,19 +451,29 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		{
 			genesToHighLight.clear();
 			for (String line : genesTextField.getText().split("\\n"))
-				for (String word : line.split("\\s+"))
-					genesToHighLight.add(word.toLowerCase());
+				genesToHighLight.add(line.toLowerCase());
 			redrawChart();
 		}
 
 	}
 
+	/*
+	 * this is coupled to data model. need to decouple it one day
+	 */
 	protected int objectsNeedHighlighting(List<Object> objects)
 	{
 
 		for (Object object : objects)
 		{
-			if (object instanceof IGeneContainer)
+			if (object instanceof CategoryAnalysisResult)
+			{
+				if (genesToHighLight
+						.contains(((CategoryAnalysisResult) object).getCategoryDescription().toLowerCase()))
+				{
+					return 1;
+				}
+			}
+			else if (object instanceof IGeneContainer)
 			{
 				if (((IGeneContainer) object).containsGenes(genesToHighLight).size() > 0)
 				{
@@ -460,13 +493,22 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		return 0;
 	}
 
+	// need to decouple
 	protected String getLabelIfNeedHighlighting(List<Object> objects)
 	{
 		DecimalFormat df = new DecimalFormat("#.##");
 		String returnValue = "";
 		for (Object object : objects)
 		{
-			if (object instanceof IGeneContainer)
+			if (object instanceof CategoryAnalysisResult)
+			{
+				if (genesToHighLight
+						.contains(((CategoryAnalysisResult) object).getCategoryDescription().toLowerCase()))
+				{
+					return ((CategoryAnalysisResult) object).getCategoryDescription();
+				}
+			}
+			else if (object instanceof IGeneContainer)
 			{
 				Set<String> genestohighlight = ((IGeneContainer) object).containsGenes(genesToHighLight);
 				String appendage = "";
