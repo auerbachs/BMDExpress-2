@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
-import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -53,7 +53,11 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		Double max2 = 0.0;
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
-
+		// Create chart
+		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1, key2, dataset,
+				PlotOrientation.VERTICAL, true, true, false);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.clearAnnotations();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
 			double[] domains = new double[series.getData().size()];
@@ -66,15 +70,24 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				double rangevalue = value.getYValue().doubleValue();
 				domains[i] = domainvalue;
 				ranges[i++] = rangevalue;
-				max2 = rangevalue;
+				if (rangevalue > max2)
+					max2 = rangevalue;
+				String label = getLabelIfNeedHighlighting((List<Object>) (value.getExtraValue()));
+
+				if (!label.equals(""))
+				{
+					XYPointerAnnotation ann = new XYPointerAnnotation(label, value.getXValue().doubleValue(),
+							value.getYValue().doubleValue(), Math.PI * 4 / 3);
+					ann.setBaseRadius(40.0);
+					ann.setTipRadius(5);
+					ann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
+
+					plot.addAnnotation(ann);
+				}
 			}
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges });
 		}
 
-		// Create chart
-		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1, key2, dataset,
-				PlotOrientation.VERTICAL, true, true, false);
-		XYPlot plot = (XYPlot) chart.getPlot();
 		// plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
@@ -130,7 +143,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 
 				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
-				if (objectsNeedHighlighting(objects))
+				if (objectsNeedHighlighting(objects) != 0)
 				{
 					return ShapeUtilities.createDiagonalCross(5, 5);
 				}
@@ -138,18 +151,13 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 					return super.getItemShape(row, col);
 			}
 
+			// add a little transparency to the items painted
 			@Override
 			public Paint getItemPaint(int row, int col)
 			{
-				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
-				List<Object> objects = (List<Object>) (data.getExtraValue());
-				if (objectsNeedHighlighting(objects))
-					return new Color(0, 0, 0, 125);
-				else
-				{
-					Color c = (Color) super.getItemPaint(row, col);
-					return new Color(c.getRed(), c.getBlue(), c.getGreen(), 100);
-				}
+
+				Color c = (Color) super.getItemPaint(row, col);
+				return new Color(c.getRed(), c.getBlue(), c.getGreen(), 100);
 			}
 
 			@Override
@@ -157,8 +165,11 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			{
 				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(column);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
-				if (objectsNeedHighlighting(objects))
+				int highlighting = objectsNeedHighlighting(objects);
+				if (highlighting == 1)
 					return Color.yellow;
+				else if (highlighting == -1)
+					return Color.BLUE;
 				else
 				{
 					return super.getItemFillPaint(row, column);
@@ -177,19 +188,9 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		renderer.setSeriesOutlineStroke(0, new BasicStroke(2.0f));
 		renderer.setDefaultItemLabelsVisible(true);
 
-		renderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator() {
-
-			@Override
-			public String generateLabel(XYDataset dataset, int series, int item)
-			{
-				AccumulationData data = (AccumulationData) getSeriesData().get(series).getData().get(item);
-				List<Object> objects = (List<Object>) (data.getExtraValue());
-				String label = getLabelIfNeedHighlighting(objects);
-				return label;
-			}
-		});
-
-		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.TOP_RIGHT);
+		ItemLabelPosition position1 = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE10,
+				TextAnchor.BOTTOM_RIGHT);
+		// renderer.setlabel
 		renderer.setDefaultNegativeItemLabelPosition(position1, true);
 		renderer.setDefaultPositiveItemLabelPosition(position1, true);
 		Color fontColor = new Color(0, 0, 0, 255);
@@ -232,6 +233,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			@Override
 			public void chartMouseMoved(ChartMouseEventFX e)
 			{
+
 				// ignore for now
 			}
 		});

@@ -1,5 +1,6 @@
 package com.sciome.charts;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest
 import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
+import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -30,7 +32,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
@@ -51,8 +52,8 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	protected final static Integer					MOD_AFTER_REACH_MAX				= 20;
 	protected final static Integer					MAX_TO_POPUP					= 100;
 	protected final static Integer					MAX_PREV_OBJECTS_TO_STORE		= 0;
-	protected CheckBox								unBinCheckBox					= new CheckBox(
-			"Show All Data");
+	// protected CheckBox unBinCheckBox = new CheckBox(
+	// "Show All Data");
 	protected Button								genesButton						= new Button("Genes");
 	protected Tooltip								toolTip							= new Tooltip("");
 
@@ -67,7 +68,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		getLogXAxis().setSelected(true);
 		getLogYAxis().setSelected(false);
 		// this chart defines how the axes can be edited by the user in the chart configuration.
-		showLogAxes(true, true, false, false, Arrays.asList(unBinCheckBox, genesButton));
+		showLogAxes(true, true, false, false, Arrays.asList(genesButton));
 		showChart();
 
 		getLogXAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -82,17 +83,6 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
 			{
-				showChart();
-			}
-		});
-
-		unBinCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				// clear the series and recreate it
-				getSeriesData().clear();
-				convertChartDataPacksToSciomeSeries(new String[] { key }, getChartDataPacks());
 				showChart();
 			}
 		});
@@ -215,29 +205,26 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 				Double newValue = (Double) value.getDataPoints().get(key);
 				if (!newValue.equals(currentValue) && currentValue != null)
 				{
-					if (unBinCheckBox.isSelected() || count < MAX_ACCUMULATION_BEFORE_MODULUS
-							|| (count >= MAX_ACCUMULATION_BEFORE_MODULUS && i % MOD_AFTER_REACH_MAX == 0))
-					{
-						if (charttableObjects.size() == 1) // we are in the area before the modulus kicks in.
-						{
-							int adds = 0;
-							int j = i - 1;
-							while (adds < MAX_PREV_OBJECTS_TO_STORE && j >= 0)
-							{
-								charttableObjects.add(charttableObjectsMasterList.get(j));
-								j--;
-								adds++;
-							}
-						}
-						AccumulationData theData = new AccumulationData("", currentValue, accumulation,
-								charttableObjects, valuesList);
-						series.getData().add(theData);
-						charttableObjects = new ArrayList<>();
-						valuesList = new ArrayList<>();
-					}
 
-					count++;
+					if (charttableObjects.size() == 1) // we are in the area before the modulus kicks in.
+					{
+						int adds = 0;
+						int j = i - 1;
+						while (adds < MAX_PREV_OBJECTS_TO_STORE && j >= 0)
+						{
+							charttableObjects.add(charttableObjectsMasterList.get(j));
+							j--;
+							adds++;
+						}
+					}
+					AccumulationData theData = new AccumulationData("", currentValue, accumulation,
+							charttableObjects, valuesList);
+					series.getData().add(theData);
+					charttableObjects = new ArrayList<>();
+					valuesList = new ArrayList<>();
 				}
+
+				count++;
 				valuesList.add(newValue);
 				charttableObjects.add(value.getCharttableObject());
 				charttableObjectsMasterList.add(value.getCharttableObject());
@@ -448,28 +435,46 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 	}
 
-	protected boolean objectsNeedHighlighting(List<Object> objects)
+	protected int objectsNeedHighlighting(List<Object> objects)
 	{
 
 		for (Object object : objects)
 		{
 			if (object instanceof IGeneContainer)
+			{
 				if (((IGeneContainer) object).containsGenes(genesToHighLight).size() > 0)
-					return true;
+				{
+					if (object instanceof ProbeStatResult
+							&& ((ProbeStatResult) object).getBestFoldChange() != null
+							&& ((ProbeStatResult) object).getBestFoldChange() > 0)
+						return 1;
+					else if (object instanceof ProbeStatResult
+							&& ((ProbeStatResult) object).getBestFoldChange() != null
+							&& ((ProbeStatResult) object).getBestFoldChange() < 0)
+						return -1;
+					else
+						return 1;
+				}
+			}
 		}
-		return false;
+		return 0;
 	}
 
 	protected String getLabelIfNeedHighlighting(List<Object> objects)
 	{
+		DecimalFormat df = new DecimalFormat("#.##");
 		String returnValue = "";
 		for (Object object : objects)
 		{
 			if (object instanceof IGeneContainer)
 			{
 				Set<String> genestohighlight = ((IGeneContainer) object).containsGenes(genesToHighLight);
+				String appendage = "";
+				if (object instanceof ProbeStatResult
+						&& ((ProbeStatResult) object).getBestFoldChange() != null)
+					appendage = ": Max FC=" + df.format(((ProbeStatResult) object).getBestFoldChange());
 				if (genestohighlight.size() > 0)
-					return String.join(",", genestohighlight);
+					return String.join(",", genestohighlight) + appendage;
 			}
 		}
 		return returnValue;
