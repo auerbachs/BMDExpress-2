@@ -498,6 +498,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	{
 		DecimalFormat df = new DecimalFormat("#.##");
 		String returnValue = "";
+		List<String> objectValues = new ArrayList<>();
 		for (Object object : objects)
 		{
 			if (object instanceof CategoryAnalysisResult)
@@ -505,7 +506,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 				if (genesToHighLight
 						.contains(((CategoryAnalysisResult) object).getCategoryDescription().toLowerCase()))
 				{
-					return ((CategoryAnalysisResult) object).getCategoryDescription();
+					objectValues.add(((CategoryAnalysisResult) object).getCategoryDescription());
 				}
 			}
 			else if (object instanceof IGeneContainer)
@@ -516,10 +517,10 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 						&& ((ProbeStatResult) object).getBestFoldChange() != null)
 					appendage = ": Max FC=" + df.format(((ProbeStatResult) object).getBestFoldChange());
 				if (genestohighlight.size() > 0)
-					return String.join(",", genestohighlight) + appendage;
+					objectValues.add(String.join(",", genestohighlight) + appendage);
 			}
 		}
-		return returnValue;
+		return String.join(", ", objectValues);
 	}
 
 }
