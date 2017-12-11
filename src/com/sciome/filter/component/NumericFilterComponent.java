@@ -1,6 +1,7 @@
 package com.sciome.filter.component;
 
 import java.lang.reflect.Method;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,10 @@ public class NumericFilterComponent extends FilterComponent
 		textEditingSlider = true;
 		try
 		{
-			value1.setText(formatDecimal(Double.valueOf(df.getValues().get(0).toString()).doubleValue()));
-			value2.setText(formatDecimal(Double.valueOf(df.getValues().get(1).toString()).doubleValue()));
+			value1.setText(formatDecimal(Double.valueOf(df.getValues().get(0).toString()).doubleValue(),
+					RoundingMode.FLOOR));
+			value2.setText(formatDecimal(Double.valueOf(df.getValues().get(1).toString()).doubleValue(),
+					RoundingMode.CEILING));
 		}
 		catch (Exception e)
 		{
@@ -75,9 +78,9 @@ public class NumericFilterComponent extends FilterComponent
 
 		try
 		{
-			value1 = new TextField(formatDecimal(min));
+			value1 = new TextField(formatDecimal(min, RoundingMode.FLOOR));
 			value1.setMinWidth(75.0);
-			value2 = new TextField(formatDecimal(max));
+			value2 = new TextField(formatDecimal(max, RoundingMode.CEILING));
 			value2.setMinWidth(75.0);
 		}
 		catch (Exception e)
@@ -102,7 +105,7 @@ public class NumericFilterComponent extends FilterComponent
 					Number newValue)
 			{
 				if (!textEditingSlider)
-					value1.setText(formatDecimal(newValue.doubleValue()));
+					value1.setText(formatDecimal(newValue.doubleValue(), RoundingMode.FLOOR));
 			}
 		});
 
@@ -113,7 +116,7 @@ public class NumericFilterComponent extends FilterComponent
 					Number newValue)
 			{
 				if (!textEditingSlider)
-					value2.setText(formatDecimal(newValue.doubleValue()));
+					value2.setText(formatDecimal(newValue.doubleValue(), RoundingMode.CEILING));
 
 			}
 		});
@@ -280,7 +283,7 @@ public class NumericFilterComponent extends FilterComponent
 		return values;
 	}
 
-	private String formatDecimal(double value)
+	private String formatDecimal(double value, RoundingMode roundingMode)
 	{
 		if (value == 0)
 			return "0";
@@ -295,10 +298,16 @@ public class NumericFilterComponent extends FilterComponent
 				v *= 10;
 				pounds += "#";
 			}
-			return new DecimalFormat(pounds + "E0").format(value);
+			DecimalFormat df = new DecimalFormat(pounds + "E0");
+			df.setRoundingMode(roundingMode);
+			return df.format(value);
 		}
 		else
-			return new DecimalFormat("#.####").format(value);
+		{
+			DecimalFormat df = new DecimalFormat("#.####");
+			df.setRoundingMode(roundingMode);
+			return df.format(value);
+		}
 	}
 
 }
