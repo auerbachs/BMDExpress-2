@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.sciome.filter.DataFilter;
 
-import javafx.scene.layout.GridPane;
-
 /*
  * define a simple ui thing that gives the user the ability
  * to supply values for a filterable key
@@ -15,11 +13,10 @@ import javafx.scene.layout.GridPane;
 public class IntegerFilterComponent extends NumericFilterComponent
 {
 
-	public IntegerFilterComponent(String key, Integer row, GridPane grid,
-			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
-			Method method)
+	public IntegerFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
+			Class filterFieldClass, DataFilter df, Method method)
 	{
-		super(key, row, grid, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method);
 	}
 
 	@Override

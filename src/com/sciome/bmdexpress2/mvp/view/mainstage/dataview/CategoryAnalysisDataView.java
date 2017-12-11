@@ -94,7 +94,7 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 

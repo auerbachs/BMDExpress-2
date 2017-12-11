@@ -5,9 +5,7 @@ import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
 import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
@@ -27,7 +25,8 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView, IBMDAnalysisService> implements IBMDSToolProgress
+public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView, IBMDAnalysisService>
+		implements IBMDSToolProgress
 {
 
 	BMDSTool							bMDSTool;
@@ -38,7 +37,8 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 	 * Constructors
 	 */
 
-	public BMDAnalysisPresenter(IBMDAnalysisView view, IBMDAnalysisService service, BMDExpressEventBus eventBus)
+	public BMDAnalysisPresenter(IBMDAnalysisView view, IBMDAnalysisService service,
+			BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 		init();
@@ -73,7 +73,8 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 				{
 					try
 					{
-						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters, modelSelectionParameters, modelsToRun, me);
+						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters,
+								modelSelectionParameters, modelsToRun, me);
 
 						// post a the new result set to the event bus
 
@@ -130,7 +131,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 			bMDSTool.selectBestModels((BMDResult) processableData);
 
 			// refresh the tabular data inside of bmdresults
-			((BMDResult) processableData).refreshTableData();
+			((BMDResult) processableData).getColumnHeader();
 
 			getEventBus().post(new BMDAnalysisDataSelectedEvent(((BMDResult) processableData)));
 		}

@@ -19,15 +19,12 @@ import com.sciome.filter.StringFilter;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 /*
@@ -114,11 +111,7 @@ public class FilterCompentsNode extends VBox
 
 	private void updateFilterNodes()
 	{
-		GridPane grid = new GridPane();
-
-		grid.setHgap(2);
-		grid.setVgap(2);
-		grid.setPadding(new Insets(10, 10, 10, 10));
+		VBox vbox = new VBox();
 		Integer row = 0;
 		filterComponents = new ArrayList<>();
 
@@ -137,25 +130,18 @@ public class FilterCompentsNode extends VBox
 			// use it.
 			DataFilter df = dataFilterMap.get(key);
 			if (filterAnnotationExtractor.getReturnType(key) != null)
-				fc = FilterComponentFactory.createFilterComponent(key, row, grid, dataFilterComponentListener,
+				fc = FilterComponentFactory.createFilterComponent(key, dataFilterComponentListener,
 						filterAnnotationExtractor.getReturnType(key), df,
 						filterAnnotationExtractor.getMethod(key));
 
 			// if this key only produces null values due to compatibility issues,
 			// it's not "useable" hence the isuseable flag.
 			if (fc != null && fc.getIsUseable())
-			{
 				filterComponents.add(fc);
 
-				row++;
-				row++;
-				row++;
-				row++;
-			}
-
 		}
-		grid.add(new Label(" "), 0, row++, 4, 1);
-		filterNodeScrollPane.setContent(grid);
+		vbox.getChildren().addAll(filterComponents);
+		filterNodeScrollPane.setContent(vbox);
 	}
 
 	/*

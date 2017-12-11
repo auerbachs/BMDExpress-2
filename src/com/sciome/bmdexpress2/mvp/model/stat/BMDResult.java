@@ -249,21 +249,12 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		return name;
 	}
 
-	public void refreshTableData()
-	{
-		columnHeader = null;
-		for (ProbeStatResult probeStatResult : probeStatResults)
-		{
-			probeStatResult.refreshRowData();
-		}
-		fillTableData();
-
-	}
-
 	private void fillTableData()
 	{
 		if (columnHeader == null)
 		{
+			for (ProbeStatResult probeStatResult : probeStatResults)
+				probeStatResult.refreshRowData();
 			fillColumnHeader();
 			fillRowData();
 		}

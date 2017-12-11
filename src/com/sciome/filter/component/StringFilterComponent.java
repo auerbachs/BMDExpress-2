@@ -17,11 +17,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /*
  * define a simple ui thing that gives the user the ability
@@ -35,11 +34,10 @@ public class StringFilterComponent extends FilterComponent
 	private CheckComboBox<String>	checkComboBox;
 	private boolean					isClearing	= false;
 
-	public StringFilterComponent(String key, Integer row, GridPane grid,
-			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
-			Method method)
+	public StringFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
+			Class filterFieldClass, DataFilter df, Method method)
 	{
-		super(key, row, grid, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method);
 
 	}
 
@@ -49,7 +47,7 @@ public class StringFilterComponent extends FilterComponent
 	}
 
 	@Override
-	protected void init(GridPane grid, String key, Integer row)
+	protected void init(String key)
 	{
 		if (suggestedValuesForFilter == null)
 			suggestedValuesForFilter = new HashSet<>();
@@ -63,7 +61,8 @@ public class StringFilterComponent extends FilterComponent
 
 		// Create the CheckComboBox with the data
 		checkComboBox = new CheckComboBox<String>(strings);
-		checkComboBox.setMaxWidth(100.0);
+		checkComboBox.setMinWidth(100.0);
+		checkComboBox.setMaxWidth(300.0);
 		checkComboBox.getCheckModel().clearChecks();
 
 		for (String s : strings)
@@ -111,13 +110,17 @@ public class StringFilterComponent extends FilterComponent
 
 		});
 
-		grid.add(keyLabel, 0, row, 4, 1);
-		grid.add(checkComboBox, 0, row + 1, 3, 1);
-		grid.add(clearButton, 3, row + 1);
-		Separator sep = new Separator(Orientation.HORIZONTAL);
-		grid.add(sep, 0, row + 2, 4, 1);
+		VBox vbox = new VBox(8);
+		HBox hbox1 = new HBox(8);
 
-		GridPane.setMargin(sep, new Insets(0, 0, 10, 0));
+		vbox.getChildren().add(keyLabel);
+		hbox1.getChildren().addAll(checkComboBox, clearButton);
+
+		vbox.getChildren().add(hbox1);
+		this.getChildren().addAll(vbox);
+
+		vbox.setStyle("-fx-border-color: black;" + "-fx-padding: 0 0 30 0;");
+		VBox.setMargin(vbox, new Insets(15, 15, 15, 15));
 
 	}
 

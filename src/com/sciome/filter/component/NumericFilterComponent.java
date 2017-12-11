@@ -14,11 +14,10 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /*
  * define a simple ui thing that gives the user the ability
@@ -31,11 +30,10 @@ public class NumericFilterComponent extends FilterComponent
 	private boolean			textEditingSlider	= false;
 	protected RangeSlider	hSlider;
 
-	public NumericFilterComponent(String key, Integer row, GridPane grid,
-			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
-			Method method)
+	public NumericFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
+			Class filterFieldClass, DataFilter df, Method method)
 	{
-		super(key, row, grid, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method);
 	}
 
 	@Override
@@ -45,7 +43,7 @@ public class NumericFilterComponent extends FilterComponent
 	}
 
 	@Override
-	protected void init(GridPane grid, String key, Integer row)
+	protected void init(String key)
 	{
 
 		List<Object> range = dataFilterComponentListener.getRangeForMethod(method);
@@ -55,8 +53,6 @@ public class NumericFilterComponent extends FilterComponent
 			return; // there is nothing we can do because the data doesn't have values for this
 		}
 		isInteger = false;
-		Label keyLabel = new Label(key);
-		grid.add(keyLabel, 0, row, 4, 1);
 
 		if (range.get(0) != null && range.get(0) instanceof Integer)
 			isInteger = true;
@@ -66,9 +62,11 @@ public class NumericFilterComponent extends FilterComponent
 		try
 		{
 			value1 = new TextField(formatDecimal(min, RoundingMode.FLOOR));
-			value1.setMinWidth(75.0);
+			value1.setMinWidth(150.0);
+			value1.setMaxWidth(1500);
 			value2 = new TextField(formatDecimal(max, RoundingMode.CEILING));
-			value2.setMinWidth(75.0);
+			value2.setMinWidth(150.0);
+			value2.setMaxWidth(150.0);
 		}
 		catch (Exception e)
 		{
@@ -76,13 +74,14 @@ public class NumericFilterComponent extends FilterComponent
 		}
 
 		hSlider = new RangeSlider(min, max, min, max);
-		hSlider.setShowTickMarks(true);
+		// hSlider.setShowTickMarks(true);
+		hSlider.setMinWidth(300);
+		hSlider.setMaxWidth(300);
 		if (isInteger)
 		{
 			hSlider.setMajorTickUnit(1.0);
 			hSlider.setMinorTickCount(0);
 			hSlider.setSnapToTicks(true);
-
 		}
 
 		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
@@ -110,16 +109,18 @@ public class NumericFilterComponent extends FilterComponent
 
 		// hSlider.setShowTickLabels(true);
 		// hSlider.setBlockIncrement(value);
-		grid.add(value1, 1, row + 1, 2, 1);
-		grid.add(value2, 3, row + 1, 2, 1);
 
-		grid.add(hSlider, 1, row + 2, 4, 1);
+		VBox vbox = new VBox(8);
+		HBox hbox1 = new HBox(8);
+		Label keyLabel = new Label(key);
+		hbox1.getChildren().addAll(value1, value2);
 
-		Separator sep = new Separator(Orientation.HORIZONTAL);
-		grid.add(sep, 0, row + 3, 4, 1);
-		GridPane.setMargin(sep, new Insets(0, 0, 10, 0));
+		vbox.getChildren().addAll(keyLabel, hbox1, hSlider);
+		this.getChildren().addAll(vbox);
+		VBox.setMargin(vbox, new Insets(15, 15, 15, 15));
 
 		value2.setVisible(true);
+		vbox.setStyle("-fx-border-color: black;" + "-fx-padding: 0 0 30 0;");
 		initListener();
 	}
 

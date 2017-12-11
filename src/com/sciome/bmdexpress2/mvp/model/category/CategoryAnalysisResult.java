@@ -165,6 +165,14 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	private transient Double					bmduUpper95;
 	private transient Double					bmduLower95;
 
+	private StringBuffer getStringBuffer()
+	{
+		if (this.stringBuffer == null)
+			stringBuffer = new StringBuffer();
+
+		return stringBuffer;
+	}
+
 	@JsonIgnore
 	public Long getID()
 	{
@@ -1237,7 +1245,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	protected void createRowData()
 	{
-		stringBuffer = new StringBuffer();
+		stringBuffer = getStringBuffer();
 		if (row != null)
 			return;
 		row = new ArrayList<>();
@@ -1419,6 +1427,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String grabGenesWithConflictingProbeSets()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1442,6 +1451,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDLConflictList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1473,6 +1483,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDUConflictList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1504,6 +1515,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDConflictList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1536,6 +1548,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getProbesConflictList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1561,6 +1574,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getGenesConflictList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1598,6 +1612,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDLDown()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1630,6 +1645,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDUDown()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1662,6 +1678,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDDown()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1694,6 +1711,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getProbesDown()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1719,6 +1737,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getGenesDown()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1756,6 +1775,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDLUp()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1788,6 +1808,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDUUp()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1820,6 +1841,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDUp()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1852,6 +1874,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getProbesUp()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1877,6 +1900,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getGenesUp()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1950,6 +1974,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDLList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -1979,6 +2004,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDUList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -2008,6 +2034,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getBMDList()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -2038,6 +2065,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getProbeIds()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (referenceGeneProbeStatResults == null)
 		{
@@ -2068,6 +2096,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getGenesIds()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (this.genes != null)
 			return this.genes;
@@ -2090,6 +2119,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	private String getGeneSymbolsPrivate()
 	{
+		getStringBuffer();
 		stringBuffer.setLength(0);
 		if (this.geneSymbols != null)
 			return this.geneSymbols;
