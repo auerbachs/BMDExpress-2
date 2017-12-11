@@ -101,6 +101,8 @@ public class FilterCompentsNode extends VBox
 
 				// update view
 				updateFilterNodes();
+
+				dataFilterComponentListener.dataFilterChanged();
 			}
 		});
 		this.getChildren().add(addRemoveFilterButton);

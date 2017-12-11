@@ -32,7 +32,9 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 			// e.printStackTrace();
 		}
 
-		return false;
+		// pass it by default if it get's here. excpetion was caught. this could mean the filter has null
+		// values or is defective
+		return true;
 	}
 
 }

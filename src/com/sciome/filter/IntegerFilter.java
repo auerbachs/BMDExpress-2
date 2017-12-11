@@ -31,7 +31,9 @@ public class IntegerFilter<T> extends DataFilter<Integer, T>
 
 		}
 
-		return false;
+		// pass it by default if it get's here. excpetion was caught. this could mean the filter has null
+		// values or is defective
+		return true;
 	}
 
 }
