@@ -1,7 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResult;
@@ -33,10 +35,11 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 	@Override
 	public Set<String> getItemsForMethod(Method method)
 	{
+		Set<String> items = new HashSet<>();
 		OriogenResults oriogenResults = (OriogenResults) this.bmdAnalysisDataSet;
 		// load transient variables iwth this hacky cal
 		oriogenResults.getColumnHeader();
-		Set<String> items = new HashSet<>();
+
 		for (OriogenResult oriogenResult : oriogenResults.getOriogenResults())
 		{
 			try
@@ -52,6 +55,48 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 		}
 
 		return items;
+	}
+
+	@Override
+	public List<Object> getRangeForMethod(Method method)
+	{
+		List<Object> returnList = new ArrayList<>();
+		Object min = null;
+		Object max = null;
+		OriogenResults oriogenResults = (OriogenResults) this.bmdAnalysisDataSet;
+		// load transient variables iwth this hacky cal
+		oriogenResults.getColumnHeader();
+
+		for (OriogenResult oriogenResult : oriogenResults.getOriogenResults())
+		{
+			try
+			{
+				Object value = method.invoke(oriogenResults, null);
+				if (value != null)
+				{
+					if (min == null)
+					{
+						min = value;
+						max = value;
+						continue;
+					}
+
+					if (compareToNumericValues(value, min) == -1)
+						min = value;
+					if (compareToNumericValues(value, max) == 1)
+						max = value;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		returnList.add(min);
+		returnList.add(max);
+
+		return returnList;
 	}
 
 }

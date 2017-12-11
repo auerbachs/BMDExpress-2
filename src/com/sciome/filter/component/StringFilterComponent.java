@@ -16,6 +16,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -122,9 +123,12 @@ public class StringFilterComponent extends FilterComponent
 		});
 
 		grid.add(keyLabel, 0, row, 4, 1);
-		grid.add(checkComboBox, 0, row + 1, 2, 1);
-		grid.add(clearButton, 1, row + 1);
-		grid.add(new Separator(Orientation.HORIZONTAL), 0, row + 2, 4, 1);
+		grid.add(checkComboBox, 0, row + 1, 3, 1);
+		grid.add(clearButton, 3, row + 1);
+		Separator sep = new Separator(Orientation.HORIZONTAL);
+		grid.add(sep, 0, row + 2, 4, 1);
+
+		GridPane.setMargin(sep, new Insets(0, 0, 10, 0));
 
 	}
 

@@ -31,15 +31,17 @@ public class IntegerFilterComponent extends NumericFilterComponent
 			if (value1.getText() == null || value1.getText().equals(""))
 				values.add(new Integer(0));
 			else
-				values.add(Integer.valueOf(value1.getText()));
+				values.add((int) (((Number) Double.valueOf(value1.getText())).doubleValue()));
 
 			if (value2.getText() == null || value2.getText().equals(""))
 				values.add(new Integer(0));
 			else
-				values.add(Integer.valueOf(value2.getText()));
+				values.add((int) (((Number) Double.valueOf(value2.getText())).doubleValue()));
 		}
 		catch (Exception e)
-		{}
+		{
+			e.printStackTrace();
+		}
 		return values;
 	}
 

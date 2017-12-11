@@ -467,6 +467,18 @@ public abstract class BMDExpressDataView<T> extends VBox
 		}
 
 	}
+
+	protected int compareToNumericValues(Object o1, Object o2)
+	{
+		if (o1 instanceof Integer && o2 instanceof Integer)
+			return ((Integer) o1).compareTo(((Integer) o2));
+		else if (o1 instanceof Number && o2 instanceof Number)
+			return Double.valueOf(((Number) o1).doubleValue())
+					.compareTo(Double.valueOf(((Number) o2).doubleValue()));
+		else
+			return o1.toString().compareTo(o2.toString());
+
+	}
 }
 
 final class TableCellCallBack

@@ -2,6 +2,7 @@ package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
@@ -52,6 +53,13 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 		Set<String> items = new HashSet<>();
 
 		return items;
+	}
+
+	@Override
+	public List<Object> getRangeForMethod(Method method)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

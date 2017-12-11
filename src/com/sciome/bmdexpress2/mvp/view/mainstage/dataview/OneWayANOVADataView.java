@@ -1,7 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResult;
@@ -36,10 +38,11 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 	@Override
 	public Set<String> getItemsForMethod(Method method)
 	{
+		Set<String> items = new HashSet<>();
 		OneWayANOVAResults oneWayANOVAResults = (OneWayANOVAResults) this.bmdAnalysisDataSet;
 		// load transient variables iwth this hacky cal
 		oneWayANOVAResults.getColumnHeader();
-		Set<String> items = new HashSet<>();
+
 		for (OneWayANOVAResult onewayResult : oneWayANOVAResults.getOneWayANOVAResults())
 		{
 			try
@@ -55,6 +58,48 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 		}
 
 		return items;
+	}
+
+	@Override
+	public List<Object> getRangeForMethod(Method method)
+	{
+		List<Object> returnList = new ArrayList<>();
+		Object min = null;
+		Object max = null;
+		OneWayANOVAResults oneWayANOVAResults = (OneWayANOVAResults) this.bmdAnalysisDataSet;
+		// load transient variables iwth this hacky cal
+		oneWayANOVAResults.getColumnHeader();
+
+		for (OneWayANOVAResult onewayResult : oneWayANOVAResults.getOneWayANOVAResults())
+		{
+			try
+			{
+				Object value = method.invoke(onewayResult, null);
+				if (value != null)
+				{
+					if (min == null)
+					{
+						min = value;
+						max = value;
+						continue;
+					}
+
+					if (compareToNumericValues(value, min) == -1)
+						min = value;
+					if (compareToNumericValues(value, max) == 1)
+						max = value;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		returnList.add(min);
+		returnList.add(max);
+
+		return returnList;
 	}
 
 }

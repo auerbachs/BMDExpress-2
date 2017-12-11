@@ -1,22 +1,23 @@
 package com.sciome.filter.component;
 
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.controlsfx.control.RangeSlider;
+
 import com.sciome.filter.DataFilter;
-import com.sciome.filter.DataFilterType;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 /*
  * define a simple ui thing that gives the user the ability
@@ -24,6 +25,10 @@ import javafx.scene.text.Font;
  */
 public class NumericFilterComponent extends FilterComponent
 {
+
+	private boolean		isInteger;
+	private boolean		textEditingSlider	= false;
+	private RangeSlider	hSlider;
 
 	public NumericFilterComponent(String key, Integer row, GridPane grid,
 			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
@@ -35,90 +40,156 @@ public class NumericFilterComponent extends FilterComponent
 	@Override
 	protected void initValues(DataFilter df)
 	{
-		value1.setText(df.getValues().get(0).toString());
-		value2.setText(df.getValues().get(1).toString());
-		cBox.getSelectionModel().select(df.getDataFilterType());
-		if (df.getDataFilterType() == DataFilterType.BETWEEN)
+
+		textEditingSlider = true;
+		try
 		{
-			value2.setVisible(true);
-			between.setVisible(true);
+			value1.setText(formatDecimal(Double.valueOf(df.getValues().get(0).toString()).doubleValue()));
+			value2.setText(formatDecimal(Double.valueOf(df.getValues().get(1).toString()).doubleValue()));
 		}
+		catch (Exception e)
+		{
+
+		}
+		textEditingSlider = false;
 	}
 
 	@Override
 	protected void init(GridPane grid, String key, Integer row)
 	{
+
+		isInteger = false;
 		Label keyLabel = new Label(key);
 		grid.add(keyLabel, 0, row, 4, 1);
+		List<Object> range = dataFilterComponentListener.getRangeForMethod(method);
 
-		cBox = new ComboBox<>();
-		if (filterFieldClass.equals(String.class))
-			cBox.getItems().setAll(DataFilterType.CONTAINS);
-		else
-			cBox.getItems().setAll(DataFilterType.values());
+		if (range.get(0) instanceof Integer)
+			isInteger = true;
+		double min = getMin(range);
+		double max = getMax(range);
 
-		grid.add(cBox, 0, row + 1);
-		value1 = new TextField();
-		value1.setMaxWidth(50.0);
-		between = new Label("and");
-		between.setFont(new Font(9.0));
-		value2 = new TextField();
-		value2.setMaxWidth(50.0);
+		try
+		{
+			value1 = new TextField(formatDecimal(min));
+			value1.setMinWidth(75.0);
+			value2 = new TextField(formatDecimal(max));
+			value2.setMinWidth(75.0);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
-		grid.add(value1, 1, row + 1);
-		grid.add(between, 2, row + 1);
-		grid.add(value2, 3, row + 1);
-		grid.add(new Separator(Orientation.HORIZONTAL), 0, row + 2, 4, 1);
+		hSlider = new RangeSlider(min, max, min, max);
+		hSlider.setShowTickMarks(true);
+		if (isInteger)
+		{
+			hSlider.setMajorTickUnit(1.0);
+			hSlider.setMinorTickCount(0);
+			hSlider.setSnapToTicks(true);
 
-		between.setVisible(false);
-		value2.setVisible(false);
+		}
+
+		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+					Number newValue)
+			{
+				if (!textEditingSlider)
+					value1.setText(formatDecimal(newValue.doubleValue()));
+			}
+		});
+
+		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+					Number newValue)
+			{
+				if (!textEditingSlider)
+					value2.setText(formatDecimal(newValue.doubleValue()));
+
+			}
+		});
+
+		// hSlider.setShowTickLabels(true);
+		// hSlider.setBlockIncrement(value);
+		grid.add(value1, 1, row + 1, 2, 1);
+		grid.add(value2, 3, row + 1, 2, 1);
+
+		grid.add(hSlider, 1, row + 2, 4, 1);
+
+		Separator sep = new Separator(Orientation.HORIZONTAL);
+		grid.add(sep, 0, row + 3, 4, 1);
+		GridPane.setMargin(sep, new Insets(0, 0, 10, 0));
+
+		value2.setVisible(true);
 		initListener();
+	}
+
+	private double getMin(List<Object> range)
+	{
+
+		if (range.get(0) instanceof Integer)
+			return ((Integer) range.get(0)).doubleValue();
+		else
+			return ((Number) range.get(0)).doubleValue();
+	}
+
+	private double getMax(List<Object> range)
+	{
+
+		if (range.get(1) instanceof Integer)
+			return ((Integer) range.get(1)).doubleValue();
+		else
+			return ((Number) range.get(1)).doubleValue();
 	}
 
 	private void initListener()
 	{
-		cBox.valueProperty().addListener(new ChangeListener<DataFilterType>() {
 
-			@Override
-			public void changed(ObservableValue<? extends DataFilterType> observable, DataFilterType oldValue,
-					DataFilterType newValue)
-			{
-				if (cBox.getSelectionModel().getSelectedItem() == DataFilterType.BETWEEN)
-				{
-					between.setVisible(true);
-					value2.setVisible(true);
-				}
-				else
-				{
-					between.setVisible(false);
-					value2.setVisible(false);
-				}
-
-				// only fire the update if a value is present
-				if (!value1.getText().equals(""))
-				{
-					if (!value1.getStyleClass().contains("textboxfilterchanged"))
-						value1.getStyleClass().add("textboxfilterchanged");
-					if (!value2.getStyleClass().contains("textboxfilterchanged"))
-						value2.getStyleClass().add("textboxfilterchanged");
-					if (!value2.isVisible())
-						doDelayedFilterChange();
-					if (value2.isVisible() && !value2.getText().equals(""))
-						doDelayedFilterChange();
-				}
-			}
-
-		});
 		value1.textProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if (!value1.getStyleClass().contains("textboxfilterchanged"))
 				value1.getStyleClass().add("textboxfilterchanged");
+
+			textEditingSlider = true;
+			try
+			{
+				if (Double.valueOf(value1.getText()) <= hSlider.getHighValue()
+						&& Double.valueOf(value1.getText()) >= hSlider.getMin())
+				{
+					hSlider.setLowValue(Double.valueOf(value1.getText()));
+				}
+			}
+			catch (Exception e)
+			{
+
+			}
+			textEditingSlider = false;
+
 			doDelayedFilterChange();
 		});
 		value2.textProperty().addListener((observable, oldValue, newValue) ->
 		{
 			if (!value2.getStyleClass().contains("textboxfilterchanged"))
 				value2.getStyleClass().add("textboxfilterchanged");
+
+			textEditingSlider = true;
+			try
+			{
+				if (Double.valueOf(value2.getText()) >= hSlider.getLowValue()
+						&& Double.valueOf(value2.getText()) <= hSlider.getMax())
+				{
+					hSlider.setHighValue(Double.valueOf(value2.getText()));
+				}
+			}
+			catch (Exception e)
+			{
+
+			}
+			textEditingSlider = false;
 			doDelayedFilterChange();
 		});
 	}
@@ -173,14 +244,11 @@ public class NumericFilterComponent extends FilterComponent
 	@Override
 	public boolean isFilledOut()
 	{
-		if (cBox.getSelectionModel().getSelectedItem() == null)
-			return false;
 
 		if (value1.getText() == null || value1.getText().equals(""))
 			return false;
 
-		if (cBox.getSelectionModel().getSelectedItem() == DataFilterType.BETWEEN
-				&& (value2.getText() == null || value2.getText().equals("")))
+		if ((value2.getText() == null || value2.getText().equals("")))
 			return false;
 		return true;
 
@@ -205,6 +273,27 @@ public class NumericFilterComponent extends FilterComponent
 		catch (Exception e)
 		{}
 		return values;
+	}
+
+	private String formatDecimal(double value)
+	{
+		if (value == 0)
+			return "0";
+		else if (isInteger)
+			return new DecimalFormat("#").format(value);
+		else if (Math.abs(value) < 0.0001)
+		{
+			String pounds = "#.####";
+			double v = Math.abs(value);
+			while (v < .0001)
+			{
+				v *= 10;
+				pounds += "#";
+			}
+			return new DecimalFormat(pounds + "E0").format(value);
+		}
+		else
+			return new DecimalFormat("#.####").format(value);
 	}
 
 }

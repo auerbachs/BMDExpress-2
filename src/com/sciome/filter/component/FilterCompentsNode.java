@@ -113,6 +113,7 @@ public class FilterCompentsNode extends VBox
 	private void updateFilterNodes()
 	{
 		GridPane grid = new GridPane();
+
 		grid.setHgap(2);
 		grid.setVgap(2);
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -145,6 +146,7 @@ public class FilterCompentsNode extends VBox
 				row++;
 				row++;
 				row++;
+				row++;
 			}
 
 		}
@@ -172,15 +174,15 @@ public class FilterCompentsNode extends VBox
 			}
 			else if (returnType.equals(Integer.class))
 			{
-				df = new IntegerFilter<>(fc.getcBox().getSelectionModel().getSelectedItem(), filterableClass,
-						fc.getFilterKey(), fc.getValues());
+				df = new IntegerFilter<>(DataFilterType.BETWEEN, filterableClass, fc.getFilterKey(),
+						fc.getValues());
 			}
 			else
 			{
 				try
 				{
-					df = new NumberFilter<>(fc.getcBox().getSelectionModel().getSelectedItem(),
-							filterableClass, fc.getFilterKey(), fc.getValues());
+					df = new NumberFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
+							fc.getValues());
 				}
 				catch (Exception e)
 				{

@@ -4,10 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import com.sciome.filter.DataFilter;
-import com.sciome.filter.DataFilterType;
 
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
@@ -27,8 +24,6 @@ public abstract class FilterComponent
 
 	protected TextField						value1;
 	protected TextField						value2;
-	protected Label							between;
-	protected ComboBox<DataFilterType>		cBox;
 	protected DataFilterComponentListener	dataFilterComponentListener;
 	protected Class							filterFieldClass;
 	protected boolean						filterChangeInProgress;
@@ -75,11 +70,6 @@ public abstract class FilterComponent
 	public TextField getValue2()
 	{
 		return value2;
-	}
-
-	public ComboBox<DataFilterType> getcBox()
-	{
-		return cBox;
 	}
 
 }

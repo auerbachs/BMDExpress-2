@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
@@ -97,6 +99,47 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		}
 
 		return items;
+	}
+
+	@Override
+	public List<Object> getRangeForMethod(Method method)
+	{
+		List<Object> returnList = new ArrayList<>();
+		Object min = null;
+		Object max = null;
+		CategoryAnalysisResults categoryAnalysisResults = (CategoryAnalysisResults) this.bmdAnalysisDataSet;
+		// load transient variables iwth this hacky cal
+		categoryAnalysisResults.getColumnHeader();
+		for (CategoryAnalysisResult csr : categoryAnalysisResults.getCategoryAnalsyisResults())
+		{
+			try
+			{
+				Object value = method.invoke(csr, null);
+				if (value != null)
+				{
+					if (min == null)
+					{
+						min = value;
+						max = value;
+						continue;
+					}
+
+					if (compareToNumericValues(value, min) == -1)
+						min = value;
+					if (compareToNumericValues(value, max) == 1)
+						max = value;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		returnList.add(min);
+		returnList.add(max);
+
+		return returnList;
 	}
 
 }
