@@ -152,13 +152,13 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			}
 
 			// add a little transparency to the items painted
-			@Override
-			public Paint getItemPaint(int row, int col)
-			{
+			// @Override
+			// public Paint getItemPaint(int row, int col)
+			// {
 
-				Color c = (Color) super.getItemPaint(row, col);
-				return new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
-			}
+			// Color c = (Color) super.getItemPaint(row, col);
+			// return new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
+			// }
 
 			@Override
 			public Paint getItemFillPaint(int row, int column)
