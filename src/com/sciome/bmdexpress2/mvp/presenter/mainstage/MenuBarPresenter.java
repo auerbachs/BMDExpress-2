@@ -23,6 +23,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.AddProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
@@ -118,6 +119,10 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		// which dataset to analyze
 		getEventBus().post(new CategoryAnalysisRequestEvent(catAnalysisType));
 
+	}
+	
+	public void addProject(File selectedFile) {
+		this.getEventBus().post(new AddProjectRequestEvent(selectedFile));
 	}
 
 	/*

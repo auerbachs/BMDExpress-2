@@ -112,6 +112,13 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.loadProject(null);
 
 	}
+	
+	/*
+	 * add a project
+	 */
+	public void handle_addProject(ActionEvent event) {
+		presenter.addProject(null);
+	}
 
 	/*
 	 * import raw expression data

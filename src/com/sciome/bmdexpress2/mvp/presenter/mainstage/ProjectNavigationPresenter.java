@@ -46,6 +46,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimen
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.AddProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
@@ -318,6 +319,52 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 
 	}
 
+	/*
+	 * add project event has been fired.
+	 */
+	@Subscribe
+	public void onProjectAddRequest(AddProjectRequestEvent addProjectRequestEvent)
+	{
+		try
+		{
+			if ((currentProject != null && !currentProject.isProjectEmpty()) && saveProjectFirstMaybe() == -1)
+			{
+				return;
+			}
+			File selectedFile = getView().askForAProjectFileToOpen();
+
+			if (selectedFile == null)
+			{
+				return;
+			}
+			
+			//TODO this is a hack.  needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+			BMDProject newProject = loadDialog.addProject(selectedFile);
+
+			if (newProject != null)
+			{
+				// add files to the current project
+				currentProject.getDoseResponseExperiments().addAll(newProject.getDoseResponseExperiments());
+				currentProject.getWilliamsTrendResults().addAll(newProject.getWilliamsTrendResults());
+				currentProject.getOneWayANOVAResults().addAll(newProject.getOneWayANOVAResults());
+				currentProject.getOriogenResults().addAll(newProject.getOriogenResults());
+				currentProject.getbMDResult().addAll(newProject.getbMDResult());
+				currentProject.getCategoryAnalysisResults().addAll(newProject.getCategoryAnalysisResults());
+				
+				//Set project file to null to request new file name for saving
+				currentProjectFile = null;
+				
+				this.getEventBus().post(new BMDProjectLoadedEvent(currentProject));
+				}
+		}
+		catch (Exception exception)
+		{
+			this.getEventBus().post(new ShowErrorEvent(exception.getMessage()));
+		}
+
+	}
+	
 	/*
 	 * load project event has been fired.
 	 */

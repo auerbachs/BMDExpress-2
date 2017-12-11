@@ -252,6 +252,89 @@ public class DialogWithThreadProcess
 		showWaitDialog("Load Project", "Loading Project from " + selectedFile.getAbsolutePath());
 		return (BMDProject) task.getValue();
 	}
+	
+	public BMDProject addProject(File selectedFile)
+	{
+		Task task = new Task<BMDProject>() {
+
+			BMDProject loadedProject = null;
+
+			@Override
+			protected BMDProject call() throws Exception
+			{
+				try
+				{
+					FileInputStream fileIn = new FileInputStream(selectedFile);
+					BufferedInputStream bIn = new BufferedInputStream(fileIn, 1024 * 2000);
+
+					ObjectInputStream in = new ObjectInputStream(bIn);
+					loadedProject = (BMDProject) in.readObject();
+					in.close();
+					fileIn.close();
+				}
+				catch (IOException i)
+				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file corrupted. " + i.toString()));
+
+						}
+					});
+					i.printStackTrace();
+				}
+				catch (ClassNotFoundException c)
+				{
+
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file incorrect. " + c.toString()));
+
+						}
+					});
+
+					c.printStackTrace();
+				}
+
+				return loadedProject;
+			}
+
+			@Override
+			protected void succeeded()
+			{
+				super.succeeded();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void cancelled()
+			{
+				super.cancelled();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void failed()
+			{
+				super.failed();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+		};
+		new Thread(task).start();
+
+		showWaitDialog("Add Project", "Adding Project from " + selectedFile.getAbsolutePath());
+		return (BMDProject) task.getValue();
+	}
 
 	/*
 	 * show a dialog with indeterminate Progress bar
