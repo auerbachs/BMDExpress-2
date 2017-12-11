@@ -27,9 +27,9 @@ import javafx.scene.layout.GridPane;
 public class NumericFilterComponent extends FilterComponent
 {
 
-	private boolean		isInteger;
-	private boolean		textEditingSlider	= false;
-	private RangeSlider	hSlider;
+	private boolean			isInteger;
+	private boolean			textEditingSlider	= false;
+	protected RangeSlider	hSlider;
 
 	public NumericFilterComponent(String key, Integer row, GridPane grid,
 			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
@@ -42,19 +42,6 @@ public class NumericFilterComponent extends FilterComponent
 	protected void initValues(DataFilter df)
 	{
 
-		textEditingSlider = true;
-		try
-		{
-			value1.setText(formatDecimal(Double.valueOf(df.getValues().get(0).toString()).doubleValue(),
-					RoundingMode.FLOOR));
-			value2.setText(formatDecimal(Double.valueOf(df.getValues().get(1).toString()).doubleValue(),
-					RoundingMode.CEILING));
-		}
-		catch (Exception e)
-		{
-
-		}
-		textEditingSlider = false;
 	}
 
 	@Override
@@ -270,16 +257,22 @@ public class NumericFilterComponent extends FilterComponent
 		{
 			if (value1.getText() == null || value1.getText().equals(""))
 				values.add("0");
+			else if (Double.valueOf(value1.getText()) <= hSlider.getMin())
+				values.add(Double.NEGATIVE_INFINITY);
 			else
 				values.add(Double.valueOf(value1.getText()));
 
 			if (value2.getText() == null || value2.getText().equals(""))
 				values.add(0.0);
+			else if (Double.valueOf(value2.getText()) >= hSlider.getMax())
+				values.add(Double.POSITIVE_INFINITY);
 			else
 				values.add(Double.valueOf(value2.getText()));
 		}
 		catch (Exception e)
-		{}
+		{
+			// e.printStackTrace();
+		}
 		return values;
 	}
 

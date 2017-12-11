@@ -24,6 +24,8 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 			Number value2 = (Number) values.get(1);
 			Number objectValue = (Number) filterAnnotationExtractor.getFilterableValue(object, key);
 
+			if (objectValue.doubleValue() < 0)
+				System.out.println();
 			return objectValue.doubleValue() >= value1.doubleValue()
 					&& objectValue.doubleValue() <= value2.doubleValue();
 		}
@@ -34,7 +36,7 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 
 		// pass it by default if it get's here. excpetion was caught. this could mean the filter has null
 		// values or is defective
-		return true;
+		return false;
 	}
 
 }

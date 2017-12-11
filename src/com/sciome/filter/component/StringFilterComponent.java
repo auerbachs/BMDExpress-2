@@ -46,7 +46,6 @@ public class StringFilterComponent extends FilterComponent
 	@Override
 	protected void initValues(DataFilter df)
 	{
-
 	}
 
 	@Override
@@ -54,16 +53,6 @@ public class StringFilterComponent extends FilterComponent
 	{
 		if (suggestedValuesForFilter == null)
 			suggestedValuesForFilter = new HashSet<>();
-
-		// let's skip
-		// trying to redraw data filters for string filter for now.
-		//
-		if (dataFilter != null)
-		{
-			// List<Object> values = dataFilter.getValues();
-			// for (Object value : values)
-			// suggestedValuesForFilter.add(value.toString());
-		}
 
 		List<String> list = new ArrayList<>(dataFilterComponentListener.getItemsForMethod(method));
 		Collections.sort(list);

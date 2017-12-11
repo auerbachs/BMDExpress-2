@@ -30,11 +30,15 @@ public class IntegerFilterComponent extends NumericFilterComponent
 		{
 			if (value1.getText() == null || value1.getText().equals(""))
 				values.add(new Integer(0));
+			else if (Double.valueOf(value1.getText()) <= hSlider.getMin())
+				values.add(-Integer.MIN_VALUE);
 			else
 				values.add((int) (((Number) Double.valueOf(value1.getText())).doubleValue()));
 
 			if (value2.getText() == null || value2.getText().equals(""))
 				values.add(new Integer(0));
+			else if (Double.valueOf(value2.getText()) >= hSlider.getMax())
+				values.add(Integer.MAX_VALUE);
 			else
 				values.add((int) (((Number) Double.valueOf(value2.getText())).doubleValue()));
 		}

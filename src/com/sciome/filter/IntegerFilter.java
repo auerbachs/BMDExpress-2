@@ -28,12 +28,12 @@ public class IntegerFilter<T> extends DataFilter<Integer, T>
 		}
 		catch (Exception e)
 		{
-
+			// e.printStackTrace();
 		}
 
 		// pass it by default if it get's here. excpetion was caught. this could mean the filter has null
 		// values or is defective
-		return true;
+		return false;
 	}
 
 }
