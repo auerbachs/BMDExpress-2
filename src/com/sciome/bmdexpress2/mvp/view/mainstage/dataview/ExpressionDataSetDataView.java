@@ -1,5 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.ExpressionDataSetDataViewPresenter;
@@ -40,6 +44,14 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return null;
+	}
+
+	@Override
+	public Set<String> getItemsForMethod(Method method)
+	{
+		Set<String> items = new HashSet<>();
+
+		return items;
 	}
 
 }

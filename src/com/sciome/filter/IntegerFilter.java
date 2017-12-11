@@ -1,5 +1,7 @@
 package com.sciome.filter;
 
+import java.util.List;
+
 /*
  * deals with integer comparison for data filtration
  */
@@ -7,15 +9,9 @@ public class IntegerFilter<T> extends DataFilter<Integer, T>
 {
 
 	public IntegerFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			Integer value1)
+			List<Object> value1)
 	{
 		super(dataFilterType, filterableAnnotatedClass, key, value1);
-	}
-
-	public IntegerFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			Integer value1, Integer value2)
-	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1, value2);
 	}
 
 	@Override
@@ -24,6 +20,8 @@ public class IntegerFilter<T> extends DataFilter<Integer, T>
 
 		try
 		{
+			Integer value1 = (Integer) values.get(0);
+			Integer value2 = (Integer) values.get(1);
 			Integer objectValue = (Integer) filterAnnotationExtractor.getFilterableValue(object, key);
 			switch (dataFilterType)
 			{

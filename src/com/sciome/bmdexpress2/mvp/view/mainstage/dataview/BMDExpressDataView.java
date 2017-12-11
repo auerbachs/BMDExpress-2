@@ -114,6 +114,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 		defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.toString());
 
 		filtrationNode = new FilterCompentsNode(filterableClass, this, defaultDPack);
+
 		if (!BMDExpressProperties.getInstance().isHideFilter())
 		{
 			hideFilter.setText(HIDE_FILTER);
@@ -213,6 +214,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			}
 		});
 
+		defaultDPack = filtrationNode.getFilterDataPack();
 		showDataVisualization(defaultDPack);
 
 	}

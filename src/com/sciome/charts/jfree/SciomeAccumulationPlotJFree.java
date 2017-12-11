@@ -157,7 +157,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			{
 
 				Color c = (Color) super.getItemPaint(row, col);
-				return new Color(c.getRed(), c.getBlue(), c.getGreen(), 100);
+				return new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
 			}
 
 			@Override

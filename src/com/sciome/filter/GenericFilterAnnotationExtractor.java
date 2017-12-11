@@ -71,6 +71,11 @@ public class GenericFilterAnnotationExtractor
 		return null;
 	}
 
+	public Method getMethod(String key)
+	{
+		return methodMap.get(key);
+	}
+
 	public List<String> getKeys()
 	{
 		return keys;

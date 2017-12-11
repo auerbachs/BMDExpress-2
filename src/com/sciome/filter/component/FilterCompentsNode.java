@@ -11,6 +11,7 @@ import java.util.Set;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
+import com.sciome.filter.DataFilterType;
 import com.sciome.filter.GenericFilterAnnotationExtractor;
 import com.sciome.filter.IntegerFilter;
 import com.sciome.filter.NumberFilter;
@@ -132,12 +133,10 @@ public class FilterCompentsNode extends VBox
 			// if there is already a datafilter associated with this object,
 			// use it.
 			DataFilter df = dataFilterMap.get(key);
-			if (df == null && filterAnnotationExtractor.getReturnType(key) != null)
-				fc = new FilterComponent(key, row, grid, dataFilterComponentListener,
-						filterAnnotationExtractor.getReturnType(key));
-			else if (filterAnnotationExtractor.getReturnType(key) != null)
-				fc = new FilterComponent(key, row, grid, dataFilterComponentListener,
-						filterAnnotationExtractor.getReturnType(key), df);
+			if (filterAnnotationExtractor.getReturnType(key) != null)
+				fc = FilterComponentFactory.createFilterComponent(key, row, grid, dataFilterComponentListener,
+						filterAnnotationExtractor.getReturnType(key), df,
+						filterAnnotationExtractor.getMethod(key));
 
 			if (fc != null)
 			{
@@ -168,22 +167,20 @@ public class FilterCompentsNode extends VBox
 			Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
 			if (returnType.equals(String.class))
 			{
-				df = new StringFilter<>(fc.getcBox().getSelectionModel().getSelectedItem(), filterableClass,
-						fc.getFilterKey(), fc.getValueOne(), fc.getValueTwo());
+				df = new StringFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
+						fc.getValues());
 			}
 			else if (returnType.equals(Integer.class))
 			{
 				df = new IntegerFilter<>(fc.getcBox().getSelectionModel().getSelectedItem(), filterableClass,
-						fc.getFilterKey(), Integer.valueOf(fc.getValueOne()),
-						Integer.valueOf(fc.getValueTwo()));
+						fc.getFilterKey(), fc.getValues());
 			}
 			else
 			{
 				try
 				{
 					df = new NumberFilter<>(fc.getcBox().getSelectionModel().getSelectedItem(),
-							filterableClass, fc.getFilterKey(), Double.valueOf(fc.getValueOne()),
-							Double.valueOf(fc.getValueTwo()));
+							filterableClass, fc.getFilterKey(), fc.getValues());
 				}
 				catch (Exception e)
 				{

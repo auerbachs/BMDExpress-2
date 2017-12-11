@@ -1,5 +1,7 @@
 package com.sciome.filter;
 
+import java.util.List;
+
 /*
  * deals with decimal filtration
  */
@@ -7,15 +9,9 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 {
 
 	public NumberFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			Number value1)
+			List<Object> values)
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1);
-	}
-
-	public NumberFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			Number value1, Number value2)
-	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1, value2);
+		super(dataFilterType, filterableAnnotatedClass, key, values);
 	}
 
 	@Override
@@ -24,6 +20,8 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 
 		try
 		{
+			Number value1 = (Number) values.get(0);
+			Number value2 = (Number) values.get(1);
 			Number objectValue = (Number) filterAnnotationExtractor.getFilterableValue(object, key);
 			switch (dataFilterType)
 			{
@@ -48,7 +46,7 @@ public class NumberFilter<T> extends DataFilter<Number, T>
 		}
 		catch (Exception e)
 		{
-
+			// e.printStackTrace();
 		}
 
 		return false;

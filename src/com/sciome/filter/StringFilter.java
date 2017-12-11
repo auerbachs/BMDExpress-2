@@ -1,5 +1,9 @@
 package com.sciome.filter;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /*
  * deals with String filtration.
  */
@@ -7,29 +11,27 @@ public class StringFilter<T> extends DataFilter<String, T>
 {
 
 	public StringFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			String value1)
+			List<Object> value1)
 	{
 		super(dataFilterType, filterableAnnotatedClass, key, value1);
-	}
-
-	public StringFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			String value1, String value2)
-	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1, value2);
 	}
 
 	@Override
 	public boolean passesFilter(T object)
 	{
+		Set<Object> stringSet = new HashSet<>(getValues());
 		try
 		{
-			String objectValue = (String) filterAnnotationExtractor.getFilterableValue(object, key);
+			String objectValue = ((String) filterAnnotationExtractor.getFilterableValue(object, key))
+					.toLowerCase();
 			switch (dataFilterType)
 			{
 				case EQUALS:
-					return objectValue.equalsIgnoreCase(value1);
+					return stringSet.contains(objectValue);
 				case CONTAINS:
-					return objectValue.toLowerCase().contains(value1.toLowerCase());
+					for (Object obj : stringSet)
+						if (objectValue.contains(((String) obj).toLowerCase()))
+							return true;
 				default:
 					break;
 			}

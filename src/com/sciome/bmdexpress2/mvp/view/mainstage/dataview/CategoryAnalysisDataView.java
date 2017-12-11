@@ -1,8 +1,11 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
@@ -33,7 +36,6 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	{
 		super(CategoryAnalysisResult.class, categoryAnalysisResults, viewTypeKey);
 		presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
-
 		// Create a CellFactory for the category id
 		categoryCellFactory = new CategoryTableCallBack();
 
@@ -63,6 +65,38 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return new CategoryAnalysisDataVisualizationView();
+	}
+
+	@Override
+	public Set<String> getItemsForMethod(Method method)
+	{
+		CategoryAnalysisResults categoryAnalysisResults = (CategoryAnalysisResults) this.bmdAnalysisDataSet;
+		// load transient variables iwth this hacky cal
+		categoryAnalysisResults.getColumnHeader();
+		Set<String> items = new HashSet<>();
+		for (CategoryAnalysisResult csr : categoryAnalysisResults.getCategoryAnalsyisResults())
+		{
+			try
+			{
+				Object value = "";
+
+				// Go analysis result has a couple special fields for identifier.
+				if (value != null)
+					items.add(value.toString());
+				if (csr instanceof GOAnalysisResult)
+					value = method.invoke((GOAnalysisResult) csr, null);
+				else
+					value = method.invoke(csr, null);
+				if (value != null)
+					items.add(value.toString());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return items;
 	}
 
 }
