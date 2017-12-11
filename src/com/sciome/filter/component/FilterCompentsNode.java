@@ -139,7 +139,9 @@ public class FilterCompentsNode extends VBox
 						filterAnnotationExtractor.getReturnType(key), df,
 						filterAnnotationExtractor.getMethod(key));
 
-			if (fc != null)
+			// if this key only produces null values due to compatibility issues,
+			// it's not "useable" hence the isuseable flag.
+			if (fc != null && fc.getIsUseable())
 			{
 				filterComponents.add(fc);
 

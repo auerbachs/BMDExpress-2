@@ -28,6 +28,7 @@ public abstract class FilterComponent
 	protected Class							filterFieldClass;
 	protected boolean						filterChangeInProgress;
 	protected boolean						fireFilter;
+	protected boolean						isUseable	= true;
 
 	public FilterComponent(String key, Integer row, GridPane grid,
 			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
@@ -72,4 +73,8 @@ public abstract class FilterComponent
 		return value2;
 	}
 
+	public boolean getIsUseable()
+	{
+		return isUseable;
+	}
 }

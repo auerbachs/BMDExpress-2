@@ -58,12 +58,17 @@ public class NumericFilterComponent extends FilterComponent
 	protected void init(GridPane grid, String key, Integer row)
 	{
 
+		List<Object> range = dataFilterComponentListener.getRangeForMethod(method);
+		if (range.get(0) == null)
+		{
+			isUseable = false;
+			return; // there is nothing we can do because the data doesn't have values for this
+		}
 		isInteger = false;
 		Label keyLabel = new Label(key);
 		grid.add(keyLabel, 0, row, 4, 1);
-		List<Object> range = dataFilterComponentListener.getRangeForMethod(method);
 
-		if (range.get(0) instanceof Integer)
+		if (range.get(0) != null && range.get(0) instanceof Integer)
 			isInteger = true;
 		double min = getMin(range);
 		double max = getMax(range);
