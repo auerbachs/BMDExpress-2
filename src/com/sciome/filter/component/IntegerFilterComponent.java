@@ -41,7 +41,7 @@ public class IntegerFilterComponent extends NumericFilterComponent
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return values;
 	}

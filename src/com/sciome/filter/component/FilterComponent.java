@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.sciome.filter.DataFilter;
 
+import javafx.application.Platform;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -56,6 +58,55 @@ public abstract class FilterComponent extends VBox
 	// for strings, it could be a list of possible values
 	// for numerics it would be an inclusive range
 	public abstract List<Object> getValues();
+
+	/*
+	 * when user types new filter, try to delay for one second before doing the datafilterchanged if the user
+	 * types data before filter is fired, then this will wait before firing off filter.
+	 */
+	protected void doDelayedFilterChange(List<Control> controls)
+	{
+		fireFilter = true;
+		for (Control control : controls)
+			if (!control.getStyleClass().contains("textboxfilterchanged"))
+				control.getStyleClass().add("textboxfilterchanged");
+		if (!filterChangeInProgress)
+		{
+			filterChangeInProgress = true;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					while (fireFilter)
+					{
+						fireFilter = false; // set his global variable to false.
+						try
+						{
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							dataFilterComponentListener.dataFilterChanged();
+							for (Control control : controls)
+								control.getStyleClass().remove("textboxfilterchanged");
+							filterChangeInProgress = false;
+						}
+					});
+
+				}
+			}).start();
+
+		}
+	}
 
 	public String getFilterKey()
 	{

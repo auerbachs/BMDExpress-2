@@ -4,13 +4,13 @@ import java.lang.reflect.Method;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.controlsfx.control.RangeSlider;
 
 import com.sciome.filter.DataFilter;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -147,9 +147,6 @@ public class NumericFilterComponent extends FilterComponent
 
 		value1.textProperty().addListener((observable, oldValue, newValue) ->
 		{
-			if (!value1.getStyleClass().contains("textboxfilterchanged"))
-				value1.getStyleClass().add("textboxfilterchanged");
-
 			textEditingSlider = true;
 			try
 			{
@@ -165,13 +162,10 @@ public class NumericFilterComponent extends FilterComponent
 			}
 			textEditingSlider = false;
 
-			doDelayedFilterChange();
+			doDelayedFilterChange(Arrays.asList(value1, value2));
 		});
 		value2.textProperty().addListener((observable, oldValue, newValue) ->
 		{
-			if (!value2.getStyleClass().contains("textboxfilterchanged"))
-				value2.getStyleClass().add("textboxfilterchanged");
-
 			textEditingSlider = true;
 			try
 			{
@@ -186,55 +180,8 @@ public class NumericFilterComponent extends FilterComponent
 
 			}
 			textEditingSlider = false;
-			doDelayedFilterChange();
+			doDelayedFilterChange(Arrays.asList(value1, value2));
 		});
-	}
-
-	/*
-	 * when user types new filter, try to delay for one second before doing the datafilterchanged if the user
-	 * types data before filter is fired, then this will wait before firing off filter.
-	 */
-	private void doDelayedFilterChange()
-	{
-		fireFilter = true;
-		if (!filterChangeInProgress)
-		{
-			filterChangeInProgress = true;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run()
-				{
-					while (fireFilter)
-					{
-						fireFilter = false; // set his global variable to false.
-						try
-						{
-							Thread.sleep(1000);
-						}
-						catch (InterruptedException e)
-						{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run()
-						{
-							dataFilterComponentListener.dataFilterChanged();
-							value1.getStyleClass().remove("textboxfilterchanged");
-							value2.getStyleClass().remove("textboxfilterchanged");
-							filterChangeInProgress = false;
-						}
-					});
-
-				}
-			}).start();
-
-		}
-
 	}
 
 	@Override

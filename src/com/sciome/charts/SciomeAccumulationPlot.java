@@ -345,6 +345,12 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 		VBox vbox = new VBox();
 		if (dbToPathwayToGeneSet != null)
 		{
+			ComboBox<String> howtodostring;
+			// Create the CheckComboBox with the data
+			howtodostring = new ComboBox<String>(
+					FXCollections.observableArrayList(Arrays.asList("begins with", "contains")));
+
+			howtodostring.setValue("begins with");
 			List<String> pathways = new ArrayList<>();
 			HBox hbox = new HBox();
 
@@ -359,7 +365,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 				}
 
 			});
-			pathwayTextField.setMinWidth(400);
+			pathwayTextField.setMinWidth(300);
 			TextFields.bindAutoCompletion(pathwayTextField,
 					new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
 
@@ -368,7 +374,11 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 						{
 							List<String> returnList = new ArrayList<>();
 							for (String p : pathways)
-								if (p.toLowerCase().contains(param.getUserText().toLowerCase()))
+								if (howtodostring.getValue().equals("contains")
+										&& p.toLowerCase().contains(param.getUserText().toLowerCase()))
+									returnList.add(p);
+								else if (howtodostring.getValue().equals("begins with")
+										&& p.toLowerCase().startsWith(param.getUserText().toLowerCase()))
 									returnList.add(p);
 
 							return returnList;
@@ -413,7 +423,7 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 
 			});
 
-			hbox.getChildren().addAll(dbCombo, pathwayTextField, clearButton);
+			hbox.getChildren().addAll(howtodostring, dbCombo, pathwayTextField, clearButton);
 			vbox.getChildren().add(hbox);
 			dbCombo.getSelectionModel().select(0);
 		}
