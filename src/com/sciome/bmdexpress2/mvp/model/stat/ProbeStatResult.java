@@ -17,9 +17,6 @@ import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -233,9 +230,9 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public List<String> generateColumnHeader()
 	{
 		List<String> columnHeader = new ArrayList<String>();
-		columnHeader.add("Probe ID");
-		columnHeader.add("Entrez Gene IDs");
-		columnHeader.add("Genes Symbols");
+		columnHeader.add(BMDResult.PROBE_ID);
+		columnHeader.add(BMDResult.GENE_IDS);
+		columnHeader.add(BMDResult.GENE_SYMBOLS);
 		for (StatResult statResult : statResults)
 		{
 			columnHeader.addAll(statResult.getColumnNames());
@@ -277,23 +274,22 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 		if (bestPolyStatResult != null)
 		{
-			columnHeader.add("Best Poly");
+			columnHeader.add(BMDResult.BEST_POLY);
 		}
 
-		columnHeader.add("Best Model");
-		columnHeader.add("Best BMD");
-		columnHeader.add("Best BMDL");
-		columnHeader.add("Best BMDU");
-		columnHeader.add("Best fitPValue");
-		columnHeader.add("Best fitLogLikelihood");
-		columnHeader.add("Best AIC");
-		columnHeader.add("Best adverseDirection");
-		columnHeader.add("Best BMD/BMDL");
+		columnHeader.add(BMDResult.BEST_MODEL);
+		columnHeader.add(BMDResult.BEST_BMD);
+		columnHeader.add(BMDResult.BEST_BMDL);
+		columnHeader.add(BMDResult.BEST_BMDU);
+		columnHeader.add(BMDResult.BEST_FITPVALUE);
+		columnHeader.add(BMDResult.BEST_LOGLIKLIHOOD);
+		columnHeader.add(BMDResult.BEST_AIC);
+		columnHeader.add(BMDResult.BEST_ADVERSE_DIRECTION);
+		columnHeader.add(BMDResult.BEST_BMD_BMDL_RATIO);
 
 		return columnHeader;
 	}
 
-	@Filterable(key = "Entrez Gene ID")
 	@JsonIgnore
 	public String getGenes()
 	{
@@ -305,7 +301,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		this.genes = genes;
 	}
 
-	@Filterable(key = "Gene Symbols")
 	@JsonIgnore
 	public String getGeneSymbols()
 	{
@@ -346,8 +341,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	 * make charttable stuff work with best stat model
 	 */
 
-	@Filterable(key = BMDResult.BMD)
-	@ChartableDataPoint(key = BMDResult.BMD)
 	@JsonIgnore
 	public Double getBestBMD()
 	{
@@ -356,8 +349,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMD();
 	}
 
-	@Filterable(key = BMDResult.BMDL)
-	@ChartableDataPoint(key = BMDResult.BMDL)
 	@JsonIgnore
 	public Double getBestBMDL()
 	{
@@ -366,8 +357,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.FIT_PVALUE)
-	@ChartableDataPoint(key = BMDResult.FIT_PVALUE)
 	@JsonIgnore
 	public Double getBestFitPValue()
 	{
@@ -376,8 +365,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getFitPValue();
 	}
 
-	@Filterable(key = BMDResult.FIT_LOG_LIKELIHOOD)
-	@ChartableDataPoint(key = BMDResult.FIT_LOG_LIKELIHOOD)
 	@JsonIgnore
 	public Double getBestFitLogLikelihood()
 	{
@@ -386,8 +373,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getFitLogLikelihood();
 	}
 
-	@Filterable(key = BMDResult.BMDU)
-	@ChartableDataPoint(key = BMDResult.BMDU)
 	@JsonIgnore
 	public Double getBestBMDU()
 	{
@@ -396,8 +381,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU();
 	}
 
-	@Filterable(key = BMDResult.BMD_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMD_BMDL_RATIO)
 	@JsonIgnore
 	public Double getBestBMDdiffBMDL()
 	{
@@ -406,8 +389,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMD() / bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMDL_RATIO)
 	@JsonIgnore
 	public Double getBestBMDUdiffBMDL()
 	{
@@ -416,8 +397,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU() / bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMD_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMD_RATIO)
 	@JsonIgnore
 	public Double getBestBMDUdiffBMD()
 	{
@@ -426,39 +405,30 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU() / bestStatResult.getBMD();
 	}
 
-	@Filterable(key = BMDResult.PREFILTER_ADJUSTEDPVALUE)
-	@ChartableDataPoint(key = BMDResult.PREFILTER_ADJUSTEDPVALUE)
 	@JsonIgnore
 	public Double getPrefilterAdjustedPValue()
 	{
 		return prefilterAdjustedPValue;
 	}
 
-	@Filterable(key = BMDResult.PREFILTER_PVALUE)
-	@ChartableDataPoint(key = BMDResult.PREFILTER_PVALUE)
 	@JsonIgnore
 	public Double getPrefilterPValue()
 	{
 		return prefilterPvalue;
 	}
 
-	@Filterable(key = BMDResult.BEST_FOLDCHANGE)
-	@ChartableDataPoint(key = BMDResult.BEST_FOLDCHANGE)
 	@JsonIgnore
 	public Double getBestFoldChange()
 	{
 		return prefilterBestFoldChange;
 	}
 
-	@Filterable(key = BMDResult.BEST_ABSFOLDCHANGE)
-	@ChartableDataPoint(key = BMDResult.BEST_ABSFOLDCHANGE)
 	@JsonIgnore
 	public Double getBestABSFoldChange()
 	{
 		return prefilterBestABSFoldChange;
 	}
 
-	@ChartableDataPointLabel
 	@JsonIgnore
 	public String getChartableDataLabel()
 	{
@@ -484,6 +454,12 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			if (genes.contains(gene.toLowerCase()))
 				genesContained.add(gene);
 		return genesContained;
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

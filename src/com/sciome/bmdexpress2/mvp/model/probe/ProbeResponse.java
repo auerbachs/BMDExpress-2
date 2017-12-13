@@ -160,4 +160,10 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 		return this.probe.toString();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

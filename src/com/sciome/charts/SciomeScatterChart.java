@@ -3,6 +3,7 @@ package com.sciome.charts;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -22,10 +23,10 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	protected Tooltip toolTip = new Tooltip("");
 
 	@SuppressWarnings("rawtypes")
-	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] { key1, key2 }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, chartListener);
 
 		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
@@ -52,7 +53,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	}
 
 	@SuppressWarnings("rawtypes")
-	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
+	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, key1, key2, true, true, chartListener);
@@ -98,10 +99,10 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
-		String key1 = keys[0];
-		String key2 = keys[1];
+		ChartKey key1 = keys[0];
+		ChartKey key2 = keys[1];
 
 		List<SciomeSeries<Number, Number>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())

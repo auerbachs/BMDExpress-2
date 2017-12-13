@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -27,10 +28,10 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 	protected Tooltip	toolTip		= new Tooltip("");
 	protected final int	MAXITEMS	= 50;
 
-	public SciomeBarChart(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeBarChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] { key }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key }, chartListener);
 
 		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(false, true, false, true);
@@ -136,9 +137,9 @@ public abstract class SciomeBarChart extends ScrollableSciomeChartFX<String, Num
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
-		String key = keys[0];
+		ChartKey key = keys[0];
 		Map<String, Integer> countMap = getCountMap();
 
 		int maxPerPack = 0;

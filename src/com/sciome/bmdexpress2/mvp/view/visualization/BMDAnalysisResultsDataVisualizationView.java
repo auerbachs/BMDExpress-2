@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -47,28 +48,30 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 				BMDExpressEventBus.getInstance());
 
 		chartCache.put(BMDL_HISTOGRAM + "-" + BMDResult.BMDL, new SciomeHistogramJFree("", new ArrayList<>(),
-				BMDResult.BMDL, 20.0, BMDAnalysisResultsDataVisualizationView.this));
+				new ChartKey(BMDResult.BMDL, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 		chartCache.put(BMDU_HISTOGRAM + "-" + BMDResult.BMDU, new SciomeHistogramJFree("", new ArrayList<>(),
-				BMDResult.BMDU, 20.0, BMDAnalysisResultsDataVisualizationView.this));
-		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE, new SciomeHistogramJFree("",
-				new ArrayList<>(), BMDResult.FIT_PVALUE, 20.0, BMDAnalysisResultsDataVisualizationView.this));
+				new ChartKey(BMDResult.BMDU, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
+		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE,
+				new SciomeHistogramJFree("", new ArrayList<>(), new ChartKey(BMDResult.FIT_PVALUE, null),
+						20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMDL, new SciomeAccumulationPlotJFree(
-				"Accumulation", new ArrayList<>(), BMDResult.BMDL, 0.0, this));
-		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMD,
-				new SciomeAccumulationPlotJFree("Accumulation", new ArrayList<>(), BMDResult.BMD, 0.0, this));
+				"Accumulation", new ArrayList<>(), new ChartKey(BMDResult.BMDL, null), 0.0, this));
+		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMD, new SciomeAccumulationPlotJFree(
+				"Accumulation", new ArrayList<>(), new ChartKey(BMDResult.BMD, null), 0.0, this));
 		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMDU, new SciomeAccumulationPlotJFree(
-				"Accumulation", new ArrayList<>(), BMDResult.BMDU, 0.0, this));
+				"Accumulation", new ArrayList<>(), new ChartKey(BMDResult.BMDU, null), 0.0, this));
 
 		chartCache.put(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.FIT_LOG_LIKELIHOOD,
-				new SciomeHistogramJFree("", new ArrayList<>(), BMDResult.FIT_LOG_LIKELIHOOD, 20.0,
+				new SciomeHistogramJFree("", new ArrayList<>(),
+						new ChartKey(BMDResult.FIT_LOG_LIKELIHOOD, null), 20.0,
 						BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
-				new SciomeScatterChartJFree("", new ArrayList<>(), BMDResult.BMD, BMDResult.BMDL,
-						BMDAnalysisResultsDataVisualizationView.this));
+				new SciomeScatterChartJFree("", new ArrayList<>(), new ChartKey(BMDResult.BMD, null),
+						new ChartKey(BMDResult.BMDL, null), BMDAnalysisResultsDataVisualizationView.this));
 		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogramJFree("", new ArrayList<>(),
-				BMDResult.BMD, 20.0, BMDAnalysisResultsDataVisualizationView.this));
+				new ChartKey(BMDResult.BMD, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 	}
 
@@ -92,7 +95,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			if (result instanceof BMDResult)
 				((BMDResult) result).getColumnHeader();
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds);
+				selectedIds, null, new ChartKey(BMDResult.PROBE_ID, null));
 
 		if (chartKey.equals(BMDL_HISTOGRAM))
 		{

@@ -18,8 +18,6 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -30,7 +28,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	/**
 	 * 
 	 */
-	private static final long		serialVersionUID			= -5704632335867988973L;
+	private static final long		serialVersionUID	= -5704632335867988973L;
 
 	private String					name;
 
@@ -40,20 +38,6 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	private transient List<String>	columnHeader;
 
 	private Long					id;
-
-	/* define chartabble key values */
-	public static final String		FVALUE						= "F-Value";
-	public static final String		UNADJUSTED_PVALUE			= "Unadjusted P-Value";
-	public static final String		ADJUSTED_PVALUE				= "Adjusted P-Value";
-	public static final String		NEG_LOG_ADJUSTED_PVALUE		= "Negative Log 10 Adjusted P-Value";
-	public static final String		BEST_FOLD_CHANGE			= "Max Fold Change";
-	public static final String		BEST_FOLD_CHANGE_ABS		= "Max Fold Change Unsigned";
-	public static final String		FOLD_CHANGE					= "Fold Change";
-	public static final String		GENE_ID						= "Gene ID";
-	public static final String		GENE_SYMBOL					= "Gene Symbol";
-	public static final String		PROBE_ID					= "Probe ID";
-
-	public static final String		NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
 
 	@JsonIgnore
 	public Long getID()
@@ -66,7 +50,6 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		this.id = id;
 	}
 
-	@ChartableData(key = "One Way ANOVA")
 	public List<OneWayANOVAResult> getOneWayANOVAResults()
 	{
 		return oneWayANOVAResults;
@@ -77,7 +60,6 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		this.oneWayANOVAResults = oneWayANOVAResults;
 	}
 
-	@ChartableDataLabel(key = "One Way ANOVA")
 	@Override
 	public String getName()
 	{

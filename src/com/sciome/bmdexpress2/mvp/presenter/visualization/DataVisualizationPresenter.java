@@ -2,13 +2,13 @@ package com.sciome.bmdexpress2.mvp.presenter.visualization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
@@ -17,15 +17,16 @@ import com.sciome.bmdexpress2.shared.eventbus.project.GiveMeProjectRequest;
 import com.sciome.bmdexpress2.shared.eventbus.project.HeresYourProjectEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.data.ChartDataPackMaker;
 import com.sciome.filter.DataFilterPack;
 
-public abstract class DataVisualizationPresenter extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>
+public abstract class DataVisualizationPresenter
+		extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>
 {
 	protected BMDProject	bmdProject	= null;
 	boolean					drawn		= false;
 
-	public DataVisualizationPresenter(IDataVisualizationView view, IVisualizationService service, BMDExpressEventBus eventBus)
+	public DataVisualizationPresenter(IDataVisualizationView view, IVisualizationService service,
+			BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 		init();
@@ -42,12 +43,10 @@ public abstract class DataVisualizationPresenter extends ServicePresenterBase<ID
 		getEventBus().post(new GiveMeProjectRequest("please"));
 	}
 
-	
-
 	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds)
+			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedKeys, ChartKey label)
 	{
-		return getService().getCategoryResultsChartPackData(catResults, pack, selectedIds);
+		return getService().getCategoryResultsChartPackData(catResults, pack, selectedIds, mathedKeys, label);
 	}
 
 	public abstract List<BMDExpressAnalysisDataSet> getResultsFromProject(
@@ -77,12 +76,15 @@ public abstract class DataVisualizationPresenter extends ServicePresenterBase<ID
 	@Subscribe
 	public void onShowBMDAnalysisDataSet(ShowBMDAnalysisDataSetVisualizationsEvent event)
 	{
-		try {
+		try
+		{
 			if (!drawn)
 				getView().drawResults(event.GetPayload());
-	
+
 			drawn = true;
-		} catch(Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}

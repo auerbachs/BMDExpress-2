@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
@@ -61,12 +62,12 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private Button						maxMinButton;
 	protected Button					configurationButton;
 	private HBox						checkBoxes;
-	private String[]					chartableKeys;
+	private ChartKey[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
 
 	private List<SciomeSeries<X, Y>>	seriesData		= new ArrayList<>();
 
-	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, String[] keys,
+	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			SciomeChartListener chartListener)
 	{
 		this.title = title;
@@ -137,7 +138,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	/* abstract methods */
 
-	protected abstract Node generateChart(String[] keys, ChartConfiguration chartConfiguration);
+	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 
 	protected abstract boolean isXAxisDefineable();
 
@@ -149,7 +150,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	// the subclass needs to conver the charted data packs to a sciome series.
 	// then the actual chart implementation can use the SciomeSeries and SciomeData
 	// to construct the chart
-	protected abstract void convertChartDataPacksToSciomeSeries(String[] keys,
+	protected abstract void convertChartDataPacksToSciomeSeries(ChartKey[] keys,
 			List<ChartDataPack> chartPacks);
 
 	/* end of abstract methods */
@@ -228,7 +229,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	/*
 	 * get the minimum of all the mins amongst all data packs associated with the supplied key
 	 */
-	protected Double getMinMin(String key)
+	protected Double getMinMin(ChartKey key)
 	{
 		Double min = 9999999999.0;
 
@@ -249,7 +250,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	/*
 	 * get max of maximums amongst data packs associated with key
 	 */
-	protected Double getMaxMax(String key)
+	protected Double getMaxMax(ChartKey key)
 	{
 
 		Double max = -9999999999.0;

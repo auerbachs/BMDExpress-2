@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeRangePlot;
 import com.sciome.charts.data.ChartConfiguration;
@@ -36,8 +37,9 @@ import javafx.util.Duration;
 public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExporter
 {
 
-	public SciomeRangePlotFX(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
-			String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
+	public SciomeRangePlotFX(String title, List<ChartDataPack> chartDataPacks, ChartKey minKey,
+			ChartKey maxKey, ChartKey lowKey, ChartKey highKey, ChartKey middleKey,
+			SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, minKey, maxKey, lowKey, highKey, middleKey, chartListener);
 
@@ -495,12 +497,12 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
 
-		String minKey = keys[0];
-		String maxKey = keys[1];
-		String key = keys[3];
+		ChartKey minKey = keys[0];
+		ChartKey maxKey = keys[1];
+		ChartKey key = keys[3];
 		Double axisMin = getMinMin(minKey);
 		Double dataMin = axisMin;
 		Double axisMax = getMaxMax(maxKey);
@@ -524,7 +526,8 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 			}
 		}
 		final Axis yAxis;
-		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogXAxis().isSelected(), axisMin, axisMax, dataMin);
+		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogXAxis().isSelected(), axisMin, axisMax,
+				dataMin);
 
 		xAxis.setLabel("Category");
 		// yAxis.setLabel(minKey + "," + lowKey + "," + key + "," + maxKey);

@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -134,7 +132,6 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	}
 
 	@Override
-	@ChartableDataLabel(key = "Category Results Name")
 	public String getName()
 	{
 		return name;
@@ -146,7 +143,6 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 		this.name = name;
 	}
 
-	@ChartableData(key = "Category Analysis Result")
 	public List<CategoryAnalysisResult> getCategoryAnalsyisResults()
 	{
 		return categoryAnalsyisResults;

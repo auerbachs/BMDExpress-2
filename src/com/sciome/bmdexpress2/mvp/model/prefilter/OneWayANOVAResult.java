@@ -15,9 +15,6 @@ import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.bmdexpress2.util.NumberManager;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -71,21 +68,17 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		this.probeResponse = probeResponse;
 	}
 
-	@Filterable(key = OneWayANOVAResults.PROBE_ID)
-	@ChartableDataPointLabel(key = OneWayANOVAResults.PROBE_ID)
 	@JsonIgnore
 	public String getProbeID()
 	{
 		return probeResponse.getProbe().getId();
 	}
 
-	@Filterable(key = OneWayANOVAResults.GENE_ID)
 	public String getGenes()
 	{
 		return genes;
 	}
 
-	@Filterable(key = OneWayANOVAResults.GENE_SYMBOL)
 	@JsonIgnore
 	public String getGeneSymbols()
 	{
@@ -112,8 +105,6 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		this.degreesOfFreedomTwo = degreesOfFreedomTwo;
 	}
 
-	@Filterable(key = OneWayANOVAResults.FVALUE)
-	@ChartableDataPoint(key = OneWayANOVAResults.FVALUE)
 	public double getfValue()
 	{
 		return fValue;
@@ -124,14 +115,11 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		this.fValue = fValue;
 	}
 
-	@Filterable(key = OneWayANOVAResults.UNADJUSTED_PVALUE)
-	@ChartableDataPoint(key = OneWayANOVAResults.UNADJUSTED_PVALUE)
 	public double getpValue()
 	{
 		return pValue;
 	}
 
-	@ChartableDataPoint(key = OneWayANOVAResults.NEG_LOG_UNADJUSTED_PVALUE)
 	@JsonIgnore
 	public double getNegativeLog10pValue()
 	{
@@ -144,15 +132,12 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		this.pValue = pValue;
 	}
 
-	@ChartableDataPoint(key = OneWayANOVAResults.NEG_LOG_ADJUSTED_PVALUE)
 	@JsonIgnore
 	public double getNegativeLogAdjustedPValue()
 	{
 		return NumberManager.negLog10(this.adjustedPValue);
 	}
 
-	@Filterable(key = OneWayANOVAResults.ADJUSTED_PVALUE)
-	@ChartableDataPoint(key = OneWayANOVAResults.ADJUSTED_PVALUE)
 	public double getAdjustedPValue()
 	{
 		return adjustedPValue;
@@ -163,15 +148,11 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		this.adjustedPValue = adjustedPValue;
 	}
 
-	@Filterable(key = OneWayANOVAResults.BEST_FOLD_CHANGE)
-	@ChartableDataPoint(key = OneWayANOVAResults.BEST_FOLD_CHANGE)
 	public Float getBestFoldChange()
 	{
 		return bestFoldChange;
 	}
 
-	@Filterable(key = OneWayANOVAResults.BEST_FOLD_CHANGE_ABS)
-	@ChartableDataPoint(key = OneWayANOVAResults.BEST_FOLD_CHANGE_ABS)
 	@JsonIgnore
 	public Float getBestFoldChangeABS()
 	{
@@ -263,6 +244,12 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 	public String toString()
 	{
 		return probeResponse.getProbe().getId() + " : " + genes + " : " + geneSymbols;
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

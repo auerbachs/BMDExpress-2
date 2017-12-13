@@ -1,26 +1,29 @@
 package com.sciome.bmdexpress2.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.data.ChartDataPackMaker;
 import com.sciome.filter.DataFilterPack;
 
-public class VisualizationService implements IVisualizationService{
+public class VisualizationService implements IVisualizationService
+{
 
 	@Override
 	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds) {
-		ChartDataPackMaker<BMDExpressAnalysisDataSet, BMDExpressAnalysisRow> chartDataPackMaker = new ChartDataPackMaker<>(
-				pack);
-		List<ChartDataPack> chartDataPacks = chartDataPackMaker.generateDataPacks(catResults);
+			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedChartKeys, ChartKey labelKey)
+	{
+		ChartDataPackMaker chartDataPackMaker = new ChartDataPackMaker(pack);
+		List<ChartDataPack> chartDataPacks = chartDataPackMaker.generateDataPacks(catResults, mathedChartKeys,
+				labelKey);
 		removeSelectedIds(chartDataPacks, selectedIds);
 		return chartDataPacks;
 	}
-	
+
 	/*
 	 * look at the data point label of each data row. if it's in the selected id's list, then allow it to
 	 * pass.

@@ -1,9 +1,12 @@
 package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.WilliamsTrendDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.service.VisualizationService;
@@ -15,7 +18,9 @@ import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
-public class WilliamsTrendDataVisualizationView extends DataVisualizationView implements IDataVisualizationView {
+public class WilliamsTrendDataVisualizationView extends DataVisualizationView
+		implements IDataVisualizationView
+{
 	private static final String	UNADJUSTED_PVALUE_HISTOGRAM			= "Unadjusted P-Value Histogram";
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
 	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Best Fold Change Histogram";
@@ -25,30 +30,35 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 	{
 		super();
 		IVisualizationService service = new VisualizationService();
-		presenter = new WilliamsTrendDataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
+		presenter = new WilliamsTrendDataVisualizationPresenter(this, service,
+				BMDExpressEventBus.getInstance());
 
-		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.UNADJUSTED_PVALUE,
-				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.UNADJUSTED_PVALUE, 20.0, this));
+		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + PrefilterResults.UNADJUSTED_PVALUE,
+				new SciomeHistogramJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, null), 20.0, this));
 
-		chartCache.put(ADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.ADJUSTED_PVALUE,
-				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.ADJUSTED_PVALUE, 20.0, this));
+		chartCache.put(ADJUSTED_PVALUE_HISTOGRAM + "-" + PrefilterResults.ADJUSTED_PVALUE,
+				new SciomeHistogramJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.ADJUSTED_PVALUE, null), 20.0, this));
 
-		chartCache.put(BEST_FOLD_CHANGE_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE,
-				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE, 20.0, this));
+		chartCache.put(BEST_FOLD_CHANGE_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE,
+				new SciomeHistogramJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null), 20.0, this));
 
-		chartCache.put(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE_ABS,
-				new SciomeHistogramJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE_ABS, 20.0,
-						this));
+		chartCache.put(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE_ABS,
+				new SciomeHistogramJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE_ABS, null), 20.0, this));
 
 		chartCache.put(
-				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE + WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE,
-				new SciomeScatterChartJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
-						WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE, false, true, this));
+				"DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.NEG_LOG_ADJUSTED_PVALUE,
+				new SciomeScatterChartJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
+						new ChartKey(PrefilterResults.NEG_LOG_ADJUSTED_PVALUE, null), false, true, this));
 		chartCache.put(
-				"DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE
-						+ WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE,
-				new SciomeScatterChartJFree("", new ArrayList<>(), WilliamsTrendResults.BEST_FOLD_CHANGE,
-						WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE, false, true, this));
+				"DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE,
+				new SciomeScatterChartJFree("", new ArrayList<>(),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
+						new ChartKey(PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE, null), false, true, this));
 
 	}
 
@@ -61,14 +71,17 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 		if (results == null || results.size() == 0)
 			return;
 
+		Set<ChartKey> mathedKeys = new HashSet<>();
+		mathedKeys.add(new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG));
+		mathedKeys.add(new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds);
+				selectedIds, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
 		chartsList = new ArrayList<>();
 
 		if (chartKey.equals(UNADJUSTED_PVALUE_HISTOGRAM))
 		{
 			SciomeChartBase chart = chartCache
-					.get(UNADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.UNADJUSTED_PVALUE);
+					.get(UNADJUSTED_PVALUE_HISTOGRAM + "-" + PrefilterResults.UNADJUSTED_PVALUE);
 			chart.redrawCharts(chartDataPacks);
 
 			chartsList.add(chart);
@@ -76,31 +89,31 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView im
 		else if (chartKey.equals(ADJUSTED_PVALUE_HISTOGRAM))
 		{
 			SciomeChartBase chart = chartCache
-					.get(ADJUSTED_PVALUE_HISTOGRAM + "-" + WilliamsTrendResults.ADJUSTED_PVALUE);
+					.get(ADJUSTED_PVALUE_HISTOGRAM + "-" + PrefilterResults.ADJUSTED_PVALUE);
 			chart.redrawCharts(chartDataPacks);
 			chartsList.add(chart);
 		}
 		else if (chartKey.equals(BEST_FOLD_CHANGE_HISTOGRAM))
 		{
 			SciomeChartBase chart = chartCache
-					.get(BEST_FOLD_CHANGE_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE);
+					.get(BEST_FOLD_CHANGE_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE);
 			chart.redrawCharts(chartDataPacks);
 			chartsList.add(chart);
 		}
 		else if (chartKey.equals(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM))
 		{
 			SciomeChartBase chart = chartCache
-					.get(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + WilliamsTrendResults.BEST_FOLD_CHANGE_ABS);
+					.get(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE_ABS);
 			chart.redrawCharts(chartDataPacks);
 			chartsList.add(chart);
 		}
 		else
 		{
-			SciomeChartBase chart = chartCache.get("DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE
-					+ WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE);
+			SciomeChartBase chart = chartCache.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE
+					+ PrefilterResults.NEG_LOG_ADJUSTED_PVALUE);
 			chart.redrawCharts(chartDataPacks);
-			SciomeChartBase chart2 = chartCache.get("DEFAULT-" + WilliamsTrendResults.BEST_FOLD_CHANGE
-					+ WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE);
+			SciomeChartBase chart2 = chartCache.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE
+					+ PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE);
 			chart2.redrawCharts(chartDataPacks);
 			chartsList.add(chart);
 			chartsList.add(chart2);

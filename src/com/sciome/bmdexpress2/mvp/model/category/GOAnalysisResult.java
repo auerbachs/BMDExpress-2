@@ -46,4 +46,10 @@ public class GOAnalysisResult extends CategoryAnalysisResult implements Serializ
 		return categoryIdentifier.toString();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

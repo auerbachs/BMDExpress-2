@@ -2,6 +2,7 @@ package com.sciome.charts.javafx;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeHistogram;
 import com.sciome.charts.data.ChartConfiguration;
@@ -27,8 +28,8 @@ import javafx.scene.layout.StackPane;
 public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExporter
 {
 
-	public SciomeHistogramFX(String title, List<ChartDataPack> chartDataPacks, String key, Double bucketsize,
-			SciomeChartListener chartListener)
+	public SciomeHistogramFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
+			Double bucketsize, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key, bucketsize, chartListener);
 
@@ -39,20 +40,20 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key = keys[0];
+		ChartKey key = keys[0];
 
 		final Axis xAxis = new CategoryAxis();
 
 		final Axis yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), null, null,
 				null);
 
-		xAxis.setLabel(key);
+		xAxis.setLabel(key.toString());
 		yAxis.setLabel("Count");
 
 		XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-		series1.setName(key);
+		series1.setName(key.toString());
 
 		for (Object sciomeDataObj : getSeriesData().get(0).getData())
 		{

@@ -3,6 +3,7 @@ package com.sciome.charts;
 import java.util.List;
 import java.util.Map;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
 
@@ -21,7 +22,7 @@ public abstract class SciomePieChart extends SciomeChartBase<Number, Number> imp
 	public SciomePieChart(Map<String, Double> pieDataMap, Map<String, List<Object>> pieObjectMap,
 			List<ChartDataPack> packs, String title, SciomeChartListener listener)
 	{
-		super(title, packs, new String[] {}, listener);
+		super(title, packs, new ChartKey[] {}, listener);
 		this.pieDataMap = pieDataMap;
 		this.pieObjectMap = pieObjectMap;
 
@@ -52,7 +53,7 @@ public abstract class SciomePieChart extends SciomeChartBase<Number, Number> imp
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
 
 	}

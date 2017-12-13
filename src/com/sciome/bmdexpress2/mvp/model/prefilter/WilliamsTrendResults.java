@@ -9,8 +9,8 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
@@ -18,17 +18,16 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
-		implements Serializable, IStatModelProcessable, PrefilterResults{
+		implements Serializable, IStatModelProcessable, PrefilterResults
+{
 	/**
 	 * 
 	 */
-	private static final long			serialVersionUID			= -5704632335867988973L;
+	private static final long			serialVersionUID	= -5704632335867988973L;
 
 	private String						name;
 
@@ -38,19 +37,6 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 	private transient List<String>		columnHeader;
 
 	private Long						id;
-
-	/* define chartabble key values */
-	public static final String			UNADJUSTED_PVALUE			= "Unadjusted P-Value";
-	public static final String			ADJUSTED_PVALUE				= "Adjusted P-Value";
-	public static final String			NEG_LOG_ADJUSTED_PVALUE		= "Negative Log 10 Adjusted P-Value";
-	public static final String			BEST_FOLD_CHANGE			= "Max Fold Change";
-	public static final String			BEST_FOLD_CHANGE_ABS		= "Max Fold Change Unsigned";
-	public static final String			FOLD_CHANGE					= "Fold Change";
-	public static final String			GENE_ID						= "Gene ID";
-	public static final String			GENE_SYMBOL					= "Gene Symbol";
-	public static final String			PROBE_ID					= "Probe ID";
-
-	public static final String			NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
 
 	@JsonIgnore
 	public Long getID()
@@ -63,7 +49,6 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 		this.id = id;
 	}
 
-	@ChartableData(key = "Williams Trend")
 	public List<WilliamsTrendResult> getWilliamsTrendResults()
 	{
 		return williamsTrendResults;
@@ -74,7 +59,6 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 		this.williamsTrendResults = williamsTrendResults;
 	}
 
-	@ChartableDataLabel(key = "Williams Trend")
 	@Override
 	public String getName()
 	{
@@ -241,16 +225,18 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PrefilterResult> getPrefilterResults() {
+	public List<PrefilterResult> getPrefilterResults()
+	{
 		return (List<PrefilterResult>) (List<?>) williamsTrendResults;
 	}
 
 	@Override
 	@JsonIgnore
-	public LogTransformationEnum getLogTransformation() {
+	public LogTransformationEnum getLogTransformation()
+	{
 		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 

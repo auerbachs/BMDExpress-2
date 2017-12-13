@@ -17,6 +17,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeHistogram;
 import com.sciome.charts.data.ChartConfiguration;
@@ -32,16 +33,16 @@ import javafx.scene.input.MouseButton;
 public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataExporter
 {
 
-	public SciomeHistogramJFree(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeHistogramJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key, bucketsize, chartListener);
 	}
 
 	@Override
-	protected Node generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key = keys[0];
+		ChartKey key = keys[0];
 
 		// Create dataset
 		HistogramDataset dataset = new HistogramDataset();
@@ -61,15 +62,16 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		}
 
 		// Create chart
-		JFreeChart chart = ChartFactory.createHistogram(key + " Histogram", key, "Count", dataset,
-				PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createHistogram(key.toString() + " Histogram", key.toString(),
+				"Count", dataset, PlotOrientation.VERTICAL, true, true, false);
 
 		// Set plot parameters
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key));
+		plot.setRangeAxis(
+				SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key.toString()));
 
 		// Set renderer parameters
 		XYBarRenderer renderer = ((XYBarRenderer) plot.getRenderer());
@@ -121,9 +123,9 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 	// This method is overridden since jfree has it's own implementation for histograms that generates
 	// buckets by itself which we need to map our objects to
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
-		String key = keys[0];
+		ChartKey key = keys[0];
 		// Now put the data in a bucket
 
 		// We currently need to generate the jfree dataset to create the SciomeSeries for the purpose of
@@ -141,7 +143,7 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				values[i++] = dataPoint.doubleValue();
 			}
 			if (values.length > 0)
-				dataset.addSeries(key, values, (int) bucketsize.doubleValue());
+				dataset.addSeries(key.toString(), values, (int) bucketsize.doubleValue());
 		}
 
 		List<SciomeSeries<String, Number>> seriesData = new ArrayList<>();

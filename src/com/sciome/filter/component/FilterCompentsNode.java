@@ -10,7 +10,6 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 import com.sciome.filter.DataFilterType;
-import com.sciome.filter.GenericFilterAnnotationExtractor;
 import com.sciome.filter.IntegerFilter;
 import com.sciome.filter.NumberFilter;
 import com.sciome.filter.StringFilter;
@@ -27,19 +26,19 @@ import javafx.scene.layout.VBox;
  */
 public class FilterCompentsNode extends VBox implements FilterComponentContainer
 {
-	private static final String					ADD_FILTER			= "--ADD FILTER--";
-	private List<FilterComponent>				filterComponents;
-	private GenericFilterAnnotationExtractor	filterAnnotationExtractor;
-	private Class								filterableClass;
-	private DataFilterComponentListener			dataFilterComponentListener;
-	private ComboBox<String>					addRemoveFilterCombo;
+	private static final String			ADD_FILTER			= "--ADD FILTER--";
+	private List<FilterComponent>		filterComponents;
+	private FilterDataExtractor			filterAnnotationExtractor;
+	private Class						filterableClass;
+	private DataFilterComponentListener	dataFilterComponentListener;
+	private ComboBox<String>			addRemoveFilterCombo;
 
-	private List<String>						visibleFilterNodes	= new ArrayList<>();
+	private List<String>				visibleFilterNodes	= new ArrayList<>();
 
 	// use this map to easily assoicate existing data filter with a key
-	private Map<String, DataFilter>				dataFilterMap		= new HashMap<>();
-	private ScrollPane							filterNodeScrollPane;
-	private VBox								filterComponentVbox;
+	private Map<String, DataFilter>		dataFilterMap		= new HashMap<>();
+	private ScrollPane					filterNodeScrollPane;
+	private VBox						filterComponentVbox;
 
 	//
 	public FilterCompentsNode(Class filterableClass, DataFilterComponentListener dataFilterComponentListener)
@@ -77,7 +76,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 
 		visibleFilterNodes = BMDExpressProperties.getInstance().getFilters(filterableClass.getName());
 
-		filterAnnotationExtractor = new GenericFilterAnnotationExtractor(filterableClass);
+		filterAnnotationExtractor = new FilterDataExtractor(filterableClass);
 		List<String> sortedKeyList = filterAnnotationExtractor.getKeys();
 		Collections.sort(sortedKeyList);
 		// addRemoveFilterButton = new Button("Add/Remove Filters");

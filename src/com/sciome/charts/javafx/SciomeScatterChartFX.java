@@ -2,6 +2,7 @@ package com.sciome.charts.javafx;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomeScatterChart;
 import com.sciome.charts.data.ChartConfiguration;
@@ -24,14 +25,14 @@ import javafx.scene.layout.StackPane;
  */
 public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDataExporter
 {
-	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
-			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
+	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
+			ChartKey key2, boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
 	}
 
-	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
-			SciomeChartListener chartListener)
+	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
+			ChartKey key2, SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, key1, key2, true, true, chartListener);
 	}
@@ -41,10 +42,10 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key1 = keys[0];
-		String key2 = keys[1];
+		ChartKey key1 = keys[0];
+		ChartKey key2 = keys[1];
 		Double max1 = getMaxMax(key1);
 		Double min1 = getMinMin(key1);
 
@@ -82,8 +83,8 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 		final Axis yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), min2, max2,
 				dataMin2);
 
-		xAxis.setLabel(key1);
-		yAxis.setLabel(key2);
+		xAxis.setLabel(key1.toString());
+		yAxis.setLabel(key2.toString());
 
 		ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
 

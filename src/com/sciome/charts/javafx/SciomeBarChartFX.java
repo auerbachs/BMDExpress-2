@@ -2,6 +2,7 @@ package com.sciome.charts.javafx;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeBarChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -23,7 +24,7 @@ import javafx.scene.layout.StackPane;
 public class SciomeBarChartFX extends SciomeBarChart
 {
 
-	public SciomeBarChartFX(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeBarChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key, chartListener);
@@ -35,9 +36,9 @@ public class SciomeBarChartFX extends SciomeBarChart
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key = keys[0];
+		ChartKey key = keys[0];
 		Double max = getMaxMax(key);
 		Double min = getMinMin(key);
 		Double dataMin = min;
@@ -56,7 +57,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 		yAxis = SciomeNumberAxisGeneratorFX.generateAxis(getLogYAxis().isSelected(), min, max, dataMin);
 
 		xAxis.setLabel("Category");
-		yAxis.setLabel(key);
+		yAxis.setLabel(key.toString());
 		BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
 
 		barChart.setTitle("Multiple Data Viewer: " + key);

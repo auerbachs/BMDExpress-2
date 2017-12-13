@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -25,10 +26,10 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 	protected final int	MAXITEMS	= 20;
 
 	@SuppressWarnings("unchecked")
-	public SciomeRangePlot(String title, List<ChartDataPack> chartDataPacks, String minKey, String maxKey,
-			String lowKey, String highKey, String middleKey, SciomeChartListener chartListener)
+	public SciomeRangePlot(String title, List<ChartDataPack> chartDataPacks, ChartKey minKey, ChartKey maxKey,
+			ChartKey lowKey, ChartKey highKey, ChartKey middleKey, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] { minKey, maxKey, lowKey, highKey, middleKey },
+		super(title, chartDataPacks, new ChartKey[] { minKey, maxKey, lowKey, highKey, middleKey },
 				chartListener);
 
 		this.addDataAtTop = true;
@@ -83,13 +84,13 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
-		String minKey = keys[0];
-		String maxKey = keys[1];
-		String lowKey = keys[2];
-		String key = keys[3];
-		String middleKey = keys[4];
+		ChartKey minKey = keys[0];
+		ChartKey maxKey = keys[1];
+		ChartKey lowKey = keys[2];
+		ChartKey key = keys[3];
+		ChartKey middleKey = keys[4];
 		Double axisMin = getMinMin(minKey);
 		Double axisMax = getMaxMax(maxKey);
 		if (axisMax == 0.0)

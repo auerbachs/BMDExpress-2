@@ -2,6 +2,8 @@ package com.sciome.filter;
 
 import java.util.List;
 
+import com.sciome.filter.component.FilterDataExtractor;
+
 /*
  * abstract class for making a data filter
  * S represents the class that should be annotated for filtratoin
@@ -15,7 +17,7 @@ public abstract class DataFilter<T, S>
 
 	protected DataFilterType					dataFilterType;
 	protected String							key;
-	protected GenericFilterAnnotationExtractor	filterAnnotationExtractor;
+	protected FilterDataExtractor	filterAnnotationExtractor;
 	private Class<S>							filterableAnnotatedClass;
 	// Value to compare object to
 	protected List<Object>						values;
@@ -32,7 +34,7 @@ public abstract class DataFilter<T, S>
 
 	private void init()
 	{
-		filterAnnotationExtractor = new GenericFilterAnnotationExtractor(filterableAnnotatedClass);
+		filterAnnotationExtractor = new FilterDataExtractor(filterableAnnotatedClass);
 	}
 
 	public abstract boolean passesFilter(S object);

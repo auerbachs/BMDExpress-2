@@ -16,6 +16,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
@@ -61,10 +62,10 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	protected Set<String>							genesToHighLight				= new HashSet<>();
 	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSet;
 
-	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] { key }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key }, chartListener);
 
 		getLogXAxis().setSelected(true);
 		getLogYAxis().setSelected(false);
@@ -160,10 +161,10 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
 
-		String key = keys[0];
+		ChartKey key = keys[0];
 		List<SciomeSeries<Number, Number>> seriesData = new ArrayList<>();
 
 		for (ChartDataPack chartDataPack : getChartDataPacks())

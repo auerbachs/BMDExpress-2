@@ -43,4 +43,10 @@ public class DefinedCategoryAnalysisResult extends CategoryAnalysisResult implem
 		return this.categoryIdentifier.toString();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

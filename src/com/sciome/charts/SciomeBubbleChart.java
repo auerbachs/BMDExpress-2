@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -25,10 +26,10 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 
 	private int				nodeCount;
 
-	public SciomeBubbleChart(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
-			String key3, SciomeChartListener chartListener)
+	public SciomeBubbleChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			ChartKey key3, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] { key1, key2, key3 }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2, key3 }, chartListener);
 		showChart();
 
 	}
@@ -72,11 +73,11 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
-		String key1 = keys[0];
-		String key2 = keys[1];
-		String key3 = keys[2];
+		ChartKey key1 = keys[0];
+		ChartKey key2 = keys[1];
+		ChartKey key3 = keys[2];
 		Double max1 = getMaxMax(key1);
 		Double max3 = getMaxMax(key3);
 		Double bubbleScale = (1.0 / BUBBLE_SCALE_FRACTION) / (max3 / max1);

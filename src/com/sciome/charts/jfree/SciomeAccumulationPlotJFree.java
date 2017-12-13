@@ -24,6 +24,7 @@ import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.util.ShapeUtilities;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -36,16 +37,16 @@ import javafx.scene.input.MouseButton;
 public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 {
 
-	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key, bucketsize, chartListener);
 	}
 
 	@Override
-	protected Node generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key1 = keys[0];
+		ChartKey key1 = keys[0];
 		String key2 = "Accumulation";
 		Double min1 = getMinMin(key1);
 		Double min2 = 0.0;
@@ -54,8 +55,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		// Create chart
-		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1, key2, dataset,
-				PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1.toString(), key2,
+				dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.clearAnnotations();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
@@ -91,7 +92,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		// plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setDomainAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1));
+		plot.setDomainAxis(
+				SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1.toString()));
 		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key2));
 
 		// Only want to zoom in if we any values have been set in chartConfig
@@ -206,7 +208,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				AccumulationData data = (AccumulationData) getSeriesData().get(series).getData().get(item);
 				List<Object> objects = (List<Object>) (data.getExtraValue());
 				return String.valueOf(joinObjects(objects, data.getYValue().doubleValue(),
-						data.getValuesList(), key1, MAX_TO_POPUP));
+						data.getValuesList(), key1.toString(), MAX_TO_POPUP));
 			}
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);

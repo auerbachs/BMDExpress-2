@@ -1,14 +1,15 @@
 package com.sciome.charts.data;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -16,11 +17,10 @@ import com.sciome.filter.DataFilterPack;
  * Takes a dataFilterPack which defines filters for the objects that are used to create the data.
  * 
  */
-public class ChartDataPackMaker<T, S>
+public class ChartDataPackMaker
 {
 
-	GenericChartDataExtractor	chartDataExtractor;
-	private DataFilterPack		dataFilterPack;
+	private DataFilterPack dataFilterPack;
 
 	public ChartDataPackMaker(DataFilterPack dataFilterPack)
 	{
@@ -30,13 +30,14 @@ public class ChartDataPackMaker<T, S>
 	/*
 	 * generate data packs. loop through the objects and pass them to the generateDataPack method.
 	 */
-	public List<ChartDataPack> generateDataPacks(List<T> objectsForChart)
+	public List<ChartDataPack> generateDataPacks(List<BMDExpressAnalysisDataSet> objectsForChart,
+			Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
 		List<ChartDataPack> dataPackList = new ArrayList<>();
 
-		for (Object obj : objectsForChart)
+		for (BMDExpressAnalysisDataSet obj : objectsForChart)
 		{
-			ChartDataPack dataPack = generateDataPack(obj);
+			ChartDataPack dataPack = generateDataPack(obj, mathedChartKeys, labelKey);
 			if (dataPack != null)
 				dataPackList.add(dataPack);
 		}
@@ -48,92 +49,56 @@ public class ChartDataPackMaker<T, S>
 	 * use annotation and reflection to figure out which method returns a list of objects that have data
 	 * points.
 	 */
-	public ChartDataPack generateDataPack(Object object)
+	public ChartDataPack generateDataPack(BMDExpressAnalysisDataSet object, Set<ChartKey> mathedChartKeys,
+			ChartKey labelKey)
 	{
-		// get the method that returns the chartable data points.
-		Method getChartableDataMethod = GenericChartDataExtractor.getAnnotatedMethod(object.getClass(),
-				ChartableData.class);
 
-		if (getChartableDataMethod == null)
-			return null;
+		Set<ChartKey> chartKeys = new HashSet<>();
+		for (String header : object.getColumnHeader())
+			chartKeys.add(new ChartKey(header, null));
 
-		// now invoke the metohd to get a list of objects
-		// with the datpoints.
-		Object chartableDataObjects = null;
-		try
-		{
-			chartableDataObjects = getChartableDataMethod.invoke(object);
-		}
-		catch (Exception e)
-		{}
-
-		// make sure we are getting a List back.
-		if (chartableDataObjects == null || !(chartableDataObjects instanceof List))
-			return null;
-
-		// make sure the list is not empty.
-		if (((List) chartableDataObjects).size() == 0)
-		{
-			return null;
-		}
-
-		// get the class of the first object of the list. we are hoping
-		// that it is one that has ChartableDataPoint annotations.
-		Class chartableDataObjectClass = ((List) chartableDataObjects).get(0).getClass();
-
-		// create the chart extractor class
-		GenericChartDataExtractor chartDataExtractor = new GenericChartDataExtractor(
-				chartableDataObjectClass);
+		chartKeys.addAll(mathedChartKeys);
 
 		List<ChartData> chartDataList = new ArrayList<>();
-
-		// The keys are part of the ChartableDataPoint definition
-		List<String> dataPointKeys = chartDataExtractor.getKeys();
-
-		for (Object dataPointObject : ((List) chartableDataObjects))
+		int i = -1;
+		for (BMDExpressAnalysisRow row : object.getAnalysisRows())
 		{
-			// does it pass the filter?
-			if (dataFilterPack != null && !dataFilterPack.passesFilter(dataPointObject))
-			{
+			i++;
+			// filter out rows that do not pass the filter criteria
+			if (dataFilterPack != null && !dataFilterPack.passesFilter(row))
 				continue;
-			}
 
-			// start seting up the ChartData object.
-			ChartData<S> chartData = new ChartData<>();
-			chartData.setCharttableObject((S) dataPointObject);
+			ChartData chartData = new ChartData();
+
+			chartData.setCharttableObject(row.getObject());
 			chartData.setDataPoints(new HashMap<>());
+			String label = "";
 
-			// grabe the name of this data
-			Method chartableDataPointLabelMethod = GenericChartDataExtractor
-					.getAnnotatedMethod(dataPointObject.getClass(), ChartableDataPointLabel.class);
-
-			// if no name then forget about adding this to the set.
-			if (chartableDataPointLabelMethod == null)
+			Object labelObject = object.getValueForHeaderAt(labelKey, i);
+			if (labelObject == null)
 				continue;
-			try
-			{
-				chartData.setDataPointLabel((String) chartableDataPointLabelMethod.invoke(dataPointObject));
-			}
-			catch (Exception e)
-			{
-				// if there is a problem calling the method, then forget about it.
-				continue;
-			}
+			label = labelObject.toString();
+			chartData.setDataPointLabel(label);
 
-			// look at the keys and start getting the values via the key's referenced method
-			for (String key : chartDataExtractor.getKeys())
+			for (ChartKey key : chartKeys)
 			{
-				Double value = chartDataExtractor.getDataPointValue(dataPointObject, key);
+				Object value = object.getValueForHeaderAt(key, i);
 				if (value == null)
 					continue;
+				Double doubleValue = null;
+				if (value instanceof Integer)
+					doubleValue = ((Integer) value).doubleValue();
+				else if (value instanceof Number)
+					doubleValue = ((Number) value).doubleValue();
+				else
+					continue;
 
-				// put the values in the ChartData data point Map.
-				chartData.getDataPoints().put(key, value);
+				// this will apply math transformation to the value
+				doubleValue = key.getValue(doubleValue);
+
+				chartData.getDataPoints().put(key, doubleValue);
+
 			}
-
-			// now add this record to chartdatalist
-			// chartData contains several values which can be plotted based on
-			// programatic or user selection.
 			chartDataList.add(chartData);
 
 		}
@@ -143,27 +108,11 @@ public class ChartDataPackMaker<T, S>
 			@Override
 			public int compare(ChartData o1, ChartData o2)
 			{
-				return o1.getDataPointLabel().compareTo(o2.getDataPointLabel());
+				return o1.getDataPointLabel().toLowerCase().compareTo(o2.getDataPointLabel().toLowerCase());
 			}
 		});
 
-		// finish building the chartdatpack
-		ChartDataPack chartDataPack = new ChartDataPack(chartDataList, dataPointKeys);
-
-		Method getChartableDataNameMethod = GenericChartDataExtractor.getAnnotatedMethod(object.getClass(),
-				ChartableDataLabel.class);
-
-		if (getChartableDataNameMethod == null)
-			return null;
-
-		String dataPackName = "";
-		try
-		{
-			dataPackName = (String) getChartableDataNameMethod.invoke(object);
-		}
-		catch (Exception e)
-		{}
-		chartDataPack.setName(dataPackName);
+		ChartDataPack chartDataPack = new ChartDataPack(chartDataList, new ArrayList<>(chartKeys));
 
 		return chartDataPack;
 

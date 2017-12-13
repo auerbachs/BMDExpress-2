@@ -11,8 +11,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.filter.annotation.Filterable;
 
 /*
  * base class for the statistical curve fitting/bmd models being ran on the data.
@@ -60,8 +58,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		this.id = id;
 	}
 
-	@Filterable(key = BMDResult.BMD)
-	@ChartableDataPoint(key = BMDResult.BMD)
 	public double getBMD()
 	{
 		return BMD;
@@ -72,8 +68,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		BMD = bMD;
 	}
 
-	@Filterable(key = BMDResult.BMDL)
-	@ChartableDataPoint(key = BMDResult.BMDL)
 	public double getBMDL()
 	{
 		return BMDL;
@@ -84,8 +78,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		BMDL = bMDL;
 	}
 
-	@Filterable(key = BMDResult.BMDU)
-	@ChartableDataPoint(key = BMDResult.BMDU)
 	public double getBMDU()
 	{
 		return BMDU;
@@ -96,8 +88,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		BMDU = bMD;
 	}
 
-	@Filterable(key = BMDResult.FIT_PVALUE)
-	@ChartableDataPoint(key = BMDResult.FIT_PVALUE)
 	public double getFitPValue()
 	{
 		return fitPValue;
@@ -108,8 +98,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		this.fitPValue = fitPValue;
 	}
 
-	@Filterable(key = BMDResult.FIT_LOG_LIKELIHOOD)
-	@ChartableDataPoint(key = BMDResult.FIT_LOG_LIKELIHOOD)
 	public double getFitLogLikelihood()
 	{
 		return fitLogLikelihood;
@@ -150,16 +138,12 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		this.curveParameters = curveParameters;
 	}
 
-	@Filterable(key = BMDResult.BMD_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMD_BMDL_RATIO)
 	@JsonIgnore
 	public double getBMDdiffBMDL()
 	{
 		return BMD / BMDL;
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMDL_RATIO)
 	@JsonIgnore
 	public double getBMDUdiffBMDL()
 	{
@@ -168,8 +152,6 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		return BMDU / BMDL;
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMD_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMD_RATIO)
 	@JsonIgnore
 	public double getBMDUdiffBMD()
 	{
@@ -187,5 +169,11 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 
 	@JsonIgnore
 	public abstract List<String> getParametersNames();
+
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
 
 }

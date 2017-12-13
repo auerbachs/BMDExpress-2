@@ -8,20 +8,18 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.bmdexpress2.util.NumberManager;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
-public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serializable, PrefilterResult {
+public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serializable, PrefilterResult
+{
 
 	/**
 	 * 
@@ -67,35 +65,28 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		this.probeResponse = probeResponse;
 	}
 
-	@Filterable(key = WilliamsTrendResults.PROBE_ID)
-	@ChartableDataPointLabel(key = WilliamsTrendResults.PROBE_ID)
 	@JsonIgnore
 	public String getProbeID()
 	{
 		return probeResponse.getProbe().getId();
 	}
 
-	@Filterable(key = WilliamsTrendResults.GENE_ID)
 	public String getGenes()
 	{
 		return genes;
 	}
 
-	@Filterable(key = WilliamsTrendResults.GENE_SYMBOL)
 	@JsonIgnore
 	public String getGeneSymbols()
 	{
 		return geneSymbols;
 	}
 
-	@Filterable(key = WilliamsTrendResults.UNADJUSTED_PVALUE)
-	@ChartableDataPoint(key = WilliamsTrendResults.UNADJUSTED_PVALUE)
 	public double getpValue()
 	{
 		return pValue;
 	}
 
-	@ChartableDataPoint(key = WilliamsTrendResults.NEG_LOG_UNADJUSTED_PVALUE)
 	@JsonIgnore
 	public double getNegativeLog10pValue()
 	{
@@ -108,15 +99,12 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		this.pValue = pValue;
 	}
 
-	@ChartableDataPoint(key = WilliamsTrendResults.NEG_LOG_ADJUSTED_PVALUE)
 	@JsonIgnore
 	public double getNegativeLogAdjustedPValue()
 	{
 		return NumberManager.negLog10(this.adjustedPValue);
 	}
 
-	@Filterable(key = WilliamsTrendResults.ADJUSTED_PVALUE)
-	@ChartableDataPoint(key = WilliamsTrendResults.ADJUSTED_PVALUE)
 	public double getAdjustedPValue()
 	{
 		return adjustedPValue;
@@ -127,15 +115,11 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		this.adjustedPValue = adjustedPValue;
 	}
 
-	@Filterable(key = WilliamsTrendResults.BEST_FOLD_CHANGE)
-	@ChartableDataPoint(key = WilliamsTrendResults.BEST_FOLD_CHANGE)
 	public Float getBestFoldChange()
 	{
 		return bestFoldChange;
 	}
 
-	@Filterable(key = WilliamsTrendResults.BEST_FOLD_CHANGE_ABS)
-	@ChartableDataPoint(key = WilliamsTrendResults.BEST_FOLD_CHANGE_ABS)
 	@JsonIgnore
 	public Float getBestFoldChangeABS()
 	{
@@ -183,7 +167,7 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		this.geneSymbols = geneSymbols.toString();
 		row.add(genes.toString());
 		row.add(geneSymbols.toString());
-		
+
 		row.add((pValue));
 		row.add((adjustedPValue));
 
@@ -224,6 +208,12 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 	public String toString()
 	{
 		return probeResponse.getProbe().getId() + " : " + genes + " : " + geneSymbols;
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

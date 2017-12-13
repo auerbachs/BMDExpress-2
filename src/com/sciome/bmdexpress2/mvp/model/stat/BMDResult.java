@@ -21,8 +21,6 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -59,6 +57,20 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		PREFILTER_ADJUSTEDPVALUE	= "Prefilter Adjusted P-Value";
 	public static final String		BEST_FOLDCHANGE				= "Max Fold Change";
 	public static final String		BEST_ABSFOLDCHANGE			= "Max Fold Change Absolute Value";
+	public static final String		PROBE_ID					= "Probe ID";
+	public static final String		GENE_IDS					= "Entrez Gene IDs";
+	public static final String		GENE_SYMBOLS				= "Genes Symbols";
+	public static final String		BEST_MODEL					= "Best Model";
+	public static final String		BEST_BMD					= "Best BMD";
+	public static final String		BEST_BMDL					= "Best BMDL";
+	public static final String		BEST_BMDU					= "Best BMDU";
+	public static final String		BEST_FITPVALUE				= "Best fitPValue";
+	public static final String		BEST_LOGLIKLIHOOD			= "Best fitLogLikelihood";
+	public static final String		BEST_AIC					= "Best AIC";
+	public static final String		BEST_ADVERSE_DIRECTION		= "Best adverseDirection";
+	public static final String		BEST_BMD_BMDL_RATIO			= "Best BMD/BMDL";
+
+	public static final String		BEST_POLY					= "Best Poly";
 
 	@JsonIgnore
 	public Long getID()
@@ -72,7 +84,6 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	}
 
 	@Override
-	@ChartableDataLabel(key = "Category Results Name")
 	public String getName()
 	{
 		return name;
@@ -84,7 +95,6 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		this.name = name;
 	}
 
-	@ChartableData(key = "Probe Stat Results")
 	public List<ProbeStatResult> getProbeStatResults()
 	{
 		return probeStatResults;

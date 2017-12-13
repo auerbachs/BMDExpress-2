@@ -31,9 +31,6 @@ import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.util.NumberManager;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.filter.annotation.Filterable;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = GOAnalysisResult.class, name = "go"),
@@ -195,21 +192,18 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.referenceGeneProbeStatResults = referenceGeneProbeStatResults;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.CATEGORY_ID)
 	@JsonIgnore
 	public String getCategoryID()
 	{
 		return categoryIdentifier.getId();
 	}
 
-	@Filterable(key = CategoryAnalysisResults.CATEGORY_DESCRIPTION)
 	@JsonIgnore
 	public String getCategoryDescription()
 	{
 		return categoryIdentifier.getTitle();
 	}
 
-	@Filterable(key = CategoryAnalysisResults.GO_TERM_LEVEL)
 	@JsonIgnore
 	public Integer getGotermLevel()
 	{
@@ -230,7 +224,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return null;
 	}
 
-	@Filterable(key = "Entrez Gene IDs")
 	@JsonIgnore
 	public String getGenes()
 	{
@@ -239,7 +232,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return genes;
 	}
 
-	@Filterable(key = "Gene Symbols")
 	@JsonIgnore
 	public String getGeneSymbols()
 	{
@@ -248,7 +240,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return geneSymbols;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG)
 	@JsonIgnore
 	public Double getNegLogOfFishers2Tail()
 	{
@@ -257,8 +248,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return NumberManager.negLog10(fishersExactTwoTailPValue);
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.NUM_SIGNFICANT_GENES)
-	@Filterable(key = CategoryAnalysisResults.NUM_SIGNFICANT_GENES)
 	public Integer getGeneCountSignificantANOVA()
 	{
 		return geneCountSignificantANOVA;
@@ -269,7 +258,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.geneCountSignificantANOVA = geneCountSignificantANOVA;
 	}
 
-	@Filterable(key = "Genes With BMD BMDL Ratio Below Value")
 	public Integer getGenesWithBMDBMDLRatioBelowValue()
 	{
 		return genesWithBMDBMDLRatioBelowValue;
@@ -285,7 +273,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithBMDUBMDLRatioBelowValue = value;
 	}
 
-	@Filterable(key = "Genes With BMDU BMDL Ratio Below Value")
 	public Integer getGenesWithBMDUBMDLRatioBelowValue()
 	{
 		return genesWithBMDUBMDLRatioBelowValue;
@@ -296,13 +283,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithBMDUBMDRatioBelowValue = value;
 	}
 
-	@Filterable(key = "Genes With BMDU BMD Ratio Below Value")
 	public Integer getGenesWithBMDUBMDRatioBelowValue()
 	{
 		return genesWithBMDUBMDRatioBelowValue;
 	}
 
-	@Filterable(key = "Genes With N-Fold Below low Postive Dose Value")
 	public Integer getGenesWithNFoldBelowLowPostiveDoseValue()
 	{
 		return genesWithNFoldBelowLowPostiveDoseValue;
@@ -313,7 +298,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithNFoldBelowLowPostiveDoseValue = genesWithNFoldBelowLowPostiveDoseValue;
 	}
 
-	@Filterable(key = "Genes With Max Fold Change >=")
 	public Integer getGenesWithFoldChangeAboveValue()
 	{
 		return genesWithFoldChangeAboveValue;
@@ -324,7 +308,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithFoldChangeAboveValue = genesWithFoldChangeAboveValue;
 	}
 
-	@Filterable(key = "Genes With Prefilter P-Value >=")
 	public Integer getGenesWithPrefilterPValueAboveValue()
 	{
 		return genesWithPrefilterPValueAboveValue;
@@ -335,7 +318,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithPrefilterPValueAboveValue = genesWithPValueAboveValue;
 	}
 
-	@Filterable(key = "Genes With Prefilter Adjusted P-Value >=")
 	public Integer getGenesWithPrefilterAdjustedPValueAboveValue()
 	{
 		return genesWithPrefilterAdjustedPValueAboveValue;
@@ -346,14 +328,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithPrefilterAdjustedPValueAboveValue = genesWithAdjustedPValueAboveValue;
 	}
 
-	@ChartableDataPoint(key = "Percentage")
-	@Filterable(key = "Percentage")
 	public Double getPercentage()
 	{
 		return percentage;
 	}
 
-	@Filterable(key = "All Gene Count")
 	public Integer getGeneAllCount()
 	{
 		return geneAllCount;
@@ -379,8 +358,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.percentage = percentage;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMD_MEAN)
 	public Double getBmdMean()
 	{
 		return bmdMean;
@@ -391,8 +368,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdMean = bmdMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMD_MEDIAN)
 	public Double getBmdMedian()
 	{
 		return bmdMedian;
@@ -403,8 +378,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdMedian = bmdMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_MINIUMUM)
-	@Filterable(key = CategoryAnalysisResults.BMD_MINIUMUM)
 	public Double getBmdMinimum()
 	{
 		return bmdMinimum;
@@ -415,7 +388,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdMinimum = bmdMinimum;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_MAXIMUM)
 	@JsonIgnore
 	public Double getBMDMaximum()
 	{
@@ -436,7 +408,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return currentMaxBMD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_MAXIMUM)
 	@JsonIgnore
 	public Double getBMDLMaximum()
 	{
@@ -457,8 +428,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return currentMaxBMDL;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_SD)
-	@Filterable(key = CategoryAnalysisResults.BMD_SD)
 	public Double getBmdSD()
 	{
 		if (bmdSD != null && bmdSD.isNaN())
@@ -501,15 +470,12 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			this.bmdWSD = bmdWSD;
 	}
 
-	@ChartableDataPointLabel
 	@JsonIgnore
 	public String getChartableDataLabel()
 	{
 		return this.getCategoryIdentifier().getId();
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDU_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDU_MEAN)
 	public Double getBmduMean()
 	{
 		return bmduMean;
@@ -520,8 +486,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmduMean = bmduMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDU_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDU_MEDIAN)
 	public Double getBmduMedian()
 	{
 		return bmduMedian;
@@ -532,8 +496,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmduMedian = bmduMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDU_MINIUMUM)
-	@Filterable(key = CategoryAnalysisResults.BMDU_MINIUMUM)
 	public Double getBmduMinimum()
 	{
 		return bmduMinimum;
@@ -544,8 +506,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmduMinimum = bmduMinimum;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDU_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDU_SD)
 	public Double getBmduSD()
 	{
 		if (bmduSD != null && bmduSD.isNaN())
@@ -588,8 +548,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			this.bmduWSD = bmduWSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDL_MEAN)
 	public Double getBmdlMean()
 	{
 		return bmdlMean;
@@ -600,8 +558,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdlMean = bmdlMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDL_MEDIAN)
 	public Double getBmdlMedian()
 	{
 		return bmdlMedian;
@@ -612,8 +568,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdlMedian = bmdlMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_MINIUMUM)
-	@Filterable(key = CategoryAnalysisResults.BMDL_MINIUMUM)
 	public Double getBmdlMinimum()
 	{
 		return bmdlMinimum;
@@ -624,8 +578,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdlMinimum = bmdlMinimum;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDL_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDL_SD)
 	public Double getBmdlSD()
 	{
 		if (bmdlSD != null && bmdlSD.isNaN())
@@ -668,8 +620,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			this.bmdlWSD = bmdlWSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_FIFTH_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMD_FIFTH_MEAN)
 	public Double getFifthPercentileIndex()
 	{
 		return fifthPercentileIndex;
@@ -690,8 +640,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdFifthPercentileTotalGenes = bmdFifthPercentileTotalGenes;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMD_TENTH_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMD_TENTH_MEAN)
 	public Double getTenthPercentileIndex()
 	{
 		return tenthPercentileIndex;
@@ -712,8 +660,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.bmdTenthPercentileTotalGenes = bmdTenthPercentileTotalGenes;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUP_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUP_MEAN)
 	public Double getGenesUpBMDMean()
 	{
 		return genesUpBMDMean;
@@ -724,8 +670,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDMean = genesUpBMDMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUP_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUP_MEDIAN)
 	public Double getGenesUpBMDMedian()
 	{
 		return genesUpBMDMedian;
@@ -736,8 +680,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDMedian = genesUpBMDMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUP_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDUP_SD)
 	public Double getGenesUpBMDSD()
 	{
 		if (genesUpBMDSD != null && genesUpBMDSD.isNaN())
@@ -750,8 +692,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDSD = genesUpBMDSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLUP_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDLUP_MEAN)
 	public Double getGenesUpBMDLMean()
 	{
 		return genesUpBMDLMean;
@@ -762,8 +702,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDLMean = genesUpBMDLMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLUP_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDLUP_MEDIAN)
 	public Double getGenesUpBMDLMedian()
 	{
 		return genesUpBMDLMedian;
@@ -774,8 +712,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDLMedian = genesUpBMDLMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLUP_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDLUP_SD)
 	public Double getGenesUpBMDLSD()
 	{
 		if (genesUpBMDLSD != null && genesUpBMDLSD.isNaN())
@@ -788,8 +724,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDLSD = genesUpBMDLSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUUP_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUUP_MEAN)
 	public Double getGenesUpBMDUMean()
 	{
 		return genesUpBMDUMean;
@@ -800,8 +734,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDUMean = genesUpBMDUMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUUP_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUUP_MEDIAN)
 	public Double getGenesUpBMDUMedian()
 	{
 		return genesUpBMDUMedian;
@@ -812,8 +744,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDUMedian = genesUpBMDUMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUUP_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDUUP_SD)
 	public Double getGenesUpBMDUSD()
 	{
 		if (genesUpBMDUSD != null && genesUpBMDUSD.isNaN())
@@ -826,8 +756,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesUpBMDUSD = genesUpBMDUSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDDOWN_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDDOWN_MEAN)
 	public Double getGenesDownBMDMean()
 	{
 		return genesDownBMDMean;
@@ -838,8 +766,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDMean = genesDownBMDMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDDOWN_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDDOWN_MEDIAN)
 	public Double getGenesDownBMDMedian()
 	{
 		return genesDownBMDMedian;
@@ -850,8 +776,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDMedian = genesDownBMDMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDDOWN_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDDOWN_SD)
 	public Double getGenesDownBMDSD()
 	{
 		if (genesDownBMDSD != null && genesDownBMDSD.isNaN())
@@ -864,8 +788,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDSD = genesDownBMDSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLDOWN_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDLDOWN_MEAN)
 	public Double getGenesDownBMDLMean()
 	{
 		return genesDownBMDLMean;
@@ -876,8 +798,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDLMean = genesDownBMDLMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLDOWN_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDLDOWN_MEDIAN)
 	public Double getGenesDownBMDLMedian()
 	{
 		return genesDownBMDLMedian;
@@ -888,8 +808,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDLMedian = genesDownBMDLMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLDOWN_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDLDOWN_SD)
 	public Double getGenesDownBMDLSD()
 	{
 		if (genesDownBMDLSD != null && genesDownBMDLSD.isNaN())
@@ -902,8 +820,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDLSD = genesDownBMDLSD;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUDOWN_MEAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUDOWN_MEAN)
 	public Double getGenesDownBMDUMean()
 	{
 		return genesDownBMDUMean;
@@ -914,8 +830,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDUMean = genesDownBMDUMean;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUDOWN_MEDIAN)
-	@Filterable(key = CategoryAnalysisResults.BMDUDOWN_MEDIAN)
 	public Double getGenesDownBMDUMedian()
 	{
 		return genesDownBMDUMedian;
@@ -926,8 +840,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesDownBMDUMedian = genesDownBMDUMedian;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUDOWN_SD)
-	@Filterable(key = CategoryAnalysisResults.BMDUDOWN_SD)
 	public Double getGenesDownBMDUSD()
 	{
 		if (genesDownBMDUSD != null && genesDownBMDUSD.isNaN())
@@ -961,7 +873,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithConflictingProbeSets = genesWithConflictingProbeSets;
 	}
 
-	@Filterable(key = "Genes With BMD <= Highest Dose")
 	public Integer getGenesWithBMDLessEqualHighDose()
 	{
 		return genesWithBMDLessEqualHighDose;
@@ -972,7 +883,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithBMDLessEqualHighDose = genesWithBMDLessEqualHighDose;
 	}
 
-	@Filterable(key = "Genes With BMD pValue >= N")
 	public Integer getGenesWithBMDpValueGreaterEqualValue()
 	{
 		return genesWithBMDpValueGreaterEqualValue;
@@ -983,8 +893,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.genesWithBMDpValueGreaterEqualValue = genesWithBMDpValueGreaterEqualValue;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.FISHERS_LEFT)
-	@Filterable(key = CategoryAnalysisResults.FISHERS_LEFT)
 	public Double getFishersExactLeftPValue()
 	{
 		return fishersExactLeftPValue;
@@ -995,8 +903,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.fishersExactLeftPValue = fishersExactLeftPValue;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.FISHERS_RIGHT)
-	@Filterable(key = CategoryAnalysisResults.FISHERS_RIGHT)
 	public Double getFishersExactRightPValue()
 	{
 		return fishersExactRightPValue;
@@ -1007,8 +913,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.fishersExactRightPValue = fishersExactRightPValue;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.FISHERS_TWO_TAIL)
-	@Filterable(key = CategoryAnalysisResults.FISHERS_TWO_TAIL)
 	public Double getFishersExactTwoTailPValue()
 	{
 		return fishersExactTwoTailPValue;
@@ -1020,7 +924,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	}
 
 	// add in the ratios filters
-	@Filterable(key = CategoryAnalysisResults.BMDU_BMDL_MEDIAN_RATIO)
 	@JsonIgnore
 	public Double getBMDUdivBMDLMEDIAN()
 	{
@@ -1031,7 +934,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return this.bmduMedian / this.bmdlMedian;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.BMD_BMDL_MEDIAN_RATIO)
 	@JsonIgnore
 	public Double getBMDdivBMDLMEDIAN()
 	{
@@ -1043,7 +945,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return this.bmdMedian / this.bmdlMedian;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.BMDU_BMD_MEDIAN_RATIO)
 	@JsonIgnore
 	public Double getBMDUdivBMDMEDIAN()
 	{
@@ -1054,7 +955,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return this.bmduMedian / this.bmdMedian;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.BMDU_BMDL_MEAN_RATIO)
 	@JsonIgnore
 	public Double getBMDUdivBMDLMEAN()
 	{
@@ -1065,7 +965,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return this.bmduMean / this.bmdlMean;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.BMD_BMDL_MEAN_RATIO)
 	@JsonIgnore
 	public Double getBMDdivBMDLMEAN()
 	{
@@ -1076,7 +975,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return this.bmdMean / this.bmdlMean;
 	}
 
-	@Filterable(key = CategoryAnalysisResults.BMDU_BMD_MEAN_RATIO)
 	@JsonIgnore
 	public Double getBMDUdivBMDMEAN()
 	{
@@ -1397,7 +1295,6 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		genesThatPassedAllFilters = number;
 	}
 
-	@Filterable(key = "Genes That Passed All Filters")
 	@JsonIgnore
 	public Integer getAllGenesPassedAllFilters()
 	{
@@ -2140,94 +2037,69 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return stringBuffer.toString();
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.OVERALL_DIRECTION)
-	@Filterable(key = CategoryAnalysisResults.OVERALL_DIRECTION)
 	public AdverseDirectionEnum getOverallDirection()
 	{
 		return overallDirection;
 	}
 
 	// fold change stats
-	@ChartableDataPoint(key = CategoryAnalysisResults.TOTAL_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.TOTAL_FOLD_CHANGE)
+
 	public Double gettotalFoldChange()
 	{
 		return totalFoldChange;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.MEAN_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.MEAN_FOLD_CHANGE)
 	public Double getmeanFoldChange()
 	{
 		return meanFoldChange;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.MEDIAN_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.MEDIAN_FOLD_CHANGE)
 	public Double getmedianFoldChange()
 	{
 		return medianFoldChange;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.MAX_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.MAX_FOLD_CHANGE)
 	public Double getmaxFoldChange()
 	{
 		return maxFoldChange;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.MIN_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.MIN_FOLD_CHANGE)
 	public Double getminFoldChange()
 	{
 		return minFoldChange;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.STDDEV_FOLD_CHANGE)
-	@Filterable(key = CategoryAnalysisResults.STDDEV_FOLD_CHANGE)
 	public Double getstdDevFoldChange()
 	{
 		return stdDevFoldChange;
 	}
 
 	// 95% confidence interval stats
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLOWER95)
-	@Filterable(key = CategoryAnalysisResults.BMDLOWER95)
 	public Double getbmdLower95()
 	{
 		return bmdLower95;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUPPER95)
-	@Filterable(key = CategoryAnalysisResults.BMDUPPER95)
 	public Double getbmdUpper95()
 	{
 		return bmdUpper95;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLLOWER95)
-	@Filterable(key = CategoryAnalysisResults.BMDLLOWER95)
 	public Double getbmdlLower95()
 	{
 		return bmdlLower95;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDLUPPER95)
-	@Filterable(key = CategoryAnalysisResults.BMDLUPPER95)
 	public Double getbmdlUpper95()
 	{
 		return bmdlUpper95;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDUUPPER95)
-	@Filterable(key = CategoryAnalysisResults.BMDUUPPER95)
 	public Double getbmduUpper95()
 	{
 		return bmduUpper95;
 	}
 
-	@ChartableDataPoint(key = CategoryAnalysisResults.BMDULOWER95)
-	@Filterable(key = CategoryAnalysisResults.BMDULOWER95)
 	public Double getbmduLower95()
 	{
 		return bmduLower95;

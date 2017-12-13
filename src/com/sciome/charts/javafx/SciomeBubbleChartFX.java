@@ -2,6 +2,7 @@ package com.sciome.charts.javafx;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeBubbleChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -29,8 +30,8 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 	// map that keeps track of enough information to instantiate a node.
 	// so we don't have to store 10,000 nodes in memory
 
-	public SciomeBubbleChartFX(String title, List<ChartDataPack> chartDataPacks, String key1, String key2,
-			String key3, SciomeChartListener chartListener)
+	public SciomeBubbleChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			ChartKey key3, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, key3, chartListener);
 
@@ -41,11 +42,11 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key1 = keys[0];
-		String key2 = keys[1];
-		String key3 = keys[2];
+		ChartKey key1 = keys[0];
+		ChartKey key2 = keys[1];
+		ChartKey key3 = keys[2];
 		Double max1 = getMaxMax(key1);
 		Double max2 = getMaxMax(key2);
 
@@ -74,8 +75,8 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 
 		BubbleChart<Number, Number> blc = new BubbleChart<Number, Number>(xAxis, yAxis);
 
-		xAxis.setLabel(key1);
-		yAxis.setLabel(key2);
+		xAxis.setLabel(key1.toString());
+		yAxis.setLabel(key2.toString());
 		blc.setTitle(key1 + " Vs. " + key2 + ": Bubble Size=" + key3);
 
 		Double scaleValue = max2 / max1;

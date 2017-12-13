@@ -14,37 +14,23 @@ import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
-public class OriogenResults extends BMDExpressAnalysisDataSet implements Serializable, IStatModelProcessable, PrefilterResults {
+public class OriogenResults extends BMDExpressAnalysisDataSet
+		implements Serializable, IStatModelProcessable, PrefilterResults
+{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 343075642510090330L;
+	private static final long		serialVersionUID	= 343075642510090330L;
 
-	private String						name;
+	private String					name;
 
-	private DoseResponseExperiment		doseResponseExperiment;
-	private List<OriogenResult>			oriogenResults;
-	private AnalysisInfo				analysisInfo;
-	private transient List<String>		columnHeader;
+	private DoseResponseExperiment	doseResponseExperiment;
+	private List<OriogenResult>		oriogenResults;
+	private AnalysisInfo			analysisInfo;
+	private transient List<String>	columnHeader;
 
-	private Long						id;
-
-	/* define chartabble key values */
-	public static final String			UNADJUSTED_PVALUE			= "Unadjusted P-Value";
-	public static final String			ADJUSTED_PVALUE				= "Adjusted P-Value";
-	public static final String			NEG_LOG_ADJUSTED_PVALUE		= "Negative Log 10 Adjusted P-Value";
-	public static final String			BEST_FOLD_CHANGE			= "Max Fold Change";
-	public static final String			BEST_FOLD_CHANGE_ABS		= "Max Fold Change Unsigned";
-	public static final String			FOLD_CHANGE					= "Fold Change";
-	public static final String			GENE_ID						= "Gene ID";
-	public static final String			GENE_SYMBOL					= "Gene Symbol";
-	public static final String			PROBE_ID					= "Probe ID";
-	public static final String			PROFILE						= "Profile";
-
-	public static final String			NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
+	private Long					id;
 
 	@JsonIgnore
 	public Long getID()
@@ -57,7 +43,6 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 		this.id = id;
 	}
 
-	@ChartableData(key = "Oriogen")
 	public List<OriogenResult> getOriogenResults()
 	{
 		return oriogenResults;
@@ -68,7 +53,6 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 		this.oriogenResults = OriogenResults;
 	}
 
-	@ChartableDataLabel(key = "Oriogen")
 	@Override
 	public String getName()
 	{
@@ -235,16 +219,18 @@ public class OriogenResults extends BMDExpressAnalysisDataSet implements Seriali
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PrefilterResult> getPrefilterResults() {
+	public List<PrefilterResult> getPrefilterResults()
+	{
 		return (List<PrefilterResult>) (List<?>) oriogenResults;
 	}
 
 	@Override
 	@JsonIgnore
-	public LogTransformationEnum getLogTransformation() {
+	public LogTransformationEnum getLogTransformation()
+	{
 		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 }

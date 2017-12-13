@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -14,11 +15,11 @@ import com.sciome.charts.model.SciomeSeries;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -33,11 +34,11 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 	protected Double	bucketsize			= 20.0;
 	protected final int	MAX_TOOL_TIP_SHOWS	= 20;
 
-	public SciomeHistogram(String title, List<ChartDataPack> chartDataPacks, String key, Double bucketsize,
+	public SciomeHistogram(String title, List<ChartDataPack> chartDataPacks, ChartKey key, Double bucketsize,
 			SciomeChartListener chartListener)
 	{
 
-		super(title, chartDataPacks, new String[] { key }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key }, chartListener);
 		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e)
@@ -74,14 +75,16 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		return sb.toString();
 	}
 
-	protected Double getBucketSize() {
+	protected Double getBucketSize()
+	{
 		return this.bucketsize;
 	}
-	
-	protected void setBucketSize(Double bucketsize) {
+
+	protected void setBucketSize(Double bucketsize)
+	{
 		this.bucketsize = bucketsize;
 	}
-	
+
 	@Override
 	protected boolean isXAxisDefineable()
 	{
@@ -105,13 +108,13 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
 
-		String key = keys[0];
+		ChartKey key = keys[0];
 		Double max = getMaxMax(key);
 		Double min = getMinMin(key);
-		
+
 		if (bucketsize == null)
 			bucketsize = 20.0;
 		Double bucketSize = (max - min) / bucketsize;
@@ -151,7 +154,7 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		}
 		List<SciomeSeries<String, Number>> seriesData = new ArrayList<>();
 		SciomeSeries<String, Number> series1 = new SciomeSeries<>();
-		series1.setName(key);
+		series1.setName(key.toString());
 
 		DecimalFormat df = new DecimalFormat("#.###");
 		for (int i = 0; i <= bucketsize.intValue(); i++)
@@ -173,7 +176,7 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 	{
 		List<String> returnList = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("series");
 		sb.append("\t");
 		sb.append("x");
@@ -182,7 +185,7 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 		sb.append("\t");
 		sb.append("components delimited by ///");
 		returnList.add(sb.toString());
-		
+
 		for (SciomeSeries<String, Number> seriesData : getSeriesData())
 		{
 			for (SciomeData<String, Number> xychartData : seriesData.getData())
@@ -201,7 +204,7 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 						components.append("///");
 					components.append(obj.toString());
 				}
-				
+
 				sb.append(seriesData.getName());
 				sb.append("\t");
 				sb.append(X);
@@ -218,8 +221,9 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 
 		return returnList;
 	}
-	
-	private void showConfiguration() {
+
+	private void showConfiguration()
+	{
 		Dialog<Boolean> dialog = new Dialog<>();
 		dialog.setTitle("Chart Configuration");
 		dialog.setResizable(true);
@@ -258,8 +262,10 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 					try
 					{
 						setBucketSize(Double.valueOf(bucketSizeTF.getText()));
-					} catch(Exception e) {
-						
+					}
+					catch (Exception e)
+					{
+
 					}
 					return true;
 				}

@@ -43,4 +43,10 @@ public class PathwayAnalysisResult extends CategoryAnalysisResult implements Ser
 		return this.categoryIdentifier.toString();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

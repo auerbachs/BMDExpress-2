@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartData;
@@ -46,7 +47,7 @@ public abstract class ScrollableSciomeChartFX<X, Y> extends SciomeChartBase<X, Y
 	private ChangeListener<Number>			sliderChangeListener;
 	private int								currentSliderValue	= 1;
 
-	public ScrollableSciomeChartFX(String title, List<ChartDataPack> chartDataPacks, String[] keys,
+	public ScrollableSciomeChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, keys, chartListener);

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.SciomePieChart;
 import com.sciome.charts.data.ChartConfiguration;
@@ -38,7 +39,7 @@ public class SciomePieChartFX extends SciomePieChart implements ChartDataExporte
 	 * generate a pie chart and return
 	 */
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
 
 		ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();

@@ -2,6 +2,7 @@ package com.sciome.charts;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 
@@ -16,12 +17,12 @@ public abstract class SciomeLineChart extends SciomeChartBase<Number, Number>
 	public SciomeLineChart(String title, List<ChartDataPack> chartDataPacks,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new String[] {}, chartListener);
+		super(title, chartDataPacks, new ChartKey[] {}, chartListener);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -50,7 +51,7 @@ public abstract class SciomeLineChart extends SciomeChartBase<Number, Number>
 	 * fill up the sciome series data structure so implementing classes can use it to create charts
 	 */
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(String[] keys, List<ChartDataPack> chartPacks)
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
 	{
 
 	}

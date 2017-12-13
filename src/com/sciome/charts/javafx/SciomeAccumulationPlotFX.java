@@ -2,6 +2,7 @@ package com.sciome.charts.javafx;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -23,7 +24,7 @@ import javafx.scene.layout.StackPane;
 public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 {
 
-	public SciomeAccumulationPlotFX(String title, List<ChartDataPack> chartDataPacks, String key,
+	public SciomeAccumulationPlotFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key, bucketsize, chartListener);
@@ -32,9 +33,9 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected Chart generateChart(String[] keys, ChartConfiguration chartConfig)
+	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		String key1 = keys[0];
+		ChartKey key1 = keys[0];
 		String key2 = "Accumulation";
 		Double dataMin = getMinMin(key1);
 		// final NumberAxis xAxis = new NumberAxis();
@@ -49,7 +50,7 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 				chartConfig == null ? null : chartConfig.getMinX(),
 				chartConfig == null ? null : chartConfig.getMaxX(), dataMin);
 
-		xAxis.setLabel(key1);
+		xAxis.setLabel(key1.toString());
 		yAxis.setLabel(key2);
 		// creating the chart
 		final LineChart<Number, Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
@@ -71,7 +72,7 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 					XYChart.Data theData = new XYChart.Data(value.getXValue(), value.getYValue());
 					theData.setExtraValue(value.getExtraValue());
 					theData.setNode(userObjectPane(value.getExtraValue(), value.getYValue().doubleValue(),
-							value.getValuesList(), key1));
+							value.getValuesList(), key1.toString()));
 					series.getData().add(theData);
 
 				}
