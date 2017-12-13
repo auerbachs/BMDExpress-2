@@ -219,7 +219,12 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null || columnHeader.size() == 0)
+		{
 			fillColumnHeader();
+			// refresh all the data rows so all transient properties are availabe
+			for (CategoryAnalysisResult result : this.categoryAnalsyisResults)
+				result.createRowData();
+		}
 		return columnHeader;
 	}
 

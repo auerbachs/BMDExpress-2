@@ -83,18 +83,16 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 				Object value = "";
 
 				// Go analysis result has a couple special fields for identifier.
-				if (value != null)
-					items.add(value.toString());
 				if (csr instanceof GOAnalysisResult)
 					value = method.invoke((GOAnalysisResult) csr, null);
 				else
 					value = method.invoke(csr, null);
-				if (value != null)
-					items.add(value.toString());
+				if (value != null && !value.toString().trim().equals(""))
+					items.add(value.toString().trim());
 			}
 			catch (Exception e)
 			{
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 

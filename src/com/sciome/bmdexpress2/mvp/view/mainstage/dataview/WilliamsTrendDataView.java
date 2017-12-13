@@ -46,8 +46,8 @@ public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResul
 			try
 			{
 				Object value = method.invoke(williams, null);
-				if (value != null)
-					items.add(value.toString());
+				if (value != null && !value.toString().trim().equals(""))
+					items.add(value.toString().trim());
 			}
 			catch (Exception e)
 			{

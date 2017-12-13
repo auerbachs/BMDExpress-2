@@ -13,14 +13,15 @@ public class FilterComponentFactory
 			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
 			Method method, FilterComponentContainer container)
 	{
-		if (filterFieldClass.equals(String.class))
-			return new StringFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
-					container);
-		else if (filterFieldClass.equals(Integer.class))
+		if (filterFieldClass.equals(Integer.class))
 			return new IntegerFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
 					container);
-		else
+		else if (filterFieldClass.equals(Float.class) || filterFieldClass.equals(Double.class)
+				|| filterFieldClass.equals(Number.class))
 			return new NumericFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
+					container);
+		else // when in doubt, default to string filter component
+			return new StringFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
 					container);
 	}
 

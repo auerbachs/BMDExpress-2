@@ -109,11 +109,13 @@ public class StringFilterComponent extends FilterComponent
 			{
 				if (!isClearing)
 				{
-					dataFilterComponentListener.dataFilterChanged();
 					keyLabel.setText(key + ": " + checkComboBox.getCheckModel().getCheckedItems().size()
 							+ " selected.");
 					suggestedValuesForFilter.clear();
-					suggestedValuesForFilter.addAll(checkComboBox.getCheckModel().getCheckedItems());
+					for (String str : checkComboBox.getCheckModel().getCheckedItems())
+						suggestedValuesForFilter.add(str.toLowerCase());
+
+					dataFilterComponentListener.dataFilterChanged();
 				}
 			}
 		});

@@ -18,7 +18,6 @@ import com.sciome.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -33,7 +32,6 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	private GenericFilterAnnotationExtractor	filterAnnotationExtractor;
 	private Class								filterableClass;
 	private DataFilterComponentListener			dataFilterComponentListener;
-	private Button								addRemoveFilterButton;
 	private ComboBox<String>					addRemoveFilterCombo;
 
 	private List<String>						visibleFilterNodes	= new ArrayList<>();
@@ -188,17 +186,13 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 				continue;
 			DataFilter df = null;
 			Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
-			if (returnType.equals(String.class))
-			{
-				df = new StringFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
-						fc.getValues());
-			}
-			else if (returnType.equals(Integer.class))
+			if (returnType.equals(Integer.class))
 			{
 				df = new IntegerFilter<>(DataFilterType.BETWEEN, filterableClass, fc.getFilterKey(),
 						fc.getValues());
 			}
-			else
+			else if (returnType.equals(Float.class) || returnType.equals(Double.class)
+					|| returnType.equals(Number.class))
 			{
 				try
 				{
@@ -211,7 +205,11 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 				}
 
 			}
+			else
+				df = new StringFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
+						fc.getValues());
 			dataFilters.add(df);
+			dataFilterMap.put(df.getKey(), df);
 		}
 
 		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters);

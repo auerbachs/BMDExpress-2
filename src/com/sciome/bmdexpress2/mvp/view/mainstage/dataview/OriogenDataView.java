@@ -45,8 +45,8 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 			try
 			{
 				Object value = method.invoke(oriogenResult, null);
-				if (value != null)
-					items.add(value.toString());
+				if (value != null && !value.toString().trim().equals(""))
+					items.add(value.toString().trim());
 			}
 			catch (Exception e)
 			{

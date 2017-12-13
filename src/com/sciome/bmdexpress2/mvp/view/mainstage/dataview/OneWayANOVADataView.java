@@ -48,8 +48,8 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 			try
 			{
 				Object value = method.invoke(onewayResult, null);
-				if (value != null)
-					items.add(value.toString());
+				if (value != null && !value.toString().trim().equals(""))
+					items.add(value.toString().trim());
 			}
 			catch (Exception e)
 			{

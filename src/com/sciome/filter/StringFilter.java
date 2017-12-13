@@ -22,7 +22,7 @@ public class StringFilter<T> extends DataFilter<String, T>
 		Set<Object> stringSet = new HashSet<>(getValues());
 		try
 		{
-			String objectValue = ((String) filterAnnotationExtractor.getFilterableValue(object, key))
+			String objectValue = (filterAnnotationExtractor.getFilterableValue(object, key)).toString()
 					.toLowerCase();
 			switch (dataFilterType)
 			{
@@ -30,7 +30,7 @@ public class StringFilter<T> extends DataFilter<String, T>
 					return stringSet.contains(objectValue);
 				case CONTAINS:
 					for (Object obj : stringSet)
-						if (objectValue.contains(((String) obj).toLowerCase()))
+						if (objectValue.contains(obj.toString().toLowerCase()))
 							return true;
 				default:
 					break;
