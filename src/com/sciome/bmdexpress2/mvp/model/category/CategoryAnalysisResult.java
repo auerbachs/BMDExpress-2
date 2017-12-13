@@ -1051,9 +1051,9 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 		headers.add("Genes That Passed All Filters");
 
-		headers.add("Fisher's Exact Left P-Value");
-		headers.add("Fisher's Exact Right P-Value");
-		headers.add("Fisher's Exact Two-Tailed P-Value");
+		headers.add(CategoryAnalysisResults.FISHERS_LEFT);
+		headers.add(CategoryAnalysisResults.FISHERS_RIGHT);
+		headers.add(CategoryAnalysisResults.FISHERS_TWO_TAIL);
 
 		headers.add("Percentage");
 		headers.add("Entrez Gene IDs");
@@ -1065,24 +1065,24 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			headers.add("Genes with Conflicting Probesets");
 		}
 
-		headers.add("BMD Mean");
-		headers.add("BMD Median");
-		headers.add("BMD Minimum");
-		headers.add("BMD SD");
+		headers.add(CategoryAnalysisResults.BMD_MEAN);
+		headers.add(CategoryAnalysisResults.BMD_MEDIAN);
+		headers.add(CategoryAnalysisResults.BMD_MINIUMUM);
+		headers.add(CategoryAnalysisResults.BMD_SD);
 		headers.add("BMD wMean");
 		headers.add("BMD wSD");
 
-		headers.add("BMDL Mean");
-		headers.add("BMDL Median");
-		headers.add("BMDL Minimum");
-		headers.add("BMDL SD");
+		headers.add(CategoryAnalysisResults.BMDL_MEAN);
+		headers.add(CategoryAnalysisResults.BMDL_MEDIAN);
+		headers.add(CategoryAnalysisResults.BMDL_MINIUMUM);
+		headers.add(CategoryAnalysisResults.BMDL_SD);
 		headers.add("BMDL wMean");
 		headers.add("BMDL wSD");
 
-		headers.add("BMDU Mean");
-		headers.add("BMDU Median");
-		headers.add("BMDU Minimum");
-		headers.add("BMDU SD");
+		headers.add(CategoryAnalysisResults.BMDU_MEAN);
+		headers.add(CategoryAnalysisResults.BMDU_MEDIAN);
+		headers.add(CategoryAnalysisResults.BMDU_MINIUMUM);
+		headers.add(CategoryAnalysisResults.BMDU_SD);
 		headers.add("BMDU wMean");
 		headers.add("BMDU wSD");
 

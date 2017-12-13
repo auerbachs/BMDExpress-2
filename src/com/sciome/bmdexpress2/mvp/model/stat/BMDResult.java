@@ -51,8 +51,6 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BMD_BMDL_RATIO				= "Best BMD/BMDL";
 	public static final String		BMDU_BMDL_RATIO				= "Best BMDU/BMDL";
 	public static final String		BMDU_BMD_RATIO				= "Best BMDU/BMD";
-	public static final String		FIT_PVALUE					= "Best Fit P-Value";
-	public static final String		FIT_LOG_LIKELIHOOD			= "Best Fit Log-Likelihood";
 	public static final String		PREFILTER_PVALUE			= "Prefilter P-Value";
 	public static final String		PREFILTER_ADJUSTEDPVALUE	= "Prefilter Adjusted P-Value";
 	public static final String		BEST_FOLDCHANGE				= "Max Fold Change";

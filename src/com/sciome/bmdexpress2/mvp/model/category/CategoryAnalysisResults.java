@@ -86,8 +86,8 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				BMD_BMDL_MEAN_RATIO					= "BMD Mean/BMDL Mean";
 	public static final String				BMDU_BMD_MEAN_RATIO					= "BMDU Mean/BMD Mean";
 
-	public static final String				CATEGORY_ID							= "Category ID";
-	public static final String				CATEGORY_DESCRIPTION				= "Category Description";
+	public static final String				CATEGORY_ID							= "Pathway ID";
+	public static final String				CATEGORY_DESCRIPTION				= "Pathway Name";
 	public static final String				GO_TERM_LEVEL						= "GO Term Level";
 
 	public static final String				OVERALL_DIRECTION					= "Overall Direction";

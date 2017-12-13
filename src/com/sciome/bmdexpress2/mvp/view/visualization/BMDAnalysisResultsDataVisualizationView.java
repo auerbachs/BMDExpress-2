@@ -51,8 +51,8 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 				new ChartKey(BMDResult.BMDL, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 		chartCache.put(BMDU_HISTOGRAM + "-" + BMDResult.BMDU, new SciomeHistogramJFree("", new ArrayList<>(),
 				new ChartKey(BMDResult.BMDU, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
-		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE,
-				new SciomeHistogramJFree("", new ArrayList<>(), new ChartKey(BMDResult.FIT_PVALUE, null),
+		chartCache.put(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.BEST_FITPVALUE,
+				new SciomeHistogramJFree("", new ArrayList<>(), new ChartKey(BMDResult.BEST_FITPVALUE, null),
 						20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMDL, new SciomeAccumulationPlotJFree(
@@ -62,9 +62,9 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		chartCache.put(ACCUMULATION_CHARTS + "-" + BMDResult.BMDU, new SciomeAccumulationPlotJFree(
 				"Accumulation", new ArrayList<>(), new ChartKey(BMDResult.BMDU, null), 0.0, this));
 
-		chartCache.put(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.FIT_LOG_LIKELIHOOD,
+		chartCache.put(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.BEST_LOGLIKLIHOOD,
 				new SciomeHistogramJFree("", new ArrayList<>(),
-						new ChartKey(BMDResult.FIT_LOG_LIKELIHOOD, null), 20.0,
+						new ChartKey(BMDResult.BEST_LOGLIKLIHOOD, null), 20.0,
 						BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
@@ -111,14 +111,14 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		}
 		else if (chartKey.equals(FIT_PVALUE_HISTOGRAM))
 		{
-			SciomeChartBase chart = chartCache.get(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.FIT_PVALUE);
+			SciomeChartBase chart = chartCache.get(FIT_PVALUE_HISTOGRAM + "-" + BMDResult.BEST_FITPVALUE);
 			chartsList.add(chart);
 			chart.redrawCharts(chartDataPacks);
 		}
 		else if (chartKey.equals(FIT_LOG_LIKELIHOOD_HISTOGRAM))
 		{
 			SciomeChartBase chart = chartCache
-					.get(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.FIT_LOG_LIKELIHOOD);
+					.get(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.BEST_LOGLIKLIHOOD);
 			chartsList.add(chart);
 			chart.redrawCharts(chartDataPacks);
 		}

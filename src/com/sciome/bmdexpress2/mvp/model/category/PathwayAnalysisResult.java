@@ -18,8 +18,8 @@ public class PathwayAnalysisResult extends CategoryAnalysisResult implements Ser
 	{
 		List<String> headers = super.generateColumnHeader();
 
-		headers.add(0, "Pathway Name");
-		headers.add(0, "Pathway ID");
+		headers.add(0, CategoryAnalysisResults.CATEGORY_DESCRIPTION);
+		headers.add(0, CategoryAnalysisResults.CATEGORY_ID);
 
 		return headers;
 	}

@@ -14,7 +14,7 @@ public class VisualizationService implements IVisualizationService
 {
 
 	@Override
-	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
+	public List<ChartDataPack> getBMDExpressAnalysisChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
 			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
 		ChartDataPackMaker chartDataPackMaker = new ChartDataPackMaker(pack);

@@ -27,8 +27,6 @@ public class NumberFilter extends DataFilter<Number>
 			Number value2 = (Number) values.get(1);
 			Number objectValue = (Number) filterAnnotationExtractor.getFilterableValue(object, key);
 
-			if (objectValue.doubleValue() < 0)
-				System.out.println();
 			return objectValue.doubleValue() >= value1.doubleValue()
 					&& objectValue.doubleValue() <= value2.doubleValue();
 		}

@@ -34,6 +34,7 @@ import com.sciome.filter.DataFilterPack;
 
 /*
  * take care of charts and special view options for the Category Analysis visualizations
+ * 
  */
 public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
@@ -174,7 +175,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 						+ CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG,
 				new SciomeBubbleChartJFree("", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
-						new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL_NEG_LOG, null),
+						new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG),
 						new ChartKey("Percentage", null), CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotJFree("Accumulation",
@@ -205,8 +206,11 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		if (results == null || results.size() == 0)
 			return;
+
+		Set<ChartKey> mathedKeys = new HashSet<>();
+		mathedKeys.add(new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, null, new ChartKey(CategoryAnalysisResults.CATEGORY_DESCRIPTION, null));
+				selectedIds, mathedKeys, new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
 
 		chartsList = new ArrayList<>();
 		if (chartKey.equals(RANGEPLOT))

@@ -260,8 +260,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		for (ChartDataPack pack : chartDataPacks)
 		{
 			Map<ChartKey, ChartStatistics> map = pack.getChartStatMap();
-			for (ChartKey k : map.keySet())
-				System.out.println(k);
+
 			Double currMax = map.get(key).getMax();
 			if (currMax == null)
 				continue;

@@ -11,6 +11,6 @@ import com.sciome.filter.DataFilterPack;
 public interface IVisualizationService
 {
 
-	List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
+	List<ChartDataPack> getBMDExpressAnalysisChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
 			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedChartKeys, ChartKey labelKey);
 }

@@ -57,7 +57,8 @@ public class ChartDataPackMaker
 		for (String header : object.getColumnHeader())
 			chartKeys.add(new ChartKey(header, null));
 
-		chartKeys.addAll(mathedChartKeys);
+		if (mathedChartKeys != null)
+			chartKeys.addAll(mathedChartKeys);
 
 		List<ChartData> chartDataList = new ArrayList<>();
 		int i = -1;
@@ -82,6 +83,8 @@ public class ChartDataPackMaker
 
 			for (ChartKey key : chartKeys)
 			{
+				if (key.getKey().toLowerCase().contains("two tail"))
+					System.out.println();
 				Object value = object.getValueForHeaderAt(key, i);
 				if (value == null)
 					continue;

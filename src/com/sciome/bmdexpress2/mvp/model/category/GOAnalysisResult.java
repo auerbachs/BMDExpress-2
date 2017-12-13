@@ -18,9 +18,9 @@ public class GOAnalysisResult extends CategoryAnalysisResult implements Serializ
 	{
 		List<String> headers = super.generateColumnHeader();
 
-		headers.add(0, "GO Term Name");
+		headers.add(0, CategoryAnalysisResults.CATEGORY_DESCRIPTION);
 		headers.add(0, "GO Level");
-		headers.add(0, "Go Accession");
+		headers.add(0, CategoryAnalysisResults.CATEGORY_ID);
 
 		return headers;
 	}

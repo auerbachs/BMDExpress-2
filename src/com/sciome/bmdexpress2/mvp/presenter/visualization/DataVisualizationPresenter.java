@@ -46,7 +46,7 @@ public abstract class DataVisualizationPresenter
 	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
 			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedKeys, ChartKey label)
 	{
-		return getService().getCategoryResultsChartPackData(catResults, pack, selectedIds, mathedKeys, label);
+		return getService().getBMDExpressAnalysisChartDataPack(catResults, pack, selectedIds, mathedKeys, label);
 	}
 
 	public abstract List<BMDExpressAnalysisDataSet> getResultsFromProject(

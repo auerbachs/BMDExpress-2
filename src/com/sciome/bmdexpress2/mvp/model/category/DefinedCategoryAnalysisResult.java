@@ -18,8 +18,8 @@ public class DefinedCategoryAnalysisResult extends CategoryAnalysisResult implem
 	{
 		List<String> headers = super.generateColumnHeader();
 
-		headers.add(0, "Category Name");
-		headers.add(0, "Category ID");
+		headers.add(0, CategoryAnalysisResults.CATEGORY_DESCRIPTION);
+		headers.add(0, CategoryAnalysisResults.CATEGORY_ID);
 
 		return headers;
 	}

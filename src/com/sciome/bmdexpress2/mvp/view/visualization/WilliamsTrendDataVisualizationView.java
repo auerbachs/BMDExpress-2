@@ -117,7 +117,6 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 			chartsList.add(chart);
 			chartsList.add(chart2);
 		}
-		System.out.println();
 		graphViewAnchorPane.getChildren().clear();
 		showCharts();
 
