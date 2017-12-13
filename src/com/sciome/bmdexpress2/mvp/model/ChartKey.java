@@ -1,5 +1,7 @@
 package com.sciome.bmdexpress2.mvp.model;
 
+import com.sciome.bmdexpress2.util.NumberManager;
+
 /*
  * this class will store the key (aka column header) for values
  * that can be charted. 
@@ -49,10 +51,10 @@ public class ChartKey
 	{
 		if (math == null || math.equals(""))
 			return value;
-		else if (math.equals(NEGLOG) && value > 0)
-			return -Math.log10(value);
+		else if (math.equals(NEGLOG))
+			return NumberManager.negLog10(value);
 		else if (math.equals(LOG) && value > 0)
-			return Math.log10(value);
+			return NumberManager.log10(value);
 		else if (math.equals(ABS) && value > 0)
 			return Math.abs(value);
 		else if (math.equals(SQRT) && value > 0)
@@ -64,7 +66,46 @@ public class ChartKey
 	@Override
 	public String toString()
 	{
+		if (math == null)
+			return key;
 		return math + " of " + key;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((math == null) ? 0 : math.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChartKey other = (ChartKey) obj;
+		if (key == null)
+		{
+			if (other.key != null)
+				return false;
+		}
+		else if (!key.equals(other.key))
+			return false;
+		if (math == null)
+		{
+			if (other.math != null)
+				return false;
+		}
+		else if (!math.equals(other.math))
+			return false;
+		return true;
 	}
 
 }

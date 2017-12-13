@@ -169,6 +169,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 		if (bestFoldChange != null)
 		{
 			row.add((bestFoldChange));
+			row.add(this.getBestFoldChangeABS());
 		}
 		if (foldChanges != null)
 		{

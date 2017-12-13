@@ -9,7 +9,7 @@ import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 public abstract class BMDExpressAnalysisDataSet
 {
 
-	// map the header to the column number for quicker access of data points
+	// map the header to the column number for quicker access of data points finally
 	private Map<String, Integer> headerToIndex;
 
 	public abstract List<String> getColumnHeader();
@@ -32,7 +32,7 @@ public abstract class BMDExpressAnalysisDataSet
 			headerToIndex = new HashMap<>();
 			int i = 0;
 			for (String str : getColumnHeader())
-				headerToIndex.put(key, i++);
+				headerToIndex.put(str, i++);
 		}
 
 		return headerToIndex.get(key);
@@ -43,16 +43,35 @@ public abstract class BMDExpressAnalysisDataSet
 	{
 		try
 		{
-			return getAnalysisRows().get(i).getRow().get(getIndexForKey(string.getKey()));
+			return getAnalysisRows().get(i).getRow().get(getIndexForKey(string.getKey()).intValue());
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
-		finally
-		{
+		return null;
+	}
+
+	public Class getHeaderClass(String key)
+	{
+		if (this.getAnalysisRows().size() == 0)
 			return null;
+		try
+		{
+			return this.getAnalysisRows().get(0).getRow().get(getIndexForKey(key)).getClass();
 		}
+		catch (Exception e)
+		{
+
+		}
+
+		return null;
+
+	}
+
+	public Object getValueForRow(BMDExpressAnalysisRow object, String key) throws Exception
+	{
+		return object.getRow().get(getIndexForKey(key));
 	}
 
 }

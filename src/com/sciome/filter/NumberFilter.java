@@ -2,20 +2,23 @@ package com.sciome.filter;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+
 /*
  * deals with decimal filtration
  */
-public class NumberFilter<T> extends DataFilter<Number, T>
+public class NumberFilter extends DataFilter<Number>
 {
 
-	public NumberFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
+	public NumberFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet dataset, String key,
 			List<Object> values)
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, values);
+		super(dataFilterType, dataset, key, values);
 	}
 
 	@Override
-	public boolean passesFilter(T object)
+	public boolean passesFilter(BMDExpressAnalysisRow object)
 	{
 
 		try

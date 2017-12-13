@@ -49,16 +49,15 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 				new SciomeHistogramJFree("", new ArrayList<>(),
 						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE_ABS, null), 20.0, this));
 
-		chartCache.put(
-				"DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.NEG_LOG_ADJUSTED_PVALUE,
+		chartCache.put("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.ADJUSTED_PVALUE,
 				new SciomeScatterChartJFree("", new ArrayList<>(),
 						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
-						new ChartKey(PrefilterResults.NEG_LOG_ADJUSTED_PVALUE, null), false, true, this));
-		chartCache.put(
-				"DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE,
+						new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG), false, true, this));
+		chartCache.put("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.UNADJUSTED_PVALUE,
 				new SciomeScatterChartJFree("", new ArrayList<>(),
 						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
-						new ChartKey(PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE, null), false, true, this));
+						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG), false, true,
+						this));
 
 	}
 
@@ -109,11 +108,11 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 		}
 		else
 		{
-			SciomeChartBase chart = chartCache.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE
-					+ PrefilterResults.NEG_LOG_ADJUSTED_PVALUE);
+			SciomeChartBase chart = chartCache
+					.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.ADJUSTED_PVALUE);
 			chart.redrawCharts(chartDataPacks);
-			SciomeChartBase chart2 = chartCache.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE
-					+ PrefilterResults.NEG_LOG_UNADJUSTED_PVALUE);
+			SciomeChartBase chart2 = chartCache
+					.get("DEFAULT-" + PrefilterResults.BEST_FOLD_CHANGE + PrefilterResults.UNADJUSTED_PVALUE);
 			chart2.redrawCharts(chartDataPacks);
 			chartsList.add(chart);
 			chartsList.add(chart2);

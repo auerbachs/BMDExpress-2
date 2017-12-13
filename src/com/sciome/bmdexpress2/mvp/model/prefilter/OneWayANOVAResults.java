@@ -150,26 +150,27 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 			return;
 		}
 
-		columnHeader.add("Probe ID");
+		columnHeader.add(PrefilterResults.PROBE_ID);
 
-		columnHeader.add("Genes");
+		columnHeader.add(PrefilterResults.GENE_ID);
 
-		columnHeader.add("Gene Symbols");
+		columnHeader.add(PrefilterResults.GENE_SYMBOL);
 		columnHeader.add("Df1");
 
 		columnHeader.add("Df2");
 
-		columnHeader.add("F-Value");
+		columnHeader.add(PrefilterResults.FVALUE);
 
 		// p value
-		columnHeader.add("P-Value");
+		columnHeader.add(PrefilterResults.UNADJUSTED_PVALUE);
 
 		// adjusted p value
-		columnHeader.add("Adjusted P-Value");
+		columnHeader.add(PrefilterResults.ADJUSTED_PVALUE);
 
 		if (oneWayANOVAResults.get(0).getBestFoldChange() != null)
 		{
-			columnHeader.add("Max Fold Change Value");
+			columnHeader.add(PrefilterResults.BEST_FOLD_CHANGE);
+			columnHeader.add(PrefilterResults.BEST_FOLD_CHANGE_ABS);
 		}
 
 		if (oneWayANOVAResults.get(0).getFoldChanges() != null)

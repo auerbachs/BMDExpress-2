@@ -4,24 +4,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+
 /*
  * deals with String filtration.
  */
-public class StringFilter<T> extends DataFilter<String, T>
+public class StringFilter extends DataFilter<String>
 {
 
-	public StringFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
+	public StringFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet dataset, String key,
 			List<Object> value1)
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1);
+		super(dataFilterType, dataset, key, value1);
 	}
 
 	@Override
-	public boolean passesFilter(T object)
+	public boolean passesFilter(BMDExpressAnalysisRow object)
 	{
 		Set<Object> stringSet = new HashSet<>(getValues());
 		try
 		{
+
 			String objectValue = (filterAnnotationExtractor.getFilterableValue(object, key)).toString()
 					.toLowerCase();
 			switch (dataFilterType)

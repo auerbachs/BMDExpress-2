@@ -2,6 +2,8 @@ package com.sciome.filter;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+
 /*
  * Data Filter package that contains a list of filters.  It also has method to 
  * see if an object passes the filters
@@ -42,7 +44,7 @@ public class DataFilterPack
 	/*
 	 * take this object and see if it passes the filter
 	 */
-	public boolean passesFilter(Object record)
+	public boolean passesFilter(BMDExpressAnalysisRow record)
 	{
 		if (dataFilters.isEmpty())
 			return true;

@@ -47,7 +47,7 @@ public class NumericFilterComponent extends FilterComponent
 	protected void init(String key)
 	{
 
-		List<Object> range = dataFilterComponentListener.getRangeForMethod(method);
+		List<Object> range = dataFilterComponentListener.getRangeForKey(key);
 		if (range.get(0) == null)
 		{
 			isUseable = false;

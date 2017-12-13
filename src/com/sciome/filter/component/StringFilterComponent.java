@@ -60,7 +60,7 @@ public class StringFilterComponent extends FilterComponent
 		if (suggestedValuesForFilter == null)
 			suggestedValuesForFilter = new HashSet<>();
 
-		List<String> list = new ArrayList<>(dataFilterComponentListener.getItemsForMethod(method));
+		List<String> list = new ArrayList<>(dataFilterComponentListener.getItemsForKey(key));
 		Collections.sort(list);
 
 		VBox vbox = new VBox(8);

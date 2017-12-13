@@ -201,6 +201,14 @@ public class NumberManager
 		return -Math.log10(v);
 	}
 
+	public static double log10(double v)
+	{
+		if (v == 0.0)
+			v = 0.000000000000000000001;
+
+		return Math.log10(v);
+	}
+
 	private static int redicimal(int decimals, double smaller)
 	{
 		double ten = 10;

@@ -16,17 +16,15 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 public interface PrefilterResults
 {
 	/* define chartabble key values */
-	public static final String	FVALUE						= "F-Value";
-	public static final String	UNADJUSTED_PVALUE			= "Unadjusted P-Value";
-	public static final String	ADJUSTED_PVALUE				= "Adjusted P-Value";
-	public static final String	NEG_LOG_ADJUSTED_PVALUE		= "Negative Log 10 Adjusted P-Value";
-	public static final String	BEST_FOLD_CHANGE			= "Max Fold Change";
-	public static final String	BEST_FOLD_CHANGE_ABS		= "Max Fold Change Unsigned";
-	public static final String	FOLD_CHANGE					= "Fold Change";
-	public static final String	GENE_ID						= "Gene ID";
-	public static final String	GENE_SYMBOL					= "Gene Symbol";
-	public static final String	PROBE_ID					= "Probe ID";
-	public static final String	NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
+	public static final String	FVALUE					= "F-Value";
+	public static final String	UNADJUSTED_PVALUE		= "Unadjusted P-Value";
+	public static final String	ADJUSTED_PVALUE			= "Adjusted P-Value";
+	public static final String	BEST_FOLD_CHANGE		= "Max Fold Change";
+	public static final String	BEST_FOLD_CHANGE_ABS	= "Max Fold Change Unsigned";
+	public static final String	FOLD_CHANGE				= "Fold Change";
+	public static final String	GENE_ID					= "Gene ID";
+	public static final String	GENE_SYMBOL				= "Gene Symbol";
+	public static final String	PROBE_ID				= "Probe ID";
 
 	public List<PrefilterResult> getPrefilterResults();
 

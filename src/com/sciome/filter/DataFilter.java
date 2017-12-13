@@ -2,6 +2,8 @@ package com.sciome.filter;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.filter.component.FilterDataExtractor;
 
 /*
@@ -12,32 +14,32 @@ import com.sciome.filter.component.FilterDataExtractor;
  * to get the data that needs comparing.
  * 
  */
-public abstract class DataFilter<T, S>
+public abstract class DataFilter<T>
 {
 
-	protected DataFilterType					dataFilterType;
-	protected String							key;
-	protected FilterDataExtractor	filterAnnotationExtractor;
-	private Class<S>							filterableAnnotatedClass;
+	protected DataFilterType			dataFilterType;
+	protected String					key;
+	protected FilterDataExtractor		filterAnnotationExtractor;
+	protected BMDExpressAnalysisDataSet	bmdanalysisDataSet;
 	// Value to compare object to
-	protected List<Object>						values;
+	protected List<Object>				values;
 
-	public DataFilter(DataFilterType dataFilterType, Class<S> filterableAnnotatedClass, String key,
+	public DataFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet bmdanalysisDataSet, String key,
 			List<Object> values)
 	{
 		this.key = key;
 		this.dataFilterType = dataFilterType;
 		this.values = values;
-		this.filterableAnnotatedClass = filterableAnnotatedClass;
+		this.bmdanalysisDataSet = bmdanalysisDataSet;
 		init();
 	}
 
 	private void init()
 	{
-		filterAnnotationExtractor = new FilterDataExtractor(filterableAnnotatedClass);
+		filterAnnotationExtractor = new FilterDataExtractor(bmdanalysisDataSet);
 	}
 
-	public abstract boolean passesFilter(S object);
+	public abstract boolean passesFilter(BMDExpressAnalysisRow object);
 
 	public List<Object> getValues()
 	{

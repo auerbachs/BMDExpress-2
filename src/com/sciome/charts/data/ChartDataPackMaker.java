@@ -113,6 +113,7 @@ public class ChartDataPackMaker
 		});
 
 		ChartDataPack chartDataPack = new ChartDataPack(chartDataList, new ArrayList<>(chartKeys));
+		chartDataPack.setName(object.getName());
 
 		return chartDataPack;
 

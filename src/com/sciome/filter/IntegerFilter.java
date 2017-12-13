@@ -2,20 +2,23 @@ package com.sciome.filter;
 
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+
 /*
  * deals with integer comparison for data filtration
  */
-public class IntegerFilter<T> extends DataFilter<Integer, T>
+public class IntegerFilter extends DataFilter<Integer>
 {
 
-	public IntegerFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
+	public IntegerFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet dataset, String key,
 			List<Object> value1)
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1);
+		super(dataFilterType, dataset, key, value1);
 	}
 
 	@Override
-	public boolean passesFilter(T object)
+	public boolean passesFilter(BMDExpressAnalysisRow object)
 	{
 
 		try

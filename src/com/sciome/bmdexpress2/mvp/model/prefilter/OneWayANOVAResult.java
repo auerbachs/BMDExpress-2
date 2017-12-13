@@ -210,6 +210,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		if (bestFoldChange != null)
 		{
 			row.add((bestFoldChange));
+			row.add(this.getBestFoldChangeABS());
 		}
 		if (foldChanges != null)
 		{

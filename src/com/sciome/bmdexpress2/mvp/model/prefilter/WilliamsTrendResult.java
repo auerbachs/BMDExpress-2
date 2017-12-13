@@ -174,6 +174,7 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		if (bestFoldChange != null)
 		{
 			row.add((bestFoldChange));
+			row.add(this.getBestFoldChangeABS());
 		}
 		if (foldChanges != null)
 		{

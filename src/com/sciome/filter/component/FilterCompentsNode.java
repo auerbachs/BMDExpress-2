@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
@@ -29,6 +30,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	private static final String			ADD_FILTER			= "--ADD FILTER--";
 	private List<FilterComponent>		filterComponents;
 	private FilterDataExtractor			filterAnnotationExtractor;
+	private BMDExpressAnalysisDataSet	filterableDataSet;
 	private Class						filterableClass;
 	private DataFilterComponentListener	dataFilterComponentListener;
 	private ComboBox<String>			addRemoveFilterCombo;
@@ -41,24 +43,27 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	private VBox						filterComponentVbox;
 
 	//
-	public FilterCompentsNode(Class filterableClass, DataFilterComponentListener dataFilterComponentListener)
+	public FilterCompentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
+			DataFilterComponentListener dataFilterComponentListener)
 	{
 		super();
 
 		this.filterableClass = filterableClass;
 		this.dataFilterComponentListener = dataFilterComponentListener;
+		this.filterableDataSet = filterableDataSet;
 
 		init();
 
 	}
 
-	public FilterCompentsNode(Class filterableClass, DataFilterComponentListener dataFilterComponentListener,
-			DataFilterPack dPack)
+	public FilterCompentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
+			DataFilterComponentListener dataFilterComponentListener, DataFilterPack dPack)
 	{
 		super();
 
 		this.filterableClass = filterableClass;
 		this.dataFilterComponentListener = dataFilterComponentListener;
+		this.filterableDataSet = filterableDataSet;
 
 		if (dPack != null)
 		{
@@ -76,7 +81,8 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 
 		visibleFilterNodes = BMDExpressProperties.getInstance().getFilters(filterableClass.getName());
 
-		filterAnnotationExtractor = new FilterDataExtractor(filterableClass);
+		filterAnnotationExtractor = new FilterDataExtractor(filterableDataSet);
+
 		List<String> sortedKeyList = filterAnnotationExtractor.getKeys();
 		Collections.sort(sortedKeyList);
 		// addRemoveFilterButton = new Button("Add/Remove Filters");
@@ -187,7 +193,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
 			if (returnType.equals(Integer.class))
 			{
-				df = new IntegerFilter<>(DataFilterType.BETWEEN, filterableClass, fc.getFilterKey(),
+				df = new IntegerFilter(DataFilterType.BETWEEN, this.filterableDataSet, fc.getFilterKey(),
 						fc.getValues());
 			}
 			else if (returnType.equals(Float.class) || returnType.equals(Double.class)
@@ -195,7 +201,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			{
 				try
 				{
-					df = new NumberFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
+					df = new NumberFilter(DataFilterType.EQUALS, this.filterableDataSet, fc.getFilterKey(),
 							fc.getValues());
 				}
 				catch (Exception e)
@@ -205,7 +211,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 
 			}
 			else
-				df = new StringFilter<>(DataFilterType.EQUALS, filterableClass, fc.getFilterKey(),
+				df = new StringFilter(DataFilterType.EQUALS, this.filterableDataSet, fc.getFilterKey(),
 						fc.getValues());
 			dataFilters.add(df);
 			dataFilterMap.put(df.getKey(), df);

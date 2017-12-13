@@ -48,6 +48,8 @@ public class ChartDataPack
 		chartStats.setMin(0.0);
 		chartStats.setMean(0.0);
 		chartStats.setMedian(0.0);
+		if (key.getKey().toLowerCase().contains("fold change"))
+			System.out.println();
 		chartStatMap.put(key, chartStats);
 		if (values.size() == 0)
 			return;
@@ -73,7 +75,14 @@ public class ChartDataPack
 
 			if (mappedDataPoints.containsKey(key))
 			{
-				values.add(mappedDataPoints.get(key).doubleValue());
+				try
+				{
+					values.add(mappedDataPoints.get(key).doubleValue());
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 

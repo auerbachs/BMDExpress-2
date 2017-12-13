@@ -1,6 +1,5 @@
 package com.sciome.filter.component;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
@@ -12,8 +11,8 @@ public interface DataFilterComponentListener
 {
 	public void dataFilterChanged();
 
-	public Set<String> getItemsForMethod(Method method);
+	public Set<String> getItemsForKey(String key);
 
-	public List<Object> getRangeForMethod(Method method);
+	public List<Object> getRangeForKey(String method);
 
 }

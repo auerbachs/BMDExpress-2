@@ -1,26 +1,38 @@
 package com.sciome.filter.component;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 
 public class FilterDataExtractor
 {
 
-	public FilterDataExtractor(Class filterableClass)
+	private BMDExpressAnalysisDataSet filterableDataSet;
+
+	public FilterDataExtractor(BMDExpressAnalysisDataSet filterableDataSet)
 	{
-		// TODO Auto-generated constructor stub
+		this.filterableDataSet = filterableDataSet;
 	}
 
-	public Object getFilterableValue(Object object, String key)
+	public Object getFilterableValue(BMDExpressAnalysisRow object, String key)
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			return filterableDataSet.getValueForRow(object, key);
+		}
+		catch (Exception e)
+		{
+
+		}
 		return null;
 	}
 
 	public Class getReturnType(String key)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return filterableDataSet.getHeaderClass(key);
 	}
 
 	public Method getMethod(String key)
@@ -31,8 +43,7 @@ public class FilterDataExtractor
 
 	public List<String> getKeys()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>(filterableDataSet.getColumnHeader());
 	}
 
 }

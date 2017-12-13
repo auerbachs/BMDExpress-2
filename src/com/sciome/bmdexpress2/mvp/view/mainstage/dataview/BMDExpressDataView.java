@@ -1,7 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
@@ -113,7 +115,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 		defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.toString());
 
-		filtrationNode = new FilterCompentsNode(filterableClass, this, defaultDPack);
+		filtrationNode = new FilterCompentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
 
 		if (!BMDExpressProperties.getInstance().isHideFilter())
 		{
@@ -433,6 +435,68 @@ public abstract class BMDExpressDataView<T> extends VBox
 		if (presenter != null)
 			presenter.destroy();
 
+	}
+
+	@Override
+	public Set<String> getItemsForKey(String method)
+	{
+		bmdAnalysisDataSet.getColumnHeader();
+		Set<String> items = new HashSet<>();
+		for (BMDExpressAnalysisRow row : bmdAnalysisDataSet.getAnalysisRows())
+		{
+			try
+			{
+				Object value = bmdAnalysisDataSet.getValueForRow(row, method);
+				if (value != null && !value.toString().trim().equals(""))
+					items.add(value.toString().trim());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return items;
+	}
+
+	@Override
+	public List getRangeForKey(String method)
+	{
+		List<Object> returnList = new ArrayList<>();
+
+		bmdAnalysisDataSet.getColumnHeader();
+		Set<String> items = new HashSet<>();
+		Object min = null;
+		Object max = null;
+		for (BMDExpressAnalysisRow row : bmdAnalysisDataSet.getAnalysisRows())
+		{
+			try
+			{
+				Object value = bmdAnalysisDataSet.getValueForRow(row, method);
+				if (value != null)
+				{
+					if (min == null)
+					{
+						min = value;
+						max = value;
+						continue;
+					}
+
+					if (compareToNumericValues(value, min) == -1)
+						min = value;
+					if (compareToNumericValues(value, max) == 1)
+						max = value;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		returnList.add(min);
+		returnList.add(max);
+
+		return returnList;
 	}
 
 	/*

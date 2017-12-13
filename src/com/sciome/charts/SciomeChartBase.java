@@ -6,12 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.data.ChartStatistics;
 import com.sciome.charts.export.ChartDataExporter;
 import com.sciome.charts.model.SciomeSeries;
 
@@ -257,7 +259,10 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 		for (ChartDataPack pack : chartDataPacks)
 		{
-			Double currMax = pack.getChartStatMap().get(key).getMax();
+			Map<ChartKey, ChartStatistics> map = pack.getChartStatMap();
+			for (ChartKey k : map.keySet())
+				System.out.println(k);
+			Double currMax = map.get(key).getMax();
 			if (currMax == null)
 				continue;
 
