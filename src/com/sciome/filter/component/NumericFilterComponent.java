@@ -14,7 +14,6 @@ import com.sciome.filter.DataFilter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,11 +28,13 @@ public class NumericFilterComponent extends FilterComponent
 	private boolean			isInteger;
 	private boolean			textEditingSlider	= false;
 	protected RangeSlider	hSlider;
+	protected TextField		value1;
+	protected TextField		value2;
 
 	public NumericFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
-			Class filterFieldClass, DataFilter df, Method method)
+			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
 	{
-		super(key, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method, container);
 	}
 
 	@Override
@@ -112,11 +113,11 @@ public class NumericFilterComponent extends FilterComponent
 
 		VBox vbox = new VBox(8);
 		HBox hbox1 = new HBox(8);
-		Label keyLabel = new Label(key);
+
 		hbox1.getChildren().addAll(value1, value2);
 
-		vbox.getChildren().addAll(keyLabel, hbox1, hSlider);
-		this.getChildren().addAll(vbox);
+		vbox.getChildren().addAll(hbox1, hSlider);
+		addFilterComponent(vbox);
 		VBox.setMargin(vbox, new Insets(15, 15, 15, 15));
 
 		value2.setVisible(true);

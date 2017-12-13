@@ -3,10 +3,8 @@ package com.sciome.filter.component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.filter.DataFilter;
@@ -17,32 +15,33 @@ import com.sciome.filter.IntegerFilter;
 import com.sciome.filter.NumberFilter;
 import com.sciome.filter.StringFilter;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 /*
  * javafx node that displays a bunch of filter fields. 
  */
-public class FilterCompentsNode extends VBox
+public class FilterCompentsNode extends VBox implements FilterComponentContainer
 {
+	private static final String					ADD_FILTER			= "--ADD FILTER--";
 	private List<FilterComponent>				filterComponents;
 	private GenericFilterAnnotationExtractor	filterAnnotationExtractor;
 	private Class								filterableClass;
 	private DataFilterComponentListener			dataFilterComponentListener;
 	private Button								addRemoveFilterButton;
+	private ComboBox<String>					addRemoveFilterCombo;
 
 	private List<String>						visibleFilterNodes	= new ArrayList<>();
 
 	// use this map to easily assoicate existing data filter with a key
 	private Map<String, DataFilter>				dataFilterMap		= new HashMap<>();
 	private ScrollPane							filterNodeScrollPane;
+	private VBox								filterComponentVbox;
 
 	//
 	public FilterCompentsNode(Class filterableClass, DataFilterComponentListener dataFilterComponentListener)
@@ -83,26 +82,53 @@ public class FilterCompentsNode extends VBox
 		filterAnnotationExtractor = new GenericFilterAnnotationExtractor(filterableClass);
 		List<String> sortedKeyList = filterAnnotationExtractor.getKeys();
 		Collections.sort(sortedKeyList);
-		addRemoveFilterButton = new Button("Add/Remove Filters");
+		// addRemoveFilterButton = new Button("Add/Remove Filters");
+		addRemoveFilterCombo = new ComboBox<>();
 
-		addRemoveFilterButton.setOnAction(new EventHandler<ActionEvent>() {
-			@SuppressWarnings("restriction")
+		addRemoveFilterCombo.getItems().addAll(sortedKeyList);
+		addRemoveFilterCombo.getItems().add(0, ADD_FILTER);
+		addRemoveFilterCombo.setValue(ADD_FILTER);
+		for (String node : visibleFilterNodes)
+			addRemoveFilterCombo.getItems().remove(node);
+
+		addRemoveFilterCombo.valueProperty().addListener(new ChangeListener<String>() {
+			boolean removing = false;
+
 			@Override
-			public void handle(ActionEvent e)
+			public void changed(ObservableValue ov, String t, String t1)
 			{
-				customChoiceDialogForDataSet(sortedKeyList, visibleFilterNodes, "Add/Remove Filters");
+				if (removing || t1 == null || t1.equals("") || t1.equals(ADD_FILTER))
+					return;
 
-				// update properties
+				visibleFilterNodes.add(t1);
+
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run()
+					{
+						removing = true;
+						addRemoveFilterCombo.getItems().remove(t1);
+						addRemoveFilterCombo.setValue(ADD_FILTER);
+						removing = false;
+					}
+				});
+
 				BMDExpressProperties.getInstance().updateFilter(filterableClass.getName(),
 						visibleFilterNodes);
 
 				// update view
-				updateFilterNodes();
+				FilterComponent fc = getFilterComponent(t1);
+				if (fc != null)
+				{
+					filterComponentVbox.getChildren().add(0, fc);
+					filterComponents.add(fc);
+				}
 
 				dataFilterComponentListener.dataFilterChanged();
 			}
 		});
-		this.getChildren().add(addRemoveFilterButton);
+
+		this.getChildren().add(addRemoveFilterCombo);
 		filterNodeScrollPane = new ScrollPane();
 		updateFilterNodes();
 		this.getChildren().add(filterNodeScrollPane);
@@ -111,7 +137,7 @@ public class FilterCompentsNode extends VBox
 
 	private void updateFilterNodes()
 	{
-		VBox vbox = new VBox();
+		filterComponentVbox = new VBox();
 		Integer row = 0;
 		filterComponents = new ArrayList<>();
 
@@ -124,15 +150,7 @@ public class FilterCompentsNode extends VBox
 			// also give it the listener so it can attach it's own components to it
 			// and send messages back home so the calling object can do what it does,
 			// like get an updated datafilterpack so it can update the ui.
-			FilterComponent fc = null;
-
-			// if there is already a datafilter associated with this object,
-			// use it.
-			DataFilter df = dataFilterMap.get(key);
-			if (filterAnnotationExtractor.getReturnType(key) != null)
-				fc = FilterComponentFactory.createFilterComponent(key, dataFilterComponentListener,
-						filterAnnotationExtractor.getReturnType(key), df,
-						filterAnnotationExtractor.getMethod(key));
+			FilterComponent fc = getFilterComponent(key);
 
 			// if this key only produces null values due to compatibility issues,
 			// it's not "useable" hence the isuseable flag.
@@ -140,8 +158,21 @@ public class FilterCompentsNode extends VBox
 				filterComponents.add(fc);
 
 		}
-		vbox.getChildren().addAll(filterComponents);
-		filterNodeScrollPane.setContent(vbox);
+		filterComponentVbox.getChildren().addAll(filterComponents);
+		filterNodeScrollPane.setContent(filterComponentVbox);
+	}
+
+	private FilterComponent getFilterComponent(String key)
+	{
+		// if there is already a datafilter associated with this object,
+		// use it
+		DataFilter df = dataFilterMap.get(key);
+		if (filterAnnotationExtractor.getReturnType(key) != null)
+			return FilterComponentFactory.createFilterComponent(key, dataFilterComponentListener,
+					filterAnnotationExtractor.getReturnType(key), df,
+					filterAnnotationExtractor.getMethod(key), this);
+		else
+			return null;
 	}
 
 	/*
@@ -188,56 +219,21 @@ public class FilterCompentsNode extends VBox
 		return dFP;
 	}
 
-	@SuppressWarnings("restriction")
-	private void customChoiceDialogForDataSet(List<String> dataSet, List<String> visible, String title)
+	@Override
+	public void close(FilterComponent fc)
 	{
-		Dialog<List<String>> dialog = new Dialog<>();
-		dialog.setTitle(title);
+		filterComponentVbox.getChildren().remove(fc);
+		List<String> items = new ArrayList<>(addRemoveFilterCombo.getItems());
+		items.add(fc.getFilterKey());
+		Collections.sort(items);
+		addRemoveFilterCombo.getItems().clear();
+		addRemoveFilterCombo.getItems().addAll(items);
+		addRemoveFilterCombo.setValue(ADD_FILTER);
+		filterComponents.remove(fc);
 
-		Set<String> visibleSet = new HashSet<>(visible);
-		List<CheckBox> checkBoxes = new ArrayList<>();
-		// Set the button types.
-		ButtonType doneButtonType = new ButtonType("Done", ButtonData.OK_DONE);
-		dialog.getDialogPane().getButtonTypes().addAll(doneButtonType, ButtonType.CANCEL);
-		dialog.setResizable(true);
-
-		ScrollPane sp = new ScrollPane();
-		sp.setMaxHeight(500.0);
-		sp.setPrefHeight(500.0);
-
-		VBox vb = new VBox();
-
-		sp.setContent(vb);
-
-		int i = 0;
-		for (String obj : dataSet)
-		{
-
-			CheckBox cb = new CheckBox(obj.toString());
-			vb.getChildren().add(cb);
-			checkBoxes.add(cb);
-			if (visibleSet.contains(obj))
-				cb.setSelected(true);
-		}
-
-		dialog.getDialogPane().setContent(sp);
-		dialog.getDialogPane().setMinWidth(500.0);
-		// Convert the result to a username-password-pair when the login button is clicked.
-		dialog.setResultConverter(dialogButton ->
-		{
-			if (dialogButton == doneButtonType)
-			{
-				visible.clear();
-				for (CheckBox cb : checkBoxes)
-				{
-					if (cb.isSelected())
-						visible.add(cb.getText());
-				}
-			}
-			return null;
-		});
-
-		dialog.showAndWait();
+		visibleFilterNodes.remove(fc.getFilterKey());
+		BMDExpressProperties.getInstance().updateFilter(filterableClass.getName(), visibleFilterNodes);
+		dataFilterComponentListener.dataFilterChanged();
 
 	}
 

@@ -14,9 +14,9 @@ public class IntegerFilterComponent extends NumericFilterComponent
 {
 
 	public IntegerFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
-			Class filterFieldClass, DataFilter df, Method method)
+			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
 	{
-		super(key, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method, container);
 	}
 
 	@Override

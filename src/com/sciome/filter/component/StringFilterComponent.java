@@ -24,7 +24,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -41,13 +40,12 @@ public class StringFilterComponent extends FilterComponent
 	// value;
 	private Set<String>	suggestedValuesForFilter;
 
-	private Label		keyLabel;
 	private boolean		isClearing	= false;
 
 	public StringFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
-			Class filterFieldClass, DataFilter df, Method method)
+			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
 	{
-		super(key, dataFilterComponentListener, filterFieldClass, df, method);
+		super(key, dataFilterComponentListener, filterFieldClass, df, method, container);
 
 	}
 
@@ -65,16 +63,13 @@ public class StringFilterComponent extends FilterComponent
 		List<String> list = new ArrayList<>(dataFilterComponentListener.getItemsForMethod(method));
 		Collections.sort(list);
 
-		keyLabel = new Label(key);
 		VBox vbox = new VBox(8);
-
-		vbox.getChildren().add(keyLabel);
 
 		if (list.size() <= 100)
 			vbox.getChildren().add(useComboBox(list, key));
 		else
 			vbox.getChildren().add(userTextFieldWithCompletion(list, key));
-		this.getChildren().addAll(vbox);
+		addFilterComponent(vbox);
 
 		vbox.setStyle("-fx-border-color: black;" + "-fx-padding: 0 0 30 0;");
 		VBox.setMargin(vbox, new Insets(15, 15, 15, 15));

@@ -11,14 +11,17 @@ public class FilterComponentFactory
 {
 	public static FilterComponent createFilterComponent(String key,
 			DataFilterComponentListener dataFilterComponentListener, Class filterFieldClass, DataFilter df,
-			Method method)
+			Method method, FilterComponentContainer container)
 	{
 		if (filterFieldClass.equals(String.class))
-			return new StringFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method);
+			return new StringFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
+					container);
 		else if (filterFieldClass.equals(Integer.class))
-			return new IntegerFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method);
+			return new IntegerFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
+					container);
 		else
-			return new NumericFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method);
+			return new NumericFilterComponent(key, dataFilterComponentListener, filterFieldClass, df, method,
+					container);
 	}
 
 }
