@@ -473,6 +473,15 @@ public abstract class BMDExpressDataView<T> extends VBox
 			try
 			{
 				Object value = bmdAnalysisDataSet.getValueForRow(row, method);
+
+				// don't mess with weird double values.
+				if (value instanceof Double
+						&& (((Double) value) == null || ((Double) value).equals(Double.NaN)
+								|| ((Double) value).equals(Double.NEGATIVE_INFINITY)
+								|| ((Double) value).equals(Double.POSITIVE_INFINITY)))
+					continue;
+				if (value != null && value.toString().equals(""))
+					continue;
 				if (value != null)
 				{
 					if (min == null)

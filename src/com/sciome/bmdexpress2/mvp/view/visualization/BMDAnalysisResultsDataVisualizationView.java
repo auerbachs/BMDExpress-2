@@ -1,7 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +42,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 
 	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSymboles;
 
+	// to make it quicker, define a list of keys that will be used to
+	// generate the charttable data. if this is null or empty, then
+	// values for all data cells are generated.
+	private Set<ChartKey>							useTheseKeysOnly;
+
 	public BMDAnalysisResultsDataVisualizationView()
 	{
 		super();
@@ -73,6 +80,15 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogramJFree("", new ArrayList<>(),
 				new ChartKey(BMDResult.BMD, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 
+		// this chart view is only using these chartkeys. let's reduce memory and processing by specifying
+		// these
+		// up front. But remember, if you add a new chart or specifiy new keys to use, then this needs to be
+		// updated.
+		useTheseKeysOnly = new HashSet<>();
+		useTheseKeysOnly.addAll(Arrays.asList(new ChartKey(BMDResult.BMDL, null),
+				new ChartKey(BMDResult.BEST_FITPVALUE, null), new ChartKey(BMDResult.BMD, null),
+				new ChartKey(BMDResult.BMDU, null), new ChartKey(BMDResult.BEST_LOGLIKLIHOOD, null)));
+
 	}
 
 	@Override
@@ -95,7 +111,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			if (result instanceof BMDResult)
 				((BMDResult) result).getColumnHeader();
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, null, new ChartKey(BMDResult.PROBE_ID, null));
+				selectedIds, useTheseKeysOnly, null, new ChartKey(BMDResult.PROBE_ID, null));
 
 		if (chartKey.equals(BMDL_HISTOGRAM))
 		{

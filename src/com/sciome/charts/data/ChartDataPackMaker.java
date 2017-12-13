@@ -31,13 +31,13 @@ public class ChartDataPackMaker
 	 * generate data packs. loop through the objects and pass them to the generateDataPack method.
 	 */
 	public List<ChartDataPack> generateDataPacks(List<BMDExpressAnalysisDataSet> objectsForChart,
-			Set<ChartKey> mathedChartKeys, ChartKey labelKey)
+			Set<ChartKey> useTheseKeysOnly, Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
 		List<ChartDataPack> dataPackList = new ArrayList<>();
 
 		for (BMDExpressAnalysisDataSet obj : objectsForChart)
 		{
-			ChartDataPack dataPack = generateDataPack(obj, mathedChartKeys, labelKey);
+			ChartDataPack dataPack = generateDataPack(obj, useTheseKeysOnly, mathedChartKeys, labelKey);
 			if (dataPack != null)
 				dataPackList.add(dataPack);
 		}
@@ -49,13 +49,16 @@ public class ChartDataPackMaker
 	 * use annotation and reflection to figure out which method returns a list of objects that have data
 	 * points.
 	 */
-	public ChartDataPack generateDataPack(BMDExpressAnalysisDataSet object, Set<ChartKey> mathedChartKeys,
-			ChartKey labelKey)
+	public ChartDataPack generateDataPack(BMDExpressAnalysisDataSet object, Set<ChartKey> useTheseKeysOnly,
+			Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
 
 		Set<ChartKey> chartKeys = new HashSet<>();
-		for (String header : object.getColumnHeader())
-			chartKeys.add(new ChartKey(header, null));
+		if (useTheseKeysOnly == null || useTheseKeysOnly.size() == 0)
+			for (String header : object.getColumnHeader())
+				chartKeys.add(new ChartKey(header, null));
+		else
+			chartKeys.addAll(useTheseKeysOnly);
 
 		if (mathedChartKeys != null)
 			chartKeys.addAll(mathedChartKeys);
@@ -83,8 +86,7 @@ public class ChartDataPackMaker
 
 			for (ChartKey key : chartKeys)
 			{
-				if (key.getKey().toLowerCase().contains("two tail"))
-					System.out.println();
+
 				Object value = object.getValueForHeaderAt(key, i);
 				if (value == null)
 					continue;

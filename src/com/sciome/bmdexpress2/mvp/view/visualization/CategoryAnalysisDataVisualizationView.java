@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +49,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	private static final String						MEDIAN_HISTOGRAMS	= "Median Histograms";
 	private static final String						BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
 	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSymboles;
+	// to make it quicker, define a list of keys that will be used to
+	// generate the charttable data. if this is null or empty, then
+	// values for all data cells are generated.
+	private Set<ChartKey>							useTheseKeysOnly;
 
 	public CategoryAnalysisDataVisualizationView()
 	{
@@ -56,6 +61,23 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service,
 				BMDExpressEventBus.getInstance());
 
+		// this chart view is only using these chartkeys. let's reduce memory and processing by specifying
+		// these
+		// up front. But remember, if you add a new chart or specifiy new keys to use, then this needs to be
+		// updated.
+		useTheseKeysOnly = new HashSet<>();
+		useTheseKeysOnly.addAll(Arrays.asList(new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
+				new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
+				new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null),
+				new ChartKey(CategoryAnalysisResults.BMDL_MEAN, null),
+				new ChartKey(CategoryAnalysisResults.BMD_MEAN, null),
+				new ChartKey(CategoryAnalysisResults.BMDU_MEAN, null),
+				new ChartKey(CategoryAnalysisResults.BMD_TENTH_MEAN, null),
+				new ChartKey(CategoryAnalysisResults.BMD_FIFTH_MEAN, null),
+				new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG),
+				new ChartKey("Percentage", null)
+
+		));
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
@@ -210,7 +232,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		Set<ChartKey> mathedKeys = new HashSet<>();
 		mathedKeys.add(new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, mathedKeys, new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
+				selectedIds, useTheseKeysOnly, mathedKeys,
+				new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
 
 		chartsList = new ArrayList<>();
 		if (chartKey.equals(RANGEPLOT))

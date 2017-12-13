@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,10 @@ public class OriogenDataVisualizationView extends DataVisualizationView implemen
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
 	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Best Fold Change Histogram";
 	private static final String	BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM	= "Best Fold Change (Unsigned) Histogram";
+	// to make it quicker, define a list of keys that will be used to
+	// generate the charttable data. if this is null or empty, then
+	// values for all data cells are generated.
+	private Set<ChartKey>		useTheseKeysOnly;
 
 	public OriogenDataVisualizationView()
 	{
@@ -31,6 +36,15 @@ public class OriogenDataVisualizationView extends DataVisualizationView implemen
 		IVisualizationService service = new VisualizationService();
 		presenter = new OneWayANOVADataVisualizationPresenter(this, service,
 				BMDExpressEventBus.getInstance());
+
+		useTheseKeysOnly = new HashSet<>();
+		useTheseKeysOnly
+				.addAll(Arrays.asList(new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG),
+						new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE_ABS, null),
+						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, null),
+						new ChartKey(PrefilterResults.ADJUSTED_PVALUE, null),
+						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null)));
 
 		chartCache.put(UNADJUSTED_PVALUE_HISTOGRAM + "-" + PrefilterResults.UNADJUSTED_PVALUE,
 				new SciomeHistogramJFree("", new ArrayList<>(),
@@ -73,7 +87,7 @@ public class OriogenDataVisualizationView extends DataVisualizationView implemen
 		mathedKeys.add(new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG));
 		mathedKeys.add(new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
+				selectedIds, useTheseKeysOnly, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
 		chartsList = new ArrayList<>();
 
 		if (chartKey.equals(UNADJUSTED_PVALUE_HISTOGRAM))

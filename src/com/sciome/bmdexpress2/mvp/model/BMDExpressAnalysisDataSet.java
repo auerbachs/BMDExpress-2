@@ -58,7 +58,9 @@ public abstract class BMDExpressAnalysisDataSet
 			return null;
 		try
 		{
-			return this.getAnalysisRows().get(0).getRow().get(getIndexForKey(key)).getClass();
+			for (BMDExpressAnalysisRow row : this.getAnalysisRows())
+				if (row.getRow().get(getIndexForKey(key)) != null)
+					return row.getRow().get(getIndexForKey(key)).getClass();
 		}
 		catch (Exception e)
 		{

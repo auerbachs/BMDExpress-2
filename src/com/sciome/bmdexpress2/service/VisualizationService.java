@@ -15,11 +15,12 @@ public class VisualizationService implements IVisualizationService
 
 	@Override
 	public List<ChartDataPack> getBMDExpressAnalysisChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> mathedChartKeys, ChartKey labelKey)
+			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> useTheseKeysOnly,
+			Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
 		ChartDataPackMaker chartDataPackMaker = new ChartDataPackMaker(pack);
-		List<ChartDataPack> chartDataPacks = chartDataPackMaker.generateDataPacks(catResults, mathedChartKeys,
-				labelKey);
+		List<ChartDataPack> chartDataPacks = chartDataPackMaker.generateDataPacks(catResults,
+				useTheseKeysOnly, mathedChartKeys, labelKey);
 		removeSelectedIds(chartDataPacks, selectedIds);
 		return chartDataPacks;
 	}
