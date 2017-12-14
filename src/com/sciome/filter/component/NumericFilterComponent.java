@@ -45,6 +45,12 @@ public class NumericFilterComponent extends FilterComponent
 	protected void initValues(DataFilter df)
 	{
 
+		if (df.getDataFilterType() != DataFilterType.BETWEEN && df.getValues() != null
+				&& df.getValues().size() >= 1)
+		{
+			dataFilterType.setValue(df.getDataFilterType());
+			value1.setText(df.getValues().get(0).toString());
+		}
 	}
 
 	@Override
@@ -133,6 +139,9 @@ public class NumericFilterComponent extends FilterComponent
 					value2.setVisible(false);
 					hSlider.setVisible(false);
 				}
+
+				if (!value1.getText().trim().equals(""))
+					doDelayedFilterChange(Arrays.asList(value1, value2));
 
 			}
 		});
