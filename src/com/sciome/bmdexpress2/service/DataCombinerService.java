@@ -24,9 +24,11 @@ public class DataCombinerService implements IDataCombinerService
 		Set<String> headersAdded = new HashSet<>();
 		Map<String, Integer> headerToIndex = new HashMap<>();
 
+		List<Object> objects = new ArrayList<>();
 		int i = 1;
 		for (BMDExpressAnalysisDataSet dataset : dataSets)
 		{
+			objects.add(dataset);
 			for (String head : dataset.getColumnHeader())
 			{
 				if (headersAdded.contains(head))
@@ -57,6 +59,7 @@ public class DataCombinerService implements IDataCombinerService
 
 			}
 		combinedDataSet.getAnalysisRows().addAll(rows);
+		combinedDataSet.setObjects(objects);
 
 		// now the rows are there, let's fill them in
 		i = 0;

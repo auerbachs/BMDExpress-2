@@ -29,23 +29,28 @@ import com.sciome.bmdexpress2.serviceInterface.IDataCombinerService;
 import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
@@ -830,6 +835,17 @@ public class ProjectNavigationPresenter
 			bmdAnalysisDataSet.add((BMDExpressAnalysisDataSet) obj);
 
 		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(bmdAnalysisDataSet);
+
+		if (selectedItems.get(0) instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof OriogenResults)
+			getEventBus().post(new OriogenDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
+			getEventBus().post(new CategoryAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataCombinedSelectedEvent(combined));
 		// now post an event with a list of pure analysis sets.
 		System.out.println();
 

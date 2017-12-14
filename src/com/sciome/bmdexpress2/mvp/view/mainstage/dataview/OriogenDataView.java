@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.OriogenDataViewPresenter;
@@ -12,7 +13,7 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public OriogenDataView(OriogenResults oriogenResults, String viewTypeKey)
+	public OriogenDataView(BMDExpressAnalysisDataSet oriogenResults, String viewTypeKey)
 	{
 		super(OriogenResult.class, oriogenResults, viewTypeKey);
 		presenter = new OriogenDataViewPresenter(this, BMDExpressEventBus.getInstance());

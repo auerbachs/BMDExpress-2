@@ -4,11 +4,17 @@ import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IInfoView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
@@ -48,7 +54,7 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}
-	
+
 	/*
 	 * listen for loading william's trend results so we can add it to the project
 	 */
@@ -57,7 +63,7 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}
-	
+
 	/*
 	 * listen for getting a new BMDAnalysisResult set so we can add it to the project
 	 */
@@ -72,6 +78,42 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	 */
 	@Subscribe
 	public void onSelectCategoryAnalysis(CategoryAnalysisDataSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoadCombinedExperiement(ExpressionDataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoadCombinedOneWayAnova(OneWayANOVADataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoaCombineddWilliamsTrend(WilliamsTrendDataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoadCombinedOriogen(OriogenDataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoadCombinedBMDAnalysisResults(BMDAnalysisDataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onSelectCombinedCategoryAnalysis(CategoryAnalysisDataCombinedSelectedEvent event)
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}

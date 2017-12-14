@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDExpressDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
@@ -101,7 +102,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 		topHBox.setAlignment(Pos.CENTER_LEFT);
 
 		// tableView = new TableView<>();
-		if (viewTypeKey.equals("main"))
+		if (viewTypeKey.equals("main") && !(bmdAnalysisDataSet instanceof CombinedDataSet))
 			tableView = TableViewCache.getInstance().getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
 		else
 			tableView = new TableView<>();

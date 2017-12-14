@@ -303,7 +303,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		{
 			List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
 			for (Object obj : navigationTreeView.getSelectionModel().getSelectedItems())
-				if (((TreeItem) obj).getValue() instanceof BMDExpressAnalysisDataSet)
+				if (obj != null && ((TreeItem) obj).getValue() != null
+						&& ((TreeItem) obj).getValue() instanceof BMDExpressAnalysisDataSet)
 					datasets.add(((BMDExpressAnalysisDataSet) (((TreeItem) obj).getValue())));
 
 			presenter.multipleDataSetsSelected(datasets);

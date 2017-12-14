@@ -237,4 +237,10 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

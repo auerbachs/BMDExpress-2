@@ -60,11 +60,11 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		
+
 	}
 
 	@Override
-	public void loadDoseResponseExperiment(DoseResponseExperiment doseResponseExperiement)
+	public void loadDoseResponseExperiment(BMDExpressAnalysisDataSet doseResponseExperiement)
 	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
@@ -77,7 +77,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadOneWayANOVAAnalysis(OneWayANOVAResults oneWayANOVAResults)
+	public void loadOneWayANOVAAnalysis(BMDExpressAnalysisDataSet oneWayANOVAResults)
 	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
@@ -92,7 +92,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults)
+	public void loadWilliamsTrendAnalysis(BMDExpressAnalysisDataSet williamsTrendResults)
 	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
@@ -105,9 +105,10 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 		updateSpreadSheet();
 
 	}
-	
+
 	@Override
-	public void loadOriogenAnalysis(OriogenResults oriogenResults) {
+	public void loadOriogenAnalysis(BMDExpressAnalysisDataSet oriogenResults)
+	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
 		{
@@ -118,9 +119,9 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 
 		updateSpreadSheet();
 	}
-	
+
 	@Override
-	public void loadBMDResultAnalysis(BMDResult bMDAnalsyisResults)
+	public void loadBMDResultAnalysis(BMDExpressAnalysisDataSet bMDAnalsyisResults)
 	{
 
 		// clear data in tableview if it is not null
@@ -134,7 +135,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadCategoryAnalysis(CategoryAnalysisResults categoryAnalysisResults)
+	public void loadCategoryAnalysis(BMDExpressAnalysisDataSet categoryAnalysisResults)
 	{
 
 		// clear data in tableview if it is not null

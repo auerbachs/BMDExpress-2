@@ -11,16 +11,22 @@ import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMenuBarView;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.AddProjectRequestEvent;
@@ -70,7 +76,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		}
 
 	}
-	
+
 	/*
 	 * request for someone to perform william's trend analysis
 	 */
@@ -92,8 +98,9 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		getEventBus().post(new OneWayANOVARequestEvent(""));
 
 	}
-	
-	public void performOriogen() {
+
+	public void performOriogen()
+	{
 		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
 		// which dataset to analyze
 		getEventBus().post(new OriogenRequestEvent(""));
@@ -120,8 +127,9 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		getEventBus().post(new CategoryAnalysisRequestEvent(catAnalysisType));
 
 	}
-	
-	public void addProject(File selectedFile) {
+
+	public void addProject(File selectedFile)
+	{
 		this.getEventBus().post(new AddProjectRequestEvent(selectedFile));
 	}
 
@@ -188,14 +196,14 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	{
 		getView().oneWayANOVADataSelected();
 	}
-	
+
 	@Subscribe
 	@AllowConcurrentEvents
 	public void onWilliamsTrendSelected(WilliamsTrendDataSelectedEvent event)
 	{
 		getView().williamsTrendDataSelected();
 	}
-	
+
 	@Subscribe
 	@AllowConcurrentEvents
 	public void onOriogenSelected(OriogenDataSelectedEvent event)
@@ -208,6 +216,48 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void onCategoryAnalysisSelected(CategoryAnalysisDataSelectedEvent event)
 	{
 		getView().functionalCategoryDataSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onExpressionDataSelected(ExpressionDataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onBMDAnlysisDatasSelected(BMDAnalysisDataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onOneWayANOVASelected(OneWayANOVADataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onWilliamsTrendSelected(WilliamsTrendDataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onOriogenSelected(OriogenDataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onCategoryAnalysisSelected(CategoryAnalysisDataCombinedSelectedEvent event)
+	{
+		getView().combinedSelected();
 	}
 
 	@Subscribe

@@ -241,4 +241,10 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

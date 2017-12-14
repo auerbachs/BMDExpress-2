@@ -24,6 +24,8 @@ public abstract class BMDExpressAnalysisDataSet
 
 	public abstract List<BMDExpressAnalysisRow> getAnalysisRows();
 
+	public abstract Object getObject();
+
 	// lazy load the headerToIndex map.
 	public Integer getIndexForKey(String key)
 	{

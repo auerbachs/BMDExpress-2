@@ -112,11 +112,12 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.loadProject(null);
 
 	}
-	
+
 	/*
 	 * add a project
 	 */
-	public void handle_addProject(ActionEvent event) {
+	public void handle_addProject(ActionEvent event)
+	{
 		presenter.addProject(null);
 	}
 
@@ -286,7 +287,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.performOneWayANOVA();
 
 	}
-	
+
 	/*
 	 * williams trend analysis
 	 */
@@ -306,7 +307,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.performOriogen();
 
 	}
-	
+
 	/*
 	 * bmd analysis
 	 */
@@ -421,7 +422,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
 
 	}
-	
+
 	@Override
 	public void oneWayANOVADataSelected()
 	{
@@ -432,18 +433,20 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
 
 	}
-	
+
 	@Override
-	public void williamsTrendDataSelected() {
+	public void williamsTrendDataSelected()
+	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
 	}
-	
+
 	@Override
-	public void oriogenDataSelected() {
+	public void oriogenDataSelected()
+	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
@@ -500,12 +503,25 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	/**
 	 * True to disable all prefilter items and false otherwise
+	 * 
 	 * @param disabled
 	 */
-	private void togglePrefilterMenuItems(boolean disabled) {
+	private void togglePrefilterMenuItems(boolean disabled)
+	{
 		this.oneWayANOVAMenuItem.setDisable(disabled);
 		this.williamsTrendMenuItem.setDisable(disabled);
 		this.oriogenMenuItem.setDisable(disabled);
+	}
+
+	@Override
+	public void combinedSelected()
+	{
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(false);
+		this.GOAnalysesMenuItem.setDisable(false);
+		this.pathwayAnalysesMenuItem.setDisable(false);
+		this.definedCategoryAnalysesMenuItem.setDisable(false);
+
 	}
 
 }

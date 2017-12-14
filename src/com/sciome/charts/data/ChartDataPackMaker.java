@@ -10,6 +10,7 @@ import java.util.Set;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -35,6 +36,29 @@ public class ChartDataPackMaker
 	{
 		List<ChartDataPack> dataPackList = new ArrayList<>();
 
+		List<BMDExpressAnalysisDataSet> splitCombined = new ArrayList<>();
+		if (objectsForChart.get(0) instanceof CombinedDataSet)
+		{
+			String currAnalysis = "";
+			CombinedDataSet currSet = null;
+			for (BMDExpressAnalysisRow row : ((CombinedDataSet) objectsForChart.get(0)).getAnalysisRows())
+			{
+				// assume the first column is anlaysis name and analyses are grouped together.
+				if (!currAnalysis.equals(row.getRow().get(0).toString()))
+				{
+					currAnalysis = row.getRow().get(0).toString();
+					currSet = new CombinedDataSet(
+							((CombinedDataSet) objectsForChart.get(0)).getColumnHeader(), currAnalysis);
+
+					splitCombined.add(currSet);
+				}
+				if (currSet != null)
+					currSet.getAnalysisRows().add(row);
+
+			}
+		}
+		if (splitCombined.size() > 0)
+			objectsForChart = splitCombined;
 		for (BMDExpressAnalysisDataSet obj : objectsForChart)
 		{
 			ChartDataPack dataPack = generateDataPack(obj, useTheseKeysOnly, mathedChartKeys, labelKey);
@@ -67,6 +91,7 @@ public class ChartDataPackMaker
 		int i = -1;
 		for (BMDExpressAnalysisRow row : object.getAnalysisRows())
 		{
+
 			i++;
 			// filter out rows that do not pass the filter criteria
 			if (dataFilterPack != null && !dataFilterPack.passesFilter(row))

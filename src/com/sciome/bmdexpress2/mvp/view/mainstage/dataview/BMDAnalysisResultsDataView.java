@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDAnalysisResultsDataViewPresenter;
@@ -31,23 +32,37 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 	private BMDTableCallBack probeIDCellFactory;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public BMDAnalysisResultsDataView(BMDResult bmdResult, String viewTypeKey)
+	public BMDAnalysisResultsDataView(BMDExpressAnalysisDataSet bmdResult, String viewTypeKey)
 	{
 		super(ProbeStatResult.class, bmdResult, viewTypeKey);
 
-		presenter = new BMDAnalysisResultsDataViewPresenter(this, BMDExpressEventBus.getInstance());
+		try
+		{
+			presenter = new BMDAnalysisResultsDataViewPresenter(this, BMDExpressEventBus.getInstance());
 
-		// Create a CellFactory for the probeid. The reason for this is to allow us to detect user mouse click
-		// inside the cell so we can show the curve
-		probeIDCellFactory = new BMDTableCallBack(bmdResult);
+			if (bmdResult.getColumnHeader().size() == 0)
+				return;
 
-		if (bmdResult.getColumnHeader().size() == 0)
-			return;
-		setUpTableView(bmdResult);
-		TableColumn tc = tableView.getColumns().get(0);
-		tc.setCellFactory(probeIDCellFactory);
+			setUpTableView(bmdResult);
 
-		presenter.showVisualizations(bmdResult);
+			TableColumn tc = tableView.getColumns().get(0);
+
+			if (bmdResult instanceof BMDResult)
+			{
+				// Create a CellFactory for the probeid. The reason for this is to allow us to detect user
+				// mouse
+				// click
+				// inside the cell so we can show the curve
+				probeIDCellFactory = new BMDTableCallBack((BMDResult) bmdResult);
+				tc.setCellFactory(probeIDCellFactory);
+			}
+
+			presenter.showVisualizations(bmdResult);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 	}
 
@@ -55,13 +70,21 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 	@Override
 	public void close()
 	{
-		if (tableView != null && tableView.getColumns().size() > 0)
+		try
 		{
-			TableColumn tc = tableView.getColumns().get(0);
-			tc.setCellFactory(null);
+			if (tableView != null && tableView.getColumns().size() > 0)
+			{
+				TableColumn tc = tableView.getColumns().get(0);
+				tc.setCellFactory(null);
+			}
+			if (probeIDCellFactory != null)
+				probeIDCellFactory.close();
+			super.close();
 		}
-		probeIDCellFactory.close();
-		super.close();
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 	}
 

@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.OneWayANOVADataViewPresenter;
@@ -14,7 +15,7 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 	// OneWayANOVADataViewPresenter presenter;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public OneWayANOVADataView(OneWayANOVAResults oneWayANOVAResults, String viewTypeKey)
+	public OneWayANOVADataView(BMDExpressAnalysisDataSet oneWayANOVAResults, String viewTypeKey)
 	{
 		super(OneWayANOVAResult.class, oneWayANOVAResults, viewTypeKey);
 		presenter = new OneWayANOVADataViewPresenter(this, BMDExpressEventBus.getInstance());

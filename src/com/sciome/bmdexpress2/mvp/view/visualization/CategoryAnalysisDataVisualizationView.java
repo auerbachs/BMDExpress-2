@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
@@ -216,8 +217,11 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	{
 		try
 		{
+			Object obj = results.get(0).getObject();
+			if (results.get(0).getObject() instanceof List)
+				obj = ((List) results.get(0).getObject()).get(0);
 			dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
-					.getdbToPathwaytoGeneSet(((CategoryAnalysisResults) results.get(0)).getBmdResult());
+					.getdbToPathwaytoGeneSet(((CategoryAnalysisResults) obj).getBmdResult());
 		}
 		catch (Exception e)
 		{
@@ -424,10 +428,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		Set<ProbeStatResult> probeIdSet = new HashSet<>();
 		for (BMDExpressAnalysisDataSet results : catResultss)
 		{
-			CategoryAnalysisResults catResults = (CategoryAnalysisResults) results;
-			for (CategoryAnalysisResult catResult : catResults.getCategoryAnalsyisResults())
+			for (BMDExpressAnalysisRow row : results.getAnalysisRows())
 			{
-				if (pack != null && !pack.passesFilter(catResult))
+				CategoryAnalysisResult catResult = (CategoryAnalysisResult) row.getObject();
+				if (pack != null && !pack.passesFilter(row))
 					continue;
 				if (selectedIds2 != null && !selectedIds2.contains(catResult.getCategoryIdentifier().getId()))
 					continue;

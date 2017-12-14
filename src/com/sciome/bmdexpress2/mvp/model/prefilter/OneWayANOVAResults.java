@@ -247,4 +247,10 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
 }

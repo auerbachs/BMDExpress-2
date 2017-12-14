@@ -1,6 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
-import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.ExpressionDataSetDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
@@ -16,7 +16,7 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ExpressionDataSetDataView(DoseResponseExperiment doseResponseExperiement, String viewTypeKey)
+	public ExpressionDataSetDataView(BMDExpressAnalysisDataSet doseResponseExperiement, String viewTypeKey)
 	{
 		super(ProbeResponse.class, doseResponseExperiement, viewTypeKey);
 

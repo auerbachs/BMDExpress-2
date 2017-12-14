@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.WilliamsTrendDataViewPresenter;
@@ -13,7 +14,7 @@ public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResul
 {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public WilliamsTrendDataView(WilliamsTrendResults williamsTrendResults, String viewTypeKey)
+	public WilliamsTrendDataView(BMDExpressAnalysisDataSet williamsTrendResults, String viewTypeKey)
 	{
 		super(WilliamsTrendResult.class, williamsTrendResults, viewTypeKey);
 		presenter = new WilliamsTrendDataViewPresenter(this, BMDExpressEventBus.getInstance());

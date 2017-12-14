@@ -9,10 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
-import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.BMDAnalysisResultsDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.service.VisualizationService;
@@ -104,8 +103,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 
 		// this is needed becasue there are transient fields that need to be initialized.
 		// don;t like how this work as it leads to null pointers. need to look into architecture
+		Object obj = results.get(0).getObject();
+		if (results.get(0).getObject() instanceof List)
+			obj = ((List) results.get(0).getObject()).get(0);
 		dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
-				.getdbToPathwaytoGeneSet(((BMDResult) results.get(0)));
+				.getdbToPathwaytoGeneSet(((BMDResult) obj));
 
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
@@ -183,29 +185,33 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	{
 		Map<String, Double> mapCount = new HashMap<>();
 
-		for (BMDExpressAnalysisDataSet row : bmdResultss)
+		for (BMDExpressAnalysisDataSet dataset : bmdResultss)
 		{
-			if (!(row instanceof BMDResult))
-				continue;
-			BMDResult bmdResults = (BMDResult) row;
-			for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
-			{
-				if (pack != null && !pack.passesFilter(probeStatResult))
-					continue;
-				if (selectedIds2 != null
-						&& !selectedIds2.contains(probeStatResult.getProbeResponse().getProbe().getId()))
-					continue;
 
-				StatResult result = probeStatResult.getBestStatResult();
-				if (result == null)
-					continue;
-				if (mapCount.containsKey(result.toString()))
+			for (BMDExpressAnalysisRow row : dataset.getAnalysisRows())
+			{
+
+				String bestModel = null;;
+				try
 				{
-					mapCount.put(result.toString(), mapCount.get(result.toString()) + 1.0);
+					if (pack != null && !pack.passesFilter(row))
+						continue;
+					if (selectedIds2 != null
+							&& !selectedIds2.contains(dataset.getValueForRow(row, BMDResult.PROBE_ID)))
+						continue;
+					bestModel = dataset.getValueForRow(row, BMDResult.BEST_MODEL).toString();
+				}
+				catch (Exception e)
+				{}
+				if (bestModel == null)
+					continue;
+				if (mapCount.containsKey(bestModel))
+				{
+					mapCount.put(bestModel, mapCount.get(bestModel) + 1.0);
 				}
 				else
 				{
-					mapCount.put(result.toString(), 1.0);
+					mapCount.put(bestModel, 1.0);
 				}
 
 			}

@@ -10,6 +10,7 @@ public class CombinedDataSet extends BMDExpressAnalysisDataSet
 
 	List<String>				header;
 	List<BMDExpressAnalysisRow>	rows;
+	List<Object>				objects;
 	AnalysisInfo				analysisInfo	= new AnalysisInfo();
 	String						name;
 
@@ -42,6 +43,11 @@ public class CombinedDataSet extends BMDExpressAnalysisDataSet
 		return analysisInfo;
 	}
 
+	public void setObjects(List<Object> objects)
+	{
+		this.objects = objects;
+	}
+
 	@Override
 	public String getName()
 	{
@@ -59,6 +65,12 @@ public class CombinedDataSet extends BMDExpressAnalysisDataSet
 	public List<BMDExpressAnalysisRow> getAnalysisRows()
 	{
 		return rows;
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return objects;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
@@ -29,7 +30,7 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	private Callback<TableColumn, TableCell> categoryCellFactory;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public CategoryAnalysisDataView(CategoryAnalysisResults categoryAnalysisResults, String viewTypeKey)
+	public CategoryAnalysisDataView(BMDExpressAnalysisDataSet categoryAnalysisResults, String viewTypeKey)
 	{
 		super(CategoryAnalysisResult.class, categoryAnalysisResults, viewTypeKey);
 		presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
