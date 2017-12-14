@@ -14,11 +14,6 @@ public class SciomeChartViewer extends ChartViewer {
 	
 	public SciomeChartViewer(JFreeChart chart) {
 		super(chart);
-		//Change the background color of the chart to be the same grey color as the program
-		Color grey = new Color(244, 244, 244);
-		chart.setBackgroundPaint(grey);
-		chart.getPlot().setBackgroundPaint(grey);
-		chart.getLegend().setBackgroundPaint(grey);
 		ChartCanvas canvas = getCanvas();
 		
 		//Remove the preivous zoom handler and add one that activates only when you hold shift
