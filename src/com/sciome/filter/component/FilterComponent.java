@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import com.sciome.filter.DataFilter;
+import com.sciome.filter.DataFilterType;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -158,5 +159,10 @@ public abstract class FilterComponent extends VBox
 	public boolean getIsUseable()
 	{
 		return isUseable;
+	}
+
+	public DataFilterType getDataFilterType()
+	{
+		return DataFilterType.BETWEEN;
 	}
 }

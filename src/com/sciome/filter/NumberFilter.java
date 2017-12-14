@@ -27,8 +27,19 @@ public class NumberFilter extends DataFilter<Number>
 			Number value2 = (Number) values.get(1);
 			Number objectValue = (Number) filterAnnotationExtractor.getFilterableValue(object, key);
 
-			return objectValue.doubleValue() >= value1.doubleValue()
-					&& objectValue.doubleValue() <= value2.doubleValue();
+			if (dataFilterType.equals(DataFilterType.BETWEEN))
+				return objectValue.doubleValue() >= value1.doubleValue()
+						&& objectValue.doubleValue() <= value2.doubleValue();
+			else if (dataFilterType.equals(DataFilterType.EQUALS))
+				return objectValue.equals(value1);
+			else if (dataFilterType.equals(DataFilterType.GREATER_THAN))
+				return objectValue.doubleValue() > value1.doubleValue();
+			else if (dataFilterType.equals(DataFilterType.GREATER_THAN_EQUAL))
+				return objectValue.doubleValue() >= value1.doubleValue();
+			else if (dataFilterType.equals(DataFilterType.LESS_THAN))
+				return objectValue.doubleValue() < value1.doubleValue();
+			else if (dataFilterType.equals(DataFilterType.LESS_THAN_EQUAL))
+				return objectValue.doubleValue() <= value1.doubleValue();
 		}
 		catch (Exception e)
 		{

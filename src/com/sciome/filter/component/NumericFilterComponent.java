@@ -10,10 +10,12 @@ import java.util.List;
 import org.controlsfx.control.RangeSlider;
 
 import com.sciome.filter.DataFilter;
+import com.sciome.filter.DataFilterType;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,11 +27,13 @@ import javafx.scene.layout.VBox;
 public class NumericFilterComponent extends FilterComponent
 {
 
-	private boolean			isInteger;
-	private boolean			textEditingSlider	= false;
-	protected RangeSlider	hSlider;
-	protected TextField		value1;
-	protected TextField		value2;
+	private boolean						isInteger;
+	private boolean						textEditingSlider	= false;
+	protected RangeSlider				hSlider;
+	protected TextField					value1;
+	protected TextField					value2;
+
+	private ComboBox<DataFilterType>	dataFilterType;
 
 	public NumericFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
 			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
@@ -63,11 +67,11 @@ public class NumericFilterComponent extends FilterComponent
 		try
 		{
 			value1 = new TextField(formatDecimal(min, RoundingMode.FLOOR));
-			value1.setMinWidth(150.0);
-			value1.setMaxWidth(1500);
+			value1.setMinWidth(100.0);
+			value1.setMaxWidth(100.0);
 			value2 = new TextField(formatDecimal(max, RoundingMode.CEILING));
-			value2.setMinWidth(150.0);
-			value2.setMaxWidth(150.0);
+			value2.setMinWidth(100.0);
+			value2.setMaxWidth(100.0);
 		}
 		catch (Exception e)
 		{
@@ -108,13 +112,38 @@ public class NumericFilterComponent extends FilterComponent
 			}
 		});
 
+		dataFilterType = new ComboBox<>();
+		dataFilterType.getItems().addAll(DataFilterType.values());
+		dataFilterType.getItems().remove(DataFilterType.CONTAINS);
+		dataFilterType.setValue(DataFilterType.BETWEEN);
+
+		dataFilterType.valueProperty().addListener(new ChangeListener<DataFilterType>() {
+
+			@Override
+			public void changed(ObservableValue<? extends DataFilterType> observable, DataFilterType oldValue,
+					DataFilterType newValue)
+			{
+				if (newValue.equals(DataFilterType.BETWEEN))
+				{
+					value2.setVisible(true);
+					hSlider.setVisible(true);
+				}
+				else
+				{
+					value2.setVisible(false);
+					hSlider.setVisible(false);
+				}
+
+			}
+		});
+
 		// hSlider.setShowTickLabels(true);
 		// hSlider.setBlockIncrement(value);
 
 		VBox vbox = new VBox(8);
 		HBox hbox1 = new HBox(8);
 
-		hbox1.getChildren().addAll(value1, value2);
+		hbox1.getChildren().addAll(dataFilterType, value1, value2);
 
 		vbox.getChildren().addAll(hbox1, hSlider);
 		addFilterComponent(vbox);
@@ -192,7 +221,7 @@ public class NumericFilterComponent extends FilterComponent
 		if (value1.getText() == null || value1.getText().equals(""))
 			return false;
 
-		if ((value2.getText() == null || value2.getText().equals("")))
+		if (value2.isVisible() && (value2.getText() == null || value2.getText().equals("")))
 			return false;
 		return true;
 
@@ -250,6 +279,15 @@ public class NumericFilterComponent extends FilterComponent
 			df.setRoundingMode(roundingMode);
 			return df.format(value);
 		}
+	}
+
+	@Override
+	public DataFilterType getDataFilterType()
+	{
+		if (dataFilterType.getValue() == null || dataFilterType.getValue().toString().equals(""))
+			return super.getDataFilterType();
+
+		return dataFilterType.getValue();
 	}
 
 }

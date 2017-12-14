@@ -27,7 +27,19 @@ public class IntegerFilter extends DataFilter<Integer>
 			Integer value2 = (Integer) values.get(1);
 			Integer objectValue = (Integer) filterAnnotationExtractor.getFilterableValue(object, key);
 
-			return objectValue >= value1 && objectValue <= value2;
+			if (dataFilterType.equals(DataFilterType.BETWEEN))
+				return objectValue >= value1 && objectValue <= value2;
+			else if (dataFilterType.equals(DataFilterType.EQUALS))
+				return objectValue.equals(value1);
+			else if (dataFilterType.equals(DataFilterType.GREATER_THAN))
+				return objectValue > value1;
+			else if (dataFilterType.equals(DataFilterType.GREATER_THAN_EQUAL))
+				return objectValue >= value1;
+			else if (dataFilterType.equals(DataFilterType.LESS_THAN))
+				return objectValue < value1;
+			else if (dataFilterType.equals(DataFilterType.LESS_THAN_EQUAL))
+				return objectValue <= value1;
+
 		}
 		catch (Exception e)
 		{

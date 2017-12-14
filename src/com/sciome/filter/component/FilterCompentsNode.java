@@ -193,7 +193,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
 			if (returnType.equals(Integer.class))
 			{
-				df = new IntegerFilter(DataFilterType.BETWEEN, this.filterableDataSet, fc.getFilterKey(),
+				df = new IntegerFilter(fc.getDataFilterType(), this.filterableDataSet, fc.getFilterKey(),
 						fc.getValues());
 			}
 			else if (returnType.equals(Float.class) || returnType.equals(Double.class)
@@ -201,7 +201,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			{
 				try
 				{
-					df = new NumberFilter(DataFilterType.EQUALS, this.filterableDataSet, fc.getFilterKey(),
+					df = new NumberFilter(fc.getDataFilterType(), this.filterableDataSet, fc.getFilterKey(),
 							fc.getValues());
 				}
 				catch (Exception e)
