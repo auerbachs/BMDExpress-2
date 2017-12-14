@@ -489,10 +489,10 @@ public class ModelGraphics extends JPanel
 										.addGap(13, 13, 13))
 								.addGroup(jPanel1Layout.createSequentialGroup().addComponent(printButton)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(clearButton)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(colorButton)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(clearButton).addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(colorButton).addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addComponent(closeButton)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
 						/// <>///
@@ -522,13 +522,11 @@ public class ModelGraphics extends JPanel
 		jPanel1Layout.setVerticalGroup(jPanel1Layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap()
-								.addGroup(jPanel1Layout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(modelLabel)
-										.addComponent(modelField, javax.swing.GroupLayout.PREFERRED_SIZE,
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(
+								jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+										.addComponent(modelLabel).addComponent(modelField,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -635,7 +633,8 @@ public class ModelGraphics extends JPanel
 		);
 		jPanel3Layout.setVerticalGroup(
 				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-						javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						jPanel3Layout.createSequentialGroup()
 								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(jPanel3Layout
 										.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1621,6 +1620,8 @@ public class ModelGraphics extends JPanel
 	private void mapProbesToData()
 	{
 		this.probeStatResultMap = new HashMap<>();
+		if (bmdResults == null)
+			return;
 		for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
 		{
 			probeStatResultMap.put(probeStatResult.getProbeResponse().getProbe(), probeStatResult);

@@ -1,6 +1,9 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
+import com.sciome.bmdexpress2.mvp.model.CombinedRow;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDAnalysisResultsDataViewPresenter;
@@ -45,7 +48,10 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 			setUpTableView(bmdResult);
 
-			TableColumn tc = tableView.getColumns().get(0);
+			int probeIDColumn = 0;
+			if (bmdResult instanceof CombinedDataSet)
+				probeIDColumn = 1;
+			TableColumn tc = tableView.getColumns().get(probeIDColumn);
 
 			if (bmdResult instanceof BMDResult)
 			{
@@ -54,6 +60,11 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 				// click
 				// inside the cell so we can show the curve
 				probeIDCellFactory = new BMDTableCallBack((BMDResult) bmdResult);
+				tc.setCellFactory(probeIDCellFactory);
+			}
+			else if (bmdResult instanceof CombinedDataSet)
+			{
+				probeIDCellFactory = new BMDTableCallBack(null);
 				tc.setCellFactory(probeIDCellFactory);
 			}
 
@@ -74,7 +85,10 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		{
 			if (tableView != null && tableView.getColumns().size() > 0)
 			{
-				TableColumn tc = tableView.getColumns().get(0);
+				int probeIDColumn = 0;
+				if (bmdAnalysisDataSet instanceof CombinedDataSet)
+					probeIDColumn = 1;
+				TableColumn tc = tableView.getColumns().get(probeIDColumn);
 				tc.setCellFactory(null);
 			}
 			if (probeIDCellFactory != null)
@@ -94,136 +108,145 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		return new BMDAnalysisResultsDataVisualizationView();
 	}
 
-}
-
-final class BMDTableCallBack implements Callback<TableColumn, TableCell>
-{
-	BMDResult				bmdResult;
-	private ModelGraphics	modelGraphics;
-
-	public BMDTableCallBack(BMDResult bmdr)
+	private class BMDTableCallBack implements Callback<TableColumn, TableCell>
 	{
-		bmdResult = bmdr;
-	}
+		BMDResult				bmdResult;
+		private ModelGraphics	modelGraphics;
 
-	public void close()
-	{
-		bmdResult = null;
-	}
-
-	@Override
-	public TableCell call(TableColumn param)
-	{
-
-		TableCell cell = new TableCell<ProbeStatResult, String>() {
-
-			// must override drawing the cell so we can color it blue.
-			@Override
-			public void updateItem(String item, boolean empty)
-			{
-				super.updateItem(item, empty);
-				setTextFill(javafx.scene.paint.Color.BLUE);
-				setText(empty ? null : getString());
-				setGraphic(null);
-			}
-
-			private String getString()
-			{
-				return getItem() == null ? "" : getItem().toString();
-			}
-		};
-
-		// add mouse click event handler.
-		cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event)
-			{
-				if (event.getClickCount() != 1)
-				{
-					return;
-				}
-				TableCell c = (TableCell) event.getSource();
-				ProbeStatResult item = (ProbeStatResult) c.getTableRow().getItem();
-
-				if (item == null)
-				{
-					return;
-				}
-				if (modelGraphics != null)
-				{
-					if (item.getBestStatResult() != null)
-						modelGraphics.setSelectedModel(item.getBestStatResult().toString());
-					else
-						modelGraphics.setSelectedModel(item.getStatResults().get(0).toString());
-					modelGraphics.setSelectedProbe(item.getProbeResponse().getProbe());
-				}
-				else
-				{
-					showGraphView(bmdResult, item);
-				}
-
-			}
-		});
-		return cell;
-	}
-
-	/*
-	 * after user clicks on a probe id then we show the curve fit view which is a swingnode based thing.
-	 */
-	private void showGraphView(BMDResult bmdResult, ProbeStatResult probeStatResult)
-	{
-
-		try
+		public BMDTableCallBack(BMDResult bmdr)
 		{
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/curvefit.fxml"));
+			bmdResult = bmdr;
+		}
 
-			Stage stage = BMDExpressFXUtils.getInstance()
-					.generateStage("Curve Viewer: " + bmdResult.getName());
-			new Stage(StageStyle.DECORATED);
-			// stage.setAlwaysOnTop(true);
-			stage.setScene(new Scene((AnchorPane) loader.load()));
-			CurveFitView controller = loader.<CurveFitView> getController();
-			if (modelGraphics == null)
-			{
-				modelGraphics = new ModelGraphics(bmdResult, probeStatResult.getBestStatResult(),
-						new ModelGraphicsEvent() {
+		public void close()
+		{
+			bmdResult = null;
+		}
 
-							@Override
-							public void closeModelGraphics()
-							{
-								modelGraphics = null;
-								Platform.runLater(new Runnable() {
+		@Override
+		public TableCell call(TableColumn param)
+		{
 
-									@Override
-									public void run()
-									{
-										stage.close();
-									}
-								});
+			TableCell cell = new TableCell<ProbeStatResult, String>() {
 
-							}
-						});
-
-			}
-			controller.initData(bmdResult, probeStatResult, modelGraphics);
-
-			stage.sizeToScene();
-			stage.show();
-			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				// must override drawing the cell so we can color it blue.
 				@Override
-				public void handle(WindowEvent we)
+				public void updateItem(String item, boolean empty)
 				{
-					modelGraphics = null;
+					super.updateItem(item, empty);
+					setTextFill(javafx.scene.paint.Color.BLUE);
+					setText(empty ? null : getString());
+					setGraphic(null);
+				}
+
+				private String getString()
+				{
+					return getItem() == null ? "" : getItem().toString();
+				}
+			};
+
+			// add mouse click event handler.
+			cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent event)
+				{
+					if (event.getClickCount() != 1)
+					{
+						return;
+					}
+					TableCell c = (TableCell) event.getSource();
+					BMDExpressAnalysisRow row = (BMDExpressAnalysisRow) c.getTableRow().getItem();
+					ProbeStatResult item = (ProbeStatResult) row.getObject();
+
+					if (item == null)
+					{
+						return;
+					}
+					if (modelGraphics != null)
+					{
+						if (item.getBestStatResult() != null)
+							modelGraphics.setSelectedModel(item.getBestStatResult().toString());
+						else
+							modelGraphics.setSelectedModel(item.getStatResults().get(0).toString());
+						modelGraphics.setSelectedProbe(item.getProbeResponse().getProbe());
+					}
+					else
+					{
+						// we are making a strong assumption that the parent for a
+						// row here in this context is a BMDResult
+						if (row instanceof CombinedRow)
+							bmdResult = (BMDResult) ((CombinedRow) row).getParentObject();
+						showGraphView(bmdResult, item);
+					}
+
 				}
 			});
-
+			return cell;
 		}
-		catch (Exception e)
+
+		/*
+		 * after user clicks on a probe id then we show the curve fit view which is a swingnode based thing.
+		 */
+		private void showGraphView(BMDResult bmdResult, ProbeStatResult probeStatResult)
 		{
-			e.printStackTrace();
+
+			String name = "";
+			if (bmdResult != null)
+				name = bmdResult.getName();
+			else
+				name = probeStatResult.getChartableDataLabel();
+
+			try
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/curvefit.fxml"));
+
+				Stage stage = BMDExpressFXUtils.getInstance().generateStage("Curve Viewer: " + name);
+				new Stage(StageStyle.DECORATED);
+				// stage.setAlwaysOnTop(true);
+				stage.setScene(new Scene((AnchorPane) loader.load()));
+				CurveFitView controller = loader.<CurveFitView> getController();
+				if (modelGraphics == null)
+				{
+					modelGraphics = new ModelGraphics(bmdResult, probeStatResult.getBestStatResult(),
+							new ModelGraphicsEvent() {
+
+								@Override
+								public void closeModelGraphics()
+								{
+									modelGraphics = null;
+									Platform.runLater(new Runnable() {
+
+										@Override
+										public void run()
+										{
+											stage.close();
+										}
+									});
+
+								}
+							});
+
+				}
+				controller.initData(bmdResult, probeStatResult, modelGraphics);
+
+				stage.sizeToScene();
+				stage.show();
+				stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+					@Override
+					public void handle(WindowEvent we)
+					{
+						modelGraphics = null;
+					}
+				});
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+
+			}
 
 		}
-
 	}
 }

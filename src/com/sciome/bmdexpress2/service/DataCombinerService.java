@@ -49,7 +49,7 @@ public class DataCombinerService implements IDataCombinerService
 		for (BMDExpressAnalysisDataSet dataset : dataSets)
 			for (BMDExpressAnalysisRow r : dataset.getAnalysisRows())
 			{
-				CombinedRow cr = new CombinedRow(r.getObject());
+				CombinedRow cr = new CombinedRow(r.getObject(), dataset);
 				for (String str : theHeader)
 					cr.getRow().add(null);
 
