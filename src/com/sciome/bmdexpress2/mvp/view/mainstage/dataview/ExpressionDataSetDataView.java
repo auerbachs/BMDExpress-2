@@ -32,7 +32,6 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 		hideTable.setDisable(true);
 		hideCharts.setDisable(true);
 		enableFilterCheckBox.setDisable(true);
-		drawSelectedIdsCheckBox.setDisable(true);
 
 	}
 

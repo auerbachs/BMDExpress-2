@@ -19,11 +19,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
@@ -60,10 +57,6 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected List<BMDExpressAnalysisDataSet>	results;
 	protected DataFilterPack					defaultDPack;
 
-	protected Button							addDataSet;
-
-	protected Button							removeDataSet;
-
 	private VBox								vBox;
 	protected ComboBox<String>					cBox;
 	protected Map<String, SciomeChartBase>		chartCache				= new HashMap<>();
@@ -96,8 +89,6 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 		graphViewAnchorPane = new AnchorPane();
 		vBox.getChildren().add(h);
 		vBox.getChildren().add(graphViewAnchorPane);
-		addDataSet = new Button("+");
-		removeDataSet = new Button("-");
 
 		HBox h1 = new HBox();
 		HBox h2 = new HBox();
@@ -118,30 +109,14 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			}
 
 		});
-		Label label = new Label("<-- Add/Remove dataset in visualizations. ");
 
-		h1.getChildren().addAll(addDataSet, removeDataSet, label);
 		h2.getChildren().addAll(new Label("Select Graph View"), cBox);
 		h.getChildren().addAll(h1, h2);
 
 		HBox.setHgrow(h2, Priority.ALWAYS);
 		h.setAlignment(Pos.CENTER_LEFT);
 		VBox.setVgrow(graphViewAnchorPane, Priority.ALWAYS);
-		addDataSet.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				handle_addDataSet(e);
-			}
-		});
 
-		removeDataSet.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				handle_removeDataSet(e);
-			}
-		});
 	}
 
 	public Node getNode()
@@ -250,41 +225,6 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void initData(DataFilterPack dPack)
 	{
 		defaultDPack = dPack;
-
-	}
-
-	private void handle_addDataSet(ActionEvent event)
-	{
-		List<BMDExpressAnalysisDataSet> dataSet = null;
-		if (results != null && results.size() > 0)
-		{
-			dataSet = presenter.getResultsFromProject(results);
-			List<BMDExpressAnalysisDataSet> ds = customChoiceDialogForDataSet(dataSet,
-					"Add Data Set(s) To Visualization");
-			// BMDExpressAnalysisDataSet d = choiceDialogForDataSet(dataSet, "Add Data Set To Visualization");
-			if (ds != null)
-			{
-				results.addAll(ds);
-				redrawCharts(defaultDPack, selectedIds);
-			}
-		}
-
-	}
-
-	private void handle_removeDataSet(ActionEvent event)
-	{
-		if (results != null && results.size() > 1)
-		{
-			List<BMDExpressAnalysisDataSet> ds = customChoiceDialogForDataSet(results,
-					"Remove Data Set From Visualization");
-			if (ds != null)
-			{
-				results.removeAll(ds);
-				if (results.isEmpty())
-					results.addAll(originatingResults);
-				redrawCharts(defaultDPack, selectedIds);
-			}
-		}
 
 	}
 

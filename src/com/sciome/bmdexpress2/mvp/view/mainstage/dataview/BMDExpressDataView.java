@@ -21,7 +21,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -54,9 +53,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected TableView<BMDExpressAnalysisRow>					tableView		= null;
 	protected HBox												topHBox;
 	protected Label												totalItemsLabel;
-	protected Label												selectedItemsLabel;
 	protected CheckBox											enableFilterCheckBox;
-	protected CheckBox											drawSelectedIdsCheckBox;
 	protected SplitPane											splitPaneMain;
 	protected SplitPane											splitPane;
 	protected FilterCompentsNode								filtrationNode;
@@ -80,10 +77,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	private Class<?>											filterableClass;
 	protected BMDExpressAnalysisDataSet							bmdAnalysisDataSet;
 	private DataFilterPack										defaultDPack	= null;
-	private List<String>										selectedIds;
 	protected ObservableList<BMDExpressAnalysisRow>				rawTableData	= null;
-
-	private TableListener										tableViewChangeListener;
 
 	@SuppressWarnings("unchecked")
 	public BMDExpressDataView(Class<?> filterableClass, BMDExpressAnalysisDataSet bmdAnalysisDataSet,
@@ -137,15 +131,11 @@ public abstract class BMDExpressDataView<T> extends VBox
 		}
 
 		totalItemsLabel = new Label("");
-		selectedItemsLabel = new Label("");
 		enableFilterCheckBox = new CheckBox(APPPLY_FILTER);
 		enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
 
-		drawSelectedIdsCheckBox = new CheckBox("Draw Selected Items");
 		topHBox.getChildren().add(totalItemsLabel);
-		topHBox.getChildren().add(selectedItemsLabel);
 		topHBox.getChildren().add(enableFilterCheckBox);
-		topHBox.getChildren().add(drawSelectedIdsCheckBox);
 		topHBox.getChildren().add(hideFilter);
 		topHBox.getChildren().add(hideTable);
 		topHBox.getChildren().add(hideCharts);
@@ -272,11 +262,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 		tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		totalItemsLabel.setText("Total Items: " + analysisDataSet.getAnalysisRows().size());
-		selectedItemsLabel.setText("Selected Items: 0");
-
-		// set up selection change listener
-		tableViewChangeListener = new TableListener();
-		tableView.getSelectionModel().getSelectedItems().addListener(tableViewChangeListener);
 
 		// put the displayable data into a sortable and filterable list.
 		rawTableData = FXCollections.observableArrayList(analysisDataSet.getAnalysisRows());
@@ -292,14 +277,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 			{
 				dataFilterChanged();
 				BMDExpressProperties.getInstance().setApplyFilter(enableFilterCheckBox.isSelected());
-			}
-		});
-
-		drawSelectedIdsCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
-			{
-				redrawVisualizations();
 			}
 		});
 
@@ -340,8 +317,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 		List<String> localSelectedIds = null;
 		// check to see whether or not to only draw the selected items in the chart visualizations.
-		if (drawSelectedIdsCheckBox.isSelected())
-			localSelectedIds = selectedIds;
 
 		if (enableFilterCheckBox.isSelected())
 		{
@@ -417,8 +392,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 			// tc.setCellValueFactory(null);
 			splitPane.getItems().remove(splitPaneMain);
 			splitPane.getItems().remove(filtrationNode);
-			if (tableViewChangeListener != null && tableView != null)
-				tableView.getSelectionModel().getSelectedItems().removeListener(tableViewChangeListener);
 
 		}
 		catch (Exception e)
@@ -507,39 +480,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 		returnList.add(max);
 
 		return returnList;
-	}
-
-	/*
-	 * Listen to see if the user (de)selects an item in the table. update the selecte items label and redraw
-	 * visualizations to reflect which records have been selected.
-	 */
-	private class TableListener implements ListChangeListener<BMDExpressAnalysisRow>
-	{
-
-		@Override
-		public void onChanged(
-				javafx.collections.ListChangeListener.Change<? extends BMDExpressAnalysisRow> change)
-		{
-			selectedItemsLabel
-					.setText("Selected Items: " + tableView.getSelectionModel().getSelectedItems().size());
-
-			BMDExpressDataView.this.selectedIds = new ArrayList<>();
-			List<? extends BMDExpressAnalysisRow> mylist = change.getList();
-
-			if (mylist.size() == 0)
-			{
-				return;
-			}
-			for (BMDExpressAnalysisRow row : mylist)
-			{
-				if (row != null && row.getRow() != null && row.getRow().size() > 0)
-					selectedIds.add(row.getRow().get(0).toString());
-			}
-			if (drawSelectedIdsCheckBox.isSelected())
-				redrawVisualizations();
-
-		}
-
 	}
 
 	protected int compareToNumericValues(Object o1, Object o2)
