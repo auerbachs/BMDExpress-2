@@ -76,8 +76,6 @@ import com.sciome.bmdexpress2.util.DialogWithThreadProcess;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
-import javafx.scene.control.TreeItem;
-
 public class ProjectNavigationPresenter
 		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
 {
@@ -764,12 +762,11 @@ public class ProjectNavigationPresenter
 	 * A list of analysis data sets will be exported to one or more files. If there are datasets with varying
 	 * headers, then we will export to more than one file.
 	 */
-	public void exportMultipleResults(List<TreeItem> selectedItems, File selectedFile)
+	public void exportMultipleResults(List<BMDExpressAnalysisDataSet> selectedItems, File selectedFile)
 	{
 		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
-		for (TreeItem treeItem : selectedItems)
-			if (treeItem.getValue() instanceof BMDExpressAnalysisDataSet)
-				datasets.add((BMDExpressAnalysisDataSet) treeItem.getValue());
+		for (BMDExpressAnalysisDataSet item : selectedItems)
+			datasets.add(item);
 
 		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(datasets);
 

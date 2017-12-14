@@ -25,33 +25,37 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
 public class MainView extends BMDExpressViewBase implements IMainView, Initializable
 {
 
-	MainPresenter presenter;
+	MainPresenter		presenter;
 
 	@FXML
-	private Label projectNameLabel;
+	private VBox		treeViewContainer;
+	@FXML
+	private Label		projectNameLabel;
 
 	@FXML
-	private Label currentSelectionLabel;
+	private Label		currentSelectionLabel;
 
 	@FXML
-	private Label actionLabel;
+	private Label		actionLabel;
 
 	@FXML
-	private ImageView sciomeImageView;
+	private ImageView	sciomeImageView;
 	@FXML
-	private ImageView ntpImageView;
+	private ImageView	ntpImageView;
 	@FXML
-	private ImageView healthCanadaImageView;
+	private ImageView	healthCanadaImageView;
 	@FXML
-	private ImageView epaImageView;
+	private ImageView	epaImageView;
 
 	@FXML
-	private SwingNode swingNode;
+	private SwingNode	swingNode;
 
 	public MainView()
 	{
@@ -77,6 +81,13 @@ public class MainView extends BMDExpressViewBase implements IMainView, Initializ
 				swingNode.setContent(new JLabel(""));
 			}
 		});
+
+		ProjectNavigationView pv = new ProjectNavigationView(BMDExpressEventBus.getInstance());
+
+		treeViewContainer.getChildren().add(pv);
+		VBox.setVgrow(treeViewContainer, Priority.ALWAYS);
+		VBox.setVgrow(pv, Priority.ALWAYS);
+
 	}
 
 	@Override
