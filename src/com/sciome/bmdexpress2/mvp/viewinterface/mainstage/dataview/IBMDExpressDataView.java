@@ -4,4 +4,5 @@ public interface IBMDExpressDataView
 {
 
 	public void close();
+
 }

@@ -38,7 +38,6 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 
 	@FXML
 	private AnchorPane			tableAnchorPane;
-	// table for showing matrix data in a paginator
 	private BMDExpressDataView	spreadSheetTableView;
 
 	MainDataPresenter			presenter;
@@ -240,11 +239,12 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void clearTableView()
 	{
+		this.tableAnchorPane.getChildren().remove(spreadSheetTableView);
 		if (spreadSheetTableView != null)
 		{
 			spreadSheetTableView.close();
 		}
-		updateSpreadSheet();
+		tableAnchorPane.getChildren().clear();
 		spreadSheetTableView = null;
 
 	}

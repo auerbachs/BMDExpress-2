@@ -69,7 +69,6 @@ import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsJSONRequestEv
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.bmdexpress2.shared.eventbus.project.ShowMessageEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.TryCloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.DataVisualizationRequestRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowDataVisualizationEvent;
@@ -767,24 +766,16 @@ public class ProjectNavigationPresenter
 	 */
 	public void exportMultipleResults(List<TreeItem> selectedItems, File selectedFile)
 	{
-		Map<String, Set<BMDExpressAnalysisDataSet>> header2Rows = new HashMap<>();
+		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
 		for (TreeItem treeItem : selectedItems)
-		{
 			if (treeItem.getValue() instanceof BMDExpressAnalysisDataSet)
-			{
-				// produce a key that will be the header joined by nothing.
-				String headerKey = String.join("",
-						((BMDExpressAnalysisDataSet) treeItem.getValue()).getColumnHeader());
-				if (header2Rows.get(headerKey) == null)
-					header2Rows.put(headerKey, new HashSet<>());
+				datasets.add((BMDExpressAnalysisDataSet) treeItem.getValue());
 
-				header2Rows.get(headerKey).add((BMDExpressAnalysisDataSet) treeItem.getValue());
-			}
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(datasets);
 
-		}
-		String filesCreateString = getService().exportMultipleFiles(header2Rows, selectedFile);
+		getService().exportBMDExpressAnalysisDataSet(combined, selectedFile);
 
-		BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
+		// BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
 
 	}
 
@@ -828,7 +819,7 @@ public class ProjectNavigationPresenter
 
 		if (!isPure)
 		{
-			// post event to clear dataview
+			getEventBus().post(new NoDataSelectedEvent(null));
 			return;
 		}
 		for (Object obj : selectedItems)
