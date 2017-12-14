@@ -299,7 +299,16 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@SuppressWarnings("rawtypes")
 	private void handle_navigationTreeViewSelection(TreeItem selectedItem)
 	{
-		if (selectedItem.getValue() instanceof DoseResponseExperiment)
+		if (this.navigationTreeView.getSelectionModel().getSelectedItems().size() > 1)
+		{
+			List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
+			for (Object obj : navigationTreeView.getSelectionModel().getSelectedItems())
+				if (((TreeItem) obj).getValue() instanceof BMDExpressAnalysisDataSet)
+					datasets.add(((BMDExpressAnalysisDataSet) (((TreeItem) obj).getValue())));
+
+			presenter.multipleDataSetsSelected(datasets);
+		}
+		else if (selectedItem.getValue() instanceof DoseResponseExperiment)
 		{
 			DoseResponseExperiment dRE = (DoseResponseExperiment) selectedItem.getValue();
 			presenter.doseResponseExperimentSelected(dRE);
@@ -351,13 +360,14 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			navigationTreeView.getSelectionModel().select(newTreeItem);
 		}
 	}
-	
+
 	/*
 	 * put the williams trend result into the tree.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults, boolean selectIt) {
+	public void addWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults, boolean selectIt)
+	{
 		Node docImage = new ImageView(
 				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
 		TreeItem<WilliamsTrendResults> newTreeItem = new TreeItem<>(williamsTrendResults, docImage);
@@ -374,7 +384,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addOriogenAnalysis(OriogenResults oriogenResults, boolean selectIt) {
+	public void addOriogenAnalysis(OriogenResults oriogenResults, boolean selectIt)
+	{
 		Node docImage = new ImageView(
 				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
 		TreeItem<OriogenResults> newTreeItem = new TreeItem<>(oriogenResults, docImage);
@@ -385,7 +396,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			navigationTreeView.getSelectionModel().select(newTreeItem);
 		}
 	}
-	
+
 	/*
 	 * put the bmd result into the tree
 	 */
@@ -493,9 +504,10 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		});
 
 	}
-	
+
 	@Override
-	public void performWilliamsTrend() {
+	public void performWilliamsTrend()
+	{
 		// need to run this on the main ui thread. this is being called from event bus thread..hence the
 		// runlater.
 		Platform.runLater(new Runnable() {
@@ -520,7 +532,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 				if (selectedItems.size() > 0)
 				{
-					// now create a list of doseResponseExperement objects so the williams trend view can offer
+					// now create a list of doseResponseExperement objects so the williams trend view can
+					// offer
 					// a selection list.
 
 					List<IStatModelProcessable> processableDatas = new ArrayList<>();
@@ -533,7 +546,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 					try
 					{
 
-						FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/williamstrend.fxml"));
+						FXMLLoader loader = new FXMLLoader(
+								getClass().getResource("/fxml/williamstrend.fxml"));
 
 						Stage stage = BMDExpressFXUtils.getInstance().generateStage("William's Trend");
 						stage.setScene(new Scene((BorderPane) loader.load()));
@@ -558,9 +572,10 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			}
 		});
 	}
-	
+
 	@Override
-	public void performOriogen() {
+	public void performOriogen()
+	{
 		// need to run this on the main ui thread. this is being called from event bus thread..hence the
 		// runlater.
 		Platform.runLater(new Runnable() {
@@ -840,7 +855,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		setContextMenuCommonHandlers("One Way ANOVA", ctxMenu, oneWayResult);
 		return ctxMenu;
 	}
-	
+
 	private ContextMenu showWilliamsTrendContextMenu(WilliamsTrendResults williamsTrendResult)
 	{
 		ContextMenu ctxMenu = new ContextMenu();
@@ -858,7 +873,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		setContextMenuCommonHandlers("Oriogen", ctxMenu, oriogenResult);
 		return ctxMenu;
 	}
-	
+
 	private ContextMenu showCategorizationContextMenu(CategoryAnalysisResults categoryAnalysisResult)
 	{
 		ContextMenu ctxMenu = new ContextMenu();

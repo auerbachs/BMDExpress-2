@@ -12,6 +12,7 @@ import java.util.Set;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
@@ -23,6 +24,8 @@ import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.view.mainstage.ProjectNavigationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.service.DataCombinerService;
+import com.sciome.bmdexpress2.serviceInterface.IDataCombinerService;
 import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -71,13 +74,16 @@ import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
 import javafx.scene.control.TreeItem;
 
-public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
+public class ProjectNavigationPresenter
+		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
 {
 
-	private BMDProject	currentProject				= new BMDProject();
-	private File		currentProjectFile;
+	private BMDProject				currentProject	= new BMDProject();
+	private File					currentProjectFile;
+	private IDataCombinerService	combinerService	= new DataCombinerService();
 
-	public ProjectNavigationPresenter(IProjectNavigationView view, IProjectNavigationService service, BMDExpressEventBus eventBus)
+	public ProjectNavigationPresenter(IProjectNavigationView view, IProjectNavigationService service,
+			BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 		init();
@@ -167,7 +173,7 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		getView().addOneWayANOVAAnalysis(event.GetPayload(), true);
 		currentProject.getOneWayANOVAResults().add(event.GetPayload());
 	}
-	
+
 	/*
 	 * load williams trend results into the view.
 	 */
@@ -177,7 +183,7 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		getView().addWilliamsTrendAnalysis(event.GetPayload(), true);
 		currentProject.getWilliamsTrendResults().add(event.GetPayload());
 	}
-	
+
 	/*
 	 * load williams trend results into the view.
 	 */
@@ -219,10 +225,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		getView().performOneWayANOVA();
 
 	}
-	
+
 	/*
-	 * some one asked to do a williams trend. So let's tell the view about it so it can figure out what objects
-	 * are selected and do the right thing
+	 * some one asked to do a williams trend. So let's tell the view about it so it can figure out what
+	 * objects are selected and do the right thing
 	 */
 	@Subscribe
 	public void onWilliamsTrendAnalsyisRequest(WilliamsTrendRequestEvent event)
@@ -243,7 +249,7 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		getView().performOriogen();
 
 	}
-	
+
 	/*
 	 * some one asked to perform bmd analysis. lets ask the view to figure out what is selected and then do
 	 * it.
@@ -290,19 +296,19 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		{
 			getView().addOneWayANOVAAnalysis(oneWayResult, false);
 		}
-		
+
 		// populate all the williams trend data
 		for (WilliamsTrendResults williamsTrendResult : bmdProject.getWilliamsTrendResults())
 		{
 			getView().addWilliamsTrendAnalysis(williamsTrendResult, false);
 		}
 
-		//populate all the oriogen data
+		// populate all the oriogen data
 		for (OriogenResults oriogenResult : bmdProject.getOriogenResults())
 		{
 			getView().addOriogenAnalysis(oriogenResult, false);
 		}
-		
+
 		// populate all the categorization data
 		for (CategoryAnalysisResults catResult : bmdProject.getCategoryAnalysisResults())
 		{
@@ -337,9 +343,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 			{
 				return;
 			}
-			
-			//TODO this is a hack.  needs to be in the view.
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.addProject(selectedFile);
 
 			if (newProject != null)
@@ -351,12 +358,12 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 				currentProject.getOriogenResults().addAll(newProject.getOriogenResults());
 				currentProject.getbMDResult().addAll(newProject.getbMDResult());
 				currentProject.getCategoryAnalysisResults().addAll(newProject.getCategoryAnalysisResults());
-				
-				//Set project file to null to request new file name for saving
+
+				// Set project file to null to request new file name for saving
 				currentProjectFile = null;
-				
+
 				this.getEventBus().post(new BMDProjectLoadedEvent(currentProject));
-				}
+			}
 		}
 		catch (Exception exception)
 		{
@@ -364,7 +371,7 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		}
 
 	}
-	
+
 	/*
 	 * load project event has been fired.
 	 */
@@ -383,9 +390,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 			{
 				return;
 			}
-			
-			//TODO this is a hack.  needs to be in the view.
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.loadProject(selectedFile);
 
 			if (newProject != null)
@@ -424,9 +432,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 			{
 				return;
 			}
-			
-			//TODO this is a hack.  needs to be in the view.
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.importBMDFile(selectedFile);
 			String newFileName = selectedFile.getAbsolutePath().replace(".bmd", ".bm2");
 
@@ -461,9 +470,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 			{
 				return;
 			}
-			
-			//TODO this is a hack.  needs to be in the view.
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.importJSONFile(selectedFile);
 			String newFileName = selectedFile.getAbsolutePath().replace(".json", ".bm2");
 
@@ -515,9 +525,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		{
 			return;
 		}
-		
-		//TODO this is a hack.  needs to be in the view.
-		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+		// TODO this is a hack. needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(
+				((ProjectNavigationView) getView()).getWindow());
 		saveDialog.saveProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;
@@ -533,9 +544,10 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		{
 			return;
 		}
-		
-		//TODO this is a hack.  needs to be in the view.
-		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(((ProjectNavigationView)getView()).getWindow());
+
+		// TODO this is a hack. needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(
+				((ProjectNavigationView) getView()).getWindow());
 		saveDialog.saveJSONProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;
@@ -564,7 +576,7 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 	/*
 	 * set up the gene annotation data for the dose response experiment
 	 */
-	
+
 	public void assignArrayAnnotations(ChipInfo chipInfo, List<DoseResponseExperiment> experiments,
 			FileAnnotation fileAnnotation)
 	{
@@ -608,7 +620,6 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 		getService().exportDoseResponseExperiment(doseResponseExperiment, selectedFile);
 	}
 
-	
 	/*
 	 * write the bmdresults to a text file
 	 */
@@ -780,6 +791,48 @@ public class ProjectNavigationPresenter extends ServicePresenterBase<IProjectNav
 	public void exportModelParameters(BMDProject bmdProject)
 	{
 		getService().exportModelParameters(bmdProject);
+	}
+
+	public void multipleDataSetsSelected(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+		List<BMDExpressAnalysisDataSet> bmdAnalysisDataSet = new ArrayList<>();
+		Map<Class, Integer> classesOfInterestMapCount = new HashMap<>();
+		Set<Class> classesOfInterest = new HashSet<>();
+		classesOfInterest.add(CategoryAnalysisResults.class);
+		classesOfInterest.add(BMDResult.class);
+		classesOfInterest.add(WilliamsTrendResults.class);
+		classesOfInterest.add(OneWayANOVAResults.class);
+		classesOfInterest.add(OriogenResults.class);
+		classesOfInterest.add(DoseResponseExperiment.class);
+		for (Class c : classesOfInterest)
+			classesOfInterestMapCount.put(c, 0);
+		for (Object obj : selectedItems)
+			for (Class c : classesOfInterest)
+				if (c.isInstance(obj))
+					classesOfInterestMapCount.put(c, classesOfInterestMapCount.get(c) + 1);
+
+		boolean isPure = false;
+		for (Integer val : classesOfInterestMapCount.values())
+		{
+			if (val.intValue() == selectedItems.size())
+			{
+				isPure = true;
+				break;
+			}
+		}
+
+		if (!isPure)
+		{
+			// post event to clear dataview
+			return;
+		}
+		for (Object obj : selectedItems)
+			bmdAnalysisDataSet.add((BMDExpressAnalysisDataSet) obj);
+
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(bmdAnalysisDataSet);
+		// now post an event with a list of pure analysis sets.
+		System.out.println();
+
 	}
 
 }
