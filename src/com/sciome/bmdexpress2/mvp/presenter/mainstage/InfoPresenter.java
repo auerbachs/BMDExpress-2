@@ -10,6 +10,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombi
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
@@ -126,6 +127,12 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 
 	@Subscribe
 	public void onProjectClosedEvent(CloseProjectRequestEvent event)
+	{
+		getView().clearList();
+	}
+
+	@Subscribe
+	public void noDataSelectedEvent(NoDataSelectedEvent event)
 	{
 		getView().clearList();
 	}

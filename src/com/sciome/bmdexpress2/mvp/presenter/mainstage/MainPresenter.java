@@ -10,6 +10,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombi
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
@@ -165,6 +166,13 @@ public class MainPresenter extends PresenterBase<IMainView>
 	}
 
 	@Subscribe
+	public void noDataSelectedEvent(NoDataSelectedEvent event)
+	{
+		getView().updateActionStatusLabel("");
+		getView().updateSelectionLabel("");
+	}
+
+	@Subscribe
 	public void onSavedProjectAsRequest(BMDProjectSavedEvent event)
 	{
 		getView().updateActionStatusLabel("Saved");
@@ -228,11 +236,13 @@ public class MainPresenter extends PresenterBase<IMainView>
 	public void onProjectLoadedEvent(BMDProjectLoadedEvent event)
 	{
 		getView().updateSelectionLabel("");
+		getView().updateSelectionLabel("");
 	}
 
 	@Subscribe
 	public void onProjectClosedEvent(CloseProjectRequestEvent event)
 	{
+		getView().updateSelectionLabel("");
 		getView().updateSelectionLabel("");
 	}
 

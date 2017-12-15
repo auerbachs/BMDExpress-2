@@ -32,7 +32,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 	BMDSTool							bMDSTool;
 
 	private List<IStatModelProcessable>	processableDatas;
-
+	private boolean						cancel	= false;
 	/*
 	 * Constructors
 	 */
@@ -61,6 +61,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 	public void performBMDAnalysis(ModelInputParameters inputParameters,
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun)
 	{
+		cancel = false;
 
 		// send this to the bmdanalysis tool so some progress can be updated.
 		IBMDSToolProgress me = this;
@@ -71,6 +72,8 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 			{
 				for (IStatModelProcessable processableData : processableDatas)
 				{
+					if (cancel)
+						continue;
 					try
 					{
 						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters,
@@ -151,12 +154,9 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 
 	public boolean cancel()
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-			return true;
-		}
-		return false;
+		cancel = true;
+		return getService().cancel();
+
 	}
 
 	@Override
@@ -172,20 +172,14 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 	@Subscribe
 	public void onProjectLoadedEvent(BMDProjectLoadedEvent event)
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-		}
+		getService().cancel();
 		getView().closeWindow();
 	}
 
 	@Subscribe
 	public void onProjectClosedEvent(CloseProjectRequestEvent event)
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-		}
+		getService().cancel();
 		getView().closeWindow();
 	}
 }

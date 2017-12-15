@@ -239,11 +239,9 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void clearTableView()
 	{
-		// this.tableAnchorPane.getChildren().remove(spreadSheetTableView);
+		this.tableAnchorPane.getChildren().remove(spreadSheetTableView);
 		if (spreadSheetTableView != null)
-		{
 			spreadSheetTableView.close();
-		}
 		spreadSheetTableView = null;
 
 	}

@@ -516,11 +516,6 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	@Override
 	public void combinedSelected()
 	{
-		this.bMDAnalysesMenuItem.setDisable(false);
-		togglePrefilterMenuItems(false);
-		this.GOAnalysesMenuItem.setDisable(false);
-		this.pathwayAnalysesMenuItem.setDisable(false);
-		this.definedCategoryAnalysesMenuItem.setDisable(false);
 
 	}
 

@@ -9,8 +9,11 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
-public interface IBMDAnalysisService {
-	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters, 
-								 ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, 
-								 IBMDSToolProgress progressUpdater);
+public interface IBMDAnalysisService
+{
+	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			IBMDSToolProgress progressUpdater);
+
+	public boolean cancel();
 }

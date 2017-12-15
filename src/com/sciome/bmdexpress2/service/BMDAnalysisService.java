@@ -12,24 +12,39 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
-public class BMDAnalysisService implements IBMDAnalysisService{
+public class BMDAnalysisService implements IBMDAnalysisService
+{
+
+	BMDSTool bMDSTool;
 
 	@Override
 	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
-			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, IBMDSToolProgress progressUpdater) {
-		inputParameters.setObservations(processableData.getProcessableDoseResponseExperiment()
-				.getTreatments().size());
-		BMDSTool bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
-				processableData.getProcessableDoseResponseExperiment().getTreatments(),
-				inputParameters, modelSelectionParameters, modelsToRun, progressUpdater, processableData);
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			IBMDSToolProgress progressUpdater)
+	{
+		inputParameters.setObservations(
+				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
+		bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
+				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
+				modelSelectionParameters, modelsToRun, progressUpdater, processableData);
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 		if (bMDResults == null)
 			return null;
-		bMDResults.setDoseResponseExperiment(
-				processableData.getProcessableDoseResponseExperiment());
+		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
 		return bMDResults;
 	}
-	
+
+	@Override
+	public boolean cancel()
+	{
+		if (bMDSTool != null)
+		{
+			bMDSTool.cancel();
+			return true;
+		}
+		return false;
+	}
+
 }

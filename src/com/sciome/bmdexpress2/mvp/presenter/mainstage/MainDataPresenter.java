@@ -5,23 +5,18 @@ import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 
 public class MainDataPresenter extends PresenterBase<IMainDataView>
@@ -43,13 +38,6 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 		getView().loadDoseResponseExperiment(event.GetPayload());
 	}
 
-	// handle loading and selecting oneway analysis data.
-	@Subscribe
-	public void onLoadOneWayANOVAAnalysis(OneWayANOVADataLoadedEvent event)
-	{
-		getView().loadOneWayANOVAAnalysis(event.GetPayload());
-	}
-
 	@Subscribe
 	public void onSelectOneWayAnalysis(OneWayANOVADataSelectedEvent event)
 	{
@@ -60,13 +48,6 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 	public void onSelectOneWayAnalysis(OneWayANOVADataCombinedSelectedEvent event)
 	{
 		getView().loadOneWayANOVAAnalysis(event.GetPayload());
-	}
-
-	// handle loading and selecting williams analysis data.
-	@Subscribe
-	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
-	{
-		getView().loadWilliamsTrendAnalysis(event.GetPayload());
 	}
 
 	@Subscribe
@@ -81,13 +62,6 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 		getView().loadWilliamsTrendAnalysis(event.GetPayload());
 	}
 
-	// handle loading and selecting oriogen analysis data.
-	@Subscribe
-	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
-	{
-		getView().loadOriogenAnalysis(event.GetPayload());
-	}
-
 	@Subscribe
 	public void onSelectOriogenAnalysis(OriogenDataSelectedEvent event)
 	{
@@ -100,13 +74,6 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 		getView().loadOriogenAnalysis(event.GetPayload());
 	}
 
-	// handle loading and selecting bmd result analysis data.
-	@Subscribe
-	public void onLoadBMDResultAnalysis(BMDAnalysisDataLoadedEvent event)
-	{
-		getView().loadBMDResultAnalysis(event.GetPayload());
-	}
-
 	@Subscribe
 	public void onSelectBMDResultAnalysis(BMDAnalysisDataSelectedEvent event)
 	{
@@ -117,13 +84,6 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 	public void onSelectBMDResultAnalysis(BMDAnalysisDataCombinedSelectedEvent event)
 	{
 		getView().loadBMDResultAnalysis(event.GetPayload());
-	}
-
-	// handle loading and selecting functional category result analysis data.
-	@Subscribe
-	public void onLoadCategoryAnalysisResult(CategoryAnalysisDataLoadedEvent event)
-	{
-		getView().loadCategoryAnalysis(event.GetPayload());
 	}
 
 	@Subscribe
