@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 
 public abstract class BMDExpressAnalysisDataSet
@@ -24,6 +25,7 @@ public abstract class BMDExpressAnalysisDataSet
 
 	public abstract List<BMDExpressAnalysisRow> getAnalysisRows();
 
+	@JsonIgnore
 	public abstract Object getObject();
 
 	// lazy load the headerToIndex map.
