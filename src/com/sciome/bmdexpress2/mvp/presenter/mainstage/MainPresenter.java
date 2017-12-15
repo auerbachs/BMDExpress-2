@@ -5,17 +5,23 @@ import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
@@ -262,5 +268,59 @@ public class MainPresenter extends PresenterBase<IMainView>
 	public void onWarning(ShowWarningEvent event)
 	{
 		getView().showWarningDialog(event.GetPayload());
+	}
+
+	/*
+	 * load oneway anova results into the view.
+	 */
+	@Subscribe
+	public void onLoadOneWayANOVAAnalysis(OneWayANOVADataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded one-way anova: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load williams trend results into the view.
+	 */
+	@Subscribe
+	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded williams trend test: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load williams trend results into the view.
+	 */
+	@Subscribe
+	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded oriogen: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load a bmdresults into the view.
+	 */
+	@Subscribe
+	public void onLoadBMDAnalysis(BMDAnalysisDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded bmd analysis: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load a category analysis data set into the view.
+	 */
+	@Subscribe
+	public void onLoadCategoryAnalysis(CategoryAnalysisDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded category analysis: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load a category analysis data set into the view.
+	 */
+	@Subscribe
+	public void onLoadCategoryAnalysis(ExpressionDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel("loaded expression data: " + event.GetPayload().toString());
 	}
 }

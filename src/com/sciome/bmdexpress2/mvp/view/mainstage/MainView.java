@@ -15,6 +15,7 @@ import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainView;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
+import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,6 +57,9 @@ public class MainView extends BMDExpressViewBase implements IMainView, Initializ
 
 	@FXML
 	private SwingNode	swingNode;
+
+	private boolean		actionLabelUpdatInProgress	= false;
+	private boolean		actionaLabelFiredOff		= false;
 
 	public MainView()
 	{
@@ -107,6 +111,48 @@ public class MainView extends BMDExpressViewBase implements IMainView, Initializ
 	public void updateActionStatusLabel(String label)
 	{
 		actionLabel.setText(label);
+		actionaLabelFiredOff = true;
+		delayedRemoveActionText();
+
+	}
+
+	private void delayedRemoveActionText()
+	{
+		if (!actionLabelUpdatInProgress)
+		{
+			actionLabelUpdatInProgress = true;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+
+					while (actionaLabelFiredOff)
+					{
+						actionaLabelFiredOff = false;
+						try
+						{
+							Thread.sleep(5000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							actionLabel.setText("");
+							actionLabelUpdatInProgress = false;
+						}
+					});
+
+				}
+			}).start();
+		}
 
 	}
 
