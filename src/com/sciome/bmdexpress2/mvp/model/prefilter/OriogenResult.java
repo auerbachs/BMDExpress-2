@@ -216,6 +216,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 		return probeResponse.getProbe().getId() + " : " + genes + " : " + geneSymbols;
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

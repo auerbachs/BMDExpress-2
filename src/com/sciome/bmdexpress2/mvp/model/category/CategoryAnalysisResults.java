@@ -239,6 +239,7 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 		return null;
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

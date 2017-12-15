@@ -211,6 +211,7 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow implements Serial
 		return probeResponse.getProbe().getId() + " : " + genes + " : " + geneSymbols;
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

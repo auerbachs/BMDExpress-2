@@ -221,6 +221,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 		return null;
 	}
 
+	@JsonIgnore
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<PrefilterResult> getPrefilterResults()
@@ -235,6 +236,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 		return this.getDoseResponseExperiement().getLogTransformation();
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.mvp.model.category;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GenericCategoryIdentifier;
 
 public class DefinedCategoryAnalysisResult extends CategoryAnalysisResult implements Serializable
@@ -43,6 +44,7 @@ public class DefinedCategoryAnalysisResult extends CategoryAnalysisResult implem
 		return this.categoryIdentifier.toString();
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

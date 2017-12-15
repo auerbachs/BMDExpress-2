@@ -441,6 +441,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return getProbeResponse().getProbe().getId() + " : " + genes + " : " + geneSymbols;
 	}
 
+	@JsonIgnore
 	@Override
 	public Set<String> containsGenes(Set<String> genes)
 	{
@@ -456,6 +457,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return genesContained;
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

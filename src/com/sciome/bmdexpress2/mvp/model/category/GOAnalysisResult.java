@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.mvp.model.category;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
 
 public class GOAnalysisResult extends CategoryAnalysisResult implements Serializable
@@ -46,6 +47,7 @@ public class GOAnalysisResult extends CategoryAnalysisResult implements Serializ
 		return categoryIdentifier.toString();
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

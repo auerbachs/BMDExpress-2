@@ -247,6 +247,7 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow implements Serializ
 		return probeResponse.getProbe().getId() + " : " + genes + " : " + geneSymbols;
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{

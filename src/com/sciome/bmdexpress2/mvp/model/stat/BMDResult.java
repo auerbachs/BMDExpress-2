@@ -320,6 +320,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		return this.getDoseResponseExperiment().getLogTransformation();
 	}
 
+	@JsonIgnore
 	@Override
 	public Object getObject()
 	{
