@@ -2330,6 +2330,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	}
 
+	@JsonIgnore
 	@Override
 	public Set<String> containsGenes(Set<String> genes)
 	{
