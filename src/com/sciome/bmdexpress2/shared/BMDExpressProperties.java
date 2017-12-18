@@ -759,7 +759,9 @@ public class BMDExpressProperties
 
 	public void putDataFilterPackMap(String key, DataFilterPack pack)
 	{
-		dataFilterPackMap.put(key, pack);
+		// so we don't persist references to large datasets, let's make a copy of this.
+		DataFilterPack packCopy = pack.copy();
+		dataFilterPackMap.put(key, packCopy);
 		// this.saveDefaultFilter(key);
 	}
 

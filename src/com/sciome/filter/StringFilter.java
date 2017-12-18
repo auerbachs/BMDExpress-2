@@ -53,4 +53,15 @@ public class StringFilter extends DataFilter<String>
 		return false;
 	}
 
+	@Override
+	public StringFilter copy()
+	{
+		StringFilter sfi = new StringFilter();
+		sfi.setKey(this.getKey());
+		sfi.setValues(this.getValues());
+		sfi.setDataFilterType(this.getDataFilterType());
+
+		return sfi;
+	}
+
 }

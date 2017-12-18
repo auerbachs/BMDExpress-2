@@ -56,4 +56,15 @@ public class IntegerFilter extends DataFilter<Integer>
 		return false;
 	}
 
+	@Override
+	public IntegerFilter copy()
+	{
+		IntegerFilter ifi = new IntegerFilter();
+		ifi.setKey(this.getKey());
+		ifi.setValues(this.getValues());
+		ifi.setDataFilterType(this.getDataFilterType());
+
+		return ifi;
+	}
+
 }

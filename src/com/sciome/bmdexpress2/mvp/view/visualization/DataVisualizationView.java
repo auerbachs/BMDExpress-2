@@ -213,6 +213,14 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void close()
 	{
 
+		if (chartCache != null)
+			chartCache.clear();
+		if (chartsList != null)
+			this.chartsList.clear();
+		if (results != null)
+			this.results.clear();
+		if (originatingResults != null)
+			this.originatingResults.clear();
 		if (presenter != null)
 			presenter.destroy();
 

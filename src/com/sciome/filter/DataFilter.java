@@ -28,8 +28,13 @@ public abstract class DataFilter<T>
 
 	protected DataFilterType			dataFilterType;
 	protected String					key;
+
+	// these two fields are causing a memory leak
+	// because we are storing these filter instances in a hash
+	// that is cached.
 	protected FilterDataExtractor		filterAnnotationExtractor;
 	protected BMDExpressAnalysisDataSet	bmdanalysisDataSet;
+
 	// Value to compare object to
 	protected List<Object>				values;
 
@@ -106,5 +111,7 @@ public abstract class DataFilter<T>
 	{
 		this.values = values;
 	}
+
+	public abstract DataFilter copy();
 
 }

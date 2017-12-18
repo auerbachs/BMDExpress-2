@@ -1,5 +1,6 @@
 package com.sciome.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
@@ -62,6 +63,20 @@ public class DataFilterPack
 		}
 
 		return true;
+	}
+
+	public DataFilterPack copy()
+	{
+		List<DataFilter> dfCopies = new ArrayList<>();
+		DataFilterPack dp = new DataFilterPack();
+		dp.setName(this.getName());
+		if (this.getDataFilters() != null)
+			for (DataFilter df : this.getDataFilters())
+				dfCopies.add(df.copy());
+
+		dp.setDataFilters(dfCopies);
+
+		return dp;
 	}
 
 }

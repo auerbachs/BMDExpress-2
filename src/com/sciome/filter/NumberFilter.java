@@ -56,4 +56,15 @@ public class NumberFilter extends DataFilter<Number>
 		return false;
 	}
 
+	@Override
+	public NumberFilter copy()
+	{
+		NumberFilter nfi = new NumberFilter();
+		nfi.setKey(this.getKey());
+		nfi.setValues(this.getValues());
+		nfi.setDataFilterType(this.getDataFilterType());
+
+		return nfi;
+	}
+
 }

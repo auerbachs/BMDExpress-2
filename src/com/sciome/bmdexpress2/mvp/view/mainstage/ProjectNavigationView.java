@@ -108,31 +108,9 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	{
 		initializeDataSetMap();
 		initializeDataGroupCombo();
-		initializeAnalysisList();
+
 		getChildren().add(dataGroupCombo);
-		getChildren().add(analysisCheckList);
-		VBox.setVgrow(analysisCheckList, Priority.ALWAYS);
-
-		analysisCheckList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent)
-			{
-
-				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
-				{
-					System.out.println(mouseEvent.getSource());
-
-					List<BMDExpressAnalysisDataSet> selecteDataSets = getCheckedItems();
-
-					if (selecteDataSets.size() == 1)
-						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
-					else if (selecteDataSets.size() > 1)
-						dealWithRightClickOnTreeMultiSelected(selecteDataSets, mouseEvent);
-
-				}
-
-			}
-		});
+		initializeAnalysisList();
 
 	}
 
@@ -197,8 +175,11 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	public void clearNavigationTree()
 	{
 		presenter.clearMainDataView();
+		clearChecks(null);
+		this.getChildren().remove(analysisCheckList);
+		initializeAnalysisList();
 		initializeDataSetMap();
-		analysisCheckList.getItems().clear();
+		refreshAnalysisList(this.dataGroupCombo.getValue());
 
 	}
 
@@ -1279,8 +1260,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private void refreshAnalysisList(String forDataGroup)
 	{
 		clearChecks(null);
-		analysisCheckList.getItems().clear();
-		analysisCheckList.getItems().addAll(new ArrayList<>(dataSetMap.get(forDataGroup)));
+		analysisCheckList.getItems().setAll(new ArrayList<>(dataSetMap.get(forDataGroup)));
 		analysisCheckList.refresh();
 		presenter.clearMainDataView();
 	}
@@ -1309,6 +1289,30 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private void initializeAnalysisList()
 	{
 
+		analysisCheckList = new CheckListView<>();
+		getChildren().add(analysisCheckList);
+		VBox.setVgrow(analysisCheckList, Priority.ALWAYS);
+
+		analysisCheckList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent)
+			{
+
+				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
+				{
+					System.out.println(mouseEvent.getSource());
+
+					List<BMDExpressAnalysisDataSet> selecteDataSets = getCheckedItems();
+
+					if (selecteDataSets.size() == 1)
+						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
+					else if (selecteDataSets.size() > 1)
+						dealWithRightClickOnTreeMultiSelected(selecteDataSets, mouseEvent);
+
+				}
+
+			}
+		});
 		analysisCheckList.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
