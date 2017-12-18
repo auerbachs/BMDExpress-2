@@ -14,6 +14,11 @@ public class DataFilterPack
 	private String				name;
 	private List<DataFilter>	dataFilters;
 
+	public DataFilterPack()
+	{
+
+	}
+
 	public DataFilterPack(String name, List<DataFilter> dataFilters)
 	{
 		super();

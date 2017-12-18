@@ -33,7 +33,7 @@ public class NumericFilterComponent extends FilterComponent
 	protected TextField					value1;
 	protected TextField					value2;
 
-	private ComboBox<DataFilterType>	dataFilterType;
+	protected ComboBox<DataFilterType>	dataFilterType;
 
 	public NumericFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
 			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
@@ -45,12 +45,17 @@ public class NumericFilterComponent extends FilterComponent
 	protected void initValues(DataFilter df)
 	{
 
-		if (df.getDataFilterType() != DataFilterType.BETWEEN && df.getValues() != null
-				&& df.getValues().size() >= 1)
-		{
-			dataFilterType.setValue(df.getDataFilterType());
-			value1.setText(df.getValues().get(0).toString());
-		}
+		dataFilterType.setValue(df.getDataFilterType());
+		// between filters can be a little more tricky.
+		// if min/max of dataset then they may be stored as -infinity or +infinity of integer
+		// no need to set default values in that case
+		if (getDataFilterType().equals(DataFilterType.BETWEEN)
+				&& (df.getValues().get(0).equals(Double.NEGATIVE_INFINITY)
+						|| df.getValues().get(1).equals(Double.POSITIVE_INFINITY)))
+			return;
+
+		value1.setText(df.getValues().get(0).toString());
+		value2.setText(df.getValues().get(1).toString());
 	}
 
 	@Override

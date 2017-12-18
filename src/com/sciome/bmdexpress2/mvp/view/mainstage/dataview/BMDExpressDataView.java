@@ -13,6 +13,7 @@ import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.TableViewCache;
+import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 import com.sciome.filter.component.DataFilterComponentListener;
 import com.sciome.filter.component.FilterCompentsNode;
@@ -84,131 +85,148 @@ public abstract class BMDExpressDataView<T> extends VBox
 			String viewTypeKey)
 	{
 		super();
-		this.bmdAnalysisDataSet = bmdAnalysisDataSet;
-		splitPane = new SplitPane();
-		this.filterableClass = filterableClass;
-		splitPane.setOrientation(Orientation.HORIZONTAL);
-		splitPaneMain = new SplitPane();
-		splitPaneMain.setOrientation(Orientation.VERTICAL);
-		topHBox = new HBox();
-
-		this.setStyle("-fx-background-color: white;");
-		topHBox.setAlignment(Pos.CENTER_LEFT);
-
-		// tableView = new TableView<>();
-		if (viewTypeKey.equals("main") && !(bmdAnalysisDataSet instanceof CombinedDataSet))
-			tableView = TableViewCache.getInstance().getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
-		else
-			tableView = new TableView<>();
-
-		VBox.setMargin(topHBox, new Insets(5.0));
-
-		SplitPane.setResizableWithParent(splitPaneMain, true);
-
-		splitPane.getItems().add(splitPaneMain);
-		hideFilter = new Button(SHOW_FILTER);
-
-		defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.toString());
-
-		filtrationNode = new FilterCompentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
-
-		if (!BMDExpressProperties.getInstance().isHideFilter())
+		try
 		{
-			hideFilter.setText(HIDE_FILTER);
-			splitPane.getItems().add(filtrationNode);
-		}
+			this.bmdAnalysisDataSet = bmdAnalysisDataSet;
+			splitPane = new SplitPane();
+			this.filterableClass = filterableClass;
+			splitPane.setOrientation(Orientation.HORIZONTAL);
+			splitPaneMain = new SplitPane();
+			splitPaneMain.setOrientation(Orientation.VERTICAL);
+			topHBox = new HBox();
 
-		hideTable = new Button(SHOW_TABLE);
-		if (!BMDExpressProperties.getInstance().isHideTable())
+			this.setStyle("-fx-background-color: white;");
+			topHBox.setAlignment(Pos.CENTER_LEFT);
+
+			// tableView = new TableView<>();
+			if (viewTypeKey.equals("main") && !(bmdAnalysisDataSet instanceof CombinedDataSet))
+				tableView = TableViewCache.getInstance()
+						.getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
+			else
+				tableView = new TableView<>();
+
+			VBox.setMargin(topHBox, new Insets(5.0));
+
+			SplitPane.setResizableWithParent(splitPaneMain, true);
+
+			splitPane.getItems().add(splitPaneMain);
+			hideFilter = new Button(SHOW_FILTER);
+
+			defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.getName());
+			// initialize the data filters in this data filter pack. If they were deserialized from disk
+			// then they need to get a data set attached to them.
+			if (defaultDPack != null && defaultDPack.getDataFilters() != null)
+				for (DataFilter df : defaultDPack.getDataFilters())
+				{
+					df.setBmdanalysisDataSet(bmdAnalysisDataSet);
+					df.init();
+				}
+
+			filtrationNode = new FilterCompentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
+			filtrationNode.init();
+
+			if (!BMDExpressProperties.getInstance().isHideFilter())
+			{
+				hideFilter.setText(HIDE_FILTER);
+				splitPane.getItems().add(filtrationNode);
+			}
+
+			hideTable = new Button(SHOW_TABLE);
+			if (!BMDExpressProperties.getInstance().isHideTable())
+			{
+				hideTable.setText(HIDE_TABLE);
+				splitPaneMain.getItems().add(tableView);
+			}
+			hideCharts = new Button(SHOW_CHART);
+			if (!BMDExpressProperties.getInstance().isHideCharts())
+			{
+				hideCharts.setText(HIDE_CHART);
+			}
+
+			totalItemsLabel = new Label("");
+			enableFilterCheckBox = new CheckBox(APPPLY_FILTER);
+			enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
+
+			topHBox.getChildren().add(totalItemsLabel);
+			topHBox.getChildren().add(enableFilterCheckBox);
+			topHBox.getChildren().add(hideFilter);
+			topHBox.getChildren().add(hideTable);
+			topHBox.getChildren().add(hideCharts);
+			topHBox.setSpacing(20.0);
+
+			this.getChildren().add(topHBox);
+			this.getChildren().add(splitPane);
+			VBox.setVgrow(topHBox, Priority.NEVER);
+			VBox.setVgrow(splitPane, Priority.ALWAYS);
+			SplitPane.setResizableWithParent(filtrationNode, true);
+			splitPane.setDividerPosition(0, .7);
+
+			hideFilter.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					if (hideFilter.getText().equals(HIDE_FILTER))
+					{
+						splitPane.getItems().remove(filtrationNode);
+						hideFilter.setText(SHOW_FILTER);
+						BMDExpressProperties.getInstance().setHideFilter(true);
+					}
+					else
+					{
+						splitPane.getItems().add(filtrationNode);
+						splitPane.setDividerPosition(0, .7);
+						hideFilter.setText(HIDE_FILTER);
+						BMDExpressProperties.getInstance().setHideFilter(false);
+					}
+				}
+			});
+
+			hideTable.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					if (hideTable.getText().equals(HIDE_TABLE))
+					{
+						splitPaneMain.getItems().remove(tableView);
+						hideTable.setText(SHOW_TABLE);
+						BMDExpressProperties.getInstance().setHideTable(true);
+					}
+					else
+					{
+						splitPaneMain.getItems().add(tableView);
+						hideTable.setText(HIDE_TABLE);
+						BMDExpressProperties.getInstance().setHideTable(false);
+					}
+				}
+			});
+
+			hideCharts.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					if (hideCharts.getText().equals(HIDE_CHART))
+					{
+						splitPaneMain.getItems().remove(dataVisualizationNode);
+						hideCharts.setText(SHOW_CHART);
+						BMDExpressProperties.getInstance().setHideCharts(true);
+					}
+					else
+					{
+						splitPaneMain.getItems().add(0, dataVisualizationNode);
+						SplitPane.setResizableWithParent(dataVisualizationNode, true);
+						hideCharts.setText(HIDE_CHART);
+						BMDExpressProperties.getInstance().setHideCharts(false);
+					}
+				}
+			});
+
+			defaultDPack = filtrationNode.getFilterDataPack();
+			showDataVisualization(defaultDPack);
+		}
+		catch (Exception e)
 		{
-			hideTable.setText(HIDE_TABLE);
-			splitPaneMain.getItems().add(tableView);
+			e.printStackTrace();
 		}
-		hideCharts = new Button(SHOW_CHART);
-		if (!BMDExpressProperties.getInstance().isHideCharts())
-		{
-			hideCharts.setText(HIDE_CHART);
-		}
-
-		totalItemsLabel = new Label("");
-		enableFilterCheckBox = new CheckBox(APPPLY_FILTER);
-		enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
-
-		topHBox.getChildren().add(totalItemsLabel);
-		topHBox.getChildren().add(enableFilterCheckBox);
-		topHBox.getChildren().add(hideFilter);
-		topHBox.getChildren().add(hideTable);
-		topHBox.getChildren().add(hideCharts);
-		topHBox.setSpacing(20.0);
-
-		this.getChildren().add(topHBox);
-		this.getChildren().add(splitPane);
-		VBox.setVgrow(topHBox, Priority.NEVER);
-		VBox.setVgrow(splitPane, Priority.ALWAYS);
-		SplitPane.setResizableWithParent(filtrationNode, true);
-		splitPane.setDividerPosition(0, .7);
-
-		hideFilter.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				if (hideFilter.getText().equals(HIDE_FILTER))
-				{
-					splitPane.getItems().remove(filtrationNode);
-					hideFilter.setText(SHOW_FILTER);
-					BMDExpressProperties.getInstance().setHideFilter(true);
-				}
-				else
-				{
-					splitPane.getItems().add(filtrationNode);
-					splitPane.setDividerPosition(0, .7);
-					hideFilter.setText(HIDE_FILTER);
-					BMDExpressProperties.getInstance().setHideFilter(false);
-				}
-			}
-		});
-
-		hideTable.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				if (hideTable.getText().equals(HIDE_TABLE))
-				{
-					splitPaneMain.getItems().remove(tableView);
-					hideTable.setText(SHOW_TABLE);
-					BMDExpressProperties.getInstance().setHideTable(true);
-				}
-				else
-				{
-					splitPaneMain.getItems().add(tableView);
-					hideTable.setText(HIDE_TABLE);
-					BMDExpressProperties.getInstance().setHideTable(false);
-				}
-			}
-		});
-
-		hideCharts.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				if (hideCharts.getText().equals(HIDE_CHART))
-				{
-					splitPaneMain.getItems().remove(dataVisualizationNode);
-					hideCharts.setText(SHOW_CHART);
-					BMDExpressProperties.getInstance().setHideCharts(true);
-				}
-				else
-				{
-					splitPaneMain.getItems().add(0, dataVisualizationNode);
-					SplitPane.setResizableWithParent(dataVisualizationNode, true);
-					hideCharts.setText(HIDE_CHART);
-					BMDExpressProperties.getInstance().setHideCharts(false);
-				}
-			}
-		});
-
-		defaultDPack = filtrationNode.getFilterDataPack();
-		showDataVisualization(defaultDPack);
 
 	}
 
@@ -302,7 +320,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 		filterTable(filtrationNode.getFilterDataPack());
 
-		BMDExpressProperties.getInstance().putDataFilterPackMap(filterableClass.toString(), dataFilterPack);
+		BMDExpressProperties.getInstance().putDataFilterPackMap(filterableClass.getName(), dataFilterPack);
 
 		redrawVisualizations();
 	}
@@ -333,17 +351,26 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 	private void filterTable(DataFilterPack pack)
 	{
+
 		filteredData.setPredicate(record ->
 		{
-			if (!enableFilterCheckBox.isSelected())
-				return true;
-			// If filter text is empty, display all persons.
-			if (pack == null || pack.getDataFilters().isEmpty())
+			try
 			{
-				return true;
-			}
+				if (!enableFilterCheckBox.isSelected())
+					return true;
+				// If filter text is empty, display all persons.
+				if (pack == null || pack.getDataFilters() == null || pack.getDataFilters().isEmpty())
+				{
+					return true;
+				}
 
-			return pack.passesFilter(record);
+				return pack.passesFilter(record);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			return true;
 		});
 
 	}
@@ -431,6 +458,13 @@ public abstract class BMDExpressDataView<T> extends VBox
 		}
 
 		return items;
+	}
+
+	@Override
+	public void saveDataFilter(String key, DataFilterPack filterPack)
+	{
+		BMDExpressProperties.getInstance().putDataFilterPackMap(key, filterPack);
+		BMDExpressProperties.getInstance().saveDefaultFilter(key);
 	}
 
 	@Override

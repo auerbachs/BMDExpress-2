@@ -212,8 +212,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
 		BMDExpressAnalysisDataSet selectedItem = null;
 
-		if (datasets.size() > 0)
-			presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
+		// if (datasets.size() > 0)
+		// presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
 
 		if (datasets.size() == 1 && datasets.get(0) instanceof DoseResponseExperiment)
 			presenter.doseResponseExperimentSelected((DoseResponseExperiment) datasets.get(0));

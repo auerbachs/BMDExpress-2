@@ -11,6 +11,11 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 public class NumberFilter extends DataFilter<Number>
 {
 
+	public NumberFilter()
+	{
+		super();
+	}
+
 	public NumberFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet dataset, String key,
 			List<Object> values)
 	{

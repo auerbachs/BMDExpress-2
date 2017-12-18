@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -38,9 +39,11 @@ public class StringFilterComponent extends FilterComponent
 {
 	// the filterable
 	// value;
-	private Set<String>	suggestedValuesForFilter;
+	private Set<String>		suggestedValuesForFilter;
+	CheckComboBox<String>	checkComboBox;
+	TextArea				selectedStrings;
 
-	private boolean		isClearing	= false;
+	private boolean			dontFireDataChangeEvent	= false;
 
 	public StringFilterComponent(String key, DataFilterComponentListener dataFilterComponentListener,
 			Class filterFieldClass, DataFilter df, Method method, FilterComponentContainer container)
@@ -52,6 +55,38 @@ public class StringFilterComponent extends FilterComponent
 	@Override
 	protected void initValues(DataFilter df)
 	{
+
+		Set<String> valuesToCheck = new HashSet<>();
+		for (Object obj : df.getValues())
+			valuesToCheck.add(obj.toString());
+		if (checkComboBox != null)
+		{
+			dontFireDataChangeEvent = true;
+
+			for (String item : checkComboBox.getItems())
+				if (valuesToCheck.contains(item.toLowerCase()))
+					checkComboBox.getCheckModel().check(item);
+			keyLabel.setText(df.getKey() + ": " + checkComboBox.getCheckModel().getCheckedItems().size()
+					+ " selected.");
+			suggestedValuesForFilter.clear();
+			for (String str : checkComboBox.getCheckModel().getCheckedItems())
+				suggestedValuesForFilter.add(str.toLowerCase());
+			dontFireDataChangeEvent = false;
+		}
+		else
+		{
+			selectedStrings.setText(String.join("\n", new ArrayList<>(valuesToCheck)));
+		}
+
+		doDelayedFilterChange(getControls());
+	}
+
+	private List<Control> getControls()
+	{
+		if (selectedStrings != null)
+			return Arrays.asList(selectedStrings);
+		return Arrays.asList(checkComboBox);
+
 	}
 
 	@Override
@@ -82,7 +117,7 @@ public class StringFilterComponent extends FilterComponent
 		final ObservableList<String> strings = FXCollections.observableArrayList(list);
 
 		Button clearButton = new Button("Clear");
-		CheckComboBox<String> checkComboBox;
+
 		// Create the CheckComboBox with the data
 		checkComboBox = new CheckComboBox<String>(strings);
 		checkComboBox.setMinWidth(100.0);
@@ -107,7 +142,7 @@ public class StringFilterComponent extends FilterComponent
 		checkComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
 			public void onChanged(ListChangeListener.Change<? extends String> c)
 			{
-				if (!isClearing)
+				if (!dontFireDataChangeEvent)
 				{
 					keyLabel.setText(key + ": " + checkComboBox.getCheckModel().getCheckedItems().size()
 							+ " selected.");
@@ -115,7 +150,7 @@ public class StringFilterComponent extends FilterComponent
 					for (String str : checkComboBox.getCheckModel().getCheckedItems())
 						suggestedValuesForFilter.add(str.toLowerCase());
 
-					dataFilterComponentListener.dataFilterChanged();
+					doDelayedFilterChange(getControls());
 				}
 			}
 		});
@@ -125,12 +160,12 @@ public class StringFilterComponent extends FilterComponent
 			@Override
 			public void handle(ActionEvent e)
 			{
-				isClearing = true;
+				dontFireDataChangeEvent = true;
 				checkComboBox.getCheckModel().clearChecks();
 				suggestedValuesForFilter.clear();
-				dataFilterComponentListener.dataFilterChanged();
+				doDelayedFilterChange(getControls());
 				keyLabel.setText(key);
-				isClearing = false;
+				dontFireDataChangeEvent = false;
 			}
 
 		});
@@ -143,7 +178,7 @@ public class StringFilterComponent extends FilterComponent
 
 	private HBox userTextFieldWithCompletion(List<String> list, String key)
 	{
-		TextArea selectedStrings = new TextArea();
+		selectedStrings = new TextArea();
 		selectedStrings.setEditable(true);
 		TextField stringAutoCompleteSelector = new TextField();
 		// create the data to show in the CheckComboBox
@@ -200,7 +235,7 @@ public class StringFilterComponent extends FilterComponent
 				if (!line.trim().equals(""))
 					suggestedValuesForFilter.add(line.trim().toLowerCase());
 
-			doDelayedFilterChange(Arrays.asList(selectedStrings));
+			doDelayedFilterChange(getControls());
 
 		});
 
@@ -209,13 +244,13 @@ public class StringFilterComponent extends FilterComponent
 			@Override
 			public void handle(ActionEvent e)
 			{
-				isClearing = true;
+				dontFireDataChangeEvent = true;
 				suggestedValuesForFilter.clear();
 				stringAutoCompleteSelector.clear();
 				selectedStrings.clear();
-				dataFilterComponentListener.dataFilterChanged();
+				doDelayedFilterChange(getControls());
 				keyLabel.setText(key);
-				isClearing = false;
+				dontFireDataChangeEvent = false;
 			}
 
 		});

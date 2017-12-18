@@ -18,7 +18,13 @@ import com.sciome.filter.StringFilter;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
@@ -27,7 +33,7 @@ import javafx.scene.layout.VBox;
  */
 public class FilterCompentsNode extends VBox implements FilterComponentContainer
 {
-	private static final String			ADD_FILTER			= "--ADD FILTER--";
+	private static final String			ADD_FILTER				= "--ADD FILTER--";
 	private List<FilterComponent>		filterComponents;
 	private FilterDataExtractor			filterAnnotationExtractor;
 	private BMDExpressAnalysisDataSet	filterableDataSet;
@@ -35,12 +41,14 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	private DataFilterComponentListener	dataFilterComponentListener;
 	private ComboBox<String>			addRemoveFilterCombo;
 
-	private List<String>				visibleFilterNodes	= new ArrayList<>();
+	private List<String>				visibleFilterNodes		= new ArrayList<>();
 
 	// use this map to easily assoicate existing data filter with a key
-	private Map<String, DataFilter>		dataFilterMap		= new HashMap<>();
+	private Map<String, DataFilter>		dataFilterMap			= new HashMap<>();
 	private ScrollPane					filterNodeScrollPane;
 	private VBox						filterComponentVbox;
+	private boolean						fireFilter				= false;
+	private boolean						filterChangeInProgress	= false;
 
 	//
 	public FilterCompentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
@@ -71,12 +79,10 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 				dataFilterMap.put(df.getKey(), df);
 		}
 
-		init();
-
 	}
 
 	@SuppressWarnings("restriction")
-	private void init()
+	public void init()
 	{
 
 		visibleFilterNodes = BMDExpressProperties.getInstance().getFilters(filterableClass.getName());
@@ -86,6 +92,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 		List<String> sortedKeyList = filterAnnotationExtractor.getKeys();
 		Collections.sort(sortedKeyList);
 		// addRemoveFilterButton = new Button("Add/Remove Filters");
+		Button saveDefault = new Button("Save Filter");
 		addRemoveFilterCombo = new ComboBox<>();
 
 		addRemoveFilterCombo.getItems().addAll(sortedKeyList);
@@ -131,7 +138,23 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			}
 		});
 
-		this.getChildren().add(addRemoveFilterCombo);
+		saveDefault.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event)
+			{
+				dataFilterComponentListener.saveDataFilter(filterableClass.getName(), getFilterDataPack());
+
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Saved Data Filter");
+				alert.setHeaderText(null);
+				alert.setContentText(
+						"This data filter has been saved and will be default for this analyis group.");
+
+				alert.showAndWait();
+			}
+		});
+
+		this.getChildren().addAll(saveDefault, addRemoveFilterCombo);
 		filterNodeScrollPane = new ScrollPane();
 		updateFilterNodes();
 		this.getChildren().add(filterNodeScrollPane);
@@ -184,37 +207,46 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DataFilterPack getFilterDataPack()
 	{
+
 		List<DataFilter> dataFilters = new ArrayList<>();
-		for (FilterComponent fc : filterComponents)
+		try
 		{
-			if (!fc.isFilledOut())
-				continue;
-			DataFilter df = null;
-			Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
-			if (returnType.equals(Integer.class))
+
+			for (FilterComponent fc : filterComponents)
 			{
-				df = new IntegerFilter(fc.getDataFilterType(), this.filterableDataSet, fc.getFilterKey(),
-						fc.getValues());
-			}
-			else if (returnType.equals(Float.class) || returnType.equals(Double.class)
-					|| returnType.equals(Number.class))
-			{
-				try
+				if (!fc.isFilledOut())
+					continue;
+				DataFilter df = null;
+				Class returnType = filterAnnotationExtractor.getReturnType(fc.getFilterKey());
+				if (returnType.equals(Integer.class))
 				{
-					df = new NumberFilter(fc.getDataFilterType(), this.filterableDataSet, fc.getFilterKey(),
+					df = new IntegerFilter(fc.getDataFilterType(), this.filterableDataSet, fc.getFilterKey(),
 							fc.getValues());
 				}
-				catch (Exception e)
+				else if (returnType.equals(Float.class) || returnType.equals(Double.class)
+						|| returnType.equals(Number.class))
 				{
-					continue;
-				}
+					try
+					{
+						df = new NumberFilter(fc.getDataFilterType(), this.filterableDataSet,
+								fc.getFilterKey(), fc.getValues());
+					}
+					catch (Exception e)
+					{
+						continue;
+					}
 
+				}
+				else
+					df = new StringFilter(DataFilterType.EQUALS, this.filterableDataSet, fc.getFilterKey(),
+							fc.getValues());
+				dataFilters.add(df);
+				dataFilterMap.put(df.getKey(), df);
 			}
-			else
-				df = new StringFilter(DataFilterType.EQUALS, this.filterableDataSet, fc.getFilterKey(),
-						fc.getValues());
-			dataFilters.add(df);
-			dataFilterMap.put(df.getKey(), df);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 
 		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters);
@@ -237,6 +269,54 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 		visibleFilterNodes.remove(fc.getFilterKey());
 		BMDExpressProperties.getInstance().updateFilter(filterableClass.getName(), visibleFilterNodes);
 		dataFilterComponentListener.dataFilterChanged();
+
+	}
+
+	@Override
+	public void filterChanged(List<Control> controls)
+	{
+		fireFilter = true;
+
+		if (!filterChangeInProgress)
+		{
+			filterChangeInProgress = true;
+			for (Control control : controls)
+				if (!control.getStyleClass().contains("textboxfilterchanged"))
+					control.getStyleClass().add("textboxfilterchanged");
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					while (fireFilter)
+					{
+						fireFilter = false; // set his global variable to false.
+						try
+						{
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							dataFilterComponentListener.dataFilterChanged();
+							filterChangeInProgress = false;
+							for (Control control : controls)
+								control.getStyleClass().remove("textboxfilterchanged");
+						}
+					});
+
+				}
+			}).start();
+
+		}
 
 	}
 

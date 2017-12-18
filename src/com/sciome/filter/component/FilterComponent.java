@@ -6,7 +6,6 @@ import java.util.List;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterType;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -108,47 +107,9 @@ public abstract class FilterComponent extends VBox
 	 */
 	protected void doDelayedFilterChange(List<Control> controls)
 	{
-		fireFilter = true;
-		for (Control control : controls)
-			if (!control.getStyleClass().contains("textboxfilterchanged"))
-				control.getStyleClass().add("textboxfilterchanged");
-		if (!filterChangeInProgress)
-		{
-			filterChangeInProgress = true;
-			new Thread(new Runnable() {
 
-				@Override
-				public void run()
-				{
-					while (fireFilter)
-					{
-						fireFilter = false; // set his global variable to false.
-						try
-						{
-							Thread.sleep(1000);
-						}
-						catch (InterruptedException e)
-						{
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+		container.filterChanged(controls);
 
-					}
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run()
-						{
-							dataFilterComponentListener.dataFilterChanged();
-							for (Control control : controls)
-								control.getStyleClass().remove("textboxfilterchanged");
-							filterChangeInProgress = false;
-						}
-					});
-
-				}
-			}).start();
-
-		}
 	}
 
 	public String getFilterKey()

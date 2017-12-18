@@ -12,12 +12,17 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 
 public class BMDExpressProperties
@@ -55,6 +60,30 @@ public class BMDExpressProperties
 
 		loadProperties();
 		readPreferences();
+		loadDefaultFilters();
+
+	}
+
+	private void loadDefaultFilters()
+	{
+		// BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER"),
+
+		for (File file : new File(BMDExpressConstants.getInstance().BMDBASEPATH).listFiles())
+		{
+			if (file.getName().endsWith(".DEFAULTFILTER"))
+			{
+				try
+				{
+					String name = file.getName().replaceAll(".DEFAULTFILTER", "");
+					dataFilterPackMap.put(name, this.readDefaultFilter(name));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+
+			}
+		}
 
 	}
 
@@ -731,6 +760,7 @@ public class BMDExpressProperties
 	public void putDataFilterPackMap(String key, DataFilterPack pack)
 	{
 		dataFilterPackMap.put(key, pack);
+		// this.saveDefaultFilter(key);
 	}
 
 	public String getTimeStamp()
@@ -806,17 +836,72 @@ public class BMDExpressProperties
 
 	}
 
+	public void saveDefaultFilter(String name)
+	{
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			/**
+			 * To make the JSON String pretty use the below code
+			 */
+			mapper.writerWithDefaultPrettyPrinter().writeValue(new File(
+					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER"),
+					dataFilterPackMap.get(name));
+
+		}
+		catch (IOException e)
+		{
+			// do something
+			e.printStackTrace();
+		}
+
+	}
+
+	public DataFilterPack readDefaultFilter(String name)
+	{
+		try
+		{
+			File defaultFilterFile = new File(
+					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER");
+			if (!defaultFilterFile.exists())
+				return null;
+
+			ObjectMapper mapper = new ObjectMapper();
+			DataFilterPack filterpack = mapper.readValue(defaultFilterFile, DataFilterPack.class);
+			return filterpack;
+
+		}
+		catch (IOException e)
+		{
+			// do something
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	public List<String> getFilters(String name)
 	{
 		List<String> values = new ArrayList<>();
+		Set<String> valueSet = new HashSet<>();
 		if (!(new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".FILTER")
 				.exists()))
 			return values;
 		try
 		{
-			return Files.readAllLines((new File(
+			valueSet.addAll(Files.readAllLines((new File(
 					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".FILTER")
-							.toPath()));
+							.toPath())));
+
+			DataFilterPack dfp = getDataFilterPackMap(name);
+			if (dfp != null && dfp.getDataFilters() != null)
+				for (DataFilter df : dfp.getDataFilters())
+					valueSet.add(df.getKey());
+
+			values.addAll(valueSet);
+			Collections.sort(values);
+			return values;
 		}
 		catch (IOException e)
 		{
