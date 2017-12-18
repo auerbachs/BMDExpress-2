@@ -24,6 +24,9 @@ public class IntegerFilterComponent extends NumericFilterComponent
 	protected void initValues(DataFilter df)
 	{
 
+		// this could mean that the filter doesn't exist for this data set
+		if (dataFilterType == null)
+			return;
 		dataFilterType.setValue(df.getDataFilterType());
 
 		// between filters can be a little more tricky.

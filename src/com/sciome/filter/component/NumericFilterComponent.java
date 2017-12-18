@@ -45,6 +45,9 @@ public class NumericFilterComponent extends FilterComponent
 	protected void initValues(DataFilter df)
 	{
 
+		// this could mean that the filter doesn't exist for this data set
+		if (dataFilterType == null)
+			return;
 		dataFilterType.setValue(df.getDataFilterType());
 		// between filters can be a little more tricky.
 		// if min/max of dataset then they may be stored as -infinity or +infinity of integer
