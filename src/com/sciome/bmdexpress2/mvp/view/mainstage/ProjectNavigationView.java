@@ -233,7 +233,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		else if (datasets.size() == 1)
 			presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
 		else if (datasets.size() > 1 && datasets.get(0) instanceof DoseResponseExperiment)
-			presenter.clearMainDataView(); // not combining dose response data
+			presenter.multipleDataSetsSelected(datasets); // not combining dose response data
 		else if (datasets.size() > 1)
 			presenter.multipleDataSetsSelected(datasets);
 		else

@@ -20,6 +20,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
@@ -222,6 +223,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onExpressionDataSelected(ExpressionDataCombinedSelectedEvent event)
 	{
+		getView().expressionDataSelected();
 		getView().combinedSelected();
 	}
 
@@ -229,6 +231,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onBMDAnlysisDatasSelected(BMDAnalysisDataCombinedSelectedEvent event)
 	{
+		getView().bMDAnalysisDataSelected();
 		getView().combinedSelected();
 	}
 
@@ -236,6 +239,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onOneWayANOVASelected(OneWayANOVADataCombinedSelectedEvent event)
 	{
+		getView().oneWayANOVADataSelected();
 		getView().combinedSelected();
 	}
 
@@ -243,6 +247,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onWilliamsTrendSelected(WilliamsTrendDataCombinedSelectedEvent event)
 	{
+		getView().williamsTrendDataSelected();
 		getView().combinedSelected();
 	}
 
@@ -250,6 +255,7 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onOriogenSelected(OriogenDataCombinedSelectedEvent event)
 	{
+		getView().oriogenDataSelected();
 		getView().combinedSelected();
 	}
 
@@ -257,7 +263,15 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	@AllowConcurrentEvents
 	public void onCategoryAnalysisSelected(CategoryAnalysisDataCombinedSelectedEvent event)
 	{
+		getView().functionalCategoryDataSelected();
 		getView().combinedSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onNoDataSelected(NoDataSelectedEvent event)
+	{
+		getView().noDataSelected();
 	}
 
 	@Subscribe

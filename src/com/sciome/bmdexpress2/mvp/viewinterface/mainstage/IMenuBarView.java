@@ -23,4 +23,6 @@ public interface IMenuBarView
 
 	public void combinedSelected();
 
+	public void noDataSelected();
+
 }

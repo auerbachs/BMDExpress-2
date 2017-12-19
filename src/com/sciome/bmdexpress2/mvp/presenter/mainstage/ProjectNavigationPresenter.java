@@ -37,6 +37,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombi
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
@@ -834,6 +835,13 @@ public class ProjectNavigationPresenter
 			getEventBus().post(new CategoryAnalysisDataCombinedSelectedEvent(combined));
 		else if (selectedItems.get(0) instanceof BMDResult)
 			getEventBus().post(new BMDAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof DoseResponseExperiment)
+		{
+			// clear the data view
+			getEventBus().post(new NoDataSelectedEvent(""));
+			// this will inform the menubar to update accordingingly
+			getEventBus().post(new ExpressionDataCombinedSelectedEvent(combined));
+		}
 		// now post an event with a list of pure analysis sets.
 		System.out.println();
 
