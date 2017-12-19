@@ -4,6 +4,7 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.ExpressionDataSetDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
+import com.sciome.bmdexpress2.mvp.view.visualization.PCADataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
@@ -25,12 +26,11 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 		if (doseResponseExperiement.getColumnHeader().size() == 0)
 			return;
 		setUpTableView(doseResponseExperiement);
-
-		splitPaneMain.getItems().remove(dataVisualizationNode);
+		presenter.showVisualizations(doseResponseExperiement);
+		
+		//Disable filtering options for now
 		splitPane.getItems().remove(filtrationNode);
 		hideFilter.setDisable(true);
-		hideTable.setDisable(true);
-		hideCharts.setDisable(true);
 		enableFilterCheckBox.setDisable(true);
 
 	}
@@ -38,7 +38,6 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
-		return null;
+		return new PCADataVisualizationView();
 	}
-
 }

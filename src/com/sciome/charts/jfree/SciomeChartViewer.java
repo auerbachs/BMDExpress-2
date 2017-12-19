@@ -1,9 +1,6 @@
 package com.sciome.charts.jfree;
 
-import java.awt.Color;
-
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.fx.ChartCanvas;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ZoomHandlerFX;
