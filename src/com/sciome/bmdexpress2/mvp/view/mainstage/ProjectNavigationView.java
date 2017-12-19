@@ -52,6 +52,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
@@ -62,6 +63,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -74,19 +76,20 @@ import javafx.stage.WindowEvent;
 public class ProjectNavigationView extends VBox implements IProjectNavigationView
 {
 
-	private final String									EXPRESSION_DATA		= "Expression Data";
-	private final String									ONEWAY_DATA			= "One-way ANOVA";
-	private final String									WILLIAMS_DATA		= "William's Trend";
-	private final String									ORIOGEN_DATA		= "Oriogen";
-	private final String									BENCHMARK_DATA		= "Benchmark Dose Analyses";
-	private final String									CATEGORY_DATA		= "Functional Classifications";
+	private final String									EXPRESSION_DATA				= "Expression Data";
+	private final String									ONEWAY_DATA					= "One-way ANOVA";
+	private final String									WILLIAMS_DATA				= "William's Trend";
+	private final String									ORIOGEN_DATA				= "Oriogen";
+	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
+	private final String									CATEGORY_DATA				= "Functional Classifications";
 
-	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap			= new HashMap<>();
-	private ComboBox<String>								dataGroupCombo		= new ComboBox<>();
-	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList	= new CheckListView<>();
+	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
+	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
+	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
 
 	ProjectNavigationPresenter								presenter;
-	private boolean											clearingChecks		= false;
+	private boolean											fireSelection				= false;
+	private boolean											selectionChangeInProgress	= false;
 
 	public ProjectNavigationView()
 	{
@@ -109,8 +112,37 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		initializeDataSetMap();
 		initializeDataGroupCombo();
 
-		getChildren().add(dataGroupCombo);
+		HBox hbox = new HBox();
+		hbox.getChildren().add(dataGroupCombo);
+
+		Button clearButton = new Button("Clear");
+		Button selectAllButton = new Button("Select All");
+		hbox.getChildren().add(selectAllButton);
+		hbox.getChildren().add(clearButton);
+		getChildren().add(hbox);
 		initializeAnalysisList();
+
+		selectAllButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				analysisCheckList.getCheckModel().checkAll();
+				delayedCheckBoxReaction();
+
+			}
+		});
+
+		clearButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				analysisCheckList.getCheckModel().clearChecks();
+				delayedCheckBoxReaction();
+
+			}
+		});
 
 	}
 
@@ -1083,12 +1115,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private void clearChecks(BMDExpressAnalysisDataSet selectedItem)
 	{
 		// so the handler doesn't fire off events while clearing.
-		clearingChecks = true;
 		if (selectedItem == null)
 			analysisCheckList.getCheckModel().clearChecks();
 		else
 			analysisCheckList.getCheckModel().clearCheck(selectedItem);
-		clearingChecks = false;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -1317,8 +1347,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
 					{
-						if (!clearingChecks)
-							handle_navigationTreeViewSelection();
+						delayedCheckBoxReaction();
 					}
 				});
 	}
@@ -1357,6 +1386,52 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				datasets.add(ds);
 
 		return datasets;
+	}
+
+	private void delayedCheckBoxReaction()
+	{
+		fireSelection = true;
+
+		if (!selectionChangeInProgress)
+		{
+			selectionChangeInProgress = true;
+			if (!analysisCheckList.getStyleClass().contains("textboxfilterchanged"))
+				analysisCheckList.getStyleClass().add("textboxfilterchanged");
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					while (fireSelection)
+					{
+						fireSelection = false; // set his global variable to false.
+						try
+						{
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							analysisCheckList.getStyleClass().remove("textboxfilterchanged");
+							handle_navigationTreeViewSelection();
+							selectionChangeInProgress = false;
+
+						}
+					});
+
+				}
+			}).start();
+
+		}
+
 	}
 
 }
