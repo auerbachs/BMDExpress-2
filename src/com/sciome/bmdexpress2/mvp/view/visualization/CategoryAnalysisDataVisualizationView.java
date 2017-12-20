@@ -11,6 +11,7 @@ import java.util.Set;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.ReferenceGeneProbeStatResult;
@@ -22,6 +23,7 @@ import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
+import com.sciome.bmdexpress2.util.visualizations.curvefit.PathwayCurveViewer;
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
@@ -41,6 +43,8 @@ import com.sciome.filter.DataFilterPack;
 public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
+
+	private static final String						CURVEPLOT			= "Curve Overlay";
 	private static final String						RANGEPLOT			= "Range Plot";
 	private static final String						BUBBLE_CHART		= "Bubble Chart";
 	private static final String						ACCUMULATION_CHARTS	= "Accumulation Charts";
@@ -79,6 +83,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				new ChartKey("Percentage", null)
 
 		));
+
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
@@ -383,6 +388,23 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			chart2.redrawCharts(chartDataPacks);
 			chartsList.add(chart2);
 		}
+		else if (chartKey.equals(CURVEPLOT))
+		{
+			List<CategoryAnalysisResults> catResults = new ArrayList<>();
+			for (BMDExpressAnalysisDataSet dataSet : results)
+			{
+				if (dataSet.getObject() instanceof CategoryAnalysisResults)
+					catResults.add((CategoryAnalysisResults) dataSet.getObject());
+				else if (dataSet instanceof CombinedDataSet)
+				{
+					for (Object obj : (List) dataSet.getObject())
+						catResults.add((CategoryAnalysisResults) obj);
+				}
+			}
+
+			chartsList.add(new PathwayCurveViewer(catResults));
+
+		}
 		else
 		{
 			SciomeChartBase chart1 = chartCache.get("DEFAULT-Accumulation");
@@ -407,6 +429,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	{
 		List<String> resultList = new ArrayList<>();
 		resultList.add(DEFAULT_CHARTS);
+		resultList.add(CURVEPLOT);
 		resultList.add(RANGEPLOT);
 		resultList.add(BUBBLE_CHART);
 		resultList.add(BMD_BMDL_BARCHARTS);

@@ -138,6 +138,15 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected void showCharts()
 	{
 		VBox vBox = generateGridOfNodes(chartsList, 3);
+		if (chartsList.size() == 1)
+		{
+			vBox = new VBox();
+			HBox hbox = new HBox();
+			hbox.getChildren().add(chartsList.get(0));
+			HBox.setHgrow(chartsList.get(0), Priority.ALWAYS);
+			hbox.setMinWidth(800);
+			vBox.getChildren().add(hbox);
+		}
 
 		ScrollPane sp = new ScrollPane();
 		sp.setVbarPolicy(ScrollBarPolicy.ALWAYS);
