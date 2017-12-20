@@ -33,11 +33,15 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.CombinedRow;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.ReferenceGeneProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
+import com.sciome.filter.DataFilterPack;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -67,18 +71,25 @@ public class PathwayCurveViewer extends VBox
 	// the genes that are available to curveplot based on pathway and categoryanalysisresults selected.
 	private CheckComboBox<String>					geneCombo						= new CheckComboBox<>();
 
-	private List<CategoryAnalysisResults>			categoryAnalysisResults;
+	private List<BMDExpressAnalysisDataSet>			categoryAnalysisResults;
 	private JFreeCurve								jfreeCurve;
 	private HBox									hbox;
+	private DataFilterPack							filterPack;
 
-	public PathwayCurveViewer(List<CategoryAnalysisResults> categoryAnalysisResults)
+	public PathwayCurveViewer(List<BMDExpressAnalysisDataSet> categoryAnalysisResults,
+			DataFilterPack filterPack)
 	{
 		super(8);
+		this.filterPack = filterPack;
 		this.categoryAnalysisResults = categoryAnalysisResults;
+		boolean areAnyBMDResultNull = false;
 		// load available pathways
-		for (CategoryAnalysisResults results : categoryAnalysisResults)
-			for (CategoryAnalysisResult result : results.getCategoryAnalsyisResults())
-				pathwaySet.add(result.getCategoryDescription().toLowerCase());
+		for (BMDExpressAnalysisDataSet results : categoryAnalysisResults)
+			for (BMDExpressAnalysisRow result : results.getAnalysisRows())
+				if (filterPack == null || filterPack.passesFilter(result))
+					if (((CategoryAnalysisResult) result.getObject()).getAllGenesPassedAllFilters() > 0)
+						pathwaySet
+								.add(((CategoryAnalysisResult) result.getObject()).getCategoryDescription());
 		pathways.addAll(pathwaySet);
 		Collections.sort(pathways);
 		ComboBox<String> howtodostring;
@@ -88,10 +99,19 @@ public class PathwayCurveViewer extends VBox
 
 		howtodostring.setValue("begins with");
 
-		boolean areAnyBMDResultNull = false;
-		for (CategoryAnalysisResults r : categoryAnalysisResults)
-			if (r.getBmdResult() == null)
+		for (BMDExpressAnalysisDataSet result : categoryAnalysisResults)
+		{
+
+			if (result.getObject() instanceof List)
+			{
+				for (Object r : (List) result.getObject())
+					if (((CategoryAnalysisResults) r).getBmdResult() == null)
+						areAnyBMDResultNull = true;
+			}
+			else if (((CategoryAnalysisResults) result).getBmdResult() == null)
 				areAnyBMDResultNull = true;
+		}
+
 		if (areAnyBMDResultNull)
 		{
 			Alert alert = new Alert(AlertType.WARNING);
@@ -160,8 +180,8 @@ public class PathwayCurveViewer extends VBox
 						geneCombo = new CheckComboBox<>();
 						geneCombo.getItems()
 								.setAll(getGenesThatAreInPathwayAndCategoryResults(
-										pathwayAutoCompleteTextField.getText(), categoryAnalysisResultsCombo
-												.getCheckModel().getCheckedItems()));
+										pathwayAutoCompleteTextField.getText(),
+										categoryAnalysisResultsCombo.getCheckModel().getCheckedItems()));
 						hbox.getChildren().add(geneCombo);
 						geneCombo.setMaxWidth(200);
 
@@ -205,13 +225,27 @@ public class PathwayCurveViewer extends VBox
 	private List<CategoryAnalysisResults> getCatResultsThatContainPathways(String pathway)
 	{
 		Set<CategoryAnalysisResults> catResults = new HashSet<>();
-		for (CategoryAnalysisResults results : categoryAnalysisResults)
-			for (CategoryAnalysisResult result : results.getCategoryAnalsyisResults())
-				if (result.getCategoryDescription().equalsIgnoreCase(pathway))
+
+		// overly complicated code to deal with combined data sets or pure categoryanalysis results
+		// and be able to use the filterPack to filter out objects based on
+		// user supplied filter.
+		for (BMDExpressAnalysisDataSet dataSet : categoryAnalysisResults)
+		{
+			for (BMDExpressAnalysisRow row : dataSet.getAnalysisRows())
+			{
+				if (((CategoryAnalysisResult) row.getObject()).getCategoryDescription()
+						.equalsIgnoreCase(pathway) && (filterPack == null || filterPack.passesFilter(row)))
 				{
-					catResults.add(results);
-					break;
+					if (row instanceof CombinedRow)
+						catResults.add((CategoryAnalysisResults) ((CombinedRow) row).getParentObject());
+					else
+					{
+						catResults.add((CategoryAnalysisResults) dataSet);
+						break;
+					}
 				}
+			}
+		}
 
 		List<CategoryAnalysisResults> returnList = new ArrayList<>(catResults);
 		returnList.sort(new Comparator<CategoryAnalysisResults>() {
@@ -230,12 +264,28 @@ public class PathwayCurveViewer extends VBox
 	private List<String> getGenesThatAreInPathwayAndCategoryResults(String pathway,
 			List<CategoryAnalysisResults> catResults)
 	{
-
+		// overly complicated code to deal with combined data sets or pure categoryanalysis results
+		// and be able to use the filterPack to filter out objects based on
+		// user supplied filter.
 		Set<String> geneSet = new HashSet<>();
-		for (CategoryAnalysisResults results : catResults)
-			for (CategoryAnalysisResult result : results.getCategoryAnalsyisResults())
-				if (result.getCategoryDescription().equalsIgnoreCase(pathway))
+		for (BMDExpressAnalysisDataSet dataSet : categoryAnalysisResults)
+		{
+			for (BMDExpressAnalysisRow row : dataSet.getAnalysisRows())
+			{
+				// make sure the pathway matches and that the row passes the filter
+				if (((CategoryAnalysisResult) row.getObject()).getCategoryDescription()
+						.equalsIgnoreCase(pathway) && (filterPack == null || filterPack.passesFilter(row)))
 				{
+
+					// if it is a combined row, make sure that the parent object is in the list
+					// of selected categoryanalysis results
+					if (row instanceof CombinedRow && !catResults
+							.contains((CategoryAnalysisResults) ((CombinedRow) row).getParentObject()))
+						continue;
+
+					// get the category analysis result
+					CategoryAnalysisResult result = (CategoryAnalysisResult) row.getObject();
+
 					if (result.getReferenceGeneProbeStatResults() == null)
 						continue;
 					for (ReferenceGeneProbeStatResult rgps : result.getReferenceGeneProbeStatResults())
@@ -246,7 +296,10 @@ public class PathwayCurveViewer extends VBox
 					}
 					// catResults.add(results);
 					break;
+
 				}
+			}
+		}
 
 		List<String> returnList = new ArrayList<>(geneSet);
 		Collections.sort(returnList);
@@ -261,10 +314,30 @@ public class PathwayCurveViewer extends VBox
 	{
 		Set<String> geneSet = new HashSet<>(genes);
 		Map<BMDResult, Set<ProbeStatResult>> returnMap = new HashMap<>();
-		for (CategoryAnalysisResults results : catResults)
-			for (CategoryAnalysisResult result : results.getCategoryAnalsyisResults())
-				if (result.getCategoryDescription().equalsIgnoreCase(pathway))
+		for (BMDExpressAnalysisDataSet dataSet : categoryAnalysisResults)
+		{
+			for (BMDExpressAnalysisRow row : dataSet.getAnalysisRows())
+			{
+				// make sure the pathway matches and that the row passes the filter
+				if (((CategoryAnalysisResult) row.getObject()).getCategoryDescription()
+						.equalsIgnoreCase(pathway) && (filterPack == null || filterPack.passesFilter(row)))
 				{
+
+					// if it is a combined row, make sure that the parent object is in the list
+					// of selected categoryanalysis results
+					if (row instanceof CombinedRow && !catResults
+							.contains((CategoryAnalysisResults) ((CombinedRow) row).getParentObject()))
+						continue;
+
+					CategoryAnalysisResults results = null;
+					if (row instanceof CombinedRow)
+						results = (CategoryAnalysisResults) ((CombinedRow) row).getParentObject();
+					else
+						results = (CategoryAnalysisResults) dataSet;
+
+					// get the category analysis result
+					CategoryAnalysisResult result = (CategoryAnalysisResult) row.getObject();
+
 					if (result.getReferenceGeneProbeStatResults() == null)
 						continue;
 					for (ReferenceGeneProbeStatResult rgps : result.getReferenceGeneProbeStatResults())
@@ -277,8 +350,9 @@ public class PathwayCurveViewer extends VBox
 							returnMap.get(results.getBmdResult()).addAll(rgps.getProbeStatResults());
 						}
 					}
-					break;
 				}
+			}
+		}
 
 		List<String> returnList = new ArrayList<>(geneSet);
 		Collections.sort(returnList);

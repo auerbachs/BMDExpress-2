@@ -11,7 +11,6 @@ import java.util.Set;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
-import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.ReferenceGeneProbeStatResult;
@@ -390,19 +389,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		}
 		else if (chartKey.equals(CURVEPLOT))
 		{
-			List<CategoryAnalysisResults> catResults = new ArrayList<>();
-			for (BMDExpressAnalysisDataSet dataSet : results)
-			{
-				if (dataSet.getObject() instanceof CategoryAnalysisResults)
-					catResults.add((CategoryAnalysisResults) dataSet.getObject());
-				else if (dataSet instanceof CombinedDataSet)
-				{
-					for (Object obj : (List) dataSet.getObject())
-						catResults.add((CategoryAnalysisResults) obj);
-				}
-			}
-
-			chartsList.add(new PathwayCurveViewer(catResults));
+			chartsList.add(new PathwayCurveViewer(results, pack));
 
 		}
 		else
@@ -465,7 +452,6 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				{
 					for (ProbeStatResult probeStatResult : geneProbeStat.getProbeStatResults())
 					{
-
 						if (uniqueBMDCount && probeIdSet.contains(probeStatResult))
 							continue;
 
