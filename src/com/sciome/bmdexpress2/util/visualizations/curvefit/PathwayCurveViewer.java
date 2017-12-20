@@ -88,13 +88,17 @@ public class PathwayCurveViewer extends VBox
 
 		howtodostring.setValue("begins with");
 
-		if (categoryAnalysisResults.get(0).getBmdResult() == null)
+		boolean areAnyBMDResultNull = false;
+		for (CategoryAnalysisResults r : categoryAnalysisResults)
+			if (r.getBmdResult() == null)
+				areAnyBMDResultNull = true;
+		if (areAnyBMDResultNull)
 		{
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Not Available For Your Datq");
 			alert.setHeaderText("Not Available For Your Datq");
 			alert.setContentText(
-					"The category analysis curve viewer is not available for this dataset because the data was generated with an older version of BMDExpress2.  Please rerun category analysis on the bmdanalysis results.");
+					"The category analysis curve viewer is not available for at least one of these datasets because the data was generated with an older version of BMDExpress2.  Please rerun category analysis on the bmdanalysis results to be able to view them in curve viewer.");
 
 			alert.showAndWait();
 			return;
