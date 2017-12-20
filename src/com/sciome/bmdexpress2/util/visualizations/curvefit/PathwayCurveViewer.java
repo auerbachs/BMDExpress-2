@@ -294,8 +294,6 @@ public class PathwayCurveViewer extends VBox
 								&& rgps.getReferenceGene().getGeneSymbol() != null)
 							geneSet.add(rgps.getReferenceGene().getGeneSymbol());
 					}
-					// catResults.add(results);
-					break;
 
 				}
 			}
@@ -318,6 +316,9 @@ public class PathwayCurveViewer extends VBox
 		{
 			for (BMDExpressAnalysisRow row : dataSet.getAnalysisRows())
 			{
+				if (((CategoryAnalysisResult) row.getObject()).getCategoryDescription()
+						.equalsIgnoreCase(pathway))
+					System.out.println();
 				// make sure the pathway matches and that the row passes the filter
 				if (((CategoryAnalysisResult) row.getObject()).getCategoryDescription()
 						.equalsIgnoreCase(pathway) && (filterPack == null || filterPack.passesFilter(row)))
@@ -351,6 +352,7 @@ public class PathwayCurveViewer extends VBox
 						}
 					}
 				}
+
 			}
 		}
 
