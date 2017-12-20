@@ -42,8 +42,8 @@ public class PCADataVisualizationPresenter extends DataVisualizationPresenter {
 			doseVector[i] = treatments.get(i).getDose();
 		}
 		
-		PCAService service = new PCAService();
-		return service.calculatePCA(numericMatrix, doseVector, doseResponseExperiment.getName());
+		PCAService pcaService = new PCAService();
+		return pcaService.calculatePCA(numericMatrix, doseVector, doseResponseExperiment.getName());
 	}
 	
 	@Override
@@ -63,5 +63,4 @@ public class PCADataVisualizationPresenter extends DataVisualizationPresenter {
 
 		return returnList;
 	}
-
 }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
 
 import com.sciome.bmdexpress2.mvp.model.pca.PCAResult;
 import com.sciome.bmdexpress2.mvp.model.pca.PCAResults;
@@ -18,8 +16,6 @@ public class PCAService implements IPCAService{
 	@Override
 	public PCAResults calculatePCA(double[][] numericMatrix, double[] doseVector, String name) {
 		PCA pca = new PCA(MatrixUtils.createRealMatrix(numericMatrix).transpose(), CovarianceType.COVARIANCE, 4);
-		System.out.println(pca.getTransformedData().getRowDimension());
-		System.out.println(pca.getTransformedData().getColumnDimension());
 		PCAResults pcaResults = new PCAResults();
 		List<PCAResult> pcaResultList = new ArrayList<PCAResult>();
 		for(int i = 0; i < pca.getTransformedData().getRowDimension(); i++) {
@@ -36,5 +32,4 @@ public class PCAService implements IPCAService{
 		pcaResults.setName(name + "_PCA");
 		return pcaResults;
 	}
- 
 }

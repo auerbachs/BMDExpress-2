@@ -19,6 +19,8 @@ import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisData
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
+import javafx.concurrent.Task;
+
 public abstract class DataVisualizationPresenter
 		extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>
 {
@@ -35,7 +37,6 @@ public abstract class DataVisualizationPresenter
 	public void initData(BMDProject bmdProject)
 	{
 		this.bmdProject = bmdProject;
-
 	}
 
 	private void init()

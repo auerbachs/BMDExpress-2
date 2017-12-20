@@ -10,7 +10,6 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.pca.PCAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.PCADataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.service.VisualizationService;
@@ -19,8 +18,9 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomePCAJFree;
-import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
+
+import javafx.concurrent.Task;
 
 public class PCADataVisualizationView extends DataVisualizationView implements IDataVisualizationView {
 	
