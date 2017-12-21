@@ -16,11 +16,11 @@ public class CurvePProcessor
 	// NB: move the below auxiliary static functions into the sciome-commons.math?
 	// --------------------------------------------------------------------------------
 
-	private static Float smedian(Float[] m)
+	private static float smedian(Float[] m)
 	{
 		// calculates median value of the pre-sorted array m
 		int mid = m.length >> 1;
-		Float mv = m[mid];
+		float mv = m[mid];
 		if (m.length == (mid << 1))
 		{
 			mv += m[mid - 1];
@@ -29,13 +29,33 @@ public class CurvePProcessor
 		return mv;
 	} // end of smedian()
 
-	private static Float MAD(Float[] m, Float perturb)
+	private static float MAD(Float[] m, float mm, float perturb)
+	{
+		/* SD-like metric, median absolute difference = MAD;
+		 * NB: does not require sorting of m[] since its median mm is supplied;
+		 * perturb is usually small number, such as 0.000001f to avoid exact zero
+		 */
+		
+		Float[] v = m.clone();
+		for (int i = 0; i < m.length; i++)
+			if (v[i] > mm)
+				v[i] -= mm;
+			else
+				v[i] = mm - v[i];
+		
+		float x = smedian(v);
+		if (x < perturb)
+			x = perturb;
+		return x;
+	} // end of MAD()
+	
+	private static float MAD(Float[] m, float perturb)
 	{
 		// SD-like metric, median absolute difference = MAD;
 		// perturb is usually small number, such as 0.000001f to avoid exact zero
 		Float[] v = m.clone();
 		Arrays.sort(v);
-		Float x = smedian(v);
+		float x = smedian(v);
 		for (int i = 0; i < v.length; i++)
 			if (v[i] > x)
 				v[i] -= x;
@@ -47,7 +67,12 @@ public class CurvePProcessor
 		return x;
 	} // end of MAD()
 
-	private static Float[] TukeyBiWs(Float[] m, Float c, Float p)
+	private static float MAD(Float[] m)
+	{
+		return MAD(m, 0.000001f);
+	}
+	
+	private static Float[] TukeyBiWs(Float[] m, float c, float p)
 	{
 		/*
 		 * returns Tukey's biweight coefficients for the array m c is number of MADs beyond which the weight
@@ -56,12 +81,13 @@ public class CurvePProcessor
 		 */
 		Float[] f = m.clone();
 		Arrays.sort(f);
-		Float madv = MAD(f, p), piv = smedian(f);
+		float piv = smedian(f);
+		float madv = MAD(f, piv, p); 
 
 		for (int i = 0; i < m.length; i++)
 		{// fills f[] corresponding to the order in m[]
-			Float zx = (m[i] - piv) / madv / c;
-			Float x = 1.0f - zx * zx;
+			float zx = (m[i] - piv) / madv / c;
+			float x = 1.0f - zx * zx;
 			f[i] = 0.0f;
 			if (x > 0)
 				f[i] = x * x;
@@ -70,13 +96,13 @@ public class CurvePProcessor
 		return f;
 	} // end of TukeyBiWs()
 
-	private static Float wMean(Float[] vals, Float[] coffs)
+	private static float wMean(Float[] vals, Float[] coffs)
 	{
 		/*
 		 * returns weighted average for vals[], using coffs coffs[] must be non-negative
 		 */
 
-		Float c_sum = 0.0f, w_sum = 0.0f;
+		float c_sum = 0.0f, w_sum = 0.0f;
 		for (int i = 0; i < vals.length; i++)
 		{
 			c_sum += coffs[i];
@@ -86,16 +112,16 @@ public class CurvePProcessor
 		return (w_sum / c_sum);
 	}
 
-	private static Float wSD(Float[] vals, Float[] coffs)
+	private static float wSD(Float[] vals, Float[] coffs)
 	{
 		/*
 		 * returns weighted standard deviation of vals, using coffs coffs[] must be non-negative
 		 */
-		Float wm = wMean(vals, coffs);
+		float wm = wMean(vals, coffs);
 		int n = vals.length;
 		Float[] diff = new Float[n];
 
-		Float c_sum = 0.0f, w_sum = 0.0f;
+		float c_sum = 0.0f, w_sum = 0.0f;
 		for (int i = 0; i < n; i++)
 		{
 			diff[i] = vals[i] - wm;
@@ -121,15 +147,15 @@ public class CurvePProcessor
 		// NB: can use DosesStat.java methods or duplicates removal in RealVector of sciome-commons
 
 		// DosesStat t = new DosesStat();
-		// return t.asscendingSort( (Float[])allDoses.toArray() ).sortedUniDoses();
+		// return t.asscendingSort( allDoses.toArray(new Float[0]) ).sortedUniDoses();
 
-		Float[] sDoses = (Float[]) allDoses.toArray();
+		Float[] sDoses = allDoses.toArray(new Float[0]);
 		Arrays.sort(sDoses);
 		List<Float> usDoses = new ArrayList<Float>();
 		usDoses.add(sDoses[0]);
 		for (int d = 1; d < sDoses.length; d++)
 		{
-			if (sDoses[d] == sDoses[d - 1])
+			if ( sDoses[d].floatValue() == sDoses[d - 1].floatValue() )
 				continue;
 
 			usDoses.add(sDoses[d]);
@@ -148,14 +174,15 @@ public class CurvePProcessor
 
 		for (int d = 0; d < D.size(); d++)
 		{
-			Float g = allDoses.get(d);
+			Float g = D.get(d);
 			List<Float> gR = new ArrayList<Float>();
 
 			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
-				if (allDoses.get(ad) == g)
+				if (allDoses.get(ad).floatValue() == g.floatValue())
 					gR.add(allResponses.get(ad));
 
-			Float[] gResps = (Float[]) gR.toArray();
+			
+			Float[] gResps = gR.toArray(new Float[0]);
 			Float[] cfs = TukeyBiWs(gResps, 5.0f, 0.00001f);
 
 			R.add(wMean(gResps, cfs));
@@ -174,14 +201,14 @@ public class CurvePProcessor
 
 		for (int d = 0; d < D.size(); d++)
 		{
-			Float g = allDoses.get(d);
+			Float g = D.get(d);
 			List<Float> gR = new ArrayList<Float>();
 
 			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
-				if (allDoses.get(ad) == g)
+				if (allDoses.get(ad).floatValue() == g.floatValue())
 					gR.add(allResponses.get(ad));
 
-			Float[] gResps = (Float[]) gR.toArray();
+			Float[] gResps = gR.toArray(new Float[0]);
 			Float[] cfs = TukeyBiWs(gResps, 5.0f, 0.00001f);
 
 			RS.add(wSD(gResps, cfs));
@@ -238,7 +265,7 @@ public class CurvePProcessor
 	 */
 	{
 		int e = D.size() - 1;
-		Float[] sv = (Float[]) V.toArray();
+		Float[] sv = V.toArray(new Float[0]);
 		Arrays.sort(sv);
 
 		Float iD = D.get(e) + 1000.0f; // default invalid value (out of dose range)
@@ -249,12 +276,13 @@ public class CurvePProcessor
 		for (int s = 0; s < e; s++)
 		{
 			int z = s + 1;
-			if (L == V.get(s))
+			if (L.floatValue() == V.get(s).floatValue())
 				return D.get(s); // to handle exact hit
 
-			Float Vsz = Math.abs(V.get(s) - V.get(s));
+			Float Vsz = Math.abs(V.get(z) - V.get(s));
 			if (Vsz < Math.abs(V.get(z) - L))
 				continue;
+			
 			if (Vsz < Math.abs(V.get(s) - L))
 				continue;
 
@@ -325,7 +353,7 @@ public class CurvePProcessor
 		return fAUC;
 	} // end of calc_AUC()
 
-	public static float calc_wAUC(float AUC, float POD, float FirstDose, float LastDose)
+	public static float calc_wAUC(float AUC, float POD, List<Float> Doses)
 	/*
 	 * returns AUC normalized by point of departure (POD) and dose test range NB: FirstDose - untreated
 	 * control, e.g., either 0 or log-transformed by logBaseDoses() NB: POD - can be calculated by calc_POD()
@@ -333,14 +361,19 @@ public class CurvePProcessor
 	 * - has to be on the same scale of dose-units as other parameters!
 	 */
 	{
+		float Untreated = Doses.get(0);
+		float FirstDose = Doses.get(1);
+		float LastDose = Doses.get(Doses.size() - 1);
+		
 		if (POD > LastDose)
 			return 0.0f;
-		if (POD < FirstDose)
+		
+		if (POD < Untreated)
 			return 0.0f;
 
 		Float wAUC = AUC; // signed area-under-curve, such as from calc_AUC()
 		wAUC /= LastDose - FirstDose;
-		wAUC /= POD - FirstDose;
+		wAUC /= POD - Untreated;
 		return wAUC;
 	}
 
@@ -401,7 +434,7 @@ public class CurvePProcessor
 
 	public static void main(String args[])
 	{
-		CurvePProcessor cp = new CurvePProcessor();
+		//CurvePProcessor cp = new CurvePProcessor();
 
 		System.out.println("hello world");
 
@@ -445,13 +478,13 @@ public class CurvePProcessor
 			Float myPOD = calc_POD(allD, allR, 1.34f, true);
 
 			// main call:
-			Float res = calc_wAUC(myAUC, myPOD, -24, luD.get(luD.size() - 1));
+			Float res = calc_wAUC(myAUC, myPOD, luD);
 			System.out.printf("wAUC = %f%n", res);
 
 		}
 		catch (Exception e)
 		{
-			System.out.println("problems with log-transform");
+			System.out.println("problems with calculations");
 		}
 
 		System.out.println("good bye world");
