@@ -148,6 +148,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			}
 		});
 
+		// set this to be disabled until data is present
+		this.addYourOwnChartButton.setDisable(true);
 		h2.getChildren().addAll(new Label("Select Graph View"), cBox);
 		h.getChildren().addAll(h1, h2);
 
@@ -364,6 +366,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	{
 		this.results = results;
 		redrawCharts(defaultDPack);
+		this.addYourOwnChartButton.setDisable(false);
 
 	}
 
