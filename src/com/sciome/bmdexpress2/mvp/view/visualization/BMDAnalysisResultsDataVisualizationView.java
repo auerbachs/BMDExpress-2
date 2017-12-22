@@ -72,6 +72,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		chartCache.put("DEFAULT-" + BMDResult.BMD, new SciomeHistogramJFree("", new ArrayList<>(),
 				new ChartKey(BMDResult.BMD, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 
+		chartCache.put("DEFAULT-PIE",
+				new SciomePieChartFX(
+						BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, null),
+						null, null, "BMDS Model Counts", BMDAnalysisResultsDataVisualizationView.this));
+
 	}
 
 	@Override
@@ -149,12 +154,10 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		// add the straggler piechart
 		if (chartKey.equals(DEFAULT_CHARTS))
 		{
-			chartsList.add(0,
-					new SciomePieChartFX(
-							BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results,
-									pack),
-							null, chartDataPacks, "BMDS Model Counts",
-							BMDAnalysisResultsDataVisualizationView.this));
+			SciomePieChartFX pieChart = (SciomePieChartFX) chartCache.get("DEFAULT-PIE");
+			pieChart.redrawPieChart(
+					BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, pack), null);
+			chartsList.add(0, pieChart);
 		}
 
 		showCharts(chartDataPacks);
@@ -165,6 +168,8 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			DataFilterPack pack)
 	{
 		Map<String, Double> mapCount = new HashMap<>();
+		if(bmdResultss ==null)
+			return mapCount;
 
 		for (BMDExpressAnalysisDataSet dataset : bmdResultss)
 		{

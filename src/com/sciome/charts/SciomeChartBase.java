@@ -214,6 +214,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	protected void showChart(Label caption2)
 	{
 		vBox.getChildren().remove(chart);
+		vBox.getChildren().remove(caption2);
 		chart = generateChart(this.chartableKeys, chartConfiguration);
 		int insertIndex = 0;
 

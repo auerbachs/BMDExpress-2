@@ -60,6 +60,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		presenter = new CategoryAnalysisDataVisualizationPresenter(this, service,
 				BMDExpressEventBus.getInstance());
 
+		chartCache.put("PIE-CHART",
+				new SciomePieChartFX(getBMDStatResultCountsFromCatAnalysis(results, null, true), null, null,
+						"BMDS Model Counts (unique)", CategoryAnalysisDataVisualizationView.this));
+
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
@@ -355,9 +359,9 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		// add straggler pie charts that need the chartdatapacks as input.
 		if (chartKey.equals(BEST_MODEL_PIE))
 		{
-			chartsList.add(new SciomePieChartFX(getBMDStatResultCountsFromCatAnalysis(results, pack, true),
-					null, chartDataPacks, "BMDS Model Counts (unique)",
-					CategoryAnalysisDataVisualizationView.this));
+			SciomePieChartFX chart = (SciomePieChartFX) chartCache.get("PIE-CHART");
+			chart.redrawPieChart(getBMDStatResultCountsFromCatAnalysis(results, pack, true), null);
+			chartsList.add(chart);
 		}
 
 		showCharts(chartDataPacks);
@@ -386,7 +390,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			List<BMDExpressAnalysisDataSet> catResultss, DataFilterPack pack, boolean uniqueBMDCount)
 	{
 		Map<String, Double> mapCount = new HashMap<>();
-
+		if (catResultss == null)
+			return mapCount;
 		Set<ProbeStatResult> probeIdSet = new HashSet<>();
 		for (BMDExpressAnalysisDataSet results : catResultss)
 		{

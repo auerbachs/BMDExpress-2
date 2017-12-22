@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
@@ -169,6 +170,7 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 				keys.add(key);
 		}
 
+		Collections.sort(keys);
 		return keys;
 
 	}
