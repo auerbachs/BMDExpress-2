@@ -67,6 +67,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BEST_AIC					= "Best AIC";
 	public static final String		BEST_ADVERSE_DIRECTION		= "Best adverseDirection";
 	public static final String		BEST_BMD_BMDL_RATIO			= "Best BMD/BMDL";
+	public static final String		BEST_BMDU_BMDL_RATIO		= "Best BMDU/BMDL";
+	public static final String		BEST_BMDU_BMD_RATIO			= "Best BMDU/BMD";
 
 	public static final String		BEST_POLY					= "Best Poly";
 

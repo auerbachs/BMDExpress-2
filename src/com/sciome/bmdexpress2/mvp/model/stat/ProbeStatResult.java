@@ -183,6 +183,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add("none");
 			row.add("none");
 			row.add("none");
+			row.add("none");
+			row.add("none");
 		}
 		else
 		{
@@ -195,6 +197,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getAIC());
 			row.add(bestStatResult.getAdverseDirection());
 			row.add(bestStatResult.getBMD() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMD());
 		}
 
 		row.add(pValue);
@@ -286,6 +290,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		columnHeader.add(BMDResult.BEST_AIC);
 		columnHeader.add(BMDResult.BEST_ADVERSE_DIRECTION);
 		columnHeader.add(BMDResult.BEST_BMD_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMD_RATIO);
 
 		return columnHeader;
 	}
