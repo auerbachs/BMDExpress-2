@@ -19,8 +19,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
@@ -49,7 +52,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected final static String				DEFAULT_CHARTS			= "Default";
 	protected AnchorPane						graphViewAnchorPane;
 
-	List<Node>									chartsList;
+	protected List<Node>						chartsList;
+	protected List<Node>						customChartsList;
 
 	protected DataVisualizationPresenter		presenter;
 
@@ -59,6 +63,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	private VBox								vBox;
 	protected ComboBox<String>					cBox;
+	private Button								addYourOwnChartButton	= new Button("Create Your Own Chart");
 	protected Map<String, SciomeChartBase>		chartCache				= new HashMap<>();
 
 	// a list of ids (data point labels) that should only be displayed
@@ -92,6 +97,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 		HBox h1 = new HBox();
 		HBox h2 = new HBox();
+		h1.getChildren().add(this.addYourOwnChartButton);
 		h1.setAlignment(Pos.CENTER_LEFT);
 		h2.setAlignment(Pos.CENTER_RIGHT);
 		cBox = new ComboBox<>();
@@ -108,6 +114,16 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 			}
 
+		});
+
+		addYourOwnChartButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				// popup an alert and add a chart.
+
+			}
 		});
 
 		h2.getChildren().addAll(new Label("Select Graph View"), cBox);
@@ -137,13 +153,17 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	protected void showCharts()
 	{
-		VBox vBox = generateGridOfNodes(chartsList, 3);
-		if (chartsList.size() == 1)
+		List<Node> chartsToShow = new ArrayList<>();
+		chartsToShow.addAll(chartsList);
+		if (customChartsList != null)
+			chartsToShow.addAll(customChartsList);
+		VBox vBox = generateGridOfNodes(chartsToShow, 3);
+		if (chartsToShow.size() == 1)
 		{
 			vBox = new VBox();
 			HBox hbox = new HBox();
-			hbox.getChildren().add(chartsList.get(0));
-			HBox.setHgrow(chartsList.get(0), Priority.ALWAYS);
+			hbox.getChildren().add(chartsToShow.get(0));
+			HBox.setHgrow(chartsToShow.get(0), Priority.ALWAYS);
 			hbox.setMinWidth(800);
 			vBox.getChildren().add(hbox);
 		}
