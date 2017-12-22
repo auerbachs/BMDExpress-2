@@ -238,7 +238,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 
 		Set<ChartKey> mathedKeys = new HashSet<>();
 		mathedKeys.add(new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG));
-		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
+		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(results, pack,
 				useTheseKeysOnly, mathedKeys, new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
 
 		chartsList = new ArrayList<>();

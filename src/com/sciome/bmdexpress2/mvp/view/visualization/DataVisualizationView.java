@@ -115,7 +115,13 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			@Override
 			public void handle(ActionEvent event)
 			{
-				// popup an alert and add a chart.
+				CreateYourOwnChart dialog = new CreateYourOwnChart(defaultDPack);
+
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(graphViewAnchorPane.getScene().getWindow());
+				Optional<SciomeChartBase> customChart = dialog.showAndWait();
+				if (customChart.isPresent())
+					customChartsList.add(customChart.get());
 
 			}
 		});

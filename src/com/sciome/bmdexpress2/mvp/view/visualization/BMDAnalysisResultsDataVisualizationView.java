@@ -111,7 +111,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
 				((BMDResult) result).getColumnHeader();
-		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
+		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(results, pack,
 				useTheseKeysOnly, null, new ChartKey(BMDResult.PROBE_ID, null));
 
 		if (chartKey.equals(BMDL_HISTOGRAM))

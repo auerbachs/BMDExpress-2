@@ -85,7 +85,7 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 		Set<ChartKey> mathedKeys = new HashSet<>();
 		mathedKeys.add(new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG));
 		mathedKeys.add(new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG));
-		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
+		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(results, pack,
 				useTheseKeysOnly, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
 		chartsList = new ArrayList<>();
 

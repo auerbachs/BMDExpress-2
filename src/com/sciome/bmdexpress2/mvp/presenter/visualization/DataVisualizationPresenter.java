@@ -42,7 +42,7 @@ public abstract class DataVisualizationPresenter
 		getEventBus().post(new GiveMeProjectRequest("please"));
 	}
 
-	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
+	public List<ChartDataPack> getBMDAnalysisDataSetChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
 			DataFilterPack pack, Set<ChartKey> useTheseKeysOnly, Set<ChartKey> mathedKeys, ChartKey label)
 	{
 		return getService().getBMDExpressAnalysisChartDataPack(catResults, pack, useTheseKeysOnly, mathedKeys,

@@ -70,7 +70,7 @@ public class PCADataVisualizationView extends DataVisualizationView implements I
 		pcaResults.add(((PCADataVisualizationPresenter) presenter)
 				.calculatePCA((DoseResponseExperiment) results.get(0)));
 
-		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(pcaResults,
+		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(pcaResults,
 				dataFilterPack, useTheseKeysOnly, null, new ChartKey(PCAResults.DOSAGE, null));
 		chartsList = new ArrayList<>();
 
