@@ -2,17 +2,21 @@ package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.DataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
 import javafx.beans.value.ChangeListener;
@@ -52,8 +56,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected final static String				DEFAULT_CHARTS			= "Default";
 	protected AnchorPane						graphViewAnchorPane;
 
-	protected List<Node>						chartsList;
-	protected List<Node>						customChartsList;
+	protected List<Node>						chartsList				= new ArrayList<>();
+	protected List<Node>						customChartsList		= new ArrayList<>();
 
 	protected DataVisualizationPresenter		presenter;
 
@@ -115,7 +119,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			@Override
 			public void handle(ActionEvent event)
 			{
-				CreateYourOwnChart dialog = new CreateYourOwnChart(defaultDPack);
+				CreateYourOwnChart dialog = new CreateYourOwnChart(results.get(0));
 
 				dialog.initModality(Modality.WINDOW_MODAL);
 				dialog.initOwner(graphViewAnchorPane.getScene().getWindow());
@@ -151,12 +155,19 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	}
 
-	protected void showCharts()
+	protected void showCharts(List<ChartDataPack> dpack)
 	{
-		List<Node> chartsToShow = new ArrayList<>();
-		chartsToShow.addAll(chartsList);
-		if (customChartsList != null)
-			chartsToShow.addAll(customChartsList);
+		graphViewAnchorPane.getChildren().clear();
+		for (Node node : getAllCharts())
+			if (node instanceof SciomeChartBase)
+				((SciomeChartBase) node).redrawCharts(dpack);
+		layoutCharts();
+
+	}
+
+	private void layoutCharts()
+	{
+		List<Node> chartsToShow = getAllCharts();
 		VBox vBox = generateGridOfNodes(chartsToShow, 3);
 		if (chartsToShow.size() == 1)
 		{
@@ -344,7 +355,54 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 		dialog.getDialogPane().setPrefHeight(cBox.getScene().getHeight());
 		dialog.showAndWait();
 		chart.chartMinimized();
-		showCharts();
+		layoutCharts();
+	}
+
+	protected List<Node> getAllCharts()
+	{
+		List<Node> nodes = new ArrayList<>();
+		nodes.addAll(customChartsList);
+		nodes.addAll(chartsList);
+		return nodes;
+	}
+
+	protected Set<ChartKey> getUsedChartKeys()
+	{
+		Set<ChartKey> chartKeySet = new HashSet<>();
+
+		List<Node> allCharts = new ArrayList<>(chartsList);
+		allCharts.addAll(customChartsList);
+		for (Node node : allCharts)
+			if (node instanceof SciomeChartBase)
+			{
+				SciomeChartBase chart = (SciomeChartBase) node;
+				for (ChartKey chartKey : (List<ChartKey>) chart.getChartableKeys())
+				{
+					chartKeySet.add(new ChartKey(chartKey.getKey(), null));
+				}
+			}
+
+		return chartKeySet;
+	}
+
+	protected Set<ChartKey> getMathedChartKeys()
+	{
+		Set<ChartKey> chartKeySet = new HashSet<>();
+
+		List<Node> allCharts = new ArrayList<>(chartsList);
+		allCharts.addAll(customChartsList);
+		for (Node node : allCharts)
+			if (node instanceof SciomeChartBase)
+			{
+				SciomeChartBase chart = (SciomeChartBase) node;
+				for (ChartKey chartKey : (List<ChartKey>) chart.getChartableKeys())
+				{
+					if (chartKey != null && chartKey.getMath() != null)
+						chartKeySet.add(new ChartKey(chartKey.getKey(), chartKey.getMath()));
+				}
+			}
+
+		return chartKeySet;
 	}
 
 }

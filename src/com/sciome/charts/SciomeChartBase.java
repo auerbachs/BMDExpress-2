@@ -138,6 +138,15 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
 
+	public List<ChartKey> getChartableKeys()
+	{
+		List<ChartKey> keys = new ArrayList<>();
+		for (ChartKey k : chartableKeys)
+			if (k != null)
+				keys.add(k);
+		return keys;
+	}
+
 	/* abstract methods */
 
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);

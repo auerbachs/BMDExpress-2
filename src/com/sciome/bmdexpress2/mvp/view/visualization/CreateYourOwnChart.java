@@ -3,10 +3,12 @@ package com.sciome.bmdexpress2.mvp.view.visualization;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartBase;
-import com.sciome.filter.DataFilterPack;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -18,27 +20,37 @@ import javafx.scene.layout.VBox;
 public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 {
 
-	private final String			SCATTER				= "Scatter Chart";
-	private final String			BUBBLE				= "Bubble Chart";
-	private final String			HISTOGRAM			= "Histogram";
-	private final String			BAR					= "Bar";
-	private final String			ACCUMULATION		= "Accumulation Chart";
+	private final String				SCATTER			= "Scatter Chart";
+	private final String				BUBBLE			= "Bubble Chart";
+	private final String				HISTOGRAM		= "Histogram";
+	private final String				BAR				= "Bar";
+	private final String				ACCUMULATION	= "Accumulation Chart";
 
-	private ComboBox<String>		chartType			= new ComboBox<>();
+	private ComboBox<String>			chartType		= new ComboBox<>();
 
-	private List<ChartKeyLayout>	chartKeyComboBoxes	= new ArrayList<>();
-	private DataFilterPack			defaultDPack;
-	private VBox					contents			= new VBox(8);;
+	private List<ChartKeyLayout>		chartKeyLayouts	= new ArrayList<>();
+	private VBox						contents		= new VBox(8);;
+	private BMDExpressAnalysisDataSet	bmdAnalysisDataSet;
 
-	public CreateYourOwnChart(DataFilterPack defaultDPack)
+	public CreateYourOwnChart(BMDExpressAnalysisDataSet bmdAnalysisDataSet)
 	{
 		super();
-		this.defaultDPack = defaultDPack;
+		this.bmdAnalysisDataSet = bmdAnalysisDataSet;
+
 		chartType.getItems().add(SCATTER);
 		chartType.getItems().add(BUBBLE);
 		chartType.getItems().add(HISTOGRAM);
 		chartType.getItems().add(BAR);
 		chartType.getItems().add(ACCUMULATION);
+
+		chartType.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue ov, String t, String t1)
+			{
+				setUpChartKeyLayout();
+			}
+
+		});
 
 		ButtonType loginButtonType = new ButtonType("Done", ButtonData.OK_DONE);
 		getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
@@ -64,6 +76,22 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 
 	private SciomeChartBase getChart()
 	{
+		if (chartType.getValue().equals(SCATTER))
+		{
+
+		}
+		else if (chartType.getValue().equals(BUBBLE))
+		{
+
+		}
+		else if (chartType.getValue().equals(BAR))
+		{
+
+		}
+		else if (chartType.getValue().equals(HISTOGRAM))
+		{}
+		else if (chartType.getValue().equals(ACCUMULATION))
+		{}
 		return null;
 	}
 
@@ -71,8 +99,45 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 	{
 		List<String> keys = new ArrayList<>();
 
+		for (String key : bmdAnalysisDataSet.getColumnHeader())
+			if (bmdAnalysisDataSet.getHeaderClass(key).equals(Number.class)
+					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Double.class)
+					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Integer.class))
+				keys.add(key);
+
 		return keys;
 
+	}
+
+	private void setUpChartKeyLayout()
+	{
+		contents.getChildren().removeAll(chartKeyLayouts);
+
+		if (chartType.getValue().equals(SCATTER))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("X Axis", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Y Axis", getKeys()));
+
+		}
+		else if (chartType.getValue().equals(BUBBLE))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("X Axis", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Y Axis", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Bubble Size", getKeys()));
+		}
+		else if (chartType.getValue().equals(BAR))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("Value", getKeys()));
+		}
+		else if (chartType.getValue().equals(HISTOGRAM))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("Value", getKeys()));
+		}
+		else if (chartType.getValue().equals(ACCUMULATION))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("Value", getKeys()));
+		}
+		contents.getChildren().addAll(chartKeyLayouts);
 	}
 
 	private class ChartKeyLayout extends HBox
