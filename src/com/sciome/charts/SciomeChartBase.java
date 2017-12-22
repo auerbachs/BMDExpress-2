@@ -62,6 +62,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
+	private Button						closeButton;
 	protected Button					configurationButton;
 	private HBox						checkBoxes;
 	private ChartKey[]					chartableKeys;
@@ -82,6 +83,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		// set up the main components that are associated wtih the chart
 		vBox = new VBox();
 		maxMinButton = GlyphsDude.createIconButton(FontAwesomeIcon.EXPAND);
+		closeButton = GlyphsDude.createIconButton(FontAwesomeIcon.CLOSE);
 		maxMinButton.setTooltip(new Tooltip("View this chart in a large separate window."));
 		configurationButton = GlyphsDude.createIconButton(FontAwesomeIcon.GEAR);
 		configurationButton.setTooltip(new Tooltip("Configure the X and Y axis of this chart."));
@@ -109,7 +111,17 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			public void handle(ActionEvent e)
 			{
 				maxMinButton.setVisible(false);
+				closeButton.setVisible(false);
 				chartListener.expand(SciomeChartBase.this);
+
+			}
+		});
+
+		closeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e)
+			{
+				chartListener.close(SciomeChartBase.this);
 
 			}
 		});
@@ -130,7 +142,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		if (this instanceof ChartDataExporter)
 			overlayButtons.getChildren().addAll(exportToTextButton);
 
-		overlayButtons.getChildren().addAll(configurationButton, maxMinButton);
+		overlayButtons.getChildren().addAll(configurationButton, maxMinButton, closeButton);
 		overlayButtons.setAlignment(Pos.TOP_RIGHT);
 		this.getChildren().addAll(overlayButtons, vBox);
 		StackPane.setAlignment(overlayButtons, Pos.TOP_RIGHT);
@@ -357,6 +369,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	public void chartMinimized()
 	{
 		this.maxMinButton.setVisible(true);
+		this.closeButton.setVisible(true);
 	}
 
 	/*

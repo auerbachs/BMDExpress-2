@@ -196,6 +196,11 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	@Override
 	public void redrawCharts(DataFilterPack pack)
 	{
+		// set this to false by default.
+		// but if the user wants to see curve overlay, then we will
+		/// set this to true and not view custom charts because
+		// we want all the real estate we can get
+		ignoreCustomCharts = false;
 		try
 		{
 			Object obj = results.get(0).getObject();
@@ -327,6 +332,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		}
 		else if (chartKey.equals(CURVEPLOT))
 		{
+			ignoreCustomCharts = true;
 			chartsList.add(new PathwayCurveViewer(results, pack));
 
 		}

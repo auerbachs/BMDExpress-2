@@ -6,6 +6,13 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.javafx.SciomeBarChartFX;
+import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
+import com.sciome.charts.jfree.SciomeBubbleChartJFree;
+import com.sciome.charts.jfree.SciomeHistogramJFree;
+import com.sciome.charts.jfree.SciomeScatterChartJFree;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,10 +38,14 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 	private List<ChartKeyLayout>		chartKeyLayouts	= new ArrayList<>();
 	private VBox						contents		= new VBox(8);;
 	private BMDExpressAnalysisDataSet	bmdAnalysisDataSet;
+	private SciomeChartListener			chartChangeListener;
+	private List<ChartDataPack>			chartDataPacks	= new ArrayList<>();
 
-	public CreateYourOwnChart(BMDExpressAnalysisDataSet bmdAnalysisDataSet)
+	public CreateYourOwnChart(BMDExpressAnalysisDataSet bmdAnalysisDataSet,
+			SciomeChartListener chartChangeListener)
 	{
 		super();
+		this.chartChangeListener = chartChangeListener;
 		this.bmdAnalysisDataSet = bmdAnalysisDataSet;
 
 		chartType.getItems().add(SCATTER);
@@ -76,23 +87,69 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 
 	private SciomeChartBase getChart()
 	{
+		List<ChartKey> chartKeys = getChartKeys();
+		if (chartType.getValue() == null)
+			return null;
+
+		if (chartKeys == null)
+			return null;
 		if (chartType.getValue().equals(SCATTER))
 		{
+			if (chartKeys.size() != 2)
+				return null;
+			return new SciomeScatterChartJFree(
+					chartKeys.get(0).toString() + " Vs. " + chartKeys.get(1).toString(), chartDataPacks,
+					chartKeys.get(0), chartKeys.get(1), chartChangeListener);
 
 		}
 		else if (chartType.getValue().equals(BUBBLE))
 		{
-
+			if (chartKeys.size() != 3)
+				return null;
+			return new SciomeBubbleChartJFree(
+					chartKeys.get(0).toString() + " Vs. " + chartKeys.get(1).toString() + " Vs. "
+							+ chartKeys.get(2).toString(),
+					chartDataPacks, chartKeys.get(0), chartKeys.get(1), chartKeys.get(2),
+					chartChangeListener);
 		}
 		else if (chartType.getValue().equals(BAR))
 		{
+			if (chartKeys.size() != 1)
+				return null;
 
+			return new SciomeBarChartFX("Bar: " + chartKeys.get(0).toString(), chartDataPacks,
+					chartKeys.get(0), chartChangeListener);
 		}
+
 		else if (chartType.getValue().equals(HISTOGRAM))
-		{}
+		{
+			if (chartKeys.size() != 1)
+				return null;
+			return new SciomeHistogramJFree("Histogram: " + chartKeys.get(0).toString(), chartDataPacks,
+					chartKeys.get(0), 20.0, chartChangeListener);
+		}
 		else if (chartType.getValue().equals(ACCUMULATION))
-		{}
+		{
+			if (chartKeys.size() != 1)
+				return null;
+			return new SciomeAccumulationPlotJFree("Accumulation: " + chartKeys.get(0).toString(),
+					chartDataPacks, chartKeys.get(0), 20.0, chartChangeListener);
+		}
 		return null;
+	}
+
+	private List<ChartKey> getChartKeys()
+	{
+		List<ChartKey> ckeys = new ArrayList<>();
+		for (ChartKeyLayout ckl : chartKeyLayouts)
+			ckeys.add(ckl.getChartKey());
+
+		// do sanity check
+		for (ChartKey ck : ckeys)
+			if (ck == null || ck.getKey() == null || ck.getKey().equals(""))
+				return null;
+
+		return ckeys;
 	}
 
 	private List<String> getKeys()
@@ -100,10 +157,17 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		List<String> keys = new ArrayList<>();
 
 		for (String key : bmdAnalysisDataSet.getColumnHeader())
+		{
+			Class clazz = bmdAnalysisDataSet.getHeaderClass(key);
+			if (clazz == null)
+				continue;
 			if (bmdAnalysisDataSet.getHeaderClass(key).equals(Number.class)
 					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Double.class)
-					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Integer.class))
+					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Integer.class)
+					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Short.class)
+					|| bmdAnalysisDataSet.getHeaderClass(key).equals(Float.class))
 				keys.add(key);
+		}
 
 		return keys;
 
@@ -112,6 +176,7 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 	private void setUpChartKeyLayout()
 	{
 		contents.getChildren().removeAll(chartKeyLayouts);
+		chartKeyLayouts.clear();
 
 		if (chartType.getValue().equals(SCATTER))
 		{
@@ -150,6 +215,11 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		{
 			super(8);
 			this.label.setText(labelText);
+			label.setMinWidth(100);
+			label.setMaxWidth(100);
+			mathCombo.setMaxWidth(100);
+			keyCombo.setMinWidth(200);
+			keyCombo.setMaxWidth(200);
 
 			mathCombo.getItems().addAll(ChartKey.ABS, ChartKey.LOG, ChartKey.NEGLOG, ChartKey.SQRT);
 			keyCombo.getItems().addAll(keys);
@@ -159,10 +229,12 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		public ChartKey getChartKey()
 		{
 			ChartKey chartKey = null;
+			if (keyCombo.getValue() == null)
+				return null;
 			if (!keyCombo.getValue().equals(""))
 			{
 				String math = null;
-				if (!mathCombo.getValue().equals(""))
+				if (mathCombo.getValue() != null && !mathCombo.getValue().equals(""))
 					math = mathCombo.getValue();
 				return new ChartKey(keyCombo.getValue(), math);
 			}

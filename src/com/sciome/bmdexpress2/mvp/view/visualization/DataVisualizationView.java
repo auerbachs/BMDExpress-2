@@ -65,10 +65,21 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected List<BMDExpressAnalysisDataSet>	results;
 	protected DataFilterPack					defaultDPack;
 
+	private List<ChartDataPack>					chartDataPacks			= new ArrayList<>();
+
 	private VBox								vBox;
 	protected ComboBox<String>					cBox;
 	private Button								addYourOwnChartButton	= new Button("Create Your Own Chart");
 	protected Map<String, SciomeChartBase>		chartCache				= new HashMap<>();
+
+	// set this up so that charts that redrawn. this is to keep track of the
+	// closed canned charts that are stored as a hash map in implementing clases
+	protected Set<Node>							removedCharts			= new HashSet<>();
+
+	// created this variable for the sake of the curve overlay.
+	// do not show custom charts with curve overlay plot.
+	// but also you don't have to show custom plots for anything.
+	protected boolean							ignoreCustomCharts		= false;
 
 	public DataVisualizationView()
 	{
@@ -119,13 +130,18 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			@Override
 			public void handle(ActionEvent event)
 			{
-				CreateYourOwnChart dialog = new CreateYourOwnChart(results.get(0));
+				CreateYourOwnChart dialog = new CreateYourOwnChart(results.get(0),
+						DataVisualizationView.this);
 
 				dialog.initModality(Modality.WINDOW_MODAL);
 				dialog.initOwner(graphViewAnchorPane.getScene().getWindow());
 				Optional<SciomeChartBase> customChart = dialog.showAndWait();
 				if (customChart.isPresent())
+				{
 					customChartsList.add(customChart.get());
+					// need to redraw charts to update the chart datapack
+					redrawCharts(defaultDPack);
+				}
 
 			}
 		});
@@ -157,7 +173,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	protected void showCharts(List<ChartDataPack> dpack)
 	{
-		graphViewAnchorPane.getChildren().clear();
+		// update the current chartDataPacks
+		chartDataPacks = dpack;
 		for (Node node : getAllCharts())
 			if (node instanceof SciomeChartBase)
 				((SciomeChartBase) node).redrawCharts(dpack);
@@ -167,6 +184,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	private void layoutCharts()
 	{
+
+		graphViewAnchorPane.getChildren().clear();
 		List<Node> chartsToShow = getAllCharts();
 		VBox vBox = generateGridOfNodes(chartsToShow, 3);
 		if (chartsToShow.size() == 1)
@@ -361,8 +380,11 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected List<Node> getAllCharts()
 	{
 		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(customChartsList);
-		nodes.addAll(chartsList);
+		if (!ignoreCustomCharts)
+			nodes.addAll(customChartsList);
+		for (Node node : chartsList)
+			if (!removedCharts.contains(node))
+				nodes.add(node);
 		return nodes;
 	}
 
@@ -403,6 +425,17 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			}
 
 		return chartKeySet;
+	}
+
+	@Override
+	public void close(SciomeChartBase chart)
+	{
+		chartsList.remove(chart);
+		customChartsList.remove(chart);
+
+		removedCharts.add(chart);
+		layoutCharts();
+
 	}
 
 }
