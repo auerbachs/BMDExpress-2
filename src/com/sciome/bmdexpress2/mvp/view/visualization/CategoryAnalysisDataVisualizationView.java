@@ -217,7 +217,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	}
 
 	@Override
-	public void redrawCharts(DataFilterPack pack, List<String> selectedIds)
+	public void redrawCharts(DataFilterPack pack)
 	{
 		try
 		{
@@ -232,7 +232,6 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			e.printStackTrace();
 		}
 		defaultDPack = pack;
-		this.selectedIds = selectedIds;
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		if (results == null || results.size() == 0)
 			return;
@@ -240,8 +239,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		Set<ChartKey> mathedKeys = new HashSet<>();
 		mathedKeys.add(new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, useTheseKeysOnly, mathedKeys,
-				new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
+				useTheseKeysOnly, mathedKeys, new ChartKey(CategoryAnalysisResults.CATEGORY_ID, null));
 
 		chartsList = new ArrayList<>();
 		if (chartKey.equals(RANGEPLOT))
@@ -287,9 +285,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		}
 		else if (chartKey.equals(BEST_MODEL_PIE))
 		{
-			chartsList.add(new SciomePieChartFX(
-					getBMDStatResultCountsFromCatAnalysis(results, pack, selectedIds, true), null,
-					chartDataPacks, "BMDS Model Counts (unique)",
+			chartsList.add(new SciomePieChartFX(getBMDStatResultCountsFromCatAnalysis(results, pack, true),
+					null, chartDataPacks, "BMDS Model Counts (unique)",
 					CategoryAnalysisDataVisualizationView.this));
 		}
 		else if (chartKey.equals(MEAN_HISTOGRAMS))
@@ -430,8 +427,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	}
 
 	private Map<String, Double> getBMDStatResultCountsFromCatAnalysis(
-			List<BMDExpressAnalysisDataSet> catResultss, DataFilterPack pack, List<String> selectedIds2,
-			boolean uniqueBMDCount)
+			List<BMDExpressAnalysisDataSet> catResultss, DataFilterPack pack, boolean uniqueBMDCount)
 	{
 		Map<String, Double> mapCount = new HashMap<>();
 
@@ -443,8 +439,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				CategoryAnalysisResult catResult = (CategoryAnalysisResult) row.getObject();
 				if (pack != null && !pack.passesFilter(row))
 					continue;
-				if (selectedIds2 != null && !selectedIds2.contains(catResult.getCategoryIdentifier().getId()))
-					continue;
+
 				if (catResult.getReferenceGeneProbeStatResults() == null)
 					continue;
 				for (ReferenceGeneProbeStatResult geneProbeStat : catResult

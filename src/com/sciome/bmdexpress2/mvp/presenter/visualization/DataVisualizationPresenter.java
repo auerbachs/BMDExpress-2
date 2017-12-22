@@ -19,8 +19,6 @@ import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisData
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
-import javafx.concurrent.Task;
-
 public abstract class DataVisualizationPresenter
 		extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>
 {
@@ -45,11 +43,10 @@ public abstract class DataVisualizationPresenter
 	}
 
 	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> useTheseKeysOnly,
-			Set<ChartKey> mathedKeys, ChartKey label)
+			DataFilterPack pack, Set<ChartKey> useTheseKeysOnly, Set<ChartKey> mathedKeys, ChartKey label)
 	{
-		return getService().getBMDExpressAnalysisChartDataPack(catResults, pack, selectedIds,
-				useTheseKeysOnly, mathedKeys, label);
+		return getService().getBMDExpressAnalysisChartDataPack(catResults, pack, useTheseKeysOnly, mathedKeys,
+				label);
 	}
 
 	public abstract List<BMDExpressAnalysisDataSet> getResultsFromProject(

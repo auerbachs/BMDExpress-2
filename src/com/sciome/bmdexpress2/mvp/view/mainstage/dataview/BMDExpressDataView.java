@@ -340,12 +340,12 @@ public abstract class BMDExpressDataView<T> extends VBox
 		{
 			totalItemsLabel.setText(
 					"Total Items: " + filteredData.size() + "/" + analysisDataSet.getAnalysisRows().size());
-			dataVisualizationController.redrawCharts(dataFilterPack, localSelectedIds);
+			dataVisualizationController.redrawCharts(dataFilterPack);
 		}
 		else
 		{
 			totalItemsLabel.setText("Total Items: " + analysisDataSet.getAnalysisRows().size());
-			dataVisualizationController.redrawCharts(null, localSelectedIds);
+			dataVisualizationController.redrawCharts(null);
 		}
 	}
 

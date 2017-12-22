@@ -20,104 +20,86 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomePCAJFree;
 import com.sciome.filter.DataFilterPack;
 
-import javafx.concurrent.Task;
+public class PCADataVisualizationView extends DataVisualizationView implements IDataVisualizationView
+{
 
-public class PCADataVisualizationView extends DataVisualizationView implements IDataVisualizationView {
-	
-	private static final String	DEFAULT			= "DEFAULT";
+	private static final String	DEFAULT	= "DEFAULT";
 	// generate the charttable data. if this is null or empty, then
 	// values for all data cells are generated.
 	private Set<ChartKey>		useTheseKeysOnly;
-	public PCADataVisualizationView() {
+
+	public PCADataVisualizationView()
+	{
 		super();
 		IVisualizationService service = new VisualizationService();
-		presenter = new PCADataVisualizationPresenter(this, service,
-				BMDExpressEventBus.getInstance());
+		presenter = new PCADataVisualizationPresenter(this, service, BMDExpressEventBus.getInstance());
 
 		useTheseKeysOnly = new HashSet<>();
 		useTheseKeysOnly
-				.addAll(Arrays.asList(new ChartKey(PCAResults.PC1, null),
-						new ChartKey(PCAResults.PC2, null),
-						new ChartKey(PCAResults.PC3, null),
-						new ChartKey(PCAResults.PC4, null)));
+				.addAll(Arrays.asList(new ChartKey(PCAResults.PC1, null), new ChartKey(PCAResults.PC2, null),
+						new ChartKey(PCAResults.PC3, null), new ChartKey(PCAResults.PC4, null)));
 
-		chartCache.put(DEFAULT + "-" + "PC1 V PC2",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC1, null),
-						new ChartKey(PCAResults.PC2, null), this));
+		chartCache.put(DEFAULT + "-" + "PC1 V PC2", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC1, null), new ChartKey(PCAResults.PC2, null), this));
 
-		chartCache.put(DEFAULT + "-" + "PC1 V PC3",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC1, null), 
-						new ChartKey(PCAResults.PC3, null), this));
-		
-		chartCache.put(DEFAULT + "-" + "PC1 V PC4",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC1, null),
-						new ChartKey(PCAResults.PC4, null), this));
-		
-		chartCache.put(DEFAULT + "-" + "PC2 V PC3",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC2, null), 
-						new ChartKey(PCAResults.PC3, null), this));
-		
-		chartCache.put(DEFAULT + "-" + "PC2 V PC4",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC2, null), 
-						new ChartKey(PCAResults.PC4, null), this));
-		
-		chartCache.put(DEFAULT + "-" + "PC3 V PC4",
-				new SciomePCAJFree("", new ArrayList<>(),
-						new ChartKey(PCAResults.PC3, null), 
-						new ChartKey(PCAResults.PC4, null), this));
+		chartCache.put(DEFAULT + "-" + "PC1 V PC3", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC1, null), new ChartKey(PCAResults.PC3, null), this));
+
+		chartCache.put(DEFAULT + "-" + "PC1 V PC4", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC1, null), new ChartKey(PCAResults.PC4, null), this));
+
+		chartCache.put(DEFAULT + "-" + "PC2 V PC3", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC2, null), new ChartKey(PCAResults.PC3, null), this));
+
+		chartCache.put(DEFAULT + "-" + "PC2 V PC4", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC2, null), new ChartKey(PCAResults.PC4, null), this));
+
+		chartCache.put(DEFAULT + "-" + "PC3 V PC4", new SciomePCAJFree("", new ArrayList<>(),
+				new ChartKey(PCAResults.PC3, null), new ChartKey(PCAResults.PC4, null), this));
 	}
-	
+
 	@Override
-	public void redrawCharts(DataFilterPack dataFilterPack, List<String> selectedIds) {
+	public void redrawCharts(DataFilterPack dataFilterPack)
+	{
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		defaultDPack = dataFilterPack;
-		this.selectedIds = selectedIds;
 		if (results == null || results.size() == 0)
 			return;
-		
+
 		List<BMDExpressAnalysisDataSet> pcaResults = new ArrayList<BMDExpressAnalysisDataSet>();
-		pcaResults.add(((PCADataVisualizationPresenter)presenter).calculatePCA((DoseResponseExperiment)results.get(0)));
-		
-		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(pcaResults, dataFilterPack,
-				selectedIds, useTheseKeysOnly, null, new ChartKey(PCAResults.DOSAGE, null));
+		pcaResults.add(((PCADataVisualizationPresenter) presenter)
+				.calculatePCA((DoseResponseExperiment) results.get(0)));
+
+		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(pcaResults,
+				dataFilterPack, useTheseKeysOnly, null, new ChartKey(PCAResults.DOSAGE, null));
 		chartsList = new ArrayList<>();
 
-		SciomeChartBase chart1 = chartCache
-				.get(DEFAULT + "-" + "PC1 V PC2");
+		SciomeChartBase chart1 = chartCache.get(DEFAULT + "-" + "PC1 V PC2");
 		chart1.redrawCharts(chartDataPacks);
 		chartsList.add(chart1);
-		SciomeChartBase chart2 = chartCache
-				.get(DEFAULT + "-" + "PC1 V PC3");
+		SciomeChartBase chart2 = chartCache.get(DEFAULT + "-" + "PC1 V PC3");
 		chart2.redrawCharts(chartDataPacks);
 		chartsList.add(chart2);
-		SciomeChartBase chart3 = chartCache
-				.get(DEFAULT + "-" + "PC1 V PC4");
+		SciomeChartBase chart3 = chartCache.get(DEFAULT + "-" + "PC1 V PC4");
 		chart3.redrawCharts(chartDataPacks);
 		chartsList.add(chart3);
-		SciomeChartBase chart4 = chartCache
-				.get(DEFAULT + "-" + "PC2 V PC3");
+		SciomeChartBase chart4 = chartCache.get(DEFAULT + "-" + "PC2 V PC3");
 		chart4.redrawCharts(chartDataPacks);
 		chartsList.add(chart4);
-		SciomeChartBase chart5 = chartCache
-				.get(DEFAULT + "-" + "PC2 V PC4");
+		SciomeChartBase chart5 = chartCache.get(DEFAULT + "-" + "PC2 V PC4");
 		chart5.redrawCharts(chartDataPacks);
 		chartsList.add(chart5);
-		SciomeChartBase chart6 = chartCache
-				.get(DEFAULT + "-" + "PC3 V PC4");
+		SciomeChartBase chart6 = chartCache.get(DEFAULT + "-" + "PC3 V PC4");
 		chart6.redrawCharts(chartDataPacks);
 		chartsList.add(chart6);
-		
+
 		graphViewAnchorPane.getChildren().clear();
 		showCharts();
 	}
 
 	@Override
-	public List<String> getCannedCharts() {
+	public List<String> getCannedCharts()
+	{
 		List<String> resultList = new ArrayList<>();
 		resultList.add(DEFAULT_CHARTS);
 

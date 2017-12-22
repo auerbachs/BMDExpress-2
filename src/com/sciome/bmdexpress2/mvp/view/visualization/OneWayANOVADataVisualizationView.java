@@ -75,11 +75,10 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 	}
 
 	@Override
-	public void redrawCharts(DataFilterPack pack, List<String> selectedIds)
+	public void redrawCharts(DataFilterPack pack)
 	{
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		defaultDPack = pack;
-		this.selectedIds = selectedIds;
 		if (results == null || results.size() == 0)
 			return;
 
@@ -87,7 +86,7 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 		mathedKeys.add(new ChartKey(PrefilterResults.ADJUSTED_PVALUE, ChartKey.NEGLOG));
 		mathedKeys.add(new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG));
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, useTheseKeysOnly, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
+				useTheseKeysOnly, mathedKeys, new ChartKey(PrefilterResults.PROBE_ID, null));
 		chartsList = new ArrayList<>();
 
 		if (chartKey.equals(UNADJUSTED_PVALUE_HISTOGRAM))

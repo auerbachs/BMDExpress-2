@@ -91,11 +91,10 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	}
 
 	@Override
-	public void redrawCharts(DataFilterPack pack, List<String> selectedIds)
+	public void redrawCharts(DataFilterPack pack)
 	{
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		defaultDPack = pack;
-		this.selectedIds = selectedIds;
 		if (results == null || results.size() == 0)
 			return;
 
@@ -113,7 +112,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			if (result instanceof BMDResult)
 				((BMDResult) result).getColumnHeader();
 		List<ChartDataPack> chartDataPacks = presenter.getCategoryResultsChartPackData(results, pack,
-				selectedIds, useTheseKeysOnly, null, new ChartKey(BMDResult.PROBE_ID, null));
+				useTheseKeysOnly, null, new ChartKey(BMDResult.PROBE_ID, null));
 
 		if (chartKey.equals(BMDL_HISTOGRAM))
 		{
@@ -162,9 +161,8 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		else
 		{
 			chartsList.add(new SciomePieChartFX(
-					BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, pack,
-							selectedIds),
-					null, chartDataPacks, "BMDS Model Counts", BMDAnalysisResultsDataVisualizationView.this));
+					BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, pack), null,
+					chartDataPacks, "BMDS Model Counts", BMDAnalysisResultsDataVisualizationView.this));
 
 			SciomeChartBase chart1 = chartCache.get("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL);
 			chartsList.add(chart1);
@@ -181,7 +179,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	}
 
 	private Map<String, Double> getBMDStatResultCounts(List<BMDExpressAnalysisDataSet> bmdResultss,
-			DataFilterPack pack, List<String> selectedIds2)
+			DataFilterPack pack)
 	{
 		Map<String, Double> mapCount = new HashMap<>();
 
@@ -195,9 +193,6 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 				try
 				{
 					if (pack != null && !pack.passesFilter(row))
-						continue;
-					if (selectedIds2 != null
-							&& !selectedIds2.contains(dataset.getValueForRow(row, BMDResult.PROBE_ID)))
 						continue;
 					bestModel = dataset.getValueForRow(row, BMDResult.BEST_MODEL).toString();
 				}

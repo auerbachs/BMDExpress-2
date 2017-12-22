@@ -66,12 +66,6 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	private Button								addYourOwnChartButton	= new Button("Create Your Own Chart");
 	protected Map<String, SciomeChartBase>		chartCache				= new HashMap<>();
 
-	// a list of ids (data point labels) that should only be displayed
-	// the idea is that a user can selected a subset of the current data set to show.
-	// this can be null, in that case it will be ignored and all will be displayed.
-	protected List<String>						selectedIds;
-	private List<BMDExpressAnalysisDataSet>		originatingResults;
-
 	public DataVisualizationView()
 	{
 		this(BMDExpressEventBus.getInstance());
@@ -110,7 +104,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			public void changed(ObservableValue<? extends String> observable, String oldValue,
 					String newValue)
 			{
-				redrawCharts(defaultDPack, selectedIds);
+				redrawCharts(defaultDPack);
 
 			}
 
@@ -248,14 +242,12 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			this.chartsList.clear();
 		if (results != null)
 			this.results.clear();
-		if (originatingResults != null)
-			this.originatingResults.clear();
 		if (presenter != null)
 			presenter.destroy();
 
 	}
 
-	public abstract void redrawCharts(DataFilterPack dataFilterPack, List<String> selectedIds);
+	public abstract void redrawCharts(DataFilterPack dataFilterPack);
 
 	public abstract List<String> getCannedCharts();
 
@@ -333,9 +325,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void drawResults(List<BMDExpressAnalysisDataSet> results)
 	{
 		this.results = results;
-		this.originatingResults = new ArrayList<>();
-		this.originatingResults.addAll(results);
-		redrawCharts(defaultDPack, selectedIds);
+		redrawCharts(defaultDPack);
 
 	}
 
