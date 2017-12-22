@@ -443,4 +443,24 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	}
 
+	/*
+	 * This method will be called from a chart (aka theChatter) It will pass the objects that it collected
+	 * (based on user interaction or something) and send it to the other charts. The idea is that the other
+	 * charts will look at the objects and update themselves appropriately, like highlight nodes and what not.
+	 */
+	@Override
+	public void chatWithOtherCharts(Object theChatter, List<Object> objects)
+	{
+		// loop through all the charts, if they are sciomebasecharts, then
+		// allow pass the message along.
+		for (Node node : getAllCharts())
+		{
+			if (node.equals(theChatter))
+				continue;
+			if (node instanceof SciomeChartBase)
+				((SciomeChartBase) node).recieveChatFromOtherChart(objects);
+		}
+
+	}
+
 }

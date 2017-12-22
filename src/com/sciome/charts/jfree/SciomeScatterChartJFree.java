@@ -164,4 +164,11 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 		return chartView;
 	}
 
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

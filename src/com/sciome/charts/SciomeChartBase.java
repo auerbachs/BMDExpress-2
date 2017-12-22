@@ -161,6 +161,8 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	/* abstract methods */
 
+	public abstract void recieveChatFromOtherChart(List<Object> conversation);
+
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 
 	protected abstract boolean isXAxisDefineable();

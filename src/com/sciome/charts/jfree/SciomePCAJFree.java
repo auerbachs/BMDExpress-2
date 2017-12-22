@@ -26,16 +26,17 @@ import com.sciome.charts.model.SciomeSeries;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
-public class SciomePCAJFree extends SciomePCA {
+public class SciomePCAJFree extends SciomePCA
+{
 
-	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
-			ChartKey key2, boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
+	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
 	}
 
-	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
-			ChartKey key2, SciomeChartListener chartListener)
+	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, key1, key2, true, true, chartListener);
 	}
@@ -161,6 +162,13 @@ public class SciomePCAJFree extends SciomePCA {
 		});
 
 		return chartView;
+	}
+
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

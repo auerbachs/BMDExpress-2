@@ -189,4 +189,11 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		}
 		setSeriesData(seriesData);
 	}
+
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
 }

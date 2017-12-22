@@ -143,4 +143,11 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 		return returnPane;
 	}
 
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

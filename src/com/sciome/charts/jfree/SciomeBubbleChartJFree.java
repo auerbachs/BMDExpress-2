@@ -169,4 +169,11 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		return chartView;
 	}
 
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

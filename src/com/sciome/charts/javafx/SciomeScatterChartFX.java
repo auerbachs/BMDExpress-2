@@ -171,4 +171,11 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 		return node;
 	}
 
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }
