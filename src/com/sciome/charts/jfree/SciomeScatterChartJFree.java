@@ -1,12 +1,18 @@
 package com.sciome.charts.jfree;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.AbstractXYAnnotation;
+import org.jfree.chart.annotations.XYDrawableAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -30,6 +36,9 @@ import javafx.scene.input.MouseButton;
 
 public class SciomeScatterChartJFree extends SciomeScatterChart
 {
+
+	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
+	private JFreeChart					chart;
 
 	public SciomeScatterChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
 			ChartKey key2, boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
@@ -72,10 +81,10 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges });
 		}
 
-		JFreeChart chart = ChartFactory.createScatterPlot(key1.toString() + " Vs. " + key2.toString(),
-				key1.toString(), key2.toString(), dataset, PlotOrientation.VERTICAL, true, true, false);
+		chart = ChartFactory.createScatterPlot(key1.toString() + " Vs. " + key2.toString(), key1.toString(),
+				key2.toString(), dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setForegroundAlpha(0.1f);
+		// plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
 		plot.setDomainAxis(
@@ -137,7 +146,7 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.5f);
+		// chart.getPlot().setForegroundAlpha(0.5f);
 
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
@@ -163,7 +172,8 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 					Object userData = ((ChartExtraValue) getSeriesData().get(seriesIndex).getData().get(item)
 							.getExtraValue()).userData;
 					postObjectsForChattingCharts(Arrays.asList(userData));
-					showObjectText(e.getEntity().getToolTipText());
+					if (e.getTrigger().getClickCount() == 2)
+						showObjectText(e.getEntity().getToolTipText());
 				}
 			}
 
@@ -175,6 +185,33 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 		});
 
 		return chartView;
+	}
+
+	@Override
+	protected void reactToChattingCharts()
+	{
+		for (AbstractXYAnnotation annotation : chattingAnnotations)
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation);
+		Set<String> conversationalSet = new HashSet<>();
+		for (Object obj : getConversationalObjects())
+			conversationalSet.add(obj.toString().toLowerCase());
+
+		for (SciomeSeries<Number, Number> series : getSeriesData())
+		{
+			for (SciomeData<Number, Number> chartData : series.getData())
+			{
+				if (conversationalSet.contains(
+						((ChartExtraValue) chartData.getExtraValue()).userData.toString().toLowerCase()))
+				{
+					XYDrawableAnnotation ann = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 10, 10,
+							new ColorBlock(Color.ORANGE, 10, 10));
+					chattingAnnotations.add(ann);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann);
+				}
+			}
+		}
+
 	}
 
 }

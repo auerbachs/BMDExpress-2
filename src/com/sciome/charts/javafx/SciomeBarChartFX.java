@@ -133,4 +133,11 @@ public class SciomeBarChartFX extends SciomeBarChart
 		return userObjectPane(nI.object, nI.invisible);
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

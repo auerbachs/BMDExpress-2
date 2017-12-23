@@ -455,8 +455,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 		// allow pass the message along.
 		for (Node node : getAllCharts())
 		{
-			if (node.equals(theChatter))
-				continue;
+			// if (node.equals(theChatter))
+			// continue;
 			if (node instanceof SciomeChartBase)
 				((SciomeChartBase) node).recieveChatFromOtherChart(objects);
 		}

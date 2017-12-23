@@ -176,4 +176,11 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 		return node;
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

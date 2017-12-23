@@ -171,4 +171,11 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 		return node;
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

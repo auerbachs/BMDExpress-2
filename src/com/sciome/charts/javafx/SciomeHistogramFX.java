@@ -139,4 +139,11 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 		return returnPane;
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

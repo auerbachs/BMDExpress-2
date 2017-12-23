@@ -30,4 +30,11 @@ public class SciomeLineChartFX extends SciomeLineChart
 		return null;
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

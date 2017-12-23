@@ -167,7 +167,8 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 					Object userData = ((BubbleChartExtraData) getSeriesData().get(seriesIndex).getData()
 							.get(item).getExtraValue()).userData;
 					postObjectsForChattingCharts(Arrays.asList(userData));
-					showObjectText(e.getEntity().getToolTipText());
+					if (e.getTrigger().getClickCount() == 2)
+						showObjectText(e.getEntity().getToolTipText());
 
 				}
 			}
@@ -180,6 +181,13 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		});
 
 		return chartView;
+	}
+
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -168,7 +168,10 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	public void recieveChatFromOtherChart(List<Object> conversation)
 	{
 		conversationalObjects = new HashSet<>(conversation);
+		reactToChattingCharts();
 	}
+
+	protected abstract void reactToChattingCharts();
 
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 

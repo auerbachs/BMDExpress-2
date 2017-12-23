@@ -238,7 +238,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 					AccumulationData data = (AccumulationData) getSeriesData().get(seriesIndex).getData()
 							.get(item);
 					postObjectsForChattingCharts((List<Object>) data.getExtraValue());
-					showObjectText(e.getEntity().getToolTipText());
+					if (e.getTrigger().getClickCount() == 2)
+						showObjectText(e.getEntity().getToolTipText());
 				}
 			}
 
@@ -251,6 +252,13 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		});
 
 		return chartView;
+	}
+
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

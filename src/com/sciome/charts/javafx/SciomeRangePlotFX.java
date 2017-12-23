@@ -593,4 +593,11 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 		return userObjectPane(nI.object, nI.invisible, seriesIndex);
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

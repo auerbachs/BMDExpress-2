@@ -117,7 +117,8 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 					List<Object> objects = (List<Object>) getSeriesData().get(seriesIndex).getData().get(item)
 							.getExtraValue();
 					postObjectsForChattingCharts(objects);
-					showObjectText(e.getEntity().getToolTipText());
+					if (e.getTrigger().getClickCount() == 2)
+						showObjectText(e.getEntity().getToolTipText());
 				}
 			}
 
@@ -199,6 +200,13 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				seriesData.add(series);
 		}
 		setSeriesData(seriesData);
+	}
+
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

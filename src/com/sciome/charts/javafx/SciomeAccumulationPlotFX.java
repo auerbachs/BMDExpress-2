@@ -143,4 +143,11 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 		return returnPane;
 	}
 
+	@Override
+	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }
