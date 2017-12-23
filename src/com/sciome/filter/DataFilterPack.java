@@ -51,6 +51,11 @@ public class DataFilterPack
 		this.dataFilters = dataFilters;
 	}
 
+	public void setMarkedData(Set<String> marked)
+	{
+		this.markedData = marked;
+	}
+
 	/*
 	 * take this object and see if it passes the filter
 	 */
@@ -76,9 +81,9 @@ public class DataFilterPack
 	{
 		if (this.markedData.isEmpty())
 			return false;
-		if (record instanceof IMarkable)
+		if (record.getObject() instanceof IMarkable)
 		{
-			Set<String> markableKeys = ((IMarkable) record).getMarkableKeys();
+			Set<String> markableKeys = ((IMarkable) record.getObject()).getMarkableKeys();
 			for (String key : markableKeys)
 				if (this.markedData.contains(key))
 					return true;
