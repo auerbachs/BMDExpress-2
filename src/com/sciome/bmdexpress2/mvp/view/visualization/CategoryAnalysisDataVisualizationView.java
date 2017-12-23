@@ -210,8 +210,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			Object obj = results.get(0).getObject();
 			if (results.get(0).getObject() instanceof List)
 				obj = ((List) results.get(0).getObject()).get(0);
-			dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
-					.getdbToPathwaytoGeneSet(((CategoryAnalysisResults) obj).getBmdResult());
+			dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance().getdbToPathwaytoGeneSet(
+					((CategoryAnalysisResults) obj).getBmdResult().getDoseResponseExperiment());
 		}
 		catch (Exception e)
 		{

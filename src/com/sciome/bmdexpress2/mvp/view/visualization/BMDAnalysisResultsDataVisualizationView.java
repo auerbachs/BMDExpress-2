@@ -95,7 +95,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		if (results.get(0).getObject() instanceof List)
 			obj = ((List) results.get(0).getObject()).get(0);
 		dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
-				.getdbToPathwaytoGeneSet(((BMDResult) obj));
+				.getdbToPathwaytoGeneSet(((BMDResult) obj).getDoseResponseExperiment());
 
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
@@ -168,7 +168,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			DataFilterPack pack)
 	{
 		Map<String, Double> mapCount = new HashMap<>();
-		if(bmdResultss ==null)
+		if (bmdResultss == null)
 			return mapCount;
 
 		for (BMDExpressAnalysisDataSet dataset : bmdResultss)
