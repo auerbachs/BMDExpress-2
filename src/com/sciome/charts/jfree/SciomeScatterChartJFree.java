@@ -191,7 +191,7 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 	protected void reactToChattingCharts()
 	{
 		for (AbstractXYAnnotation annotation : chattingAnnotations)
-			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation);
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
 		Set<String> conversationalSet = new HashSet<>();
 		for (Object obj : getConversationalObjects())
 			conversationalSet.add(obj.toString().toLowerCase());
@@ -207,11 +207,11 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 							chartData.getYValue().doubleValue(), 10, 10,
 							new ColorBlock(Color.ORANGE, 10, 10));
 					chattingAnnotations.add(ann);
-					((XYPlot) chart.getXYPlot()).addAnnotation(ann);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
 				}
 			}
 		}
-
+		chart.fireChartChanged();
 	}
 
 }

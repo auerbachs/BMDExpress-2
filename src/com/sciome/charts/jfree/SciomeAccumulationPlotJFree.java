@@ -5,12 +5,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.AbstractXYAnnotation;
+import org.jfree.chart.annotations.XYDrawableAnnotation;
 import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -30,6 +36,7 @@ import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
+import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
 import javafx.scene.Node;
@@ -37,6 +44,9 @@ import javafx.scene.input.MouseButton;
 
 public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 {
+
+	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
+	private JFreeChart					chart;
 
 	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
@@ -56,8 +66,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 
 		DefaultXYDataset dataset = new DefaultXYDataset();
 		// Create chart
-		JFreeChart chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1.toString(), key2,
-				dataset, PlotOrientation.VERTICAL, true, true, false);
+		chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1.toString(), key2, dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.clearAnnotations();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
@@ -257,8 +267,32 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	@Override
 	protected void reactToChattingCharts()
 	{
-		// TODO Auto-generated method stub
+		for (AbstractXYAnnotation annotation : chattingAnnotations)
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
+		Set<String> conversationalSet = new HashSet<>();
+		for (Object obj : getConversationalObjects())
+			conversationalSet.add(obj.toString().toLowerCase());
 
+		for (SciomeSeries<Number, Number> series : getSeriesData())
+		{
+			for (SciomeData<Number, Number> chartData : series.getData())
+			{
+				AccumulationData data = (AccumulationData) chartData;
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				for (Object object : objects)
+				{
+					if (conversationalSet.contains(object.toString().toLowerCase()))
+					{
+						XYDrawableAnnotation ann = new XYDrawableAnnotation(
+								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(), 10,
+								10, new ColorBlock(Color.ORANGE, 10, 10));
+						chattingAnnotations.add(ann);
+						((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+					}
+				}
+			}
+		}
+		chart.fireChartChanged();
 	}
 
 }

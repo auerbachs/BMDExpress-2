@@ -1,12 +1,18 @@
 package com.sciome.charts.jfree;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.AbstractXYAnnotation;
+import org.jfree.chart.annotations.XYDrawableAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
@@ -30,6 +36,9 @@ import javafx.scene.input.MouseButton;
 
 public class SciomeBubbleChartJFree extends SciomeBubbleChart
 {
+
+	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
+	private JFreeChart					chart;
 
 	public SciomeBubbleChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
 			ChartKey key2, ChartKey key3, SciomeChartListener chartListener)
@@ -73,7 +82,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		}
 
 		// Create chart
-		JFreeChart chart = ChartFactory.createBubbleChart(
+		chart = ChartFactory.createBubbleChart(
 				key1.toString() + " Vs. " + key2.toString() + ": Bubble Size=" + key3.toString(),
 				key1.toString(), key2.toString(), dataset, PlotOrientation.VERTICAL, true, true, false);
 
@@ -186,8 +195,28 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 	@Override
 	protected void reactToChattingCharts()
 	{
-		// TODO Auto-generated method stub
+		for (AbstractXYAnnotation annotation : chattingAnnotations)
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
+		Set<String> conversationalSet = new HashSet<>();
+		for (Object obj : getConversationalObjects())
+			conversationalSet.add(obj.toString().toLowerCase());
 
+		for (SciomeSeries<Number, Number> series : getSeriesData())
+		{
+			for (SciomeData<Number, Number> chartData : series.getData())
+			{
+				if (conversationalSet.contains(
+						((BubbleChartExtraData) chartData.getExtraValue()).userData.toString().toLowerCase()))
+				{
+					XYDrawableAnnotation ann = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 10, 10,
+							new ColorBlock(Color.ORANGE, 10, 10));
+					chattingAnnotations.add(ann);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+				}
+			}
+		}
+		chart.fireChartChanged();
 	}
 
 }
