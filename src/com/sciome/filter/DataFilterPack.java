@@ -105,4 +105,9 @@ public class DataFilterPack
 		return dp;
 	}
 
+	public Set<String> getMarkedData()
+	{
+		return markedData;
+	}
+
 }

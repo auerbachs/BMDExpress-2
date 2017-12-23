@@ -38,6 +38,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 {
 
 	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
+	private List<AbstractXYAnnotation>	markedAnnotations	= new ArrayList<>();
 	private JFreeChart					chart;
 
 	public SciomeBubbleChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
@@ -217,6 +218,13 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 			}
 		}
 		chart.fireChartChanged();
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

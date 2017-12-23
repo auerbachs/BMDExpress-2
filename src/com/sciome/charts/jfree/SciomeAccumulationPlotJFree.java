@@ -46,6 +46,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 {
 
 	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
+	private List<AbstractXYAnnotation>	markedAnnotations	= new ArrayList<>();
 	private JFreeChart					chart;
 
 	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
@@ -293,6 +294,13 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			}
 		}
 		chart.fireChartChanged();
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

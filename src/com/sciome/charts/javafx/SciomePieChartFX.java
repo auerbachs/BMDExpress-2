@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
@@ -140,6 +141,13 @@ public class SciomePieChartFX extends SciomePieChart implements ChartDataExporte
 
 	@Override
 	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
 	{
 		// TODO Auto-generated method stub
 

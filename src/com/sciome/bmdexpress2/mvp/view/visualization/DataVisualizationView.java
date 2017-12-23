@@ -181,7 +181,10 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 		chartDataPacks = dpack;
 		for (Node node : getAllCharts())
 			if (node instanceof SciomeChartBase)
+			{
 				((SciomeChartBase) node).redrawCharts(dpack);
+				((SciomeChartBase) node).markData(defaultDPack.getMarkedData());
+			}
 		layoutCharts();
 
 	}

@@ -173,6 +173,8 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	protected abstract void reactToChattingCharts();
 
+	public abstract void markData(Set<String> markings);
+
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 
 	protected abstract boolean isXAxisDefineable();

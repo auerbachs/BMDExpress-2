@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -204,6 +205,13 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 
 	@Override
 	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
 	{
 		// TODO Auto-generated method stub
 

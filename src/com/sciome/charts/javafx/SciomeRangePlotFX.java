@@ -3,6 +3,7 @@ package com.sciome.charts.javafx;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
@@ -595,6 +596,13 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 
 	@Override
 	protected void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
 	{
 		// TODO Auto-generated method stub
 
