@@ -176,11 +176,4 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 		return node;
 	}
 
-	@Override
-	public void recieveChatFromOtherChart(List<Object> conversation)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

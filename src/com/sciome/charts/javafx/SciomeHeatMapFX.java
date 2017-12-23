@@ -27,11 +27,4 @@ public class SciomeHeatMapFX extends SciomeHeatMap
 		return null;
 	}
 
-	@Override
-	public void recieveChatFromOtherChart(List<Object> conversation)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

@@ -138,11 +138,4 @@ public class SciomePieChartFX extends SciomePieChart implements ChartDataExporte
 
 	}
 
-	@Override
-	public void recieveChatFromOtherChart(List<Object> conversation)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

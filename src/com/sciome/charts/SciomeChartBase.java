@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -52,12 +54,12 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private String						title;
 	private SciomeChartListener			chartListener;
 	private List<ChartDataPack>			chartDataPacks;
-	private int							maxGraphItems	= 2000000;
+	private int							maxGraphItems			= 2000000;
 	private Node						chart;
-	private CheckBox					logXAxis		= new CheckBox("Log X Axis");
-	private CheckBox					logYAxis		= new CheckBox("Log Y Axis");
-	private CheckBox					lockXAxis		= new CheckBox("Lock X Axis");
-	private CheckBox					lockYAxis		= new CheckBox("Lock Y Axis");
+	private CheckBox					logXAxis				= new CheckBox("Log X Axis");
+	private CheckBox					logYAxis				= new CheckBox("Log Y Axis");
+	private CheckBox					lockXAxis				= new CheckBox("Lock X Axis");
+	private CheckBox					lockYAxis				= new CheckBox("Lock Y Axis");
 	private VBox						vBox;
 
 	private Button						exportToTextButton;
@@ -68,7 +70,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private ChartKey[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
 
-	private List<SciomeSeries<X, Y>>	seriesData		= new ArrayList<>();
+	private List<SciomeSeries<X, Y>>	seriesData				= new ArrayList<>();
+
+	private Set<Object>					conversationalObjects	= new HashSet<>();
 
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			SciomeChartListener chartListener)
@@ -161,7 +165,10 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 	/* abstract methods */
 
-	public abstract void recieveChatFromOtherChart(List<Object> conversation);
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		conversationalObjects = new HashSet<>(conversation);
+	}
 
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 
@@ -591,6 +598,16 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			return label;
 		}
 
+	}
+
+	protected void postObjectsForChattingCharts(List<Object> objects)
+	{
+		chartListener.chatWithOtherCharts(this, objects);
+	}
+
+	protected Set<Object> getConversationalObjects()
+	{
+		return conversationalObjects;
 	}
 
 }

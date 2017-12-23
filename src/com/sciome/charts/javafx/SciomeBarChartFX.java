@@ -133,11 +133,4 @@ public class SciomeBarChartFX extends SciomeBarChart
 		return userObjectPane(nI.object, nI.invisible);
 	}
 
-	@Override
-	public void recieveChatFromOtherChart(List<Object> conversation)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
 }

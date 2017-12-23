@@ -1,11 +1,13 @@
 package com.sciome.charts.jfree;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -156,7 +158,18 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
 																					// the left mouse button
 																					// clicked
+				{
+					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
+					int item = ((XYItemEntity) e.getEntity()).getItem();
+
+					// get the object associated with with the click and post it to the other charts
+					// so they can highlight it.
+					Object userData = ((BubbleChartExtraData) getSeriesData().get(seriesIndex).getData()
+							.get(item).getExtraValue()).userData;
+					postObjectsForChattingCharts(Arrays.asList(userData));
 					showObjectText(e.getEntity().getToolTipText());
+
+				}
 			}
 
 			@Override
@@ -167,13 +180,6 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		});
 
 		return chartView;
-	}
-
-	@Override
-	public void recieveChatFromOtherChart(List<Object> conversation)
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 }
