@@ -249,7 +249,8 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			e.printStackTrace();
 		}
 
-		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters);
+		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters,
+				dataFilterComponentListener.getMarkedData());
 
 		return dFP;
 	}

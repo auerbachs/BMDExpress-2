@@ -461,6 +461,12 @@ public abstract class BMDExpressDataView<T> extends VBox
 	}
 
 	@Override
+	public Set<String> getMarkedData()
+	{
+		return new HashSet<>();
+	}
+
+	@Override
 	public void saveDataFilter(String key, DataFilterPack filterPack)
 	{
 		BMDExpressProperties.getInstance().putDataFilterPackMap(key, filterPack);

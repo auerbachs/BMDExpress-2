@@ -2,8 +2,10 @@ package com.sciome.filter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 
 /*
  * Data Filter package that contains a list of filters.  It also has method to 
@@ -14,15 +16,17 @@ public class DataFilterPack
 
 	private String				name;
 	private List<DataFilter>	dataFilters;
+	private Set<String>			markedData;
 
 	public DataFilterPack()
 	{
 
 	}
 
-	public DataFilterPack(String name, List<DataFilter> dataFilters)
+	public DataFilterPack(String name, List<DataFilter> dataFilters, Set<String> markedData)
 	{
 		super();
+		this.markedData = markedData;
 		this.name = name;
 		this.dataFilters = dataFilters;
 	}
@@ -58,11 +62,28 @@ public class DataFilterPack
 			return false;
 		for (DataFilter df : dataFilters)
 		{
+			// it is marked then do not filter it out
+			if (isMarked(record))
+				return true;
 			if (!df.passesFilter(record))
 				return false;
 		}
 
 		return true;
+	}
+
+	private boolean isMarked(BMDExpressAnalysisRow record)
+	{
+		if (this.markedData.isEmpty())
+			return false;
+		if (record instanceof IMarkable)
+		{
+			Set<String> markableKeys = ((IMarkable) record).getMarkableKeys();
+			for (String key : markableKeys)
+				if (this.markedData.contains(key))
+					return true;
+		}
+		return false;
 	}
 
 	public DataFilterPack copy()
