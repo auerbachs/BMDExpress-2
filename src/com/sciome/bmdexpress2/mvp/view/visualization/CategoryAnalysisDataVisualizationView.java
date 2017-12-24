@@ -20,9 +20,7 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
-import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.PathwayCurveViewer;
-import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomeBarChartFX;
@@ -42,16 +40,15 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
 
-	private static final String						CURVEPLOT			= "Curve Overlay";
-	private static final String						RANGEPLOT			= "Range Plot";
-	private static final String						BUBBLE_CHART		= "Bubble Chart";
-	private static final String						ACCUMULATION_CHARTS	= "Accumulation Charts";
-	private static final String						BMD_BMDL_BARCHARTS	= "BMD and BMDL Bar Charts";
-	private static final String						BEST_MODEL_PIE		= "Best Models Pie Chart";
-	private static final String						MEAN_HISTOGRAMS		= "Mean Histograms";
-	private static final String						MEDIAN_HISTOGRAMS	= "Median Histograms";
-	private static final String						BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
-	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSymboles;
+	private static final String	CURVEPLOT			= "Curve Overlay";
+	private static final String	RANGEPLOT			= "Range Plot";
+	private static final String	BUBBLE_CHART		= "Bubble Chart";
+	private static final String	ACCUMULATION_CHARTS	= "Accumulation Charts";
+	private static final String	BMD_BMDL_BARCHARTS	= "BMD and BMDL Bar Charts";
+	private static final String	BEST_MODEL_PIE		= "Best Models Pie Chart";
+	private static final String	MEAN_HISTOGRAMS		= "Mean Histograms";
+	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
+	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
@@ -205,18 +202,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		/// set this to true and not view custom charts because
 		// we want all the real estate we can get
 		ignoreCustomCharts = false;
-		try
-		{
-			Object obj = results.get(0).getObject();
-			if (results.get(0).getObject() instanceof List)
-				obj = ((List) results.get(0).getObject()).get(0);
-			dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance().getdbToPathwaytoGeneSet(
-					((CategoryAnalysisResults) obj).getBmdResult().getDoseResponseExperiment());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+
 		defaultDPack = pack;
 		String chartKey = cBox.getSelectionModel().getSelectedItem();
 		if (results == null || results.size() == 0)
@@ -233,27 +219,21 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 
 			SciomeChartBase chart1 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN);
-			((SciomeAccumulationPlot) chart1).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart1);
 			SciomeChartBase chart2 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEAN);
-			((SciomeAccumulationPlot) chart2).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart2);
 			SciomeChartBase chart3 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEDIAN);
-			((SciomeAccumulationPlot) chart3).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart3);
 			SciomeChartBase chart4 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDL_MEAN);
-			((SciomeAccumulationPlot) chart4).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart4);
 			SciomeChartBase chart5 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEDIAN);
-			((SciomeAccumulationPlot) chart5).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart5);
 			SciomeChartBase chart6 = chartCache
 					.get(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMDU_MEAN);
-			((SciomeAccumulationPlot) chart6).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 			chartsList.add(chart6);
 
 		}
@@ -344,7 +324,6 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		{
 			SciomeChartBase chart1 = chartCache.get("DEFAULT-Accumulation");
 			chartsList.add(chart1);
-			((SciomeAccumulationPlot) chart1).setdbToPathwayToGeneSet(this.dbToPathwayToGeneSymboles);
 
 			SciomeChartBase chart3 = chartCache.get(
 					"DEFAULT-" + CategoryAnalysisResults.BMD_MEDIAN + CategoryAnalysisResults.BMDL_MEDIAN);

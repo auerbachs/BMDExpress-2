@@ -3,8 +3,6 @@ package com.sciome.charts.jfree;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Paint;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +27,9 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.util.ShapeUtilities;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -85,18 +83,6 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				ranges[i++] = rangevalue;
 				if (rangevalue > max2)
 					max2 = rangevalue;
-				String label = getLabelIfNeedHighlighting((List<Object>) (value.getExtraValue()));
-
-				if (!label.equals(""))
-				{
-					XYPointerAnnotation ann = new XYPointerAnnotation(label, value.getXValue().doubleValue(),
-							value.getYValue().doubleValue(), Math.PI * 4 / 3);
-					ann.setBaseRadius(40.0);
-					ann.setTipRadius(5);
-					ann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
-
-					plot.addAnnotation(ann);
-				}
 			}
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges });
 		}
@@ -148,49 +134,6 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			domain.setRange(min1, max1);
 			range.setRange(min2, max2);
 		}
-
-		plot.setRenderer(new XYLineAndShapeRenderer(true, true) {
-
-			@Override
-			public Shape getItemShape(int row, int col)
-			{
-
-				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(col);
-				List<Object> objects = (List<Object>) (data.getExtraValue());
-				if (objectsNeedHighlighting(objects) != 0)
-				{
-					return ShapeUtilities.createDiagonalCross(5, 5);
-				}
-				else
-					return super.getItemShape(row, col);
-			}
-
-			// add a little transparency to the items painted
-			// @Override
-			// public Paint getItemPaint(int row, int col)
-			// {
-
-			// Color c = (Color) super.getItemPaint(row, col);
-			// return new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
-			// }
-
-			@Override
-			public Paint getItemFillPaint(int row, int column)
-			{
-				AccumulationData data = (AccumulationData) getSeriesData().get(row).getData().get(column);
-				List<Object> objects = (List<Object>) (data.getExtraValue());
-				int highlighting = objectsNeedHighlighting(objects);
-				if (highlighting == 1)
-					return Color.yellow;
-				else if (highlighting == -1)
-					return Color.BLUE;
-				else
-				{
-					return super.getItemFillPaint(row, column);
-				}
-			}
-
-		});
 
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
 		renderer.setDefaultShapesVisible(true);
@@ -299,8 +242,59 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	@Override
 	public void markData(Set<String> markings)
 	{
-		// TODO Auto-generated method stub
+		for (AbstractXYAnnotation annotation : markedAnnotations)
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
 
+		for (SciomeSeries<Number, Number> series : getSeriesData())
+		{
+			for (SciomeData<Number, Number> chartData : series.getData())
+			{
+
+				AccumulationData data = (AccumulationData) chartData;
+				List<Object> objects = (List<Object>) (data.getExtraValue());
+				for (Object object : objects)
+				{
+					if (object instanceof IMarkable)
+					{
+						IMarkable markable = (IMarkable) object;
+						if (!dataIsMarked(markings, markable.getMarkableKeys()))
+							continue;
+						XYDrawableAnnotation ann = new XYDrawableAnnotation(
+								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(), 15,
+								15, new ColorBlock(markable.getMarkableColor(), 15, 15));
+						XYDrawableAnnotation ann2 = new XYDrawableAnnotation(
+								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(), 17,
+								17, new ColorBlock(Color.BLACK, 17, 17));
+
+						XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
+								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
+								Math.PI * 4 / 3);
+						labelann.setBaseRadius(40.0);
+						labelann.setTipRadius(5);
+						labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
+
+						// ann2 will give us black outline
+						markedAnnotations.add(ann2);
+						markedAnnotations.add(ann);
+						markedAnnotations.add(labelann);
+						((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
+						((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+						((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
+
+					}
+				}
+			}
+		}
+		chart.fireChartChanged();
+
+	}
+
+	private boolean dataIsMarked(Set<String> markings, Set<String> data)
+	{
+		for (String d : data)
+			if (markings.contains(d))
+				return true;
+		return false;
 	}
 
 }

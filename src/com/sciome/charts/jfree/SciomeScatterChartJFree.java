@@ -237,6 +237,8 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 					XYDrawableAnnotation ann = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
 							chartData.getYValue().doubleValue(), 15, 15,
 							new ColorBlock(markable.getMarkableColor(), 15, 15));
+					XYDrawableAnnotation ann2 = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 17, 17, new ColorBlock(Color.BLACK, 17, 17));
 
 					XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
 							chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
@@ -245,9 +247,11 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 					labelann.setTipRadius(5);
 					labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 
+					// ann2 will give us black outline
+					markedAnnotations.add(ann2);
 					markedAnnotations.add(ann);
 					markedAnnotations.add(labelann);
-
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
 					((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
 					((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
 				}

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
@@ -111,7 +112,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			this.bmdAnalysisDataSet = bmdAnalysisDataSet;
 
 			dbToPathwayToGeneSet = fillUpDBToPathwayGeneSymbols();
-			markedData = new HashSet<>();
+			markedData = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 			splitPane = new SplitPane();
 			this.filterableClass = filterableClass;
 			splitPane.setOrientation(Orientation.HORIZONTAL);
@@ -501,7 +502,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	public Set<String> getMarkedData()
 	{
 		if (markedData == null)
-			return new HashSet<>();
+			return new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 		return markedData;
 	}
 

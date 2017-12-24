@@ -19,6 +19,7 @@ import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
+import com.sciome.bmdexpress2.util.NumberManager;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
@@ -485,7 +486,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	@Override
 	public String getMarkableLabel()
 	{
-		return this.getGeneSymbols();
+		return this.getGeneSymbols() + ": FC=" + NumberManager.numberFormat(2, this.getBestFoldChange());
 	}
 
 	@JsonIgnore

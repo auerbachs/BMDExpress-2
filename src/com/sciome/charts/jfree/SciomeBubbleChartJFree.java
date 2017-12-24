@@ -11,6 +11,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.annotations.XYDrawableAnnotation;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
@@ -21,10 +22,12 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.charts.SciomeBubbleChart;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -223,8 +226,53 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 	@Override
 	public void markData(Set<String> markings)
 	{
-		// TODO Auto-generated method stub
+		for (AbstractXYAnnotation annotation : markedAnnotations)
+			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
 
+		for (SciomeSeries<Number, Number> series : getSeriesData())
+		{
+			for (SciomeData<Number, Number> chartData : series.getData())
+			{
+				if (((BubbleChartExtraData) chartData.getExtraValue()).userData instanceof IMarkable)
+				{
+					IMarkable markable = (IMarkable) ((BubbleChartExtraData) chartData
+							.getExtraValue()).userData;
+
+					if (!dataIsMarked(markings, markable.getMarkableKeys()))
+						continue;
+					XYDrawableAnnotation ann = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 15, 15,
+							new ColorBlock(markable.getMarkableColor(), 15, 15));
+					XYDrawableAnnotation ann2 = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 17, 17, new ColorBlock(Color.BLACK, 17, 17));
+
+					XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
+							chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
+							Math.PI * 4 / 3);
+					labelann.setBaseRadius(40.0);
+					labelann.setTipRadius(5);
+					labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
+
+					// ann2 will give us black outline
+					markedAnnotations.add(ann2);
+					markedAnnotations.add(ann);
+					markedAnnotations.add(labelann);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+					((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
+				}
+			}
+		}
+		chart.fireChartChanged();
+
+	}
+
+	private boolean dataIsMarked(Set<String> markings, Set<String> data)
+	{
+		for (String d : data)
+			if (markings.contains(d))
+				return true;
+		return false;
 	}
 
 }

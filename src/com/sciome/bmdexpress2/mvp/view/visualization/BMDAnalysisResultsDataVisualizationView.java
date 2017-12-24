@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
@@ -15,8 +14,6 @@ import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualization
 import com.sciome.bmdexpress2.service.VisualizationService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
-import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
-import com.sciome.charts.SciomeAccumulationPlot;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.javafx.SciomePieChartFX;
@@ -31,13 +28,11 @@ import com.sciome.filter.DataFilterPack;
 public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationView
 		implements IDataVisualizationView
 {
-	private static final String						ACCUMULATION_CHARTS				= "Accumulation Charts";
-	private final static String						BMDL_HISTOGRAM					= "BMDL Histogram";
-	private final static String						BMDU_HISTOGRAM					= "BMDU Histogram";
-	private final static String						FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
-	private final static String						FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
-
-	private Map<String, Map<String, Set<String>>>	dbToPathwayToGeneSymboles;
+	private static final String	ACCUMULATION_CHARTS				= "Accumulation Charts";
+	private final static String	BMDL_HISTOGRAM					= "BMDL Histogram";
+	private final static String	BMDU_HISTOGRAM					= "BMDU Histogram";
+	private final static String	FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
+	private final static String	FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
 
 	public BMDAnalysisResultsDataVisualizationView()
 	{
@@ -89,14 +84,6 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 
 		chartsList = new ArrayList<>();
 
-		// this is needed becasue there are transient fields that need to be initialized.
-		// don;t like how this work as it leads to null pointers. need to look into architecture
-		Object obj = results.get(0).getObject();
-		if (results.get(0).getObject() instanceof List)
-			obj = ((List) results.get(0).getObject()).get(0);
-		dbToPathwayToGeneSymboles = PathwayToGeneSymbolUtility.getInstance()
-				.getdbToPathwaytoGeneSet(((BMDResult) obj).getDoseResponseExperiment());
-
 		for (BMDExpressAnalysisDataSet result : results)
 			if (result instanceof BMDResult)
 				((BMDResult) result).getColumnHeader();
@@ -129,14 +116,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			// in accumulation chart
 			SciomeChartBase chart1 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDL);
 			chartsList.add(chart1);
-			((SciomeAccumulationPlot) chart1).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 
 			SciomeChartBase chart2 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMD);
 			chartsList.add(chart2);
-			((SciomeAccumulationPlot) chart2).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 			SciomeChartBase chart3 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDU);
 			chartsList.add(chart3);
-			((SciomeAccumulationPlot) chart3).setdbToPathwayToGeneSet(dbToPathwayToGeneSymboles);
 		}
 		else
 		{
