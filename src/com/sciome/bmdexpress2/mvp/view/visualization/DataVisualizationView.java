@@ -66,6 +66,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected DataFilterPack					defaultDPack;
 
 	private List<ChartDataPack>					chartDataPacks			= new ArrayList<>();
+	private Set<String>							markedData				= new HashSet<>();
 
 	private VBox								vBox;
 	protected ComboBox<String>					cBox;
@@ -175,6 +176,12 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	}
 
+	public void setMarkedData(Set<String> d)
+	{
+		markedData = d;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void showCharts(List<ChartDataPack> dpack)
 	{
 		// update the current chartDataPacks
@@ -183,7 +190,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			if (node instanceof SciomeChartBase)
 			{
 				((SciomeChartBase) node).redrawCharts(dpack);
-				((SciomeChartBase) node).markData(defaultDPack.getMarkedData());
+				((SciomeChartBase) node).markData(markedData);
 			}
 		layoutCharts();
 

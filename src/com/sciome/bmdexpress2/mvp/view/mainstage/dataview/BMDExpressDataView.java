@@ -100,7 +100,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected ObservableList<BMDExpressAnalysisRow>				rawTableData	= null;
 
 	private Map<String, Map<String, Set<String>>>				dbToPathwayToGeneSet;
-	private Set<String>											markedData;
+	private Set<String>											markedData		= new TreeSet<>(
+			String.CASE_INSENSITIVE_ORDER);
 
 	@SuppressWarnings("unchecked")
 	public BMDExpressDataView(Class<?> filterableClass, BMDExpressAnalysisDataSet bmdAnalysisDataSet,
@@ -354,6 +355,9 @@ public abstract class BMDExpressDataView<T> extends VBox
 	public void dataFilterChanged()
 	{
 
+		// make sure the data visualization had a recent copy of the marked data
+		// before performing redraw
+		dataVisualizationController.setMarkedData(markedData);
 		DataFilterPack dataFilterPack = filtrationNode.getFilterDataPack();
 
 		filterTable(filtrationNode.getFilterDataPack());
