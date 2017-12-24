@@ -99,6 +99,14 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 				SciomeNumberAxisGeneratorJFree.generateAxis(getLogXAxis().isSelected(), key1.toString()));
 		plot.setRangeAxis(
 				SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key2.toString()));
+		// add the annotations (if they exist). This is mainly for when the user
+		// changes the axis or chartconfiguration
+		if (chattingAnnotations != null)
+			for (AbstractXYAnnotation ann : chattingAnnotations)
+				plot.addAnnotation(ann);
+		if (markedAnnotations != null)
+			for (AbstractXYAnnotation ann : markedAnnotations)
+				plot.addAnnotation(ann);
 
 		// Only want to zoom in if we any values have been set in chartConfig
 		if (chartConfig != null)
