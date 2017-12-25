@@ -209,6 +209,8 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 		for (Object obj : getConversationalObjects())
 			conversationalSet.add(obj.toString().toLowerCase());
 
+		chattingAnnotations.clear();
+
 		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
 			for (SciomeData<Number, Number> chartData : series.getData())

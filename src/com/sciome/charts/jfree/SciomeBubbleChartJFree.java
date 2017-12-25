@@ -212,7 +212,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		Set<String> conversationalSet = new HashSet<>();
 		for (Object obj : getConversationalObjects())
 			conversationalSet.add(obj.toString().toLowerCase());
-
+		chattingAnnotations.clear();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
 			for (SciomeData<Number, Number> chartData : series.getData())
