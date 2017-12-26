@@ -2140,7 +2140,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			}
 			else if ((float) downcount / totalcount >= 0.6f)
 			{
-				this.overallDirection = AdverseDirectionEnum.UP;
+				this.overallDirection = AdverseDirectionEnum.DOWN;
 
 			}
 			else
