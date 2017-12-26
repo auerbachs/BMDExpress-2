@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.IMarkable;
+import com.sciome.bmdexpress2.service.DataCombinerService;
 
 /*
  * Data Filter package that contains a list of filters.  It also has method to 
@@ -67,9 +68,12 @@ public class DataFilterPack
 			return false;
 		for (DataFilter df : dataFilters)
 		{
+
 			// it is marked then do not filter it out
-			if (isMarked(record))
-				return true;
+			// if the record is marked but there is an ANALYSIS_HEADER filter,
+			// then apply the filter. Analyis filter means do or don't show the analysis
+			if (!df.getKey().equals(DataCombinerService.ANALYSIS_HEADER) && isMarked(record))
+				continue;
 			if (!df.passesFilter(record))
 				return false;
 		}

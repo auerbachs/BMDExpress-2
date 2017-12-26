@@ -16,6 +16,8 @@ import com.sciome.bmdexpress2.serviceInterface.IDataCombinerService;
 public class DataCombinerService implements IDataCombinerService
 {
 
+	public static final String ANALYSIS_HEADER = "Analysis";
+
 	@Override
 	public CombinedDataSet combineBMDExpressAnalysisDataSets(List<BMDExpressAnalysisDataSet> dataSets)
 	{
@@ -38,7 +40,7 @@ public class DataCombinerService implements IDataCombinerService
 				headersAdded.add(head);
 			}
 		}
-		theHeader.add(0, "Analysis");
+		theHeader.add(0, DataCombinerService.ANALYSIS_HEADER);
 
 		// now we have a header. maybe not ordered perfect, but the data is there
 		// now we have the length of rows and can create a Combined data set and start adding rows.
