@@ -220,7 +220,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		for (AbstractXYAnnotation annotation : chattingAnnotations)
 			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);

@@ -171,7 +171,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		reactToChattingCharts();
 	}
 
-	protected abstract void reactToChattingCharts();
+	public abstract void reactToChattingCharts();
 
 	public abstract void markData(Set<String> markings);
 

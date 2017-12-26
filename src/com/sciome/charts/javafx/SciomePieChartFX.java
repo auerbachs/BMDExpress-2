@@ -140,7 +140,7 @@ public class SciomePieChartFX extends SciomePieChart implements ChartDataExporte
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

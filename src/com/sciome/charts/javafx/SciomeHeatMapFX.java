@@ -29,7 +29,7 @@ public class SciomeHeatMapFX extends SciomeHeatMap
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

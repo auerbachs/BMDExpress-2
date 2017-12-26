@@ -207,7 +207,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		for (AbstractXYAnnotation annotation : chattingAnnotations)
 			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);

@@ -173,7 +173,7 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

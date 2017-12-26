@@ -595,7 +595,7 @@ public class SciomeRangePlotFX extends SciomeRangePlot implements ChartDataExpor
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

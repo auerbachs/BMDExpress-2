@@ -135,7 +135,7 @@ public class SciomeBarChartFX extends SciomeBarChart
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

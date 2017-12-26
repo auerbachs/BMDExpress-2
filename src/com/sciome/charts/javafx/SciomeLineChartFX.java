@@ -32,7 +32,7 @@ public class SciomeLineChartFX extends SciomeLineChart
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

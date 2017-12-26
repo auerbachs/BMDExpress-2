@@ -145,7 +145,7 @@ public class SciomeAccumulationPlotFX extends SciomeAccumulationPlot
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

@@ -173,7 +173,7 @@ public class SciomePCAJFree extends SciomePCA
 	}
 
 	@Override
-	protected void reactToChattingCharts()
+	public void reactToChattingCharts()
 	{
 		// TODO Auto-generated method stub
 

@@ -191,6 +191,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			{
 				((SciomeChartBase) node).redrawCharts(dpack);
 				((SciomeChartBase) node).markData(markedData);
+				((SciomeChartBase) node).reactToChattingCharts();
 			}
 		layoutCharts();
 
