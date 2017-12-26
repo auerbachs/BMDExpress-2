@@ -188,6 +188,8 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
 				}
+				else
+					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
 			@Override

@@ -204,6 +204,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
 				}
+				else
+					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
 			@Override

@@ -192,6 +192,8 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 						showObjectText(e.getEntity().getToolTipText());
 
 				}
+				else
+					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
 			@Override
