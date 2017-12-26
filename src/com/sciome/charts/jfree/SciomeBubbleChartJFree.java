@@ -92,7 +92,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 
 		// Set plot parameters
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setForegroundAlpha(0.1f);
+		plot.setForegroundAlpha(0.8f);
 		plot.setDomainPannable(false);
 		plot.setRangePannable(false);
 		plot.setDomainAxis(
@@ -162,7 +162,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(.5f);
+		chart.getPlot().setForegroundAlpha(.8f);
 
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
@@ -221,10 +221,32 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 						((BubbleChartExtraData) chartData.getExtraValue()).userData.toString().toLowerCase()))
 				{
 					XYDrawableAnnotation ann = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
-							chartData.getYValue().doubleValue(), 10, 10,
-							new ColorBlock(Color.ORANGE, 10, 10));
+							chartData.getYValue().doubleValue(), 10, 10, new ColorBlock(Color.pink, 10, 10));
+					XYDrawableAnnotation ann2 = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), 12, 12, new ColorBlock(Color.BLACK, 12, 12));
+
+					// ann2 will give us black outline
+					chattingAnnotations.add(ann2);
 					chattingAnnotations.add(ann);
+					((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
 					((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+					if (((BubbleChartExtraData) chartData.getExtraValue()).userData instanceof IMarkable)
+					{
+						IMarkable markable = (IMarkable) ((BubbleChartExtraData) chartData
+								.getExtraValue()).userData;
+						XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
+								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
+								Math.PI * 4 / 3);
+						labelann.setBaseRadius(40.0);
+						labelann.setLabelOffset(5.0);
+						labelann.setBackgroundPaint(Color.pink);
+						labelann.setOutlineVisible(true);
+						labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
+						labelann.setTipRadius(5);
+						labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
+						chattingAnnotations.add(labelann);
+						((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
+					}
 				}
 			}
 		}
@@ -258,6 +280,10 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 							chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
 							Math.PI * 4 / 3);
 					labelann.setBaseRadius(40.0);
+					labelann.setLabelOffset(5.0);
+					labelann.setBackgroundPaint(Color.yellow);
+					labelann.setOutlineVisible(true);
+					labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
 					labelann.setTipRadius(5);
 					labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 
