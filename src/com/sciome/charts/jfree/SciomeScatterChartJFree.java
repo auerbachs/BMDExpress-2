@@ -280,7 +280,7 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 							Math.PI * 4 / 3);
 					labelann.setBaseRadius(40.0);
 					labelann.setLabelOffset(5.0);
-					labelann.setBackgroundPaint(Color.PINK);
+					labelann.setBackgroundPaint(Color.yellow);
 					labelann.setOutlineVisible(true);
 					labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
 					labelann.setTipRadius(5);
