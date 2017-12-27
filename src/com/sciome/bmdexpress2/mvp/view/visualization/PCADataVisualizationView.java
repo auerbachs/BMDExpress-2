@@ -20,8 +20,6 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomePCAJFree;
 import com.sciome.filter.DataFilterPack;
 
-import javafx.concurrent.Task;
-
 public class PCADataVisualizationView extends DataVisualizationView implements IDataVisualizationView {
 	
 	private static final String	DEFAULT			= "DEFAULT";

@@ -16,7 +16,7 @@ import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 import com.sciome.filter.component.DataFilterComponentListener;
-import com.sciome.filter.component.FilterCompentsNode;
+import com.sciome.filter.component.FilterComponentsNode;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -57,7 +57,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected CheckBox											enableFilterCheckBox;
 	protected SplitPane											splitPaneMain;
 	protected SplitPane											splitPane;
-	protected FilterCompentsNode								filtrationNode;
+	protected FilterComponentsNode								filtrationNode;
 	protected Button											hideFilter;
 	protected Button											hideTable;
 	protected Button											hideCharts;
@@ -122,7 +122,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 					df.init();
 				}
 
-			filtrationNode = new FilterCompentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
+			filtrationNode = new FilterComponentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
 			filtrationNode.init();
 
 			if (!BMDExpressProperties.getInstance().isHideFilter())

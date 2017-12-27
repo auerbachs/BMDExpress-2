@@ -7,6 +7,7 @@ import com.sciome.bmdexpress2.mvp.model.CombinedRow;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDAnalysisResultsDataViewPresenter;
+import com.sciome.bmdexpress2.mvp.view.mainstage.ActualCurveFitView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.CurveFitView;
 import com.sciome.bmdexpress2.mvp.view.visualization.BMDAnalysisResultsDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
@@ -199,13 +200,13 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 			try
 			{
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/curvefit.fxml"));
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/actualcurvefit.fxml"));
 
 				Stage stage = BMDExpressFXUtils.getInstance().generateStage("Curve Viewer: " + name);
 				new Stage(StageStyle.DECORATED);
 				// stage.setAlwaysOnTop(true);
 				stage.setScene(new Scene((AnchorPane) loader.load()));
-				CurveFitView controller = loader.<CurveFitView> getController();
+				ActualCurveFitView controller = loader.<ActualCurveFitView> getController();
 				if (modelGraphics == null)
 				{
 					modelGraphics = new ModelGraphics(bmdResult, probeStatResult.getBestStatResult(),
@@ -228,7 +229,7 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 							});
 
 				}
-				controller.initData(bmdResult, probeStatResult, modelGraphics);
+				controller.initData(bmdResult, probeStatResult);
 
 				stage.sizeToScene();
 				stage.show();

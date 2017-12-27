@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 
 public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, Initializable
 {
-
 	@FXML
 	SwingNode swingNode;
 
