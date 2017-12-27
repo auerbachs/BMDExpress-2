@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -52,22 +54,25 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private String						title;
 	private SciomeChartListener			chartListener;
 	private List<ChartDataPack>			chartDataPacks;
-	private int							maxGraphItems	= 2000000;
+	private int							maxGraphItems			= 2000000;
 	private Node						chart;
-	private CheckBox					logXAxis		= new CheckBox("Log X Axis");
-	private CheckBox					logYAxis		= new CheckBox("Log Y Axis");
-	private CheckBox					lockXAxis		= new CheckBox("Lock X Axis");
-	private CheckBox					lockYAxis		= new CheckBox("Lock Y Axis");
+	private CheckBox					logXAxis				= new CheckBox("Log X Axis");
+	private CheckBox					logYAxis				= new CheckBox("Log Y Axis");
+	private CheckBox					lockXAxis				= new CheckBox("Lock X Axis");
+	private CheckBox					lockYAxis				= new CheckBox("Lock Y Axis");
 	private VBox						vBox;
 
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
+	private Button						closeButton;
 	protected Button					configurationButton;
 	private HBox						checkBoxes;
 	private ChartKey[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
 
-	private List<SciomeSeries<X, Y>>	seriesData		= new ArrayList<>();
+	private List<SciomeSeries<X, Y>>	seriesData				= new ArrayList<>();
+
+	private Set<Object>					conversationalObjects	= new HashSet<>();
 
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			SciomeChartListener chartListener)
@@ -82,6 +87,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		// set up the main components that are associated wtih the chart
 		vBox = new VBox();
 		maxMinButton = GlyphsDude.createIconButton(FontAwesomeIcon.EXPAND);
+		closeButton = GlyphsDude.createIconButton(FontAwesomeIcon.CLOSE);
 		maxMinButton.setTooltip(new Tooltip("View this chart in a large separate window."));
 		configurationButton = GlyphsDude.createIconButton(FontAwesomeIcon.GEAR);
 		configurationButton.setTooltip(new Tooltip("Configure the X and Y axis of this chart."));
@@ -109,7 +115,17 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			public void handle(ActionEvent e)
 			{
 				maxMinButton.setVisible(false);
+				closeButton.setVisible(false);
 				chartListener.expand(SciomeChartBase.this);
+
+			}
+		});
+
+		closeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e)
+			{
+				chartListener.close(SciomeChartBase.this);
 
 			}
 		});
@@ -130,7 +146,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		if (this instanceof ChartDataExporter)
 			overlayButtons.getChildren().addAll(exportToTextButton);
 
-		overlayButtons.getChildren().addAll(configurationButton, maxMinButton);
+		overlayButtons.getChildren().addAll(configurationButton, maxMinButton, closeButton);
 		overlayButtons.setAlignment(Pos.TOP_RIGHT);
 		this.getChildren().addAll(overlayButtons, vBox);
 		StackPane.setAlignment(overlayButtons, Pos.TOP_RIGHT);
@@ -138,7 +154,26 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
 
+	public List<ChartKey> getChartableKeys()
+	{
+		List<ChartKey> keys = new ArrayList<>();
+		for (ChartKey k : chartableKeys)
+			if (k != null)
+				keys.add(k);
+		return keys;
+	}
+
 	/* abstract methods */
+
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		conversationalObjects = new HashSet<>(conversation);
+		reactToChattingCharts();
+	}
+
+	public abstract void reactToChattingCharts();
+
+	public abstract void markData(Set<String> markings);
 
 	protected abstract Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration);
 
@@ -193,6 +228,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	protected void showChart(Label caption2)
 	{
 		vBox.getChildren().remove(chart);
+		vBox.getChildren().remove(caption2);
 		chart = generateChart(this.chartableKeys, chartConfiguration);
 		int insertIndex = 0;
 
@@ -348,6 +384,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	public void chartMinimized()
 	{
 		this.maxMinButton.setVisible(true);
+		this.closeButton.setVisible(true);
 	}
 
 	/*
@@ -566,6 +603,16 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			return label;
 		}
 
+	}
+
+	protected void postObjectsForChattingCharts(List<Object> objects)
+	{
+		chartListener.chatWithOtherCharts(this, objects);
+	}
+
+	protected Set<Object> getConversationalObjects()
+	{
+		return conversationalObjects;
 	}
 
 }

@@ -1,5 +1,10 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
@@ -14,6 +19,7 @@ import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.ModelGraphics;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.ModelGraphicsEvent;
 
@@ -249,5 +255,25 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 			}
 
 		}
+	}
+
+	@Override
+	protected Map<String, Map<String, Set<String>>> fillUpDBToPathwayGeneSymbols()
+	{
+
+		try
+		{
+			Object obj = bmdAnalysisDataSet.getObject();
+			if (bmdAnalysisDataSet.getObject() instanceof List)
+				obj = ((List) bmdAnalysisDataSet.getObject()).get(0);
+			return PathwayToGeneSymbolUtility.getInstance()
+					.getdbToPathwaytoGeneSet(((BMDResult) obj).getDoseResponseExperiment());
+		}
+		catch (Exception e)
+		{
+
+		}
+		return new HashMap<>();
+
 	}
 }

@@ -78,11 +78,13 @@ public class FilterComponentsNode extends VBox implements FilterComponentContain
 			for (DataFilter df : dPack.getDataFilters())
 				dataFilterMap.put(df.getKey(), df);
 		}
+
 	}
 
 	@SuppressWarnings("restriction")
 	public void init()
 	{
+
 		visibleFilterNodes = BMDExpressProperties.getInstance().getFilters(filterableClass.getName());
 
 		filterAnnotationExtractor = new FilterDataExtractor(filterableDataSet);
@@ -247,7 +249,8 @@ public class FilterComponentsNode extends VBox implements FilterComponentContain
 			e.printStackTrace();
 		}
 
-		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters);
+		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters,
+				dataFilterComponentListener.getMarkedData());
 
 		return dFP;
 	}

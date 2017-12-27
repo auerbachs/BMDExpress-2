@@ -14,10 +14,10 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.annotation.FileInfo;
@@ -48,27 +48,25 @@ public class PathwayToGeneSymbolUtility
 
 	}
 
-	public Map<String, Map<String, Set<String>>> getdbToPathwaytoGeneSet(BMDResult bmdResults)
+	public Map<String, Map<String, Set<String>>> getdbToPathwaytoGeneSet(
+			DoseResponseExperiment doseResponseExperiment)
 	{
 		// no need to compute if it is current
-		if (bmdResults.getDoseResponseExperiment().getChip() == null
-				|| bmdResults.getDoseResponseExperiment().getChip().getGeoID() == null)
+		if (doseResponseExperiment.getChip() == null || doseResponseExperiment.getChip().getGeoID() == null)
 			return dbToPathwayToGeneSet;
-		if (dbToPathwayToGeneSet != null
-				&& bmdResults.getDoseResponseExperiment().getChip().getGeoID().equals(geoID))
+		if (dbToPathwayToGeneSet != null && doseResponseExperiment.getChip().getGeoID().equals(geoID))
 			return dbToPathwayToGeneSet;
 
-		this.geoID = bmdResults.getDoseResponseExperiment().getChip().getGeoID();
+		this.geoID = doseResponseExperiment.getChip().getGeoID();
 		dbToPathwayToGeneSet.clear();
 		Map<String, String> gene2Symbol = new HashMap<>();
-		for (ReferenceGeneAnnotation refAnn : bmdResults.getDoseResponseExperiment()
-				.getReferenceGeneAnnotations())
+		for (ReferenceGeneAnnotation refAnn : doseResponseExperiment.getReferenceGeneAnnotations())
 			for (ReferenceGene rg : refAnn.getReferenceGenes())
 				gene2Symbol.put(rg.getId(), rg.getGeneSymbol());
 
-		fillGOTerms(bmdResults.getDoseResponseExperiment().getChip(), gene2Symbol);
+		fillGOTerms(doseResponseExperiment.getChip(), gene2Symbol);
 
-		fillREACTOMETerms(bmdResults.getDoseResponseExperiment().getChip(), gene2Symbol);
+		fillREACTOMETerms(doseResponseExperiment.getChip(), gene2Symbol);
 
 		return dbToPathwayToGeneSet;
 	}

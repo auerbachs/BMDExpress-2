@@ -12,6 +12,6 @@ public interface IVisualizationService
 {
 
 	List<ChartDataPack> getBMDExpressAnalysisChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds, Set<ChartKey> useTheseKeysOnly,
-			Set<ChartKey> mathedChartKeys, ChartKey labelKey);
+			DataFilterPack pack, Set<ChartKey> useTheseKeysOnly, Set<ChartKey> mathedChartKeys,
+			ChartKey labelKey);
 }

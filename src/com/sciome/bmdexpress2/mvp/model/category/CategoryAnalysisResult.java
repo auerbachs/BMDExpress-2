@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.model.category;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
@@ -38,7 +40,7 @@ import com.sciome.bmdexpress2.util.NumberManager;
 		@Type(value = DefinedCategoryAnalysisResult.class, name = "defined") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
-		implements Serializable, IGeneContainer
+		implements Serializable, IGeneContainer, IMarkable
 {
 
 	/**
@@ -2138,7 +2140,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 			}
 			else if ((float) downcount / totalcount >= 0.6f)
 			{
-				this.overallDirection = AdverseDirectionEnum.UP;
+				this.overallDirection = AdverseDirectionEnum.DOWN;
 
 			}
 			else
@@ -2342,6 +2344,29 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 				genesContained.add(rg.getReferenceGene().getGeneSymbol());
 
 		return genesContained;
+	}
+
+	@JsonIgnore
+	@Override
+	public Set<String> getMarkableKeys()
+	{
+		Set<String> returnSet = new HashSet<>();
+		returnSet.add(this.getCategoryDescription());
+		return returnSet;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getMarkableLabel()
+	{
+		return this.getCategoryDescription();
+	}
+
+	@JsonIgnore
+	@Override
+	public Color getMarkableColor()
+	{
+		return Color.YELLOW;
 	}
 
 }
