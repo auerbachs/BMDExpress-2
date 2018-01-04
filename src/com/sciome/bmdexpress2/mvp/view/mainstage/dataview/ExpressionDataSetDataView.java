@@ -26,25 +26,10 @@ import javafx.scene.control.Button;
 public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 		implements IBMDExpressDataView
 {
-
-	protected Button		calculatePCA;
-
-	private final String	CALCULATE_PCA	= "Calculate PCA";
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ExpressionDataSetDataView(BMDExpressAnalysisDataSet doseResponseExperiement, String viewTypeKey)
 	{
 		super(ProbeResponse.class, doseResponseExperiement, viewTypeKey);
-
-		calculatePCA = new Button(CALCULATE_PCA);
-		calculatePCA.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				presenter.showVisualizations(doseResponseExperiement);
-			}
-		});
-		topHBox.getChildren().add(calculatePCA);
 
 		presenter = new ExpressionDataSetDataViewPresenter(this, BMDExpressEventBus.getInstance());
 
@@ -52,6 +37,8 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 			return;
 		setUpTableView(doseResponseExperiement);
 
+		presenter.showVisualizations(doseResponseExperiement);
+		
 		// Disable filtering options for now
 		splitPane.getItems().remove(filtrationNode);
 		hideFilter.setDisable(true);

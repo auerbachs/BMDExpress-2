@@ -8,8 +8,12 @@ import org.jfree.chart.fx.interaction.ZoomHandlerFX;
 public class SciomeChartViewer extends ChartViewer {
 	public static final double CHART_WIDTH = 500;
 	public static final double CHART_HEIGHT = 500;
-	
+
 	public SciomeChartViewer(JFreeChart chart) {
+		this(chart, CHART_WIDTH, CHART_HEIGHT);
+	}
+	
+	public SciomeChartViewer(JFreeChart chart, double width, double height) {
 		super(chart);
 		ChartCanvas canvas = getCanvas();
 		
@@ -21,7 +25,8 @@ public class SciomeChartViewer extends ChartViewer {
 		canvas.setRangeZoomable(false);
 		
 		//Set height and width of chart
-		canvas.setHeight(CHART_HEIGHT);
-		canvas.setWidth(CHART_WIDTH);
+		canvas.setHeight(width);
+		canvas.setWidth(height);
 	}
+	
 }

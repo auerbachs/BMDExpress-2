@@ -12,7 +12,6 @@ import com.sciome.bmdexpress2.mvp.model.CombinedRow;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDAnalysisResultsDataViewPresenter;
-import com.sciome.bmdexpress2.mvp.view.mainstage.ActualCurveFitView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.CurveFitView;
 import com.sciome.bmdexpress2.mvp.view.visualization.BMDAnalysisResultsDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
@@ -20,10 +19,7 @@ import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDa
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
-import com.sciome.bmdexpress2.util.visualizations.curvefit.ModelGraphics;
-import com.sciome.bmdexpress2.util.visualizations.curvefit.ModelGraphicsEvent;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -117,8 +113,8 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 	private class BMDTableCallBack implements Callback<TableColumn, TableCell>
 	{
-		BMDResult				bmdResult;
-		private ModelGraphics	modelGraphics;
+		BMDResult					bmdResult;
+		private CurveFitView	modelGraphics;
 
 		public BMDTableCallBack(BMDResult bmdr)
 		{
@@ -193,7 +189,7 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		}
 
 		/*
-		 * after user clicks on a probe id then we show the curve fit view which is a swingnode based thing.
+		 * after user clicks on a probe id then we show the curve fit view
 		 */
 		private void showGraphView(BMDResult bmdResult, ProbeStatResult probeStatResult)
 		{
@@ -206,35 +202,14 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 			try
 			{
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/actualcurvefit.fxml"));
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/curvefit.fxml"));
 
 				Stage stage = BMDExpressFXUtils.getInstance().generateStage("Curve Viewer: " + name);
 				new Stage(StageStyle.DECORATED);
 				// stage.setAlwaysOnTop(true);
 				stage.setScene(new Scene((AnchorPane) loader.load()));
-				ActualCurveFitView controller = loader.<ActualCurveFitView> getController();
-				if (modelGraphics == null)
-				{
-					modelGraphics = new ModelGraphics(bmdResult, probeStatResult.getBestStatResult(),
-							new ModelGraphicsEvent() {
-
-								@Override
-								public void closeModelGraphics()
-								{
-									modelGraphics = null;
-									Platform.runLater(new Runnable() {
-
-										@Override
-										public void run()
-										{
-											stage.close();
-										}
-									});
-
-								}
-							});
-
-				}
+				CurveFitView controller = loader.<CurveFitView> getController();
+				controller.setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
 				controller.initData(bmdResult, probeStatResult);
 
 				stage.sizeToScene();
@@ -260,7 +235,6 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 	@Override
 	protected Map<String, Map<String, Set<String>>> fillUpDBToPathwayGeneSymbols()
 	{
-
 		try
 		{
 			Object obj = bmdAnalysisDataSet.getObject();
@@ -274,6 +248,5 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 		}
 		return new HashMap<>();
-
 	}
 }
