@@ -64,11 +64,11 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                            <children>
-                              <Label layoutY="22.0" text="Model Name" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="17.0" AnchorPane.topAnchor="5.0">
+                              <Label layoutY="22.0" text="Model" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="17.0" AnchorPane.topAnchor="5.0">
                                  <padding>
                                     <Insets right="5.0" />
                                  </padding></Label>
-                              <ComboBox fx:id="modelNameComboBox" layoutX="141.0" layoutY="16.0" prefHeight="60.0" prefWidth="91.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="5.0" />
+                              <ComboBox fx:id="modelNameComboBox" layoutX="141.0" layoutY="16.0" prefHeight="39.0" prefWidth="110.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="83.0" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="5.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">

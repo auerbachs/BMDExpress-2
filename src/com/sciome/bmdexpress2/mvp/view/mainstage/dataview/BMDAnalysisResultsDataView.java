@@ -210,6 +210,10 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 				stage.setScene(new Scene((AnchorPane) loader.load()));
 				CurveFitView controller = loader.<CurveFitView> getController();
 				controller.setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
+				if (probeStatResult.getBestStatResult() != null)
+					controller.setSelectedModel(probeStatResult.getBestStatResult().toString());
+				else
+					controller.setSelectedModel(probeStatResult.getStatResults().get(0).toString());
 				controller.initData(bmdResult, probeStatResult);
 
 				stage.sizeToScene();

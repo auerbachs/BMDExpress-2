@@ -66,35 +66,35 @@ import javafx.stage.Stage;
 public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, Initializable
 {
 	@FXML
-	private HBox				chartBox;
+	private HBox							chartBox;
 	@FXML
-	private CheckBox			meanAndDeviationCheckBox;
+	private CheckBox						meanAndDeviationCheckBox;
 	@FXML
-	private CheckBox			logDosesCheckBox;
+	private CheckBox						logDosesCheckBox;
 	@FXML
-	private ComboBox			modelNameComboBox;
+	private ComboBox						modelNameComboBox;
 	@FXML
-	private ComboBox			idComboBox;
+	private ComboBox						idComboBox;
 	@FXML
-	private TextField			modelTextField;
+	private TextField						modelTextField;
 	@FXML
-	private TextField			bmdlTextField;
+	private TextField						bmdlTextField;
 	@FXML
-	private TextField			bmdTextField;
+	private TextField						bmdTextField;
 	@FXML
-	private TextField			bmduTextField;
+	private TextField						bmduTextField;
 	@FXML
-	private TextField			fitPTextField;
+	private TextField						fitPTextField;
 	@FXML
-	private TextField			aicTextField;
+	private TextField						aicTextField;
 	@FXML
-	private Button				printButton;
+	private Button							printButton;
 	@FXML
-	private Button				clearButton;
+	private Button							clearButton;
 	@FXML
-	private Button				propertiesButton;
+	private Button							propertiesButton;
 	@FXML
-	private Button				closeButton;
+	private Button							closeButton;
 
 	private BMDResult						bmdResults;					// the matrix of data from the parent
 	private OnewayAnova						oneway;						//
@@ -320,6 +320,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				}
 	
 			});
+			updateGraphs();
 		} else {
 			NumberAxis axis = new NumberAxis("Dose");
 			axis.setRange(doses[0], doses[doses.length - 1]);
