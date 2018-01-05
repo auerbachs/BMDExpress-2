@@ -205,7 +205,7 @@ public class AnalyzeRunner
 			params.setpValueCutoff(catConfig.getBmdPValueCutoff());
 			params.setRemoveBMDPValueLessCuttoff(true);
 		}
-		
+
 		if (catConfig.getMaxFoldChange() == null)
 			params.setUserFoldChangeFilter(false);
 		else
@@ -213,7 +213,7 @@ public class AnalyzeRunner
 			params.setMaxFoldChange(catConfig.getMaxFoldChange());
 			params.setUserFoldChangeFilter(true);
 		}
-		
+
 		if (catConfig.getPrefilterPValueMin() == null)
 			params.setUserPValueFilter(false);
 		else
@@ -221,7 +221,7 @@ public class AnalyzeRunner
 			params.setPValue(catConfig.getPrefilterPValueMin());
 			params.setUserPValueFilter(true);
 		}
-		
+
 		if (catConfig.getPrefilterAdjustedPValueMin() == null)
 			params.setUserAdjustedPValueFilter(false);
 		else
@@ -229,7 +229,7 @@ public class AnalyzeRunner
 			params.setAdjustedPValue(catConfig.getPrefilterAdjustedPValueMin());
 			params.setUserAdjustedPValueFilter(true);
 		}
-		
+
 		if (catConfig.getCorrelationCutoffForConflictingProbeSets() != null)
 			params.setCorrelationCutoffConflictingProbeSets(
 					catConfig.getCorrelationCutoffForConflictingProbeSets());
@@ -304,6 +304,8 @@ public class AnalyzeRunner
 
 			if (catConfig.getOutputName() != null)
 				catResults.setName(catConfig.getOutputName());
+			else
+				project.giveBMDAnalysisUniqueName(catResults, catResults.getName());
 			project.getCategoryAnalysisResults().add(catResults);
 		}
 	}
@@ -434,14 +436,14 @@ public class AnalyzeRunner
 					processables.add(will);
 				else if (will.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(will);
-		
+
 		for (OriogenResults ori : project.getOriogenResults())
 			if (bmdsConfig.getInputCategory().equalsIgnoreCase("oriogen"))
 				if (bmdsConfig.getInputName() == null)
 					processables.add(ori);
 				else if (ori.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(ori);
-		
+
 		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
 			if (bmdsConfig.getInputCategory().equalsIgnoreCase("expression"))
 				if (bmdsConfig.getInputName() == null)
@@ -456,6 +458,8 @@ public class AnalyzeRunner
 					modelSelectionParameters, modelsToRun, inputParameters);
 			if (bmdsConfig.getOutputName() != null)
 				result.setName(bmdsConfig.getOutputName());
+			else
+				project.giveBMDAnalysisUniqueName(result, result.getName());
 			project.getbMDResult().add(result);
 		}
 
@@ -475,7 +479,7 @@ public class AnalyzeRunner
 				processables.add(exp);
 			else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
 				processables.add(exp);
-		
+
 		if (preFilterConfig instanceof ANOVAConfig)
 		{
 			ANOVARunner anovaRunner = new ANOVARunner();
@@ -485,9 +489,12 @@ public class AnalyzeRunner
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
+						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName(),
+						project));
 			}
-		} else if(preFilterConfig instanceof WilliamsConfig) {
+		}
+		else if (preFilterConfig instanceof WilliamsConfig)
+		{
 			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
 
 			for (IStatModelProcessable processable : processables)
@@ -495,20 +502,26 @@ public class AnalyzeRunner
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), 
-						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(), 
-						preFilterConfig.getOutputName()));
+						String.valueOf(preFilterConfig.getFoldChange()),
+						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
+						preFilterConfig.getOutputName(), project));
 			}
-		} else if(preFilterConfig instanceof OriogenConfig) {
+		}
+		else if (preFilterConfig instanceof OriogenConfig)
+		{
 			OriogenRunner oriogenRunner = new OriogenRunner();
 
 			for (IStatModelProcessable processable : processables)
 			{
-				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable, preFilterConfig.getpValueCutoff(),
-						preFilterConfig.getUseMultipleTestingCorrection(), ((OriogenConfig)preFilterConfig).isMpc(),
-						((OriogenConfig)preFilterConfig).getInitialBootstraps(), ((OriogenConfig)preFilterConfig).getMaxBootstraps(),
-						((OriogenConfig)preFilterConfig).getS0Adjustment(), preFilterConfig.getFilterOutControlGenes(),
-						preFilterConfig.getUseFoldChange(), String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName()));
+				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
+						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
+						((OriogenConfig) preFilterConfig).isMpc(),
+						((OriogenConfig) preFilterConfig).getInitialBootstraps(),
+						((OriogenConfig) preFilterConfig).getMaxBootstraps(),
+						((OriogenConfig) preFilterConfig).getS0Adjustment(),
+						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
+						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName(),
+						project));
 			}
 		}
 		System.out.println("prefilter analysis");
