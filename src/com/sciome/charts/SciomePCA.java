@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.util.NumberManager;
 import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.export.ChartDataExporter;
@@ -107,12 +108,14 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 			Map<String, List<ChartData>> seriesMap = new HashMap<String, List<ChartData>>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				if(seriesMap.containsKey(chartData.getDataPointLabel())) {
-					seriesMap.get(chartData.getDataPointLabel()).add(chartData);
+				double keyValue = NumberManager.numberFormat(2, Double.parseDouble(chartData.getDataPointLabel()));
+				String key = "" + keyValue;
+				if(seriesMap.containsKey(key)) {
+					seriesMap.get(key).add(chartData);
 				} else {
 					List<ChartData> chartList = new ArrayList<ChartData>();
 					chartList.add(chartData);
-					seriesMap.put(chartData.getDataPointLabel(), chartList);
+					seriesMap.put(key, chartList);
 				}
 			}
 			
