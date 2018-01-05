@@ -129,6 +129,7 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 					if (dataPointValue1 == null || dataPointValue2 == null)
 						continue;
 
+					chartData.setCharttableObject(chartData.getDataPointLabel());
 					SciomeData<Number, Number> theData = new SciomeData<>(chartData.getDataPointLabel(),
 							dataPointValue1, dataPointValue2, new ChartExtraValue(chartData.getDataPointLabel(),
 									0, chartData.getCharttableObject()));
