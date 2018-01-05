@@ -136,6 +136,20 @@ public class BMDProject implements Serializable
 		if (oriogenResults == null)
 			oriogenResults = new ArrayList<>();
 
+		// now make sure all the names are unique
+		for (OneWayANOVAResults data : oneWayANOVAResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (WilliamsTrendResults data : williamsTrendResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (OriogenResults data : oriogenResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (BMDResult data : bMDResult)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (DoseResponseExperiment data : doseResponseExperiments)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (CategoryAnalysisResults data : categoryAnalysisResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+
 	}
 
 	@SuppressWarnings("unchecked")
