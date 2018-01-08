@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.model.stat;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,13 +15,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
+import com.sciome.bmdexpress2.util.NumberManager;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
-public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable, IGeneContainer
+public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable, IGeneContainer, IMarkable
 {
 
 	/**
@@ -183,6 +186,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add("none");
 			row.add("none");
 			row.add("none");
+			row.add("none");
+			row.add("none");
 		}
 		else
 		{
@@ -195,6 +200,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getAIC());
 			row.add(bestStatResult.getAdverseDirection());
 			row.add(bestStatResult.getBMD() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMD());
 		}
 
 		row.add(pValue);
@@ -286,6 +293,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		columnHeader.add(BMDResult.BEST_AIC);
 		columnHeader.add(BMDResult.BEST_ADVERSE_DIRECTION);
 		columnHeader.add(BMDResult.BEST_BMD_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMD_RATIO);
 
 		return columnHeader;
 	}
@@ -462,6 +471,32 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public Object getObject()
 	{
 		return this;
+	}
+
+	@JsonIgnore
+	@Override
+	public Set<String> getMarkableKeys()
+	{
+		if (geneSymbolSet == null)
+			return new HashSet<>();
+		return geneSymbolSet;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getMarkableLabel()
+	{
+		return this.getGeneSymbols() + ": FC=" + NumberManager.numberFormat(2, this.getBestFoldChange());
+	}
+
+	@JsonIgnore
+	@Override
+	public Color getMarkableColor()
+	{
+		if (this.getBestStatResult() == null || this.getBestStatResult().getAdverseDirection() > 0)
+			return Color.yellow;
+		else
+			return Color.blue;
 	}
 
 }

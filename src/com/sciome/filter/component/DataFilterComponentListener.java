@@ -19,4 +19,6 @@ public interface DataFilterComponentListener
 
 	public void saveDataFilter(String key, DataFilterPack dataFilterPack);
 
+	public Set<String> getMarkedData();
+
 }

@@ -927,16 +927,17 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	}
 
-	private void handle_BMDExpressAnalysisDataSetRename(BMDExpressAnalysisDataSet catAnalysisResults,
+	private void handle_BMDExpressAnalysisDataSetRename(BMDExpressAnalysisDataSet bmdAnalysisDataSet,
 			String title)
 	{
-		String newName = textInputDialog(catAnalysisResults.toString(), title, "Rename",
+		String newName = textInputDialog(bmdAnalysisDataSet.toString(), title, "Rename",
 				"Enter the new name.");
 
 		if (newName == null)
 			return;
 
-		catAnalysisResults.setName(newName);
+		presenter.changeAnalysisName(bmdAnalysisDataSet, newName);
+
 		analysisCheckList.refresh();
 
 	}
@@ -974,7 +975,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		if (newName == null)
 			return;
 
-		doseResponseExperiment.setName(newName);
+		presenter.changeAnalysisName(doseResponseExperiment, newName);
 		analysisCheckList.refresh();
 	}
 

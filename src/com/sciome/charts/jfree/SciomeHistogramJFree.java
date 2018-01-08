@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -99,6 +101,7 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		// Add plot point clicking interaction
 		chartView.addChartMouseListener(new ChartMouseListenerFX() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void chartMouseClicked(ChartMouseEventFX e)
 			{
@@ -107,7 +110,17 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
 																					// the left mouse button
 																					// clicked
-					showObjectText(e.getEntity().getToolTipText());
+				{
+					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
+					int item = ((XYItemEntity) e.getEntity()).getItem();
+					// get the objects associated with with the click and post it to the other charts
+					// so they can highlight it.
+					List<Object> objects = (List<Object>) getSeriesData().get(seriesIndex).getData().get(item)
+							.getExtraValue();
+					postObjectsForChattingCharts(objects);
+					if (e.getTrigger().getClickCount() == 2)
+						showObjectText(e.getEntity().getToolTipText());
+				}
 			}
 
 			@Override
@@ -189,4 +202,19 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		}
 		setSeriesData(seriesData);
 	}
+
+	@Override
+	public void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -30,6 +30,13 @@ public abstract class SciomePieChart extends SciomeChartBase<Number, Number> imp
 
 	}
 
+	public void redrawPieChart(Map<String, Double> pieDataMap, Map<String, List<Object>> pieObjectMap)
+	{
+		this.pieDataMap = pieDataMap;
+		this.pieObjectMap = pieObjectMap;
+		showChart(caption);
+	}
+
 	@Override
 	protected boolean isXAxisDefineable()
 	{

@@ -3,7 +3,9 @@ package com.sciome.bmdexpress2.mvp.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
@@ -133,6 +135,56 @@ public class BMDProject implements Serializable
 
 		if (oriogenResults == null)
 			oriogenResults = new ArrayList<>();
+
+		// now make sure all the names are unique
+		for (OneWayANOVAResults data : oneWayANOVAResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (WilliamsTrendResults data : williamsTrendResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (OriogenResults data : oriogenResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (BMDResult data : bMDResult)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (DoseResponseExperiment data : doseResponseExperiments)
+			giveBMDAnalysisUniqueName(data, data.getName());
+		for (CategoryAnalysisResults data : categoryAnalysisResults)
+			giveBMDAnalysisUniqueName(data, data.getName());
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void giveBMDAnalysisUniqueName(BMDExpressAnalysisDataSet dataSet, String proposedName)
+	{
+		Set<String> names = new HashSet<>();
+		List<BMDExpressAnalysisDataSet> dataSetWithNames = null;
+		if (dataSet instanceof WilliamsTrendResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) williamsTrendResults;
+		else if (dataSet instanceof OneWayANOVAResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) oneWayANOVAResults;
+		else if (dataSet instanceof BMDResult)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) bMDResult;
+		else if (dataSet instanceof OriogenResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) oriogenResults;
+		else if (dataSet instanceof CategoryAnalysisResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) categoryAnalysisResults;
+		else if (dataSet instanceof DoseResponseExperiment)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
+
+		for (BMDExpressAnalysisDataSet ds : dataSetWithNames)
+			names.add(ds.getName());
+
+		if (names.contains(proposedName))
+		{
+			String appendage = "";
+			int i = 1;
+			while (names.contains(proposedName + appendage))
+			{
+				appendage = "_" + i;
+				i++;
+			}
+			proposedName += appendage;
+		}
+		dataSet.setName(proposedName);
 
 	}
 

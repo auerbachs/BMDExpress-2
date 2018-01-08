@@ -31,7 +31,7 @@ import javafx.scene.layout.VBox;
 /*
  * javafx node that displays a bunch of filter fields. 
  */
-public class FilterCompentsNode extends VBox implements FilterComponentContainer
+public class FilterComponentsNode extends VBox implements FilterComponentContainer
 {
 	private static final String			ADD_FILTER				= "--ADD FILTER--";
 	private List<FilterComponent>		filterComponents;
@@ -51,7 +51,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 	private boolean						filterChangeInProgress	= false;
 
 	//
-	public FilterCompentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
+	public FilterComponentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
 			DataFilterComponentListener dataFilterComponentListener)
 	{
 		super();
@@ -64,7 +64,7 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 
 	}
 
-	public FilterCompentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
+	public FilterComponentsNode(BMDExpressAnalysisDataSet filterableDataSet, Class filterableClass,
 			DataFilterComponentListener dataFilterComponentListener, DataFilterPack dPack)
 	{
 		super();
@@ -249,7 +249,8 @@ public class FilterCompentsNode extends VBox implements FilterComponentContainer
 			e.printStackTrace();
 		}
 
-		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters);
+		DataFilterPack dFP = new DataFilterPack("Data Filter Pack", dataFilters,
+				dataFilterComponentListener.getMarkedData());
 
 		return dFP;
 	}

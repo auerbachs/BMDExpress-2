@@ -1,18 +1,22 @@
 package com.sciome.bmdexpress2.mvp.model.prefilter;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.bmdexpress2.util.NumberManager;
 
-public class OriogenResult extends BMDExpressAnalysisRow implements Serializable, PrefilterResult
+public class OriogenResult extends BMDExpressAnalysisRow implements Serializable, PrefilterResult, IMarkable
 {
 	/**
 	 * 
@@ -30,6 +34,8 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	private transient String			genes;
 	@JsonIgnore
 	private transient String			geneSymbols;
+	@JsonIgnore
+	private transient Set<String>		geneSymbolSet;
 
 	// row data for the table view.
 	@JsonIgnore
@@ -136,7 +142,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 		}
 
 		row = new ArrayList<>();
-
+		geneSymbolSet = new HashSet<>();
 		row.add(probeResponse.getProbe().getId());
 
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
@@ -155,6 +161,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 				}
 				genes.append(refGene.getId());
 				geneSymbols.append(refGene.getGeneSymbol());
+				geneSymbolSet.add(refGene.getGeneSymbol());
 			}
 		}
 
@@ -221,5 +228,28 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	public Object getObject()
 	{
 		return this;
+	}
+
+	@JsonIgnore
+	@Override
+	public Set<String> getMarkableKeys()
+	{
+		if (geneSymbolSet == null)
+			return new HashSet<>();
+		return geneSymbolSet;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getMarkableLabel()
+	{
+		return this.getGeneSymbols();
+	}
+
+	@JsonIgnore
+	@Override
+	public Color getMarkableColor()
+	{
+		return Color.YELLOW;
 	}
 }

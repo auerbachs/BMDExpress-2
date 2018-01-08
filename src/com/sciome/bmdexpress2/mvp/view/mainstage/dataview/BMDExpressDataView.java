@@ -1,13 +1,24 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
+
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
+import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDExpressDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
@@ -16,7 +27,7 @@ import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 import com.sciome.filter.component.DataFilterComponentListener;
-import com.sciome.filter.component.FilterCompentsNode;
+import com.sciome.filter.component.FilterComponentsNode;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -32,16 +43,23 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.util.Callback;
 
 /*
@@ -57,7 +75,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected CheckBox											enableFilterCheckBox;
 	protected SplitPane											splitPaneMain;
 	protected SplitPane											splitPane;
-	protected FilterCompentsNode								filtrationNode;
+	protected FilterComponentsNode								filtrationNode;
+	protected Button											markData;
 	protected Button											hideFilter;
 	protected Button											hideTable;
 	protected Button											hideCharts;
@@ -80,6 +99,10 @@ public abstract class BMDExpressDataView<T> extends VBox
 	private DataFilterPack										defaultDPack	= null;
 	protected ObservableList<BMDExpressAnalysisRow>				rawTableData	= null;
 
+	private Map<String, Map<String, Set<String>>>				dbToPathwayToGeneSet;
+	private Set<String>											markedData		= new TreeSet<>(
+			String.CASE_INSENSITIVE_ORDER);
+
 	@SuppressWarnings("unchecked")
 	public BMDExpressDataView(Class<?> filterableClass, BMDExpressAnalysisDataSet bmdAnalysisDataSet,
 			String viewTypeKey)
@@ -88,6 +111,9 @@ public abstract class BMDExpressDataView<T> extends VBox
 		try
 		{
 			this.bmdAnalysisDataSet = bmdAnalysisDataSet;
+
+			dbToPathwayToGeneSet = fillUpDBToPathwayGeneSymbols();
+			markedData = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 			splitPane = new SplitPane();
 			this.filterableClass = filterableClass;
 			splitPane.setOrientation(Orientation.HORIZONTAL);
@@ -111,6 +137,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			splitPane.getItems().add(splitPaneMain);
 			hideFilter = new Button(SHOW_FILTER);
+			markData = new Button("Mark Data");
 
 			defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.getName());
 			// initialize the data filters in this data filter pack. If they were deserialized from disk
@@ -122,7 +149,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 					df.init();
 				}
 
-			filtrationNode = new FilterCompentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
+			filtrationNode = new FilterComponentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
 			filtrationNode.init();
 
 			if (!BMDExpressProperties.getInstance().isHideFilter())
@@ -149,6 +176,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			topHBox.getChildren().add(totalItemsLabel);
 			topHBox.getChildren().add(enableFilterCheckBox);
+			topHBox.getChildren().add(markData);
 			topHBox.getChildren().add(hideFilter);
 			topHBox.getChildren().add(hideTable);
 			topHBox.getChildren().add(hideCharts);
@@ -161,6 +189,15 @@ public abstract class BMDExpressDataView<T> extends VBox
 			SplitPane.setResizableWithParent(filtrationNode, true);
 			splitPane.setDividerPosition(0, .7);
 
+			markData.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					// open the popup to mark your data
+					specifyGenesToHighlight();
+				}
+
+			});
 			hideFilter.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent e)
@@ -229,6 +266,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 		}
 
 	}
+
+	protected abstract Map<String, Map<String, Set<String>>> fillUpDBToPathwayGeneSymbols();
 
 	/*
 	 * This method is called by the child class if the child class wants to set up the table in the default
@@ -316,6 +355,9 @@ public abstract class BMDExpressDataView<T> extends VBox
 	public void dataFilterChanged()
 	{
 
+		// make sure the data visualization had a recent copy of the marked data
+		// before performing redraw
+		dataVisualizationController.setMarkedData(markedData);
 		DataFilterPack dataFilterPack = filtrationNode.getFilterDataPack();
 
 		filterTable(filtrationNode.getFilterDataPack());
@@ -340,12 +382,12 @@ public abstract class BMDExpressDataView<T> extends VBox
 		{
 			totalItemsLabel.setText(
 					"Total Items: " + filteredData.size() + "/" + analysisDataSet.getAnalysisRows().size());
-			dataVisualizationController.redrawCharts(dataFilterPack, localSelectedIds);
+			dataVisualizationController.redrawCharts(dataFilterPack);
 		}
 		else
 		{
 			totalItemsLabel.setText("Total Items: " + analysisDataSet.getAnalysisRows().size());
-			dataVisualizationController.redrawCharts(null, localSelectedIds);
+			dataVisualizationController.redrawCharts(null);
 		}
 	}
 
@@ -461,6 +503,14 @@ public abstract class BMDExpressDataView<T> extends VBox
 	}
 
 	@Override
+	public Set<String> getMarkedData()
+	{
+		if (markedData == null)
+			return new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+		return markedData;
+	}
+
+	@Override
 	public void saveDataFilter(String key, DataFilterPack filterPack)
 	{
 		BMDExpressProperties.getInstance().putDataFilterPackMap(key, filterPack);
@@ -525,6 +575,146 @@ public abstract class BMDExpressDataView<T> extends VBox
 					.compareTo(Double.valueOf(((Number) o2).doubleValue()));
 		else
 			return o1.toString().compareTo(o2.toString());
+
+	}
+
+	// show the configuration to the user.
+	// this too coupled to the model
+	// we will need to make the highlighting of genes or categories more generic
+	// This will take a little more thought and reengineering.
+	//
+	private void specifyGenesToHighlight()
+	{
+		TextArea genesTextField = new TextArea();
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setTitle("Select Gene Sets To Highlight");
+		dialog.setResizable(true);
+		dialog.initOwner(this.getScene().getWindow());
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.setResizable(false);
+
+		VBox vbox = new VBox();
+		if (dbToPathwayToGeneSet != null)
+		{
+			ComboBox<String> howtodostring;
+			// Create the CheckComboBox with the data
+			howtodostring = new ComboBox<String>(
+					FXCollections.observableArrayList(Arrays.asList("begins with", "contains")));
+
+			howtodostring.setValue("begins with");
+			List<String> pathways = new ArrayList<>();
+			HBox hbox = new HBox();
+
+			ComboBox<String> dbCombo = new ComboBox<>();
+			TextField pathwayTextField = new TextField();
+			Button clearButton = new Button("Clear");
+			clearButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e)
+				{
+					genesTextField.clear();
+				}
+
+			});
+			pathwayTextField.setMinWidth(300);
+			TextFields.bindAutoCompletion(pathwayTextField,
+					new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
+
+						@Override
+						public Collection<String> call(ISuggestionRequest param)
+						{
+							List<String> returnList = new ArrayList<>();
+							for (String p : pathways)
+								if (howtodostring.getValue().equals("contains")
+										&& p.toLowerCase().contains(param.getUserText().toLowerCase()))
+									returnList.add(p);
+								else if (howtodostring.getValue().equals("begins with")
+										&& p.toLowerCase().startsWith(param.getUserText().toLowerCase()))
+									returnList.add(p);
+
+							return returnList;
+						}
+					});
+			List<String> dbList = new ArrayList<>(dbToPathwayToGeneSet.keySet());
+			Collections.sort(dbList);
+			dbCombo.setItems(FXCollections.observableArrayList(dbList));
+
+			dbCombo.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				@Override
+				public void changed(ObservableValue ov, String t, String t1)
+				{
+					pathways.clear();
+					pathways.addAll(dbToPathwayToGeneSet.get(t1).keySet());
+					Collections.sort(pathways);
+
+				}
+			});
+			pathwayTextField.textProperty().addListener((observable, oldValue, newValue) ->
+			{
+				if (newValue == null)
+					return;
+
+				Set<String> genes = dbToPathwayToGeneSet.get(dbCombo.getValue()).get(newValue);
+				if (genes == null)
+					return;
+				List<String> geneSymbols = new ArrayList<>(genes);
+				Collections.sort(geneSymbols);
+
+				// category analysis results only allow to highlight pathway names.
+				if (bmdAnalysisDataSet.getAnalysisRows().size() > 0 && bmdAnalysisDataSet.getAnalysisRows()
+						.get(0).getObject() instanceof CategoryAnalysisResult)
+				{
+					genesTextField.setText(newValue + "\n" + genesTextField.getText());
+				}
+				else
+					genesTextField.setText(String.join("\n", geneSymbols) + "\n" + genesTextField.getText());
+
+			});
+
+			hbox.getChildren().addAll(howtodostring, dbCombo, pathwayTextField, clearButton);
+			vbox.getChildren().add(hbox);
+			dbCombo.getSelectionModel().select(0);
+		}
+
+		genesTextField.setMinWidth(600.0);
+		genesTextField.setMinHeight(400.0);
+
+		String defaultText = String.join("\n", markedData);
+		genesTextField.setText(defaultText);
+
+		vbox.getChildren().add(genesTextField);
+
+		dialog.getDialogPane().setContent(vbox);
+		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+		dialog.setResultConverter(new Callback<ButtonType, String>() {
+			@Override
+			public String call(ButtonType b)
+			{
+				if (b == buttonTypeOk)
+					return genesTextField.getText();
+
+				return null;
+			}
+		});
+
+		dialog.getDialogPane().setPrefSize(600, 400);
+		dialog.getDialogPane().autosize();
+		Optional<String> value = dialog.showAndWait();
+
+		if (value.isPresent())
+		{
+			markedData.clear();
+			for (String line : genesTextField.getText().split("\\n"))
+				markedData.add(line);
+
+			// marked data changed. tell everybody to update.
+			dataFilterChanged();
+		}
 
 	}
 }

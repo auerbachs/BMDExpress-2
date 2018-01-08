@@ -1,6 +1,7 @@
 package com.sciome.charts.javafx;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
@@ -28,6 +29,20 @@ public class SciomeLineChartFX extends SciomeLineChart
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

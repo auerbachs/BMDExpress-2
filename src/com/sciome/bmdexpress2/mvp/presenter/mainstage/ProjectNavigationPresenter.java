@@ -160,6 +160,7 @@ public class ProjectNavigationPresenter
 		}
 		for (DoseResponseExperiment experiment : experiments)
 		{
+			currentProject.giveBMDAnalysisUniqueName(experiment, experiment.getName());
 			currentProject.getDoseResponseExperiments().add(experiment);
 
 			getView().addDoseResponseExperiement(experiment, true);
@@ -173,6 +174,8 @@ public class ProjectNavigationPresenter
 	@Subscribe
 	public void onLoadOneWayANOVAAnalysis(OneWayANOVADataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addOneWayANOVAAnalysis(event.GetPayload(), true);
 		currentProject.getOneWayANOVAResults().add(event.GetPayload());
 	}
@@ -183,6 +186,8 @@ public class ProjectNavigationPresenter
 	@Subscribe
 	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addWilliamsTrendAnalysis(event.GetPayload(), true);
 		currentProject.getWilliamsTrendResults().add(event.GetPayload());
 	}
@@ -193,6 +198,8 @@ public class ProjectNavigationPresenter
 	@Subscribe
 	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addOriogenAnalysis(event.GetPayload(), true);
 		currentProject.getOriogenResults().add(event.GetPayload());
 	}
@@ -203,6 +210,8 @@ public class ProjectNavigationPresenter
 	@Subscribe
 	public void onLoadBMDAnalysis(BMDAnalysisDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addBMDAnalysis(event.GetPayload(), true);
 		currentProject.getbMDResult().add(event.GetPayload());
 	}
@@ -213,6 +222,8 @@ public class ProjectNavigationPresenter
 	@Subscribe
 	public void onLoadCategoryAnalysis(CategoryAnalysisDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addCategoryAnalysis(event.GetPayload(), true);
 		currentProject.getCategoryAnalysisResults().add(event.GetPayload());
 	}
@@ -355,12 +366,37 @@ public class ProjectNavigationPresenter
 			if (newProject != null)
 			{
 				// add files to the current project
-				currentProject.getDoseResponseExperiments().addAll(newProject.getDoseResponseExperiments());
-				currentProject.getWilliamsTrendResults().addAll(newProject.getWilliamsTrendResults());
-				currentProject.getOneWayANOVAResults().addAll(newProject.getOneWayANOVAResults());
-				currentProject.getOriogenResults().addAll(newProject.getOriogenResults());
-				currentProject.getbMDResult().addAll(newProject.getbMDResult());
-				currentProject.getCategoryAnalysisResults().addAll(newProject.getCategoryAnalysisResults());
+				for (DoseResponseExperiment data : newProject.getDoseResponseExperiments())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getDoseResponseExperiments().add(data);
+				}
+				for (WilliamsTrendResults data : newProject.getWilliamsTrendResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getWilliamsTrendResults().add(data);
+				}
+				for (OneWayANOVAResults data : newProject.getOneWayANOVAResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getOneWayANOVAResults().add(data);
+				}
+				for (OriogenResults data : newProject.getOriogenResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getOriogenResults().add(data);
+				}
+
+				for (BMDResult data : newProject.getbMDResult())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getbMDResult().add(data);
+				}
+				for (CategoryAnalysisResults data : newProject.getCategoryAnalysisResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getCategoryAnalysisResults().add(data);
+				}
 
 				// Set project file to null to request new file name for saving
 				currentProjectFile = null;
@@ -844,6 +880,12 @@ public class ProjectNavigationPresenter
 		}
 		// now post an event with a list of pure analysis sets.
 		System.out.println();
+
+	}
+
+	public void changeAnalysisName(BMDExpressAnalysisDataSet bmdAnalysisDataSet, String newName)
+	{
+		currentProject.giveBMDAnalysisUniqueName(bmdAnalysisDataSet, newName);
 
 	}
 

@@ -1,10 +1,14 @@
 package com.sciome.charts.jfree;
 
 import java.awt.Color;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -26,16 +30,17 @@ import com.sciome.charts.model.SciomeSeries;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
-public class SciomePCAJFree extends SciomePCA {
+public class SciomePCAJFree extends SciomePCA
+{
 
-	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
-			ChartKey key2, boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
+	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
 	}
 
-	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
-			ChartKey key2, SciomeChartListener chartListener)
+	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
+			SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, key1, key2, true, true, chartListener);
 	}
@@ -121,8 +126,7 @@ public class SciomePCAJFree extends SciomePCA {
 			range.setRange(min2, max2);
 		}
 
-		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
-
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)plot.getRenderer();
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
 			@Override
@@ -134,8 +138,26 @@ public class SciomePCAJFree extends SciomePCA {
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.5f);
-
+		plot.setForegroundAlpha(0.5f);
+		
+		//Order the elements in the legend from smallest to largest
+		LegendItemCollection collection = renderer.getLegendItems();
+		TreeSet<Double> set = new TreeSet<Double>();
+		LegendItemCollection items = new LegendItemCollection();
+		for(int i = 0; i < collection.getItemCount(); i++) {
+			set.add(Double.parseDouble(collection.get(i).getLabel()));
+		}
+		Iterator<Double> it = set.iterator();
+		while(it.hasNext()) {
+			Double first = it.next();
+			for(int j = 0; j < collection.getItemCount(); j++) {
+				if(collection.get(j).getLabel().equals("" + first)) {
+					items.add(collection.get(j));
+				}
+			}
+		}
+		plot.setFixedLegendItems(items);
+		
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 
@@ -161,6 +183,27 @@ public class SciomePCAJFree extends SciomePCA {
 		});
 
 		return chartView;
+	}
+
+	@Override
+	public void recieveChatFromOtherChart(List<Object> conversation)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }
