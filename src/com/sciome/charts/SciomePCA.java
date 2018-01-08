@@ -108,7 +108,8 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 			Map<String, List<ChartData>> seriesMap = new HashMap<String, List<ChartData>>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				double keyValue = NumberManager.numberFormat(2, Double.parseDouble(chartData.getDataPointLabel()));
+				String[] dose = chartData.getDataPointLabel().split(" - ");
+				double keyValue = NumberManager.numberFormat(2, Double.parseDouble(dose[0]));
 				String key = "" + keyValue;
 				if(seriesMap.containsKey(key)) {
 					seriesMap.get(key).add(chartData);

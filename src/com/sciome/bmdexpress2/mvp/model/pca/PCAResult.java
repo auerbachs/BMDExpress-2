@@ -9,6 +9,7 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 public class PCAResult extends BMDExpressAnalysisRow {
 	
 	private	String					dosage;
+	private String					name;
 	private List<Float>				principleComponents;
 	
 	// row data for the table view.
@@ -23,6 +24,15 @@ public class PCAResult extends BMDExpressAnalysisRow {
 	public void setDosage(String dosage) {
 		this.dosage = dosage;
 	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public List<Float> getPrincipleComponents() {
 		return principleComponents;
 	}
