@@ -146,7 +146,12 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 	
 	public void initData(BMDResult bmdResult, ProbeStatResult probeStatResult) {
 		this.bmdResults = bmdResult;
-		this.bestModel = bestModel;
+		setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
+		if (probeStatResult.getBestStatResult() != null)
+			setSelectedModel(probeStatResult.getBestStatResult().toString());
+		else
+			setSelectedModel(probeStatResult.getStatResults().get(0).toString());
+		
 		mapProbesToData();
 		
 		// set the doses.
@@ -382,7 +387,6 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// retrieve models and probe IDs to populate the comboboxes
 		modelNameComboBox.getItems().addAll(getModelNames());
 		idComboBox.getItems().addAll(getProbes());
-		modelNameComboBox.getSelectionModel().select(0);
 		
 		logDosesCheckBox.setSelected(false);
 		
