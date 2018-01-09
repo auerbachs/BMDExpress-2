@@ -12,7 +12,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.annotations.XYDrawableAnnotation;
-import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
@@ -194,6 +193,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 																					// the left mouse button
 																					// clicked
 				{
+					if (!(e.getEntity() instanceof XYItemEntity))
+						return;
 					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
 					int item = ((XYItemEntity) e.getEntity()).getItem();
 					// get the objects associated with with the click and post it to the other charts
@@ -204,7 +205,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
 				}
-				else
+				else if (e.getTrigger().getClickCount() == 2)
 					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
@@ -254,7 +255,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 						if (object instanceof IMarkable)
 						{
 							IMarkable markable = (IMarkable) object;
-							XYPointerAnnotation labelann = new XYPointerAnnotation(
+							DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
 									markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
 									chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 							labelann.setBaseRadius(40.0);
@@ -301,9 +302,9 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(), 17,
 								17, new ColorBlock(Color.BLACK, 17, 17));
 
-						XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
-								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
-								Math.PI * 4 / 3);
+						DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
+								markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
+								chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 						labelann.setBaseRadius(40.0);
 						labelann.setLabelOffset(5.0);
 						labelann.setBackgroundPaint(Color.yellow);
