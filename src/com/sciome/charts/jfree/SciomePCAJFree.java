@@ -11,6 +11,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -176,6 +178,20 @@ public class SciomePCAJFree extends SciomePCA
 			}
 		}
 		plot.setFixedLegendItems(items);
+		
+		chart.addChangeListener(new ChartChangeListener() {
+			@Override
+			public void chartChanged(ChartChangeEvent event) {
+				if(event.getChart() != null) {
+					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
+					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
+					gethSlider().setLowValue(xAxis.getLowerBound());
+					gethSlider().setHighValue(xAxis.getUpperBound());
+					getvSlider().setLowValue(yAxis.getLowerBound());
+					getvSlider().setHighValue(yAxis.getUpperBound());
+				}
+			}
+		});
 		
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);

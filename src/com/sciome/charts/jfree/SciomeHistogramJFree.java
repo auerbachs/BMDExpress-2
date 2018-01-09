@@ -10,6 +10,8 @@ import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
@@ -105,6 +107,17 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		plot.setBackgroundPaint(Color.white);
 		chart.getPlot().setForegroundAlpha(0.5f);
 
+		chart.addChangeListener(new ChartChangeListener() {
+			@Override
+			public void chartChanged(ChartChangeEvent event) {
+				if(event.getChart() != null) {
+					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
+					gethSlider().setLowValue(xAxis.getLowerBound());
+					gethSlider().setHighValue(xAxis.getUpperBound());
+				}
+			}
+		});
+		
 		// Create Custom ChartViewer to deal with zooming
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 

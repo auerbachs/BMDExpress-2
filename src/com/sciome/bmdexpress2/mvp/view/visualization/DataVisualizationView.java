@@ -209,7 +209,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			HBox hbox = new HBox();
 			hbox.getChildren().add(chartsToShow.get(0));
 			HBox.setHgrow(chartsToShow.get(0), Priority.ALWAYS);
-			hbox.setMinWidth(800);
+			hbox.setMinWidth(500);
 			vBox.getChildren().add(hbox);
 		}
 
@@ -238,7 +238,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 				hBox = new HBox();
 				hBox.setMaxWidth(1000);
 			}
-			chart.setStyle("-fx-border-color: black;" + "-fx-padding: 0 0 30 0;");
+			chart.setStyle("-fx-border-color: black;" + "-fx-padding: 0 20 30 0;");
 			hBox.getChildren().add(chart);
 			hBox.setSpacing(10.0);
 			i++;

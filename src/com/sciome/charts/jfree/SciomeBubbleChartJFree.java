@@ -15,6 +15,8 @@ import org.jfree.chart.annotations.XYDrawableAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -173,6 +175,20 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		plot.setBackgroundPaint(Color.white);
 		chart.getPlot().setForegroundAlpha(.8f);
 
+		chart.addChangeListener(new ChartChangeListener() {
+			@Override
+			public void chartChanged(ChartChangeEvent event) {
+				if(event.getChart() != null) {
+					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
+					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
+					gethSlider().setLowValue(xAxis.getLowerBound());
+					gethSlider().setHighValue(xAxis.getUpperBound());
+					getvSlider().setLowValue(yAxis.getLowerBound());
+					getvSlider().setHighValue(yAxis.getUpperBound());
+				}
+			}
+		});
+		
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 		// Add plot point clicking interaction
