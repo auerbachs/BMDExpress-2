@@ -27,9 +27,9 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 	private int				nodeCount;
 
 	public SciomeBubbleChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
-			ChartKey key3, SciomeChartListener chartListener)
+			ChartKey key3, boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key1, key2, key3 }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2, key3 }, allowXAxisSlider, allowYAxisSlider, chartListener);
 		showChart();
 
 	}

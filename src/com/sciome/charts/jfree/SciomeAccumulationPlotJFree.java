@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
@@ -24,6 +25,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 
@@ -36,20 +38,26 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
 public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 {
-
 	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
 	private List<AbstractXYAnnotation>	markedAnnotations	= new ArrayList<>();
 	private JFreeChart					chart;
-
+	private double						lowX;
+	private double						lowY;
+	private double						highX;
+	private double						highY;
+	
 	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key, bucketsize, chartListener);
+		super(title, chartDataPacks, key, bucketsize, true, true, chartListener);
 	}
 
 	@Override
@@ -66,7 +74,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		// Create chart
 		chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1.toString(), key2, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
-		XYPlot plot = (XYPlot) chart.getPlot();
+		XYPlot plot = chart.getXYPlot();
 		plot.clearAnnotations();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
@@ -142,6 +150,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			domain.setRange(min1, max1);
 			range.setRange(min2, max2);
 		}
+		setSliders(min1, max1, min2, max2);
 
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
 		renderer.setDefaultShapesVisible(true);
@@ -212,7 +221,6 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			@Override
 			public void chartMouseMoved(ChartMouseEventFX e)
 			{
-
 				// ignore for now
 			}
 		});
@@ -224,7 +232,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	public void reactToChattingCharts()
 	{
 		for (AbstractXYAnnotation annotation : chattingAnnotations)
-			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
+			chart.getXYPlot().removeAnnotation(annotation, false);
 		Set<String> conversationalSet = new HashSet<>();
 		for (Object obj : getConversationalObjects())
 			conversationalSet.add(obj.toString().toLowerCase());
@@ -250,8 +258,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 						// ann2 will give us black outline
 						chattingAnnotations.add(ann2);
 						chattingAnnotations.add(ann);
-						((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
-						((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+						chart.getXYPlot().addAnnotation(ann2, false);
+						chart.getXYPlot().addAnnotation(ann, false);
 						if (object instanceof IMarkable)
 						{
 							IMarkable markable = (IMarkable) object;
@@ -266,7 +274,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 							labelann.setTipRadius(5);
 							labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 							chattingAnnotations.add(labelann);
-							((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
+							chart.getXYPlot().addAnnotation(labelann, false);
 						}
 					}
 				}
@@ -337,4 +345,52 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		return false;
 	}
 
+	private void setSliders(double minX, double maxX, double minY, double maxY) {
+		lowX = minX;
+		highX = maxX;
+		lowY = minY;
+		highY = maxY;
+		
+		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
+		RangeSlider vSlider = new RangeSlider(minY, maxY, minY, maxY);
+		vSlider.setOrientation(Orientation.VERTICAL);
+		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				lowX = newValue.doubleValue();
+				if(lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+		
+		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				highX = newValue.doubleValue();
+				if(lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+		
+		vSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				lowY = newValue.doubleValue();
+				if(lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+		
+		vSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				highY = newValue.doubleValue();
+				if(lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+		
+		sethSlider(hSlider);
+		setvSlider(vSlider);
+	}
 }

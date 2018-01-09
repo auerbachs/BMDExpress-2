@@ -32,7 +32,7 @@ public class SciomeHistogramFX extends SciomeHistogram implements ChartDataExpor
 	public SciomeHistogramFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key, bucketsize, chartListener);
+		super(title, chartDataPacks, key, bucketsize, false, false, chartListener);
 
 	}
 

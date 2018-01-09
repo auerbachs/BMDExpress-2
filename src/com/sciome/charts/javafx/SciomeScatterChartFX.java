@@ -29,7 +29,7 @@ public class SciomeScatterChartFX extends SciomeScatterChart implements ChartDat
 	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
 			ChartKey key2, boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
+		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, false, false, chartListener);
 	}
 
 	public SciomeScatterChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,

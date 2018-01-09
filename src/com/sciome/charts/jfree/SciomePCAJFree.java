@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
@@ -16,6 +17,7 @@ import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 
@@ -27,16 +29,25 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
 public class SciomePCAJFree extends SciomePCA
 {
-
+	private JFreeChart			chart;
+	private double				lowX;
+	private double				lowY;
+	private double				highX;
+	private double				highY;
+	
 	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, chartListener);
+		super(title, chartDataPacks, key1, key2, allowXLogAxis, allowYLogAxis, true, true, chartListener);
+		
 	}
 
 	public SciomePCAJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
@@ -74,9 +85,9 @@ public class SciomePCAJFree extends SciomePCA
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges });
 		}
 
-		JFreeChart chart = ChartFactory.createScatterPlot(key1.toString() + " Vs. " + key2.toString(),
+		chart = ChartFactory.createScatterPlot(key1.toString() + " Vs. " + key2.toString(),
 				key1.toString(), key2.toString(), dataset, PlotOrientation.VERTICAL, true, true, false);
-		XYPlot plot = (XYPlot) chart.getPlot();
+		XYPlot plot = chart.getXYPlot();
 		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
@@ -125,6 +136,14 @@ public class SciomePCAJFree extends SciomePCA
 			domain.setRange(min1, max1);
 			range.setRange(min2, max2);
 		}
+		setSliders(min1, max1, min2, max2);
+		
+		ChangeListener<Number> listener = new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				plot.getRangeAxis().setRange(newValue.doubleValue(), newValue.doubleValue());
+			}
+		};
 
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)plot.getRenderer();
 		// Set tooltip string
@@ -204,6 +223,55 @@ public class SciomePCAJFree extends SciomePCA
 	{
 		// TODO Auto-generated method stub
 
+	}
+	
+	private void setSliders(double minX, double maxX, double minY, double maxY) {
+		lowX = minX;
+		highX = maxX;
+		lowY = minY;
+		highY = maxY;
+		
+		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
+		RangeSlider vSlider = new RangeSlider(minY, maxY, minY, maxY);
+		vSlider.setOrientation(Orientation.VERTICAL);
+		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				lowX = newValue.doubleValue();
+				if(lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+		
+		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				highX = newValue.doubleValue();
+				if(lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+		
+		vSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				lowY = newValue.doubleValue();
+				if(lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+		
+		vSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+				highY = newValue.doubleValue();
+				if(lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+		
+		sethSlider(hSlider);
+		setvSlider(vSlider);
 	}
 
 }

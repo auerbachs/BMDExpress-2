@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-
 import org.controlsfx.control.RangeSlider;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
@@ -20,10 +19,13 @@ import com.sciome.charts.data.ChartConfiguration;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.data.ChartStatistics;
 import com.sciome.charts.export.ChartDataExporter;
+import com.sciome.charts.jfree.SciomeChartViewer;
 import com.sciome.charts.model.SciomeSeries;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -47,8 +49,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 /*
  * The Chart Base class will contain all the things that make a chart a chart.
  * All charts will inherit from this base class.  This class contains the raw data: (chartDataPacks) which
@@ -69,7 +69,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private VBox						vBox;
 	private RangeSlider					vSlider;
 	private RangeSlider					hSlider;
-
+	private boolean						allowXAxisSlider;
+	private boolean						allowYAxisSlider;
+	
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
 	private Button						closeButton;
@@ -83,12 +85,14 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private Set<Object>					conversationalObjects	= new HashSet<>();
 
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
-			SciomeChartListener chartListener)
+			boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
 	{
 		this.title = title;
 		this.chartableKeys = keys;
 		this.chartListener = chartListener;
 		this.chartDataPacks = chartDataPacks;
+		this.allowXAxisSlider = allowXAxisSlider;
+		this.allowYAxisSlider = allowYAxisSlider;
 
 		this.convertChartDataPacksToSciomeSeries(chartableKeys, chartDataPacks);
 
@@ -161,7 +165,13 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.setPickOnBounds(false);
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
-
+	
+	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
+			SciomeChartListener chartListener)
+	{
+		this(title, chartDataPacks, keys, false, false, chartListener);
+	}
+	
 	public List<ChartKey> getChartableKeys()
 	{
 		List<ChartKey> keys = new ArrayList<>();
@@ -240,29 +250,14 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		vBox.getChildren().remove(caption2);
 		
 		chart = generateChart(this.chartableKeys, chartConfiguration);
-		hSlider = new RangeSlider();
-		
-		ChangeListener<Number> listener = new ChangeListener<Number>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		};
-		hSlider.lowValueProperty().addListener(listener);
-		hSlider.highValueProperty().addListener(listener);
-		vSlider = new RangeSlider();
-		vSlider.setOrientation(Orientation.VERTICAL);
-		vSlider.lowValueProperty().addListener(listener);
-		vSlider.highValueProperty().addListener(listener);
-		int insertIndex = 0;
-
 		chartBox = new HBox();
-		chartBox.getChildren().add(vSlider);
+		
+		if(allowYAxisSlider) {
+			chartBox.getChildren().add(vSlider);
+		}
 		chartBox.getChildren().add(chart);
 		
+		int insertIndex = 0;
 		if (vBox.getChildren().contains(checkBoxes))
 			insertIndex++;
 		if (vBox.getChildren().size() > 0 && vBox.getChildren().get(0) instanceof CheckBox)
@@ -272,7 +267,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		if (caption2 != null)
 			vBox.getChildren().add(caption2);
 		
-		vBox.getChildren().add(hSlider);
+		if(allowXAxisSlider) {
+			vBox.getChildren().add(hSlider);
+		}
 		VBox.setVgrow(chart, Priority.ALWAYS);
 
 	}
@@ -469,6 +466,38 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	protected CheckBox getLockYAxis()
 	{
 		return lockYAxis;
+	}
+
+	protected RangeSlider getvSlider() {
+		return vSlider;
+	}
+
+	protected void setvSlider(RangeSlider vSlider) {
+		this.vSlider = vSlider;
+	}
+
+	protected RangeSlider gethSlider() {
+		return hSlider;
+	}
+
+	protected void sethSlider(RangeSlider hSlider) {
+		this.hSlider = hSlider;
+	}
+	
+	protected boolean isAllowXAxisSlider() {
+		return allowXAxisSlider;
+	}
+
+	protected void setAllowXAxisSlider(boolean allowXAxisSlider) {
+		this.allowXAxisSlider = allowXAxisSlider;
+	}
+
+	protected boolean isAllowYAxisSlider() {
+		return allowYAxisSlider;
+	}
+
+	protected void setAllowYAxisSlider(boolean allowYAxisSlider) {
+		this.allowYAxisSlider = allowYAxisSlider;
 	}
 
 	// show the configuration to the user.
