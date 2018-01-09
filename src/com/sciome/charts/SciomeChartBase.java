@@ -264,14 +264,13 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			insertIndex++;
 
 		vBox.getChildren().add(insertIndex, chartBox);
+		if(allowXAxisSlider)
+			vBox.getChildren().add(hSlider);
 		if (caption2 != null)
 			vBox.getChildren().add(caption2);
-		
-		if(allowXAxisSlider) {
-			vBox.getChildren().add(hSlider);
-		}
-		VBox.setVgrow(chart, Priority.ALWAYS);
 
+		VBox.setVgrow(chartBox, Priority.ALWAYS);
+		HBox.setHgrow(chart, Priority.ALWAYS);
 	}
 
 	protected void showChart()
