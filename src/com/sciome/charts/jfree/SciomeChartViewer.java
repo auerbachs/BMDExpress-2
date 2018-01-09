@@ -130,11 +130,12 @@ public class SciomeChartViewer extends ChartViewer
 					dragAnn.setAngle(getAngle(sourcePoint, dropPoint));
 					dragAnn.setBaseRadius(distnace);
 					dragAnn.getNotify();
-					e.consume();
-					canvas.clearLiveHandler();
+					// e.consume();
+
 				}
 				drag = null;
 				dragAnn = null;
+				canvas.clearLiveHandler();
 
 			}
 		});
