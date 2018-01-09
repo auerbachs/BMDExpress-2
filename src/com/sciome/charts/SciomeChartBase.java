@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+
+import org.controlsfx.control.RangeSlider;
+
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
@@ -24,6 +27,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -43,7 +47,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 /*
  * The Chart Base class will contain all the things that make a chart a chart.
  * All charts will inherit from this base class.  This class contains the raw data: (chartDataPacks) which
@@ -56,11 +61,14 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private List<ChartDataPack>			chartDataPacks;
 	private int							maxGraphItems			= 2000000;
 	private Node						chart;
+	private HBox						chartBox;
 	private CheckBox					logXAxis				= new CheckBox("Log X Axis");
 	private CheckBox					logYAxis				= new CheckBox("Log Y Axis");
 	private CheckBox					lockXAxis				= new CheckBox("Lock X Axis");
 	private CheckBox					lockYAxis				= new CheckBox("Lock Y Axis");
 	private VBox						vBox;
+	private RangeSlider					vSlider;
+	private RangeSlider					hSlider;
 
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
@@ -227,20 +235,44 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	@SuppressWarnings("restriction")
 	protected void showChart(Label caption2)
 	{
-		vBox.getChildren().remove(chart);
+		vBox.getChildren().remove(chartBox);
+		vBox.getChildren().remove(hSlider);
 		vBox.getChildren().remove(caption2);
+		
 		chart = generateChart(this.chartableKeys, chartConfiguration);
+		hSlider = new RangeSlider();
+		
+		ChangeListener<Number> listener = new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
+		hSlider.lowValueProperty().addListener(listener);
+		hSlider.highValueProperty().addListener(listener);
+		vSlider = new RangeSlider();
+		vSlider.setOrientation(Orientation.VERTICAL);
+		vSlider.lowValueProperty().addListener(listener);
+		vSlider.highValueProperty().addListener(listener);
 		int insertIndex = 0;
 
+		chartBox = new HBox();
+		chartBox.getChildren().add(vSlider);
+		chartBox.getChildren().add(chart);
+		
 		if (vBox.getChildren().contains(checkBoxes))
 			insertIndex++;
 		if (vBox.getChildren().size() > 0 && vBox.getChildren().get(0) instanceof CheckBox)
 			insertIndex++;
 
-		vBox.getChildren().add(insertIndex, chart);
+		vBox.getChildren().add(insertIndex, chartBox);
 		if (caption2 != null)
 			vBox.getChildren().add(caption2);
-
+		
+		vBox.getChildren().add(hSlider);
 		VBox.setVgrow(chart, Priority.ALWAYS);
 
 	}
@@ -261,7 +293,6 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	{
 		if (!vBox.getChildren().contains(node))
 			vBox.getChildren().add(node);
-
 	}
 
 	/*
@@ -614,5 +645,4 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	{
 		return conversationalObjects;
 	}
-
 }
