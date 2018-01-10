@@ -55,7 +55,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	private double						lowY;
 	private double						highX;
 	private double						highY;
-	
+
 	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
@@ -68,7 +68,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		ChartKey key1 = keys[0];
 		String key2 = "Accumulation";
 		Double min1 = getMinMin(key1);
-		Double min2 = 0.0;
+		Double min2 = 1.0;
 		Double max1 = getMaxMax(key1);
 		Double max2 = 0.0;
 
@@ -142,8 +142,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			}
 			else if (min2 > max2)
 			{
-				min2 = 0.0;
-				max2 = 0.1;
+				min2 = 1.0;
+				max2 = 2.0;
 			}
 
 			// Set the domain and range based on these x and y values
@@ -187,11 +187,13 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		
+
 		chart.addChangeListener(new ChartChangeListener() {
 			@Override
-			public void chartChanged(ChartChangeEvent event) {
-				if(event.getChart() != null) {
+			public void chartChanged(ChartChangeEvent event)
+			{
+				if (event.getChart() != null)
+				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
 					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
 					gethSlider().setLowValue(xAxis.getLowerBound());
@@ -360,51 +362,56 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		return false;
 	}
 
-	private void setSliders(double minX, double maxX, double minY, double maxY) {
+	private void setSliders(double minX, double maxX, double minY, double maxY)
+	{
 		lowX = minX;
 		highX = maxX;
 		lowY = minY;
 		highY = maxY;
-		
+
 		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
 		RangeSlider vSlider = new RangeSlider(minY, maxY, minY, maxY);
 		vSlider.setOrientation(Orientation.VERTICAL);
 		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				lowX = newValue.doubleValue();
-				if(lowX != highX)
+				if (lowX != highX)
 					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
 			}
 		});
-		
+
 		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				highX = newValue.doubleValue();
-				if(lowX != highX)
+				if (lowX != highX)
 					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
 			}
 		});
-		
+
 		vSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				lowY = newValue.doubleValue();
-				if(lowY != highY)
+				if (lowY != highY)
 					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
 			}
 		});
-		
+
 		vSlider.highValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				highY = newValue.doubleValue();
-				if(lowY != highY)
+				if (lowY != highY)
 					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
 			}
 		});
-		
+
 		sethSlider(hSlider);
 		setvSlider(vSlider);
 	}
