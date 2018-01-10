@@ -97,6 +97,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 	private Button						closeButton;
 
 	private BMDResult					bmdResults;					// the matrix of data from the parent
+																	// analyis
 	private OnewayAnova					oneway;						//
 	private BMDoseModel					bmdModel;					//
 	private StatResult					bestModel;
@@ -452,11 +453,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 					return 0.09;
 				}
 				logZeroDose = doses2[i];
-				double decade = 1.0;
+
 				double decadeBelowLow = firstdDecadeBelow(logZeroDose);
-				// double lessthan = decade * .00000001;
-				// if (Math.abs(decade - logZeroDose) < lessthan)
-				// decade *= .1;
 				logZeroDose = decadeBelowLow;
 				return decadeBelowLow * .9;
 			}
