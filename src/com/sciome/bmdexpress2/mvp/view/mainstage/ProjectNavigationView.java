@@ -98,7 +98,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	}
 
 	/*
-	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus
+	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus Datq
 	 */
 	public ProjectNavigationView(BMDExpressEventBus eventBus)
 	{
