@@ -116,7 +116,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		HBox hbox = new HBox();
 		hbox.getChildren().add(dataGroupCombo);
 
-		Button clearButton = new Button("Clear Checked Items");
+		Button clearButton = new Button("Clear");
 		Button checkAllButton = new Button("Check All");
 		hbox.getChildren().add(checkAllButton);
 		hbox.getChildren().add(clearButton);
