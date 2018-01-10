@@ -263,8 +263,7 @@ public class JFreeCurve
 		double maxDose = bmdModel.maximumDose();
 
 		// create new series
-		XYSeries modelSeries = new XYSeries(
-				bmdResult.getDoseResponseExperiment().getName() + ": " + probeStatResult.toString());
+		XYSeries modelSeries = new XYSeries(bmdResult.getName() + ": " + probeStatResult.toString());
 		Set<Double> uniqueDosesSet = new HashSet<>();
 		for (int i = 0; i < doses.length; i++)
 			uniqueDosesSet.add(doses[i]);
