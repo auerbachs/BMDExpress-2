@@ -215,9 +215,10 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			{
 				if (e.getEntity() != null && e.getEntity().getToolTipText() != null // Check to see if an
 																					// entity was clicked
-						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
-																					// the left mouse button
-																					// clicked
+						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)
+						&& e.getTrigger().isShiftDown()) // Check to see if it was
+				// the left mouse button
+				// clicked
 				{
 					if (!(e.getEntity() instanceof XYItemEntity))
 						return;
@@ -227,9 +228,10 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 					// so they can highlight it.
 					AccumulationData data = (AccumulationData) getSeriesData().get(seriesIndex).getData()
 							.get(item);
-					postObjectsForChattingCharts((List<Object>) data.getExtraValue());
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
+					else
+						postObjectsForChattingCharts((List<Object>) data.getExtraValue());
 				}
 				else if (e.getTrigger().getClickCount() == 2)
 					postObjectsForChattingCharts(new ArrayList<>());

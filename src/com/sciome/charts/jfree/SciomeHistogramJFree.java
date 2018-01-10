@@ -35,17 +35,16 @@ import com.sciome.charts.model.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
 public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataExporter
 {
 
-	private JFreeChart			chart;
-	private double				lowX;
-	private double				highX;
-	
+	private JFreeChart	chart;
+	private double		lowX;
+	private double		highX;
+
 	public SciomeHistogramJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
@@ -75,8 +74,8 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		}
 
 		// Create chart
-		chart = ChartFactory.createHistogram(key.toString() + " Histogram", key.toString(),
-				"Count", dataset, PlotOrientation.VERTICAL, true, true, false);
+		chart = ChartFactory.createHistogram(key.toString() + " Histogram", key.toString(), "Count", dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 
 		// Set plot parameters
 		XYPlot plot = chart.getXYPlot();
@@ -86,7 +85,7 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		plot.setRangeAxis(
 				SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key.toString()));
 		setSliders(getMinMin(key), getMaxMax(key));
-		
+
 		// Set renderer parameters
 		XYBarRenderer renderer = ((XYBarRenderer) plot.getRenderer());
 		// Set tooltip string
@@ -109,15 +108,17 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 
 		chart.addChangeListener(new ChartChangeListener() {
 			@Override
-			public void chartChanged(ChartChangeEvent event) {
-				if(event.getChart() != null) {
+			public void chartChanged(ChartChangeEvent event)
+			{
+				if (event.getChart() != null)
+				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
 					gethSlider().setLowValue(xAxis.getLowerBound());
 					gethSlider().setHighValue(xAxis.getUpperBound());
 				}
 			}
 		});
-		
+
 		// Create Custom ChartViewer to deal with zooming
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 
@@ -130,9 +131,10 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 			{
 				if (e.getEntity() != null && e.getEntity().getToolTipText() != null // Check to see if an
 																					// entity was clicked
-						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
-																					// the left mouse button
-																					// clicked
+						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)
+						&& e.getTrigger().isShiftDown()) // Check to see if it was
+				// the left mouse button
+				// clicked
 				{
 					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
 					int item = ((XYItemEntity) e.getEntity()).getItem();
@@ -239,30 +241,33 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		// TODO Auto-generated method stub
 
 	}
-	
-	private void setSliders(double minX, double maxX) {
+
+	private void setSliders(double minX, double maxX)
+	{
 		lowX = minX;
 		highX = maxX;
-		
+
 		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
 		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				lowX = newValue.doubleValue();
-				if(lowX != highX)
+				if (lowX != highX)
 					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
 			}
 		});
-		
+
 		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
 				highX = newValue.doubleValue();
-				if(lowX != highX)
+				if (lowX != highX)
 					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
 			}
 		});
-		
+
 		sethSlider(hSlider);
 	}
 }
