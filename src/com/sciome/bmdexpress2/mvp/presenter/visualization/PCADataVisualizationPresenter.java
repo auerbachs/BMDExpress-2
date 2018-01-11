@@ -26,24 +26,8 @@ public class PCADataVisualizationPresenter extends DataVisualizationPresenter {
 	}
 
 	public PCAResults calculatePCA(DoseResponseExperiment doseResponseExperiment) {
-		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
-		List<Treatment> treatments = doseResponseExperiment.getTreatments();
-		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
-		double[] doseVector = new double[treatments.size()];
-		
-		//Fill numeric matrix
-		for(int i = 0; i < numericMatrix.length; i++) {
-			for(int j = 0; j < numericMatrix[i].length; j++) {
-				numericMatrix[i][j] = responses.get(i).getResponses().get(j);
-			}
-		}
-		//Fill doseVector
-		for(int i = 0; i < doseVector.length; i++) {
-			doseVector[i] = treatments.get(i).getDose();
-		}
-		
 		PCAService pcaService = new PCAService();
-		return pcaService.calculatePCA(numericMatrix, doseVector, doseResponseExperiment.getName());
+		return pcaService.calculatePCA(doseResponseExperiment);
 	}
 	
 	@Override

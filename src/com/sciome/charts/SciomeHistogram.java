@@ -35,10 +35,10 @@ public abstract class SciomeHistogram extends SciomeChartBase<String, Number> im
 	protected final int	MAX_TOOL_TIP_SHOWS	= 20;
 
 	public SciomeHistogram(String title, List<ChartDataPack> chartDataPacks, ChartKey key, Double bucketsize,
-			SciomeChartListener chartListener)
+			boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
 	{
 
-		super(title, chartDataPacks, new ChartKey[] { key }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key }, allowXAxisSlider, allowYAxisSlider, chartListener);
 		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e)

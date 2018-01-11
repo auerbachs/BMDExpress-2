@@ -7,14 +7,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.annotations.XYDrawableAnnotation;
-import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
@@ -23,6 +25,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 
@@ -35,6 +38,9 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.input.MouseButton;
 
 public class SciomeBubbleChartJFree extends SciomeBubbleChart
@@ -43,11 +49,15 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
 	private List<AbstractXYAnnotation>	markedAnnotations	= new ArrayList<>();
 	private JFreeChart					chart;
+	private double						lowX;
+	private double						lowY;
+	private double						highX;
+	private double						highY;
 
 	public SciomeBubbleChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key1,
 			ChartKey key2, ChartKey key3, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key1, key2, key3, chartListener);
+		super(title, chartDataPacks, key1, key2, key3, true, true, chartListener);
 		showChart();
 	}
 
@@ -148,6 +158,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 			domain.setRange(min1, max1);
 			range.setRange(min2, max2);
 		}
+		setSliders(min1, max1, min2, max2);
 
 		XYBubbleRenderer renderer = ((XYBubbleRenderer) plot.getRenderer());
 
@@ -164,6 +175,22 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		plot.setBackgroundPaint(Color.white);
 		chart.getPlot().setForegroundAlpha(.8f);
 
+		chart.addChangeListener(new ChartChangeListener() {
+			@Override
+			public void chartChanged(ChartChangeEvent event)
+			{
+				if (event.getChart() != null)
+				{
+					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
+					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
+					gethSlider().setLowValue(xAxis.getLowerBound());
+					gethSlider().setHighValue(xAxis.getUpperBound());
+					getvSlider().setLowValue(yAxis.getLowerBound());
+					getvSlider().setHighValue(yAxis.getUpperBound());
+				}
+			}
+		});
+
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
 		// Add plot point clicking interaction
@@ -176,10 +203,13 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 				System.out.println("Y: " + e.getTrigger().getY());
 				if (e.getEntity() != null && e.getEntity().getToolTipText() != null // Check to see if an
 																					// entity was clicked
-						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
-																					// the left mouse button
-																					// clicked
+						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)
+						&& e.getTrigger().isShiftDown()) // Check to see if it was
+				// the left mouse button
+				// clicked
 				{
+					if (!(e.getEntity() instanceof XYItemEntity))
+						return;
 					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
 					int item = ((XYItemEntity) e.getEntity()).getItem();
 
@@ -187,12 +217,14 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 					// so they can highlight it.
 					Object userData = ((BubbleChartExtraData) getSeriesData().get(seriesIndex).getData()
 							.get(item).getExtraValue()).userData;
-					postObjectsForChattingCharts(Arrays.asList(userData));
+
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
+					else
+						postObjectsForChattingCharts(Arrays.asList(userData));
 
 				}
-				else
+				else if (e.getTrigger().getClickCount() == 2)
 					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
@@ -236,9 +268,9 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 					{
 						IMarkable markable = (IMarkable) ((BubbleChartExtraData) chartData
 								.getExtraValue()).userData;
-						XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
-								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
-								Math.PI * 4 / 3);
+						DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
+								markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
+								chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 						labelann.setBaseRadius(40.0);
 						labelann.setLabelOffset(5.0);
 						labelann.setBackgroundPaint(Color.pink);
@@ -278,9 +310,9 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 					XYDrawableAnnotation ann2 = new XYDrawableAnnotation(chartData.getXValue().doubleValue(),
 							chartData.getYValue().doubleValue(), 17, 17, new ColorBlock(Color.BLACK, 17, 17));
 
-					XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
-							chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
-							Math.PI * 4 / 3);
+					DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
+							markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
+							chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 					labelann.setBaseRadius(40.0);
 					labelann.setLabelOffset(5.0);
 					labelann.setBackgroundPaint(Color.yellow);
@@ -311,4 +343,57 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 		return false;
 	}
 
+	private void setSliders(double minX, double maxX, double minY, double maxY)
+	{
+		lowX = minX;
+		highX = maxX;
+		lowY = minY;
+		highY = maxY;
+
+		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
+		RangeSlider vSlider = new RangeSlider(minY, maxY, minY, maxY);
+		vSlider.setOrientation(Orientation.VERTICAL);
+		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				lowX = newValue.doubleValue();
+				if (lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+
+		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				highX = newValue.doubleValue();
+				if (lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+
+		vSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				lowY = newValue.doubleValue();
+				if (lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+
+		vSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				highY = newValue.doubleValue();
+				if (lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+
+		sethSlider(hSlider);
+		setvSlider(vSlider);
+	}
 }

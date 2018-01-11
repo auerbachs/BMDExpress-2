@@ -34,9 +34,11 @@ public abstract class SciomeAccumulationPlot extends SciomeChartBase<Number, Num
 	protected Set<String>			genesToHighLight				= new HashSet<>();
 
 	public SciomeAccumulationPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
-			Double bucketsize, SciomeChartListener chartListener)
+			Double bucketsize, boolean allowXAxisSlider, boolean allowYAxisSlider,
+			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key }, allowXAxisSlider, allowYAxisSlider,
+				chartListener);
 
 		getLogXAxis().setSelected(true);
 		getLogYAxis().setSelected(false);

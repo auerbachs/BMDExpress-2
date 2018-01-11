@@ -77,7 +77,6 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		{
 			e.printStackTrace();
 		}
-
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -193,7 +192,6 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		 */
 		private void showGraphView(BMDResult bmdResult, ProbeStatResult probeStatResult)
 		{
-
 			String name = "";
 			if (bmdResult != null)
 				name = bmdResult.getName();
@@ -209,11 +207,6 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 				// stage.setAlwaysOnTop(true);
 				stage.setScene(new Scene((AnchorPane) loader.load()));
 				CurveFitView controller = loader.<CurveFitView> getController();
-//				controller.setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
-//				if (probeStatResult.getBestStatResult() != null)
-//					controller.setSelectedModel(probeStatResult.getBestStatResult().toString());
-//				else
-//					controller.setSelectedModel(probeStatResult.getStatResults().get(0).toString());
 				controller.initData(bmdResult, probeStatResult);
 
 				stage.sizeToScene();
@@ -230,9 +223,7 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 			catch (Exception e)
 			{
 				e.printStackTrace();
-
 			}
-
 		}
 	}
 

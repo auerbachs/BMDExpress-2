@@ -66,94 +66,97 @@ import javafx.stage.Stage;
 public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, Initializable
 {
 	@FXML
-	private HBox							chartBox;
+	private HBox						chartBox;
 	@FXML
-	private CheckBox						meanAndDeviationCheckBox;
+	private CheckBox					meanAndDeviationCheckBox;
 	@FXML
-	private CheckBox						logDosesCheckBox;
+	private CheckBox					logDosesCheckBox;
 	@FXML
-	private ComboBox						modelNameComboBox;
+	private ComboBox					modelNameComboBox;
 	@FXML
-	private ComboBox						idComboBox;
+	private ComboBox					idComboBox;
 	@FXML
-	private TextField						modelTextField;
+	private TextField					modelTextField;
 	@FXML
-	private TextField						bmdlTextField;
+	private TextField					bmdlTextField;
 	@FXML
-	private TextField						bmdTextField;
+	private TextField					bmdTextField;
 	@FXML
-	private TextField						bmduTextField;
+	private TextField					bmduTextField;
 	@FXML
-	private TextField						fitPTextField;
+	private TextField					fitPTextField;
 	@FXML
-	private TextField						aicTextField;
+	private TextField					aicTextField;
 	@FXML
-	private Button							printButton;
+	private Button						printButton;
 	@FXML
-	private Button							clearButton;
+	private Button						clearButton;
 	@FXML
-	private Button							propertiesButton;
+	private Button						propertiesButton;
 	@FXML
-	private Button							closeButton;
+	private Button						closeButton;
 
-	private BMDResult						bmdResults;					// the matrix of data from the parent
-	private OnewayAnova						oneway;						//
-	private BMDoseModel						bmdModel;					//
-	private StatResult						bestModel;
+	private BMDResult					bmdResults;					// the matrix of data from the parent
+																	// analyis
+	private OnewayAnova					oneway;						//
+	private BMDoseModel					bmdModel;					//
+	private StatResult					bestModel;
 
-	private String							srcName;
+	private String						srcName;
 
-	private double[]						doses;						// read in doses
-	private double[]						responses;					// holds responses
-	private double[]						parameters;					// read in parameters BMD, BMDL, BMDU,
-																		// pValue...
+	private double[]					doses;						// read in doses
+	private double[]					responses;					// holds responses
+	private double[]					parameters;					// read in parameters BMD, BMDL, BMDU,
+																	// pValue...
 
-	private XYSeries						dataSeries;					// holds the raw data
-	private XYSeries						modelSeries;				// holds the model
-	private XYSeries						bmdSeries;					// holds the BMD drawing setup
-	private XYSeries						bmdlSeries;					// holds the BMDL drawing setup
-	private XYSeries						bmduSeries;					// holds the BMDU drawing setup
-	private XYSeriesCollection				seriesSet;					// holds the set of series currently
-																		// displayed
+	private XYSeries					dataSeries;					// holds the raw data
+	private XYSeries					modelSeries;				// holds the model
+	private XYSeries					bmdSeries;					// holds the BMD drawing setup
+	private XYSeries					bmdlSeries;					// holds the BMDL drawing setup
+	private XYSeries					bmduSeries;					// holds the BMDU drawing setup
+	private XYSeriesCollection			seriesSet;					// holds the set of series currently
+																	// displayed
 
-	private Color[]							chartColors;				// holds the colors for various chart
-																		// components
+	private Color[]						chartColors;				// holds the colors for various chart
+																	// components
 
-	private JFreeChart						chart;						// the displayed chart
-	private SciomeChartViewer				cP;							// the panel for the chart
+	private JFreeChart					chart;						// the displayed chart
+	private SciomeChartViewer			cP;							// the panel for the chart
 
-	private int								NUM_SERIES;					// holds the number of data series
+	private int							NUM_SERIES;					// holds the number of data series
 
-	private int								CHART_WIDTH = 9000;			// fill up as much space as it can
-	private int								CHART_HEIGHT = 9000;		// fill up as much space as it can
+	private int							CHART_WIDTH		= 9000;		// fill up as much space as it can
+	private int							CHART_HEIGHT	= 9000;		// fill up as much space as it can
 
-	private double							HIGH;						// holds the high y value
-	private double							LOW;						// holds the low y value
-	
-	private Map<Probe, double[]>			probeResponseMap;
-	private Map<Probe, ProbeStatResult>		probeStatResultMap;
-	private double							logZeroDose;
-	CurveFitPresenter						presenter;
-	
+	private double						HIGH;						// holds the high y value
+	private double						LOW;						// holds the low y value
+
+	private Map<Probe, double[]>		probeResponseMap;
+	private Map<Probe, ProbeStatResult>	probeStatResultMap;
+	private double						logZeroDose;
+	CurveFitPresenter					presenter;
+
 	public CurveFitView()
 	{
 		this(BMDExpressEventBus.getInstance());
 	}
-	
-	public CurveFitView(BMDExpressEventBus eventBus) {
+
+	public CurveFitView(BMDExpressEventBus eventBus)
+	{
 		presenter = new CurveFitPresenter(this, eventBus);
 	}
-	
-	public void initData(BMDResult bmdResult, ProbeStatResult probeStatResult) {
+
+	public void initData(BMDResult bmdResult, ProbeStatResult probeStatResult)
+	{
 		this.bmdResults = bmdResult;
 		setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
 		if (probeStatResult.getBestStatResult() != null)
 			setSelectedModel(probeStatResult.getBestStatResult().toString());
 		else
 			setSelectedModel(probeStatResult.getStatResults().get(0).toString());
-		
+
 		mapProbesToData();
-		
+
 		// set the doses.
 		doses = new double[bmdResults.getDoseResponseExperiment().getTreatments().size()];
 		for (int i = 0; i < bmdResults.getDoseResponseExperiment().getTreatments().size(); i++)
@@ -162,17 +165,17 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 		oneway = new OnewayAnova();
 		oneway.setVariablesXX(0, doses);
-		
+
 		// init holder series
 		dataSeries = new XYSeries("Data");
 		modelSeries = new XYSeries("Model");
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
 		bmduSeries = new XYSeries("BMDU");
-	
+
 		// set up the holder for all the series
 		seriesSet = new XYSeriesCollection(dataSeries);
-		
+
 		// init color array
 		// 0: data series color
 		// 1: model series color
@@ -182,7 +185,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		chartColors[1] = Color.BLUE;
 		chartColors[2] = Color.BLACK;
 		chartColors[3] = Color.GREEN;
-		
+
 		chart = ChartFactory.createXYLineChart("Title", // chart title
 				"Dose", // domain axis label
 				"Log(Expression)", // range axis label
@@ -208,37 +211,42 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		plot.setRenderer(renderer);
 
 		cP = new SciomeChartViewer(chart, CHART_WIDTH, CHART_HEIGHT);
-		
+
 		initComponents();
 		getDataSeries();
 		createModels();
 		createDataset();
-		
+
 		chartBox.getChildren().addAll(cP);
-	}
-	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
 	}
 
 	@Override
-	public void closeWindow() {
+	public void initialize(URL location, ResourceBundle resources)
+	{
+	}
+
+	@Override
+	public void closeWindow()
+	{
 		Stage stage = (Stage) meanAndDeviationCheckBox.getScene().getWindow();
 		this.close();
 		stage.close();
 	}
 
 	@Override
-	public void close() {
+	public void close()
+	{
 		if (presenter != null)
 			presenter.destroy();
 	}
-	
-	public void handle_printButtonPressed(ActionEvent event) {
-		//NOT IMPLEMENTED YET
+
+	public void handle_printButtonPressed(ActionEvent event)
+	{
+		// NOT IMPLEMENTED YET
 	}
-	
-	public void handle_clearButtonPressed(ActionEvent event) {
+
+	public void handle_clearButtonPressed(ActionEvent event)
+	{
 		// reset the chart's colors
 		XYPlot plot = (XYPlot) chart.getPlot();
 
@@ -275,22 +283,26 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		createChart(null);
 	}
 
-	public void handle_propertiesButtonPressed(ActionEvent event) {
-		//NOT IMPLEMENTED
+	public void handle_propertiesButtonPressed(ActionEvent event)
+	{
+		// NOT IMPLEMENTED
 	}
 
-	public void handle_closeButtonPressed(ActionEvent event) {
+	public void handle_closeButtonPressed(ActionEvent event)
+	{
 		this.closeWindow();
 	}
-	
-	public void handle_logAxesChecked(ActionEvent event) {
+
+	public void handle_logAxesChecked(ActionEvent event)
+	{
 		XYPlot plot = (XYPlot) chart.getPlot();
-		if(logDosesCheckBox.isSelected()) {
+		if (logDosesCheckBox.isSelected())
+		{
 			LogAxis logAxis = new CustomJFreeLogAxis("Dose");
 			double lowRange = firstNonZeroDose(doses);
 			logAxis.setRange(new Range(lowRange, doses[doses.length - 1] * 1.1));
 			plot.setDomainAxis(logAxis);
-	
+
 			// logAxis.setMinorTickCount(10);
 			logAxis.setMinorTickMarksVisible(false);
 			logAxis.setBase(10);
@@ -298,9 +310,9 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			newSymbols.setExponentSeparator("E");
 			final DecimalFormat decForm = new DecimalFormat("0.##E0#");
 			decForm.setDecimalFormatSymbols(newSymbols);
-	
+
 			logAxis.setNumberFormatOverride(new NumberFormat() {
-	
+
 				@Override
 				public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos)
 				{
@@ -309,34 +321,37 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 						return new StringBuffer("0");
 					return new StringBuffer(decForm.format(number));
 				}
-	
+
 				@Override
 				public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos)
 				{
 					// TODO Auto-generated method stub
 					return null;
 				}
-	
+
 				@Override
 				public Number parse(String source, ParsePosition parsePosition)
 				{
 					// TODO Auto-generated method stub
 					return null;
 				}
-	
+
 			});
 			updateGraphs();
-		} else {
+		}
+		else
+		{
 			NumberAxis axis = new NumberAxis("Dose");
 			axis.setRange(doses[0], doses[doses.length - 1]);
 			plot.setDomainAxis(axis);
 		}
 	}
-	
-	public void handle_meanAndDeviationChecked(ActionEvent event) {
+
+	public void handle_meanAndDeviationChecked(ActionEvent event)
+	{
 		updateGraphs();
 	}
-	
+
 	public void setBestModel()
 	{
 		Probe selectedProbe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
@@ -353,7 +368,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			}
 		}
 	}
-	
+
 	/*
 	 * populate maps from probes to probe responses and from probes to stat results
 	 */
@@ -382,33 +397,37 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		}
 	}
-	
-	private void initComponents() {
+
+	private void initComponents()
+	{
 		// retrieve models and probe IDs to populate the comboboxes
 		modelNameComboBox.getItems().addAll(getModelNames());
 		idComboBox.getItems().addAll(getProbes());
-		
+
 		logDosesCheckBox.setSelected(false);
-		
+
 		idComboBox.valueProperty().addListener(new ChangeListener() {
 			@Override
-			public void changed(ObservableValue ov, Object t1, Object t2) {
+			public void changed(ObservableValue ov, Object t1, Object t2)
+			{
 				setBestModel();
 				updateGraphs();
 			}
 		});
-		
+
 		modelNameComboBox.valueProperty().addListener(new ChangeListener() {
 
 			@Override
-			public void changed(ObservableValue ov, Object t1, Object t2) {
+			public void changed(ObservableValue ov, Object t1, Object t2)
+			{
 				updateGraphs();
 			}
-			
+
 		});
 	}
-	
-	private void updateGraphs() {
+
+	private void updateGraphs()
+	{
 		setColors();
 		getDataSeries();
 		if (parameters.length > 1)
@@ -417,7 +436,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			createDataset();
 		}
 	}
-	
+
 	private double firstNonZeroDose(double[] doses2)
 	{
 		boolean hasZeroLowDose = false;
@@ -434,20 +453,17 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 					return 0.09;
 				}
 				logZeroDose = doses2[i];
-				double decade = 1.0;
+
 				double decadeBelowLow = firstdDecadeBelow(logZeroDose);
-				// double lessthan = decade * .00000001;
-				// if (Math.abs(decade - logZeroDose) < lessthan)
-				// decade *= .1;
-				logZeroDose = decade;
-				return decade * .9;
+				logZeroDose = decadeBelowLow;
+				return decadeBelowLow * .9;
 			}
 		}
 		// no zero dose. just return the minimum dose
 		logZeroDose = doses2[0];
 		return doses2[0] * .9;
 	}
-	
+
 	private double firstdDecadeBelow(double logZeroDose2)
 	{
 		Double[] decades = { .00000000001, .0000000001, .000000001, .00000001, .0000001, .000001, .00001,
@@ -458,15 +474,13 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			double decade = decades[i];
 			double lessthan = decade * .0001;
 			if (Math.abs(decade - logZeroDose) < lessthan)
-			{
-				return decades[i];
-			}
+				return decades[i - 1];
 			else if (logZeroDose < decade)
 				return decades[i - 1];
 		}
 		return .000000000001;
 	}
-	
+
 	/**
 	 * Sets the data series for the chart based on the model and probe that are selected in the comboboxes
 	 *
@@ -651,7 +665,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			});
 		}
 	}
-	
+
 	/**
 	 * make a copy of the data applying decision without changing original
 	 */
@@ -666,7 +680,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		return outputs;
 	}
-	
+
 	/**
 	 * stores sample datapoints for the chosen model to use for display Also sets up the BMD for display
 	 */
@@ -730,7 +744,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 		bmduSeries.add(parameters[0], bmdModel.response(parameters[0]));
 	}
-	
+
 	/**
 	 * sets the colors used to color the chart series
 	 *
@@ -748,7 +762,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// bmd series color
 		chartColors[2] = (Color) renderer.getSeriesPaint(count - 2);
 	}
-	
+
 	/**
 	 * sets the various textfields to display the used model, bmd, and bmdl
 	 *
@@ -889,7 +903,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		fitPTextField.setText(Double.toString(parameters[3]));// getDisplayedPValue()
 		aicTextField.setText(Double.toString(parameters[4]));
 	}
-	
+
 	private double maskDose(double dose)
 	{
 		if (logDosesCheckBox.isSelected() && dose == 0)
@@ -898,7 +912,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		return dose;
 
 	}
-	
+
 	/*
 	 * get the parameters of a given probe and the model name
 	 */
@@ -938,7 +952,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 
 	}
-	
+
 	/**
 	 * creates a new series collection and adds model and bmd series to the collection for display. Calls
 	 * createChart to set colors and display once the series collection has been updated.
@@ -957,7 +971,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		seriesSet.addSeries(bmduSeries);
 		createChart(modelName);
 	}
-	
+
 	/**
 	 * modifies the chart plot, displays, and renderer based on selections
 	 *
@@ -1041,7 +1055,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			renderer.setSeriesShapesVisible(NUM_SERIES + 3, false);
 		}
 	}
-	
+
 	public void setSelectedProbe(Probe probe)
 	{
 		idComboBox.getSelectionModel().select(probe);
@@ -1054,7 +1068,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 	{
 		modelNameComboBox.getSelectionModel().select(model);
 	}
-	
+
 	/**
 	 * get a list of probes that are used in the bmdAnalysis
 	 */
@@ -1069,7 +1083,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 		return probes;
 	}
-	
+
 	/**
 	 * get a list of model names that are used in the bmdResults anlaysis
 	 */

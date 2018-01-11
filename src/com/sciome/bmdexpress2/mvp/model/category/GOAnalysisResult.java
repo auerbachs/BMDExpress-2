@@ -35,7 +35,7 @@ public class GOAnalysisResult extends CategoryAnalysisResult implements Serializ
 			GOCategoryIdentifier goCatID = (GOCategoryIdentifier) categoryIdentifier;
 			super.createRowData();
 			row.add(0, goCatID.getTitle());
-			row.add(0, goCatID.getGoLevel());
+			row.add(0, Integer.parseInt(goCatID.getGoLevel()));
 			row.add(0, goCatID.getId());
 		}
 

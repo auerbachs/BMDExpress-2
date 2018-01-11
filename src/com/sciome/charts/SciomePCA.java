@@ -22,9 +22,10 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 
 	@SuppressWarnings("rawtypes")
 	public SciomePCA(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
-			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
+			boolean allowXLogAxis, boolean allowYLogAxis, boolean allowXAxisSlider, 
+			boolean allowYAxisSlider, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, allowXAxisSlider, allowYAxisSlider, chartListener);
 
 		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
@@ -54,7 +55,7 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 	public SciomePCA(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			SciomeChartListener chartListener)
 	{
-		this(title, chartDataPacks, key1, key2, true, true, chartListener);
+		this(title, chartDataPacks, key1, key2, true, true, true, true, chartListener);
 	}
 
 	private void initChart()
@@ -108,7 +109,8 @@ public abstract class SciomePCA extends SciomeChartBase<Number, Number> implemen
 			Map<String, List<ChartData>> seriesMap = new HashMap<String, List<ChartData>>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				double keyValue = NumberManager.numberFormat(2, Double.parseDouble(chartData.getDataPointLabel()));
+				String[] dose = chartData.getDataPointLabel().split(" - ");
+				double keyValue = NumberManager.numberFormat(2, Double.parseDouble(dose[0]));
 				String key = "" + keyValue;
 				if(seriesMap.containsKey(key)) {
 					seriesMap.get(key).add(chartData);

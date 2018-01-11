@@ -34,7 +34,7 @@ public class SciomeBubbleChartFX extends SciomeBubbleChart implements ChartDataE
 	public SciomeBubbleChartFX(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			ChartKey key3, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key1, key2, key3, chartListener);
+		super(title, chartDataPacks, key1, key2, key3, false, false, chartListener);
 
 	}
 

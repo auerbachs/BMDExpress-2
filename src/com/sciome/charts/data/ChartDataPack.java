@@ -44,10 +44,10 @@ public class ChartDataPack
 	private void computeStats(List<Double> values, ChartKey key)
 	{
 		ChartStatistics chartStats = new ChartStatistics();
-		chartStats.setMax(0.0);
-		chartStats.setMin(0.0);
-		chartStats.setMean(0.0);
-		chartStats.setMedian(0.0);
+		// chartStats.setMax(0.0);
+		// chartStats.setMin(0.0);
+		// chartStats.setMean(0.0);
+		// chartStats.setMedian(0.0);
 		chartStatMap.put(key, chartStats);
 		if (values.size() == 0)
 			return;

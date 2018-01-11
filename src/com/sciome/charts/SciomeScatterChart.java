@@ -24,9 +24,10 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 
 	@SuppressWarnings("rawtypes")
 	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
-			boolean allowXLogAxis, boolean allowYLogAxis, SciomeChartListener chartListener)
+			boolean allowXLogAxis, boolean allowYLogAxis, boolean allowXAxisSlider, boolean allowYAxisSlider,
+			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, allowXAxisSlider, allowYAxisSlider, chartListener);
 
 		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
@@ -56,7 +57,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	public SciomeScatterChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
 			SciomeChartListener chartListener)
 	{
-		this(title, chartDataPacks, key1, key2, true, true, chartListener);
+		this(title, chartDataPacks, key1, key2, true, true, false, false, chartListener);
 	}
 
 	private void initChart()

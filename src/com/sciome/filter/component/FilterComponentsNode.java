@@ -148,7 +148,7 @@ public class FilterComponentsNode extends VBox implements FilterComponentContain
 				alert.setTitle("Saved Data Filter");
 				alert.setHeaderText(null);
 				alert.setContentText(
-						"This data filter has been saved and will be default for this analyis group.");
+						"This data filter has been saved and will be default for this analysis group.");
 
 				alert.showAndWait();
 			}

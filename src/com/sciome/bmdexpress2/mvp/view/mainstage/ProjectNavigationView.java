@@ -59,6 +59,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -97,7 +98,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	}
 
 	/*
-	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus
+	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus Datq
 	 */
 	public ProjectNavigationView(BMDExpressEventBus eventBus)
 	{
@@ -116,13 +117,13 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		hbox.getChildren().add(dataGroupCombo);
 
 		Button clearButton = new Button("Clear");
-		Button selectAllButton = new Button("Select All");
-		hbox.getChildren().add(selectAllButton);
+		Button checkAllButton = new Button("Check All");
+		hbox.getChildren().add(checkAllButton);
 		hbox.getChildren().add(clearButton);
 		getChildren().add(hbox);
 		initializeAnalysisList();
 
-		selectAllButton.setOnAction(new EventHandler<ActionEvent>() {
+		checkAllButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event)
@@ -216,10 +217,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	}
 
 	/*
-	 * handle navigation tree view selection change
+	 * handle navigation tree view check change
 	 */
 	@SuppressWarnings("rawtypes")
-	private void handle_navigationTreeViewSelection()
+	private void handle_navigationTreeViewChecked()
 	{
 
 		List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
@@ -238,6 +239,32 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			presenter.multipleDataSetsSelected(datasets);
 		else
 			presenter.clearMainDataView();
+
+	}
+
+	/*
+	 * handle navigation tree view selection change
+	 */
+	@SuppressWarnings("rawtypes")
+	private void handle_navigationTreeViewSelection()
+	{
+
+		List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+		BMDExpressAnalysisDataSet selectedItem = null;
+
+		// if (datasets.size() > 0)
+		// presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
+
+		if (datasets.size() == 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.doseResponseExperimentSelectedForProcessing((DoseResponseExperiment) datasets.get(0));
+		else if (datasets.size() == 1)
+			presenter.BMDExpressAnalysisDataSetSelectedForProcessing(datasets.get(0));
+		else if (datasets.size() > 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.multipleDataSetsSelectedForProcessing(datasets); // not combining dose response data
+		else if (datasets.size() > 1)
+			presenter.multipleDataSetsSelectedForProcessing(datasets);
+		else
+			presenter.clearMenuViewForProcessing();
 
 	}
 
@@ -324,7 +351,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			@Override
 			public void run()
 			{
-				List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
 				for (BMDExpressAnalysisDataSet selectedItem : datasets)
@@ -384,7 +411,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			@Override
 			public void run()
 			{
-				List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
 				for (BMDExpressAnalysisDataSet selectedItem : datasets)
@@ -444,7 +471,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			@Override
 			public void run()
 			{
-				List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
 				for (BMDExpressAnalysisDataSet selectedItem : datasets)
@@ -507,7 +534,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			public void run()
 			{
 
-				List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
 				for (BMDExpressAnalysisDataSet selectedItem : datasets)
@@ -559,7 +586,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	@Override
 	public void performCategoryAnalysis(CategoryAnalysisEnum catAnalysisType)
 	{
-		List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+		List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 		List<BMDResult> selectedItems = new ArrayList<>();
 		for (BMDExpressAnalysisDataSet selectedItem : datasets)
 		{
@@ -822,7 +849,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				switch (((MenuItem) event.getTarget()).getText())
 				{
 
-					case "Remove All Checked Items":
+					case "Remove All Selected Items":
 						handle_MultiSelectRemove(selectedItems);
 						break;
 					case "Export":
@@ -908,7 +935,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private List<MenuItem> getCommonMultiSelectMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Remove All Checked Items"));
+		menuItems.add(new MenuItem("Remove All Selected Items"));
 		menuItems.add(new MenuItem("Export"));
 
 		return menuItems;
@@ -1026,7 +1053,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			@Override
 			public void run()
 			{
-				List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
 				for (BMDExpressAnalysisDataSet selectedItem : datasets)
@@ -1321,6 +1348,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	{
 
 		analysisCheckList = new CheckListView<>();
+		analysisCheckList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		getChildren().add(analysisCheckList);
 		VBox.setVgrow(analysisCheckList, Priority.ALWAYS);
 
@@ -1333,7 +1361,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				{
 					System.out.println(mouseEvent.getSource());
 
-					List<BMDExpressAnalysisDataSet> selecteDataSets = getCheckedItems();
+					List<BMDExpressAnalysisDataSet> selecteDataSets = getSelectedItems();
 
 					if (selecteDataSets.size() == 1)
 						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
@@ -1344,11 +1372,23 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 			}
 		});
+
 		analysisCheckList.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
 					{
 						delayedCheckBoxReaction();
+					}
+				});
+
+		analysisCheckList.getSelectionModel().selectedItemProperty()
+				.addListener(new ChangeListener<BMDExpressAnalysisDataSet>() {
+
+					@Override
+					public void changed(ObservableValue<? extends BMDExpressAnalysisDataSet> observable,
+							BMDExpressAnalysisDataSet oldValue, BMDExpressAnalysisDataSet newValue)
+					{
+						handle_navigationTreeViewSelection();
 					}
 				});
 	}
@@ -1389,6 +1429,17 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		return datasets;
 	}
 
+	private List<BMDExpressAnalysisDataSet> getSelectedItems()
+	{
+		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
+
+		for (BMDExpressAnalysisDataSet ds : analysisCheckList.getSelectionModel().getSelectedItems())
+			if (ds != null)
+				datasets.add(ds);
+
+		return datasets;
+	}
+
 	private void delayedCheckBoxReaction()
 	{
 		fireSelection = true;
@@ -1422,7 +1473,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						public void run()
 						{
 							analysisCheckList.getStyleClass().remove("textboxfilterchanged");
-							handle_navigationTreeViewSelection();
+							handle_navigationTreeViewChecked();
 							selectionChangeInProgress = false;
 
 						}

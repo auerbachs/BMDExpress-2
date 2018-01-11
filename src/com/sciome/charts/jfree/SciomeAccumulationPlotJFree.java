@@ -8,14 +8,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.annotations.XYDrawableAnnotation;
-import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.ColorBlock;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.ItemLabelAnchor;
@@ -25,6 +27,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.ui.TextAnchor;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
 
@@ -37,20 +40,26 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
 public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 {
-
 	private List<AbstractXYAnnotation>	chattingAnnotations	= new ArrayList<>();
 	private List<AbstractXYAnnotation>	markedAnnotations	= new ArrayList<>();
 	private JFreeChart					chart;
+	private double						lowX;
+	private double						lowY;
+	private double						highX;
+	private double						highY;
 
 	public SciomeAccumulationPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, key, bucketsize, chartListener);
+		super(title, chartDataPacks, key, bucketsize, true, true, chartListener);
 	}
 
 	@Override
@@ -59,7 +68,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		ChartKey key1 = keys[0];
 		String key2 = "Accumulation";
 		Double min1 = getMinMin(key1);
-		Double min2 = 0.0;
+		Double min2 = 1.0;
 		Double max1 = getMaxMax(key1);
 		Double max2 = 0.0;
 
@@ -67,7 +76,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		// Create chart
 		chart = ChartFactory.createXYLineChart(key1 + " Accumulation Plot", key1.toString(), key2, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
-		XYPlot plot = (XYPlot) chart.getPlot();
+		XYPlot plot = chart.getXYPlot();
 		plot.clearAnnotations();
 		for (SciomeSeries<Number, Number> series : getSeriesData())
 		{
@@ -133,8 +142,8 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			}
 			else if (min2 > max2)
 			{
-				min2 = 0.0;
-				max2 = 0.1;
+				min2 = 1.0;
+				max2 = 2.0;
 			}
 
 			// Set the domain and range based on these x and y values
@@ -143,6 +152,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			domain.setRange(min1, max1);
 			range.setRange(min2, max2);
 		}
+		setSliders(min1, max1, min2, max2);
 
 		XYLineAndShapeRenderer renderer = ((XYLineAndShapeRenderer) plot.getRenderer());
 		renderer.setDefaultShapesVisible(true);
@@ -177,7 +187,22 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		// chart.getPlot().setForegroundAlpha(0.5f);
+
+		chart.addChangeListener(new ChartChangeListener() {
+			@Override
+			public void chartChanged(ChartChangeEvent event)
+			{
+				if (event.getChart() != null)
+				{
+					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
+					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
+					gethSlider().setLowValue(xAxis.getLowerBound());
+					gethSlider().setHighValue(xAxis.getUpperBound());
+					getvSlider().setLowValue(yAxis.getLowerBound());
+					getvSlider().setHighValue(yAxis.getUpperBound());
+				}
+			}
+		});
 
 		// Create Panel
 		SciomeChartViewer chartView = new SciomeChartViewer(chart);
@@ -190,28 +215,31 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 			{
 				if (e.getEntity() != null && e.getEntity().getToolTipText() != null // Check to see if an
 																					// entity was clicked
-						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)) // Check to see if it was
-																					// the left mouse button
-																					// clicked
+						&& e.getTrigger().getButton().equals(MouseButton.PRIMARY)
+						&& e.getTrigger().isShiftDown()) // Check to see if it was
+				// the left mouse button
+				// clicked
 				{
+					if (!(e.getEntity() instanceof XYItemEntity))
+						return;
 					int seriesIndex = ((XYItemEntity) e.getEntity()).getSeriesIndex();
 					int item = ((XYItemEntity) e.getEntity()).getItem();
 					// get the objects associated with with the click and post it to the other charts
 					// so they can highlight it.
 					AccumulationData data = (AccumulationData) getSeriesData().get(seriesIndex).getData()
 							.get(item);
-					postObjectsForChattingCharts((List<Object>) data.getExtraValue());
 					if (e.getTrigger().getClickCount() == 2)
 						showObjectText(e.getEntity().getToolTipText());
+					else
+						postObjectsForChattingCharts((List<Object>) data.getExtraValue());
 				}
-				else
+				else if (e.getTrigger().getClickCount() == 2)
 					postObjectsForChattingCharts(new ArrayList<>());
 			}
 
 			@Override
 			public void chartMouseMoved(ChartMouseEventFX e)
 			{
-
 				// ignore for now
 			}
 		});
@@ -223,7 +251,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 	public void reactToChattingCharts()
 	{
 		for (AbstractXYAnnotation annotation : chattingAnnotations)
-			((XYPlot) chart.getXYPlot()).removeAnnotation(annotation, false);
+			chart.getXYPlot().removeAnnotation(annotation, false);
 		Set<String> conversationalSet = new HashSet<>();
 		for (Object obj : getConversationalObjects())
 			conversationalSet.add(obj.toString().toLowerCase());
@@ -249,12 +277,12 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 						// ann2 will give us black outline
 						chattingAnnotations.add(ann2);
 						chattingAnnotations.add(ann);
-						((XYPlot) chart.getXYPlot()).addAnnotation(ann2, false);
-						((XYPlot) chart.getXYPlot()).addAnnotation(ann, false);
+						chart.getXYPlot().addAnnotation(ann2, false);
+						chart.getXYPlot().addAnnotation(ann, false);
 						if (object instanceof IMarkable)
 						{
 							IMarkable markable = (IMarkable) object;
-							XYPointerAnnotation labelann = new XYPointerAnnotation(
+							DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
 									markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
 									chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 							labelann.setBaseRadius(40.0);
@@ -265,7 +293,7 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 							labelann.setTipRadius(5);
 							labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 							chattingAnnotations.add(labelann);
-							((XYPlot) chart.getXYPlot()).addAnnotation(labelann, false);
+							chart.getXYPlot().addAnnotation(labelann, false);
 						}
 					}
 				}
@@ -301,9 +329,9 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(), 17,
 								17, new ColorBlock(Color.BLACK, 17, 17));
 
-						XYPointerAnnotation labelann = new XYPointerAnnotation(markable.getMarkableLabel(),
-								chartData.getXValue().doubleValue(), chartData.getYValue().doubleValue(),
-								Math.PI * 4 / 3);
+						DraggableXYPointerAnnotation labelann = new DraggableXYPointerAnnotation(
+								markable.getMarkableLabel(), chartData.getXValue().doubleValue(),
+								chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 						labelann.setBaseRadius(40.0);
 						labelann.setLabelOffset(5.0);
 						labelann.setBackgroundPaint(Color.yellow);
@@ -336,4 +364,57 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 		return false;
 	}
 
+	private void setSliders(double minX, double maxX, double minY, double maxY)
+	{
+		lowX = minX;
+		highX = maxX;
+		lowY = minY;
+		highY = maxY;
+
+		RangeSlider hSlider = new RangeSlider(minX, maxX, minX, maxX);
+		RangeSlider vSlider = new RangeSlider(minY, maxY, minY, maxY);
+		vSlider.setOrientation(Orientation.VERTICAL);
+		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				lowX = newValue.doubleValue();
+				if (lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+
+		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				highX = newValue.doubleValue();
+				if (lowX != highX)
+					chart.getXYPlot().getDomainAxis().setRange(new Range(lowX, highX));
+			}
+		});
+
+		vSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				lowY = newValue.doubleValue();
+				if (lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+
+		vSlider.highValueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
+			{
+				highY = newValue.doubleValue();
+				if (lowY != highY)
+					chart.getXYPlot().getRangeAxis().setRange(new Range(lowY, highY));
+			}
+		});
+
+		sethSlider(hSlider);
+		setvSlider(vSlider);
+	}
 }

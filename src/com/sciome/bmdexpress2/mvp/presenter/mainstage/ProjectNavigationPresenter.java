@@ -32,28 +32,35 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.AddProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
@@ -122,6 +129,34 @@ public class ProjectNavigationPresenter
 			getEventBus().post(new CategoryAnalysisDataSelectedEvent((CategoryAnalysisResults) dataset));
 		else if (dataset instanceof BMDResult)
 			getEventBus().post(new BMDAnalysisDataSelectedEvent((BMDResult) dataset));
+
+	}
+
+	/*
+	 * dose response data selected, post it to event bus
+	 */
+	public void doseResponseExperimentSelectedForProcessing(DoseResponseExperiment doseResponseExperiment)
+	{
+		getEventBus().post(new ExpressionDataSelectedForProcessingEvent(doseResponseExperiment));
+	}
+
+	/*
+	 * post the onewayaonova result was selected.
+	 */
+	public void BMDExpressAnalysisDataSetSelectedForProcessing(BMDExpressAnalysisDataSet dataset)
+	{
+		if (dataset instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataSelectedForProcessingEvent((OneWayANOVAResults) dataset));
+		else if (dataset instanceof WilliamsTrendResults)
+			getEventBus()
+					.post(new WilliamsTrendDataSelectedForProcessingEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof OriogenResults)
+			getEventBus().post(new OriogenDataSelectedForProcessingEvent((OriogenResults) dataset));
+		else if (dataset instanceof CategoryAnalysisResults)
+			getEventBus().post(
+					new CategoryAnalysisDataSelectedForProcessingEvent((CategoryAnalysisResults) dataset));
+		else if (dataset instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataSelectedForProcessingEvent((BMDResult) dataset));
 
 	}
 
@@ -795,6 +830,12 @@ public class ProjectNavigationPresenter
 
 	}
 
+	public void clearMenuViewForProcessing()
+	{
+		getEventBus().post(new NoDataSelectedForProcessingEvent(null));
+
+	}
+
 	/*
 	 * A list of analysis data sets will be exported to one or more files. If there are datasets with varying
 	 * headers, then we will export to more than one file.
@@ -825,6 +866,40 @@ public class ProjectNavigationPresenter
 
 	public void multipleDataSetsSelected(List<BMDExpressAnalysisDataSet> selectedItems)
 	{
+
+		if (!isDataListPure(selectedItems))
+		{
+			getEventBus().post(new NoDataSelectedEvent(null));
+			return;
+		}
+		List<BMDExpressAnalysisDataSet> bmdAnalysisDataSet = new ArrayList<>();
+		for (Object obj : selectedItems)
+			bmdAnalysisDataSet.add((BMDExpressAnalysisDataSet) obj);
+
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(bmdAnalysisDataSet);
+
+		if (selectedItems.get(0) instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof OriogenResults)
+			getEventBus().post(new OriogenDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
+			getEventBus().post(new CategoryAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof DoseResponseExperiment)
+		{
+			// clear the data view
+			getEventBus().post(new NoDataSelectedEvent(""));
+			// this will inform the menubar to update accordingingly
+			getEventBus().post(new ExpressionDataCombinedSelectedEvent(combined));
+		}
+
+	}
+
+	private boolean isDataListPure(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
 		List<BMDExpressAnalysisDataSet> bmdAnalysisDataSet = new ArrayList<>();
 		Map<Class, Integer> classesOfInterestMapCount = new HashMap<>();
 		Set<Class> classesOfInterest = new HashSet<>();
@@ -851,35 +926,35 @@ public class ProjectNavigationPresenter
 			}
 		}
 
-		if (!isPure)
+		return isPure;
+	}
+
+	public void multipleDataSetsSelectedForProcessing(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+
+		if (!isDataListPure(selectedItems))
 		{
-			getEventBus().post(new NoDataSelectedEvent(null));
+			getEventBus().post(new NoDataSelectedForProcessingEvent(null));
 			return;
 		}
-		for (Object obj : selectedItems)
-			bmdAnalysisDataSet.add((BMDExpressAnalysisDataSet) obj);
-
-		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(bmdAnalysisDataSet);
 
 		if (selectedItems.get(0) instanceof OneWayANOVAResults)
-			getEventBus().post(new OneWayANOVADataCombinedSelectedEvent(combined));
+			getEventBus().post(new OneWayANOVADataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
-			getEventBus().post(new WilliamsTrendDataCombinedSelectedEvent(combined));
+			getEventBus().post(new WilliamsTrendDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof OriogenResults)
-			getEventBus().post(new OriogenDataCombinedSelectedEvent(combined));
+			getEventBus().post(new OriogenDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
-			getEventBus().post(new CategoryAnalysisDataCombinedSelectedEvent(combined));
+			getEventBus().post(new CategoryAnalysisDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof BMDResult)
-			getEventBus().post(new BMDAnalysisDataCombinedSelectedEvent(combined));
+			getEventBus().post(new BMDAnalysisDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof DoseResponseExperiment)
 		{
 			// clear the data view
-			getEventBus().post(new NoDataSelectedEvent(""));
+			getEventBus().post(new NoDataSelectedForProcessingEvent(""));
 			// this will inform the menubar to update accordingingly
-			getEventBus().post(new ExpressionDataCombinedSelectedEvent(combined));
+			getEventBus().post(new ExpressionDataSelectedForProcessingEvent(null));
 		}
-		// now post an event with a list of pure analysis sets.
-		System.out.println();
 
 	}
 
