@@ -113,8 +113,8 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				if (event.getChart() != null)
 				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
-					gethSlider().setLowValue(xAxis.getLowerBound());
-					gethSlider().setHighValue(xAxis.getUpperBound());
+					((RangeSlider)gethSlider()).setLowValue(xAxis.getLowerBound());
+					((RangeSlider)gethSlider()).setHighValue(xAxis.getUpperBound());
 				}
 			}
 		});

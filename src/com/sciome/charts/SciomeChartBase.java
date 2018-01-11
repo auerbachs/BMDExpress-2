@@ -67,8 +67,8 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private CheckBox					lockXAxis				= new CheckBox("Lock X Axis");
 	private CheckBox					lockYAxis				= new CheckBox("Lock Y Axis");
 	private VBox						vBox;
-	private RangeSlider					vSlider;
-	private RangeSlider					hSlider;
+	private Control						vSlider;
+	private Control						hSlider;
 	private boolean						allowXAxisSlider;
 	private boolean						allowYAxisSlider;
 	
@@ -467,19 +467,19 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		return lockYAxis;
 	}
 
-	protected RangeSlider getvSlider() {
+	protected Control getvSlider() {
 		return vSlider;
 	}
 
-	protected void setvSlider(RangeSlider vSlider) {
+	protected void setvSlider(Control vSlider) {
 		this.vSlider = vSlider;
 	}
 
-	protected RangeSlider gethSlider() {
+	protected Control gethSlider() {
 		return hSlider;
 	}
 
-	protected void sethSlider(RangeSlider hSlider) {
+	protected void sethSlider(Control hSlider) {
 		this.hSlider = hSlider;
 	}
 	

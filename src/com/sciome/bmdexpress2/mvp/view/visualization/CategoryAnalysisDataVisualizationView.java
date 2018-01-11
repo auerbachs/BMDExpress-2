@@ -23,10 +23,10 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.PathwayCurveViewer;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeBarChartFX;
 import com.sciome.charts.javafx.SciomePieChartFX;
 import com.sciome.charts.javafx.SciomeRangePlotFX;
 import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
+import com.sciome.charts.jfree.SciomeBarChartJFree;
 import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
@@ -124,27 +124,27 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDL_MEDIAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDU_MEDIAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMD_MEAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMD_MEAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDL_MEAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 		chartCache.put(BMD_BMDL_BARCHARTS + "-" + CategoryAnalysisResults.BMDU_MEAN,
-				new SciomeBarChartFX("BarChart", new ArrayList<>(),
+				new SciomeBarChartJFree("BarChart", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDU_MEAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 

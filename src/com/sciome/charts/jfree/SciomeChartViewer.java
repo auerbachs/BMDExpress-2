@@ -13,6 +13,7 @@ import org.jfree.chart.fx.interaction.AbstractMouseHandlerFX;
 import org.jfree.chart.fx.interaction.ZoomHandlerFX;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.util.ShapeUtils;
 
@@ -60,83 +61,87 @@ public class SciomeChartViewer extends ChartViewer
 			@Override
 			public void handleMousePressed(ChartCanvas canvas, MouseEvent e)
 			{
-				ChartEntity entity = getEntity(e.getX(), e.getY());
-				for (Object ann : getChart().getXYPlot().getAnnotations())
-				{
-					if (ann instanceof DraggableXYPointerAnnotation)
+				if(getChart().getPlot() instanceof XYPlot) {
+					ChartEntity entity = getEntity(e.getX(), e.getY());
+					for (Object ann : getChart().getXYPlot().getAnnotations())
 					{
-						if (((DraggableXYPointerAnnotation) ann).getHotSpot().contains(e.getX(), e.getY()))
-							dragAnn = (DraggableXYPointerAnnotation) ann;
+						if (ann instanceof DraggableXYPointerAnnotation)
+						{
+							if (((DraggableXYPointerAnnotation) ann).getHotSpot().contains(e.getX(), e.getY()))
+								dragAnn = (DraggableXYPointerAnnotation) ann;
+						}
+	
 					}
-
+	
+					if (entity != null && entity instanceof XYAnnotationEntity)
+						drag = entity;
 				}
-
-				if (entity != null && entity instanceof XYAnnotationEntity)
-					drag = entity;
 			}
 
 			@Override
 			public void handleMouseDragged(ChartCanvas canvas, MouseEvent e)
 			{
-				if (dragAnn != null)
-				{
-					Point2D pt = new Point2D.Double(e.getX(), e.getY());
-					Rectangle2D dataArea = canvas.findDataArea(pt);
-
-					PlotOrientation orientation = getChart().getXYPlot().getOrientation();
-					RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
-							getChart().getXYPlot().getDomainAxisLocation(), orientation);
-					RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
-							getChart().getXYPlot().getRangeAxisLocation(), orientation);
-					double j2DX = getChart().getXYPlot().getDomainAxis().valueToJava2D(dragAnn.getX(),
-							dataArea, domainEdge);
-					double j2DY = getChart().getXYPlot().getRangeAxis().valueToJava2D(dragAnn.getY(),
-							dataArea, rangeEdge);
-
-					Point2D dropPoint = ShapeUtils.getPointInRectangle(e.getX(), e.getY(), dataArea);
-					double distnace = Point.distance(j2DX, j2DY, dropPoint.getX(), dropPoint.getY());
-
-					Point2D sourcePoint = new Point2D.Double(j2DX, j2DY);
-					dragAnn.setAngle(getAngle(sourcePoint, dropPoint));
-					dragAnn.setBaseRadius(distnace);
-
-					dragAnn.getNotify();
-					getChart().fireChartChanged();
+				if(getChart().getPlot() instanceof XYPlot) {
+					if (dragAnn != null)
+					{
+						Point2D pt = new Point2D.Double(e.getX(), e.getY());
+						Rectangle2D dataArea = canvas.findDataArea(pt);
+	
+						PlotOrientation orientation = getChart().getXYPlot().getOrientation();
+						RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
+								getChart().getXYPlot().getDomainAxisLocation(), orientation);
+						RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
+								getChart().getXYPlot().getRangeAxisLocation(), orientation);
+						double j2DX = getChart().getXYPlot().getDomainAxis().valueToJava2D(dragAnn.getX(),
+								dataArea, domainEdge);
+						double j2DY = getChart().getXYPlot().getRangeAxis().valueToJava2D(dragAnn.getY(),
+								dataArea, rangeEdge);
+	
+						Point2D dropPoint = ShapeUtils.getPointInRectangle(e.getX(), e.getY(), dataArea);
+						double distnace = Point.distance(j2DX, j2DY, dropPoint.getX(), dropPoint.getY());
+	
+						Point2D sourcePoint = new Point2D.Double(j2DX, j2DY);
+						dragAnn.setAngle(getAngle(sourcePoint, dropPoint));
+						dragAnn.setBaseRadius(distnace);
+	
+						dragAnn.getNotify();
+						getChart().fireChartChanged();
+					}
 				}
-
 			}
 
 			@Override
 			public void handleMouseReleased(ChartCanvas canvas, MouseEvent e)
 			{
-				if (dragAnn != null)
-				{
-					Point2D pt = new Point2D.Double(e.getX(), e.getY());
-					Rectangle2D dataArea = canvas.findDataArea(pt);
-
-					PlotOrientation orientation = getChart().getXYPlot().getOrientation();
-					RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
-							getChart().getXYPlot().getDomainAxisLocation(), orientation);
-					RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
-							getChart().getXYPlot().getRangeAxisLocation(), orientation);
-					double j2DX = getChart().getXYPlot().getDomainAxis().valueToJava2D(dragAnn.getX(),
-							dataArea, domainEdge);
-					double j2DY = getChart().getXYPlot().getRangeAxis().valueToJava2D(dragAnn.getY(),
-							dataArea, rangeEdge);
-
-					Point2D dropPoint = ShapeUtils.getPointInRectangle(e.getX(), e.getY(), dataArea);
-					double distnace = Point.distance(j2DX, j2DY, dropPoint.getX(), dropPoint.getY());
-					Point2D sourcePoint = new Point2D.Double(j2DX, j2DY);
-					dragAnn.setAngle(getAngle(sourcePoint, dropPoint));
-					dragAnn.setBaseRadius(distnace);
-					dragAnn.getNotify();
-					// e.consume();
-
+				if(getChart().getPlot() instanceof XYPlot) {
+					if (dragAnn != null)
+					{
+						Point2D pt = new Point2D.Double(e.getX(), e.getY());
+						Rectangle2D dataArea = canvas.findDataArea(pt);
+	
+						PlotOrientation orientation = getChart().getXYPlot().getOrientation();
+						RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
+								getChart().getXYPlot().getDomainAxisLocation(), orientation);
+						RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
+								getChart().getXYPlot().getRangeAxisLocation(), orientation);
+						double j2DX = getChart().getXYPlot().getDomainAxis().valueToJava2D(dragAnn.getX(),
+								dataArea, domainEdge);
+						double j2DY = getChart().getXYPlot().getRangeAxis().valueToJava2D(dragAnn.getY(),
+								dataArea, rangeEdge);
+	
+						Point2D dropPoint = ShapeUtils.getPointInRectangle(e.getX(), e.getY(), dataArea);
+						double distnace = Point.distance(j2DX, j2DY, dropPoint.getX(), dropPoint.getY());
+						Point2D sourcePoint = new Point2D.Double(j2DX, j2DY);
+						dragAnn.setAngle(getAngle(sourcePoint, dropPoint));
+						dragAnn.setBaseRadius(distnace);
+						dragAnn.getNotify();
+						// e.consume();
+	
+					}
+					drag = null;
+					dragAnn = null;
+					canvas.clearLiveHandler();
 				}
-				drag = null;
-				dragAnn = null;
-				canvas.clearLiveHandler();
-
 			}
 		});
 	}

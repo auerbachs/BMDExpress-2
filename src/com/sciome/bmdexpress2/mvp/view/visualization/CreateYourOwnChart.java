@@ -9,8 +9,8 @@ import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomeBarChartFX;
 import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
+import com.sciome.charts.jfree.SciomeBarChartJFree;
 import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
@@ -118,7 +118,7 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 			if (chartKeys.size() != 1)
 				return null;
 
-			return new SciomeBarChartFX("Bar: " + chartKeys.get(0).toString(), chartDataPacks,
+			return new SciomeBarChartJFree("Bar: " + chartKeys.get(0).toString(), chartDataPacks,
 					chartKeys.get(0), chartChangeListener);
 		}
 

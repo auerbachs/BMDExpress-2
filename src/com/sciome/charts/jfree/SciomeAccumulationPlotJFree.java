@@ -196,10 +196,10 @@ public class SciomeAccumulationPlotJFree extends SciomeAccumulationPlot
 				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
 					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
-					gethSlider().setLowValue(xAxis.getLowerBound());
-					gethSlider().setHighValue(xAxis.getUpperBound());
-					getvSlider().setLowValue(yAxis.getLowerBound());
-					getvSlider().setHighValue(yAxis.getUpperBound());
+					((RangeSlider)gethSlider()).setLowValue(xAxis.getLowerBound());
+					((RangeSlider)gethSlider()).setHighValue(xAxis.getUpperBound());
+					((RangeSlider)getvSlider()).setLowValue(yAxis.getLowerBound());
+					((RangeSlider)getvSlider()).setHighValue(yAxis.getUpperBound());
 				}
 			}
 		});
