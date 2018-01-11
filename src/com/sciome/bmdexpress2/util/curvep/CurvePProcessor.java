@@ -96,6 +96,16 @@ public class CurvePProcessor
 		return f;
 	} // end of TukeyBiWs()
 
+	private static Float[] TukeyBiWs(Float[] m, float c)
+	{
+		return TukeyBiWs(m, c, 0.000001f);
+	}
+	
+	private static Float[] TukeyBiWs(Float[] m)
+	{
+		return TukeyBiWs(m, 5.0f);
+	}
+
 	private static float wMean(Float[] vals, Float[] coffs)
 	{
 		/*
@@ -174,11 +184,11 @@ public class CurvePProcessor
 
 		for (int d = 0; d < D.size(); d++)
 		{
-			Float g = D.get(d);
+			float g = D.get(d);
 			List<Float> gR = new ArrayList<Float>();
 
 			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
-				if (allDoses.get(ad).floatValue() == g.floatValue())
+				if (allDoses.get(ad).floatValue() == g)
 					gR.add(allResponses.get(ad));
 
 			
@@ -201,11 +211,11 @@ public class CurvePProcessor
 
 		for (int d = 0; d < D.size(); d++)
 		{
-			Float g = D.get(d);
+			float g = D.get(d);
 			List<Float> gR = new ArrayList<Float>();
 
 			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
-				if (allDoses.get(ad).floatValue() == g.floatValue())
+				if (allDoses.get(ad).floatValue() == g)
 					gR.add(allResponses.get(ad));
 
 			Float[] gResps = gR.toArray(new Float[0]);
@@ -248,7 +258,7 @@ public class CurvePProcessor
 
 		if (fDoseRedo)
 		{
-			Float Fixer = (float) FirstDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
+			float Fixer = (float) FirstDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
 
 			if (FirstDoseBaseFix == 0)
 				Fixer = 2 * NewD.get(1) - NewD.get(2);
@@ -258,7 +268,7 @@ public class CurvePProcessor
 		return NewD;
 	} // end of logBaseDoses()
 
-	public static Float ImputeDose(List<Float> D, List<Float> V, Float L)
+	public static float ImputeDose(List<Float> D, List<Float> V, float L)
 	/*
 	 * Interpolates the dose at which the L threshold of response is reached D - unique doses (can be
 	 * log-transformed) V - responses corresponding to D[] L - threshold response
@@ -268,7 +278,7 @@ public class CurvePProcessor
 		Float[] sv = V.toArray(new Float[0]);
 		Arrays.sort(sv);
 
-		Float iD = D.get(e) + 1000.0f; // default invalid value (out of dose range)
+		float iD = D.get(e) + 1000.0f; // default invalid value (out of dose range)
 
 		if ((sv[e] < L) || (L < sv[0]))
 			return iD;
@@ -276,10 +286,10 @@ public class CurvePProcessor
 		for (int s = 0; s < e; s++)
 		{
 			int z = s + 1;
-			if (L.floatValue() == V.get(s).floatValue())
+			if (L == V.get(s).floatValue())
 				return D.get(s); // to handle exact hit
 
-			Float Vsz = Math.abs(V.get(z) - V.get(s));
+			float Vsz = Math.abs(V.get(z) - V.get(s));
 			if (Vsz < Math.abs(V.get(z) - L))
 				continue;
 			
@@ -293,7 +303,7 @@ public class CurvePProcessor
 		return iD;
 	} // end of ImputeDose()
 
-	public static Float calc_POD(List<Float> allD, List<Float> allR, Float Z_thr, boolean UseLog)
+	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog)
 	{
 		/*
 		 * returns lowest of the two POD estimates for decreasing and increasing direction (large number
@@ -322,11 +332,11 @@ public class CurvePProcessor
 				// e.printStackTrace();
 			}
 
-		Float L1 = avr.get(0) - Z_thr * sdr.get(0);
-		Float L2 = avr.get(0) + Z_thr * sdr.get(0);
+		float L1 = avr.get(0) - Z_thr * sdr.get(0);
+		float L2 = avr.get(0) + Z_thr * sdr.get(0);
 
-		Float P1 = ImputeDose(ulD, avr, L1);
-		Float P2 = ImputeDose(ulD, avr, L2);
+		float P1 = ImputeDose(ulD, avr, L1);
+		float P2 = ImputeDose(ulD, avr, L2);
 
 		return Math.min(P1, P2);
 	}
@@ -355,76 +365,198 @@ public class CurvePProcessor
 
 	public static float calc_wAUC(float AUC, float POD, List<Float> Doses)
 	/*
-	 * returns AUC normalized by point of departure (POD) and dose test range NB: FirstDose - untreated
-	 * control, e.g., either 0 or log-transformed by logBaseDoses() NB: POD - can be calculated by calc_POD()
-	 * or supplied externally, has to match Dose scale NB: AUC - can be calculated by calc_AUC() or intg_AUC()
-	 * - has to be on the same scale of dose-units as other parameters!
+	 * returns AUC normalized by point of departure (POD) and dose test range 
+	 * NB: Doses, AUC, and POD have to be on the matching scale of dose units 
 	 */
 	{
-		float Untreated = Doses.get(0);
-		float FirstDose = Doses.get(1);
-		float LastDose = Doses.get(Doses.size() - 1);
+		float UnDose = Doses.get(0), LoDose = Doses.get(1), HiDose = Doses.get(Doses.size() - 1);
 		
-		if (POD > LastDose)
+		if (POD > HiDose)
 			return 0.0f;
 		
-		if (POD < Untreated)
+		if (POD < UnDose)
 			return 0.0f;
 
 		Float wAUC = AUC; // signed area-under-curve, such as from calc_AUC()
-		wAUC /= LastDose - FirstDose;
-		wAUC /= POD - Untreated;
+		wAUC /= HiDose - LoDose;
+		wAUC /= POD - UnDose;
 		return wAUC;
 	}
 
-	// -- TODO!!??!!
+	public static float parametric_val(float D0, List<Float>P, int type)
+	/* calculates  response at D0 dose based on paramteric curve model, 
+	 * P contains curve coefficients, 
+	 * type defines math.equation:  
+	 * 		0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill 
+	 */
+	{
+		float rBase = 0.0f;
+		
+		rBase = P.get(0); 
+		if (type == 0)	//polynomial (incl. linear and constant cases)
+		{//y(x) = P[0] + P[1]*x + ... + P[n]*x^n
+			for (int i = 1; i < P.size(); i++) 
+				rBase += P.get(i)*Math.pow(D0, i);			
+		}
+		
+		if (type == 1) //power
+		{//y(x) = P[0] + P[1]*x^P[2]
+			rBase += P.get(1)*Math.pow(D0, P.get(2));
+		}
+		
+		if (type == 2) // exponential
+		{//y(x) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * x^P[3] ) }
+			
+			rBase = (float)Math.exp(  P.get(1)*Math.pow(D0, P.get(3))  );
+			rBase *= 1 - P.get(2);
+			rBase += P.get(2);
+			rBase *= P.get(0);
+		}
+		
+		if (type == 3) // logarithmic
+		{// y(x) = P[0] + P[1]*ln(x)
+			rBase += P.get(1)*Math.log(D0);
+		}
+		
+		if (type == 4) // Hill
+		{// y(x0 = P[0] + P[1] - P[1]P[3]/(x^P[2] + P[3])
+			
+			rBase += P.get(1);
+			rBase -= P.get(1)*P.get(3)/(Math.pow(D0, P.get(2))+P.get(3));			
+		}
+
+		return rBase;
+	} //end of parametric_val()
+	
+	public static float intg_log_AUC(List<Float> D, List<Float> P, int type, int log0fix)
+	/* log10-integrates several curve types to calculate AUC, P contains curve coefficients, 
+	 * type defines math.equation:  0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
+	 * 
+	 * calls logBaseDoses(D, log0fix) to obtain log10 transform for D[]   
+	 */
+	{
+		List<Float> luD;
+		
+		try {
+			luD = logBaseDoses(D, log0fix);
+		} catch (Exception e) {			
+			return 0.0f;
+		}
+				
+		//TODO
+		if (type == 0)
+		{//poly
+			// y(z) = P[0] + P[1]*exp(az) + ... + P[n]*exp(azn)
+			// F(y)dz = C + P[0]*z + (P[1]*exp(az)/1 + ... P[n]*exp(azn)/n )/ a
+		}	
+	
+		if (type == 1)
+		{//power
+			// y(z) = P[0] + P[1]*exp(azP[2])
+			// F(y)dz = C + P[0]*z + P[1]*exp(azP[2])/(aP[2])
+		}
+		
+		if (type == 2)
+		{//exp
+			// y(z) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * exp(azP[3]) ) }
+			// F(y)dz = C + P[0] * { P[2]*z - (P[2]-1)* exp( P[1] * exp(azP[3]) )/(aP[1]P[3]exp(azP[3])) }
+		}
+		
+		if (type == 3)
+		{//log
+			// y(z) = P[0] + P[1]*az
+			// F(y)dz = C + P[0]*z + P[1]*az^2/2
+		}
+		
+		if (type == 4)
+		{//Hill
+			
+		}
+		
+		return 0.0f;
+	} //end of intg_log_AUC()
+	
+	
 	public static float intg_AUC(List<Float> D, List<Float> P, int type)
-	{// integrates several curve types to calculate AUC, P contains curve coefficients
-
-		// if z = log10 x, then x = exp(az), where a = ln 10, then
-
+	{
+	/* analytically integrates several curve types to calculate AUC, P contains curve coefficients, 
+	 * type defines math.equation:  0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill 
+	 */
+		
+		int N = P.size();
+		float hiD = D.get(N-1), unD = D.get(0);		
+		float iAUC = parametric_val(unD, P, type);
+		iAUC *= unD - hiD; //now iAUC contains -baseline's AUC;
+		
 		if (type == 0) // polynomial, including linear and constant cases
 		{
 			// y(x) = P[0] + P[1]*x + ... + P[n]*x^n
 			// F(y)dx = C + P[0]*x + P[1]*x^2/2 + ... P[n]*x^(n+1)/(n+1)
-
-			// y(z) = P[0] + P[1]*exp(az) + ... + P[n]*exp(azn)
-			// F(y)dz = C + P[0]*z + (P[1]*exp(az)/1 + ... P[n]*exp(azn)/n )/ a
+		
+			for (int i = 0; i < N; i++)
+			{
+				float c = P.get(i);
+				if (i == 0) 
+				{
+					iAUC += c*(hiD - unD);
+					continue;
+				}
+				int i1 = i + 1;
+				c *= Math.pow(hiD, i1) - Math.pow(unD, i1);
+				c /= i1;
+				iAUC += c;
+			}
 		}
 
 		if (type == 1) // power
 		{
 			// y(x) = P[0] + P[1]*x^P[2]
 			// F(y)dx = C + P[0]*x + P[1]*x^(P[2]+1)/(P[2]+1)
-
-			// y(z) = P[0] + P[1]*exp(azP[2])
-			// F(y)dz = C + P[0]*z + P[1]*exp(azP[2])/(aP[2])
+			
+			float pp = P.get(2) + 1;
+			float c = P.get(1)/pp;
+			c *= Math.pow(hiD, pp) - Math.pow(unD, pp);
+			
+			iAUC += P.get(0)*(hiD - unD) + c;
 		}
 
 		if (type == 2) // exponential
 		{
 			// y(x) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * x^P[3] ) }
 			// F(y)dx = C + P[0] * { P[2]*x - (P[2]-1)* exp( P[1] * x^P[3] )/P[1]/P[3]/x^(P[3]-1) }
+			
+			float pp =  P.get(3) - 1;
+			float c = 1 - P.get(2);
+			c /= P.get(1) * P.get(3) / P.get(0);
+			
+			float p1 = (float)Math.exp( Math.pow(unD, P.get(3))*P.get(1) );
+			p1 /= Math.pow(unD,  pp);
+			
+			float p2 = (float)Math.exp( Math.pow(hiD, P.get(3))*P.get(1) );
+			p2 /= Math.pow(hiD,  pp);
 
-			// y(z) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * exp(azP[3]) ) }
-			// F(y)dz = C + P[0] * { P[2]*z - (P[2]-1)* exp( P[1] * exp(azP[3]) )/(aP[1]P[3]exp(azP[3])) }
+			iAUC += P.get(0)*P.get(2)*(hiD - unD) + c*(p2-p1);
 		}
 
 		if (type == 3) // logarithmic
-		{
-			// y(x) = P[0] + P[1]*ln(x)
-			// F(y)dx = C + P[0]*x + x(ln(x) - 1)P[1]
-
-			// y(z) = P[0] + P[1]*az
-			// F(y)dz = C + P[0]*z + P[1]*az^2/2
+		{//NB: this type will be a issue for cases where x = 0; currently not supported
+			
+			//y(x) = P[0] + P[1]*ln(x)
+			//F(y)dx = C + P[0]*x + x(ln(x) - 1)P[1]
+			
+			float c = P.get(1);
+			c *= hiD*Math.log(hiD) - unD*Math.log(unD);
+			
+			iAUC += (P.get(0) - P.get(1))*(hiD - unD) + c;
 		}
 
 		if (type == 4) // Hill
 		{
-			// y(x) = P[0] + P[1]*x^P[2] / ( x^P[2] + P[3]) = P[0] + 1 - P[3]/(x^P[2] + P[3])
-			// F(y)dx = C + (1+P[0])*x - ...?
+			// y(x) = P[0] + P[1]*x^P[2] / ( x^P[2] + P[3]) = 
+			//P[0] + P[1] - P[1]P[3]/(x^P[2] + P[3])
+			
+			// F(y)dx = C + x^
 
-			// y(z) =
 		}
 
 		// other types can be added and handled below
@@ -434,9 +566,7 @@ public class CurvePProcessor
 
 	public static void main(String args[])
 	{
-		//CurvePProcessor cp = new CurvePProcessor();
-
-		System.out.println("hello world");
+		System.out.println("Hi Dudes");
 
 		// below is example run of calculations using fake dose-response data
 		List<Float> allD = new ArrayList<>();
@@ -487,7 +617,7 @@ public class CurvePProcessor
 			System.out.println("problems with calculations");
 		}
 
-		System.out.println("good bye world");
+		System.out.println("Happy Christmas, you dirty animal... And Hapy New Year!");
 
 	}
 
