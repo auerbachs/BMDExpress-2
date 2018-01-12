@@ -275,7 +275,7 @@ public class SciomeBubbleChartJFree extends SciomeBubbleChart
 						labelann.setLabelOffset(5.0);
 						labelann.setBackgroundPaint(Color.white);
 						labelann.setOutlineVisible(false);
-						labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
+						labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.BOLD, 12));
 						labelann.setTipRadius(5);
 						labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 						chattingAnnotations.add(labelann);
