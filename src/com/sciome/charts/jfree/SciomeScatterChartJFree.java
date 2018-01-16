@@ -179,10 +179,10 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
 					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
-					((RangeSlider)gethSlider()).setLowValue(xAxis.getLowerBound());
-					((RangeSlider)gethSlider()).setHighValue(xAxis.getUpperBound());
-					((RangeSlider)getvSlider()).setLowValue(yAxis.getLowerBound());
-					((RangeSlider)getvSlider()).setHighValue(yAxis.getUpperBound());
+					((RangeSlider) gethSlider()).setLowValue(xAxis.getLowerBound());
+					((RangeSlider) gethSlider()).setHighValue(xAxis.getUpperBound());
+					((RangeSlider) getvSlider()).setLowValue(yAxis.getLowerBound());
+					((RangeSlider) getvSlider()).setHighValue(yAxis.getUpperBound());
 				}
 			}
 		});
@@ -271,9 +271,9 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 								chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 						labelann.setBaseRadius(40.0);
 						labelann.setLabelOffset(5.0);
-						labelann.setBackgroundPaint(Color.pink);
-						labelann.setOutlineVisible(true);
-						labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
+						labelann.setBackgroundPaint(Color.white);
+						labelann.setOutlineVisible(false);
+						labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.BOLD, 12));
 						labelann.setTipRadius(5);
 						labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 						chattingAnnotations.add(labelann);
@@ -313,9 +313,9 @@ public class SciomeScatterChartJFree extends SciomeScatterChart
 							chartData.getYValue().doubleValue(), Math.PI * 4 / 3);
 					labelann.setBaseRadius(40.0);
 					labelann.setLabelOffset(5.0);
-					labelann.setBackgroundPaint(Color.yellow);
-					labelann.setOutlineVisible(true);
-					labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 12));
+					labelann.setBackgroundPaint(Color.white);
+					labelann.setOutlineVisible(false);
+					labelann.setFont(new java.awt.Font("Courier New", java.awt.Font.BOLD, 12));
 					labelann.setTipRadius(5);
 					labelann.setTextAnchor(TextAnchor.HALF_ASCENT_RIGHT);
 
