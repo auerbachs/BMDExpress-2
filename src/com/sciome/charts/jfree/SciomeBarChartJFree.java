@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.controlsfx.control.RangeSlider;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -46,7 +45,6 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 	private SlidingCategoryDataset 	slidingDataset;
 	private JFreeChart				chart;
 	private int 					firstValue;
-	private int 					lastValue;
 
 	public SciomeBarChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			SciomeChartListener chartListener) {
@@ -54,6 +52,7 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 		// this chart defines how the axes can be edited by the user in the chart
 		// configuration.
 		showLogAxes(false, true, false, true);
+		firstValue = 0;
 
 		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -112,13 +111,6 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 		plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
 
 		setSliders(dataset.getColumnCount());
-
-		ChangeListener<Number> listener = new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				plot.getRangeAxis().setRange(newValue.doubleValue(), newValue.doubleValue());
-			}
-		};
 
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		// Set tooltip string
@@ -258,7 +250,11 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 					series1.getData().add(xyData);
 				}
 			}
-			sortSeriesY(series1);
+			if(seriesData.size() > 0)
+				sortSeriesWithPrimarySeries(series1, (SciomeSeries) (seriesData.get(0)));
+			else
+				sortSeriesY(series1);
+			
 			seriesData.add(series1);
 
 		}
@@ -291,6 +287,32 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 		}
 		return countMap;
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void sortSeriesWithPrimarySeries(SciomeSeries series1, SciomeSeries primarySeries)
+	{
+		Map<String, Integer> indexMap = new HashMap<>();
+		int i = 0;
+		for (Object sd : primarySeries.getData())
+			indexMap.put(((SciomeData) sd).getName(), i++);
+
+		series1.getData().sort(new Comparator<SciomeData>() {
+
+			@Override
+			public int compare(SciomeData o1, SciomeData o2)
+			{
+				if (indexMap.containsKey(o1.getName()) && indexMap.containsKey(o2.getName()))
+					return indexMap.get(o1.getName()).compareTo(indexMap.get(o2.getName()));
+				else if (indexMap.containsKey(o1.getName()) && !indexMap.containsKey(o2.getName()))
+					return 1;
+				else if (indexMap.containsKey(o2.getName()) && !indexMap.containsKey(o1.getName()))
+					return -1;
+				else
+					return 0;
+			}
+		});
+
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void sortSeriesY(SciomeSeries series1) {
@@ -316,25 +338,6 @@ public class SciomeBarChartJFree extends SciomeChartBase<String, Number> impleme
 	}
 
 	private void setSliders(double numValues) {
-		RangeSlider hSlider = new RangeSlider(0, numValues, 0, 10);
-
-		hSlider.lowValueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
-				firstValue = newValue.intValue();
-				slidingDataset.setFirstCategoryIndex(firstValue);
-				slidingDataset.setMaximumCategoryCount(lastValue - firstValue);
-			}
-		});
-
-		hSlider.highValueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue) {
-				lastValue = newValue.intValue();
-				slidingDataset.setMaximumCategoryCount(lastValue - firstValue);
-			}
-		});
-
 		Slider slider = new Slider(0, numValues - 10, 0);
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override

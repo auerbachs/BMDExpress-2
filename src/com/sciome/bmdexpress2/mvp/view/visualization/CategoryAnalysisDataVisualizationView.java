@@ -23,12 +23,12 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.PathwayCurveViewer;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomePieChartFX;
 import com.sciome.charts.javafx.SciomeRangePlotFX;
 import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
 import com.sciome.charts.jfree.SciomeBarChartJFree;
 import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
+import com.sciome.charts.jfree.SciomePieChartJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -58,14 +58,14 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				BMDExpressEventBus.getInstance());
 
 		chartCache.put("PIE-CHART",
-				new SciomePieChartFX(getBMDStatResultCountsFromCatAnalysis(results, null, true), null, null,
+				new SciomePieChartJFree(getBMDStatResultCountsFromCatAnalysis(results, null, true), null, null,
 						"BMDS Model Counts (unique)", CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotFX("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
 						new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null), null,
-						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), null,
+						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), null, 
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
@@ -338,7 +338,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		// add straggler pie charts that need the chartdatapacks as input.
 		if (chartKey.equals(BEST_MODEL_PIE))
 		{
-			SciomePieChartFX chart = (SciomePieChartFX) chartCache.get("PIE-CHART");
+			SciomePieChartJFree chart = (SciomePieChartJFree) chartCache.get("PIE-CHART");
 			chart.redrawPieChart(getBMDStatResultCountsFromCatAnalysis(results, pack, true), null);
 			chartsList.add(chart);
 		}

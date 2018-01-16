@@ -16,9 +16,9 @@ import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.javafx.SciomePieChartFX;
 import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
+import com.sciome.charts.jfree.SciomePieChartJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -68,7 +68,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 				new ChartKey(BMDResult.BMD, null), 20.0, BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-PIE",
-				new SciomePieChartFX(
+				new SciomePieChartJFree(
 						BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, null),
 						null, null, "BMDS Model Counts", BMDAnalysisResultsDataVisualizationView.this));
 
@@ -138,7 +138,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		// add the straggler piechart
 		if (chartKey.equals(DEFAULT_CHARTS))
 		{
-			SciomePieChartFX pieChart = (SciomePieChartFX) chartCache.get("DEFAULT-PIE");
+			SciomePieChartJFree pieChart = (SciomePieChartJFree) chartCache.get("DEFAULT-PIE");
 			pieChart.redrawPieChart(
 					BMDAnalysisResultsDataVisualizationView.this.getBMDStatResultCounts(results, pack), null);
 			chartsList.add(0, pieChart);
