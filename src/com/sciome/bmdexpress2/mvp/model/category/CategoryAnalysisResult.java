@@ -1297,31 +1297,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		genesThatPassedAllFilters = number;
 	}
 
-	@JsonIgnore
 	public Integer getAllGenesPassedAllFilters()
 	{
 
 		if (genesThatPassedAllFilters != null)
 			return genesThatPassedAllFilters;
-		// starting with the top field, check to see the first one that
-		// is not null to be able to figure out which value
-		// represents the number of genes that passed all filters.
-		if (genesWithFoldChangeAboveValue != null)
-			return genesWithFoldChangeAboveValue;
-		else if (genesWithNFoldBelowLowPostiveDoseValue != null)
-			return genesWithNFoldBelowLowPostiveDoseValue;
-		else if (genesWithBMDUBMDLRatioBelowValue != null)
-			return genesWithBMDUBMDLRatioBelowValue;
-		else if (genesWithBMDUBMDRatioBelowValue != null)
-			return genesWithBMDUBMDRatioBelowValue;
-		else if (genesWithBMDBMDLRatioBelowValue != null)
-			return genesWithBMDBMDLRatioBelowValue;
-		else if (genesWithBMDpValueGreaterEqualValue != null)
-			return genesWithBMDpValueGreaterEqualValue;
-		else if (genesWithBMDLessEqualHighDose != null)
-			return genesWithBMDLessEqualHighDose;
 
-		return geneCountSignificantANOVA;
+		return null;
 	}
 
 	private String grabGenesWithConflictingProbeSets()
