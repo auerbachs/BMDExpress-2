@@ -4,7 +4,12 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.editor.ChartEditor;
+import org.jfree.chart.editor.ChartEditorManager;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYAnnotationEntity;
 import org.jfree.chart.fx.ChartCanvas;
@@ -17,6 +22,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.util.ShapeUtils;
 
+import javafx.embed.swing.SwingNode;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 
 public class SciomeChartViewer extends ChartViewer
@@ -45,6 +55,8 @@ public class SciomeChartViewer extends ChartViewer
 		// Set height and width of chart
 		canvas.setHeight(width);
 		canvas.setWidth(height);
+		
+		addProperties();
 	}
 
 	public ChartEntity getEntity(double x, double y)
@@ -153,4 +165,36 @@ public class SciomeChartViewer extends ChartViewer
 		return Math.atan2(yDiff, xDiff) + Math.PI;
 	}
 
+	private void addProperties() {
+		MenuItem properties = new MenuItem("Properties");
+		properties.setOnAction(e -> handleProperties());
+		getContextMenu().getItems().add(properties);
+	}
+	
+	private void handleProperties() {
+		ChartEditor editor = ChartEditorManager.getChartEditor(this.getChart());
+		JPanel panel = new JPanel();
+		panel.add((JComponent)editor);
+		SwingNode node = new SwingNode();
+		node.setContent((JComponent) editor);
+		
+		DialogPane dialogPane = new DialogPane();
+		dialogPane.getButtonTypes().add(ButtonType.OK);
+		dialogPane.setContent(node);
+		dialogPane.setMinHeight(300);
+		dialogPane.setMinWidth(600);
+		
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setHeight(300);
+		dialog.setWidth(600);
+		dialog.setDialogPane(dialogPane);
+		dialog.setResultConverter(buttonType -> {
+	        if (buttonType == ButtonType.OK) {
+	        	editor.updateChart(getChart());
+	        }
+            return "";
+	    });
+		
+		dialog.show();
+	}
 }
