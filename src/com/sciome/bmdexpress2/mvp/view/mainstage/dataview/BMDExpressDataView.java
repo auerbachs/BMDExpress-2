@@ -63,7 +63,7 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 
 /*
- * base class for viewing bmdexpressdata
+ * base class for viewing bmdexpressdata 
  * data view represents a filter panel, table view and visualization view
  */
 public abstract class BMDExpressDataView<T> extends VBox
@@ -149,7 +149,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 					df.init();
 				}
 
-			filtrationNode = new FilterComponentsNode(bmdAnalysisDataSet, filterableClass, this, defaultDPack);
+			filtrationNode = new FilterComponentsNode(bmdAnalysisDataSet, filterableClass, this,
+					defaultDPack);
 			filtrationNode.init();
 
 			if (!BMDExpressProperties.getInstance().isHideFilter())
@@ -594,8 +595,18 @@ public abstract class BMDExpressDataView<T> extends VBox
 		dialog.setResizable(false);
 
 		VBox vbox = new VBox();
-		if (dbToPathwayToGeneSet != null)
+
+		String instructionText = "Enter one gene sybmol or entrez id per line. ";
+		if (this instanceof CategoryAnalysisDataView)
+			instructionText = "Enter one pathway per line.";
+		Label hintLabel1 = new Label("Marked data points are labeled in charts and not filterable.");
+		Label hintLabel2 = new Label(instructionText);
+		vbox.getChildren().add(hintLabel1);
+		vbox.getChildren().add(hintLabel2);
+		if (dbToPathwayToGeneSet != null && dbToPathwayToGeneSet.keySet().size() > 0)
 		{
+			hintLabel2.setText(
+					instructionText + " You can also select pathways to help find data points to mark.");
 			ComboBox<String> howtodostring;
 			// Create the CheckComboBox with the data
 			howtodostring = new ComboBox<String>(
@@ -672,7 +683,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			});
 
-			hbox.getChildren().addAll(howtodostring, dbCombo, pathwayTextField, clearButton);
+			hbox.getChildren().addAll(dbCombo, howtodostring, pathwayTextField, clearButton);
 			vbox.getChildren().add(hbox);
 			dbCombo.getSelectionModel().select(0);
 		}

@@ -124,7 +124,7 @@ public class PathwayCurveViewer extends VBox
 			return;
 		}
 		hbox = new HBox(5);
-		Label l = new Label("Define Data:  ");
+		Label l = new Label("Select a pathway, analyses and then genes:  ");
 		hbox.getChildren().addAll(l, howtodostring, pathwayAutoCompleteTextField);
 		l.setAlignment(Pos.CENTER_LEFT);
 		this.getChildren().addAll(hbox);
@@ -180,8 +180,8 @@ public class PathwayCurveViewer extends VBox
 						geneCombo = new CheckComboBox<>();
 						geneCombo.getItems()
 								.setAll(getGenesThatAreInPathwayAndCategoryResults(
-										pathwayAutoCompleteTextField.getText(),
-										categoryAnalysisResultsCombo.getCheckModel().getCheckedItems()));
+										pathwayAutoCompleteTextField.getText(), categoryAnalysisResultsCombo
+												.getCheckModel().getCheckedItems()));
 						hbox.getChildren().add(geneCombo);
 						geneCombo.setMaxWidth(200);
 
