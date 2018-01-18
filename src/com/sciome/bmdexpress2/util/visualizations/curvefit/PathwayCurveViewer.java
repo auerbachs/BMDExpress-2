@@ -87,7 +87,7 @@ public class PathwayCurveViewer extends VBox
 		for (BMDExpressAnalysisDataSet results : categoryAnalysisResults)
 			for (BMDExpressAnalysisRow result : results.getAnalysisRows())
 				if (filterPack == null || filterPack.passesFilter(result))
-					if (((CategoryAnalysisResult) result.getObject()).getAllGenesPassedAllFilters() > 0)
+					if (((CategoryAnalysisResult) result.getObject()).getGenesThatPassedAllFilters() > 0)
 						pathwaySet
 								.add(((CategoryAnalysisResult) result.getObject()).getCategoryDescription());
 		pathways.addAll(pathwaySet);

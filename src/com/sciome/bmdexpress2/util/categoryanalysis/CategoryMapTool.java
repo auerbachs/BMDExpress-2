@@ -500,7 +500,7 @@ public class CategoryMapTool
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);
 
 			sub = subList.size();
-			categoryAnalysisResult.setAllGenesPassedAllFilters(sub);
+			categoryAnalysisResult.setGenesThatPassedAllFilters(sub);
 			// calculate Fisher's exact test values
 			double[] triple = fisherExactTest(sub, chgTotal, all, allTotal);
 			categoryAnalysisResult.setFishersExactLeftPValue(triple[0]);
