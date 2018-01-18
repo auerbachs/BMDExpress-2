@@ -1,10 +1,10 @@
 <html>
 <body>
 <h1>
- BMDExpress 2 
+ BMDExpress 2.1 Preview
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on August 1, 2017</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 17, 2018</h2>
 
 
 
@@ -12,7 +12,18 @@
 New Release
 </h3>
 <ul>
-<li>This is the first major release of BMDExpress 2. </li>
+<li>Converted Pie Chart to use jfreechart. </li>
+<li>Remove background color and border from chart node labels. </li>
+<li>Added descriptive text to data marking dialog box to help explain to user what marking data does. </li>
+<li>Added descriptive text to curve plot overlay to explain to user how to select genes' curves to overlay. </li>
+<li>Right click on charts then Properties and you can do some basic editing of the chart. (in progress)   </li>
+
+<h3>
+Coming Soon
+</h3>
+<ul>
+<li>Finish adding chart editing dialogue. </li>
+<li>Finish converting range plot to use jfreechart. </li>
 
 
 </body>

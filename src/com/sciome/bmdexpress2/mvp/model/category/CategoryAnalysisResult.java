@@ -1175,7 +1175,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		if (genesWithPrefilterAdjustedPValueAboveValue != null)
 			row.add(genesWithPrefilterAdjustedPValueAboveValue);
 
-		row.add(getAllGenesPassedAllFilters());
+		row.add(getGenesThatPassedAllFilters());
 		row.add(this.fishersExactLeftPValue);
 		row.add(this.fishersExactRightPValue);
 		row.add(this.fishersExactTwoTailPValue);
@@ -1292,12 +1292,12 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	}
 
-	public void setAllGenesPassedAllFilters(Integer number)
+	public void setGenesThatPassedAllFilters(Integer number)
 	{
 		genesThatPassedAllFilters = number;
 	}
 
-	public Integer getAllGenesPassedAllFilters()
+	public Integer getGenesThatPassedAllFilters()
 	{
 
 		if (genesThatPassedAllFilters != null)
