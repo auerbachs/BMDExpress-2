@@ -8,8 +8,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.editor.ChartEditor;
-import org.jfree.chart.editor.ChartEditorManager;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYAnnotationEntity;
 import org.jfree.chart.fx.ChartCanvas;
@@ -22,12 +20,16 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.util.ShapeUtils;
 
+import com.sciome.charts.jfree.editor.ChartEditor;
+import com.sciome.charts.jfree.editor.ChartEditorManager;
+
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 
 public class SciomeChartViewer extends ChartViewer
 {
@@ -177,24 +179,26 @@ public class SciomeChartViewer extends ChartViewer
 		panel.add((JComponent)editor);
 		SwingNode node = new SwingNode();
 		node.setContent((JComponent) editor);
+		node.setFocusTraversable(true);
 		
 		DialogPane dialogPane = new DialogPane();
 		dialogPane.getButtonTypes().add(ButtonType.OK);
 		dialogPane.setContent(node);
-		dialogPane.setMinHeight(300);
+		dialogPane.setMinHeight(600);
 		dialogPane.setMinWidth(600);
 		
 		Dialog<String> dialog = new Dialog<>();
-		dialog.setHeight(300);
-		dialog.setWidth(600);
+		dialog.setTitle("Chart Editor");
 		dialog.setDialogPane(dialogPane);
+		dialog.setResizable(true);
 		dialog.setResultConverter(buttonType -> {
 	        if (buttonType == ButtonType.OK) {
 	        	editor.updateChart(getChart());
 	        }
             return "";
 	    });
-		
+
+		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.show();
 	}
 }
