@@ -60,6 +60,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private CheckBox						removePromiscuousProbesCheckBox;
 
+	@FXML
+	private CheckBox						deduplicateGeneSetsCheckBox;
+
 	// textfields
 	@FXML
 	private TextField						correlationCutoffProbeSetsValue;
@@ -281,12 +284,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setUserFoldChangeFilter(this.bmdFilterMaxFoldChangeCheckBox.isSelected());
 		params.setMaxFoldChange(Double.valueOf(this.bmdFilterMaxFoldChangeValue.getText()));
-		
+
 		params.setUserPValueFilter(this.bmdFilterMaxPValueCheckBox.isSelected());
 		params.setPValue(Double.valueOf(this.bmdFilterMaxPValueChangeValue.getText()));
-		
+
 		params.setUserAdjustedPValueFilter(this.bmdFilterMaxAdjustedPValueCheckBox.isSelected());
 		params.setAdjustedPValue(Double.valueOf(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
+
+		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
 		return params;
 

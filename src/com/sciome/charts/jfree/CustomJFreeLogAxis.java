@@ -82,7 +82,9 @@ public class CustomJFreeLogAxis extends LogAxis
 
 		Range range = getRange();
 		List<NumberTick> ticks = new ArrayList<NumberTick>();
-		double start = Math.floor(calculateLog(getLowerBound()));
+		double lbound = getLowerBound();
+
+		double start = Math.floor(calculateLog(lbound));
 		double end = Math.ceil(calculateLog(getUpperBound()));
 		for (int i = (int) start; i < end; i++)
 		{
@@ -109,6 +111,16 @@ public class CustomJFreeLogAxis extends LogAxis
 			}
 		}
 		return ticks;
+	}
+
+	@Override
+	public void setRange(Range range)
+	{
+
+		Range adjustedRange = range;
+		if (range.getLowerBound() <= 0.0)
+			adjustedRange = new Range(0.00000001, range.getUpperBound());
+		setRange(adjustedRange, true, true);
 	}
 
 }

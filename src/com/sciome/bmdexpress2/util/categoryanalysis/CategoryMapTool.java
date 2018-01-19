@@ -191,6 +191,10 @@ public class CategoryMapTool
 			probeGeneMaps = probeCategoryGeneMaps;
 		}
 
+		if (params.getDeduplicateGeneSets())
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: true");
+		else
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: false");
 		analysisInfo.getNotes().add("Data Source: " + bmdResults.getDoseResponseExperiment().getName());
 		analysisInfo.getNotes().add("Work Source: " + bmdResults.getName());
 		analysisInfo.getNotes()
@@ -254,13 +258,14 @@ public class CategoryMapTool
 			analysisInfo.getNotes().add("Remove Genes With Prefilter P Value >: " + params.getPValue());
 			rstName += "_pvalue" + df1.format(params.getPValue());
 		}
-		
+
 		if (params.isUserAdjustedPValueFilter())
 		{
-			analysisInfo.getNotes().add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
+			analysisInfo.getNotes()
+					.add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
 			rstName += "_adjustedpvalue" + df1.format(params.getAdjustedPValue());
 		}
-		
+
 		if (params.isIdentifyConflictingProbeSets())
 		{
 			analysisInfo.getNotes().add(
@@ -273,6 +278,9 @@ public class CategoryMapTool
 			analysisInfo.getNotes().add("Probe File: " + params.getProbeFileParameters().getFileName());
 			analysisInfo.getNotes().add("Category File: " + params.getCategoryFileParameters().getFileName());
 		}
+
+		if (params.getDeduplicateGeneSets())
+			rstName += "_deduplicate";
 		this.probeGeneMaps = probeGeneMaps;
 		this.categoryGeneMap = catMap;
 		this.rstName = rstName;
@@ -480,20 +488,18 @@ public class CategoryMapTool
 						.size();
 				categoryAnalysisResult.setGenesWithFoldChangeAboveValue(sub);
 			}
-			
+
 			if (params.isUserPValueFilter())
 			{
-				sub = bmdStats
-						.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
+				sub = bmdStats.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
 						.size();
 				categoryAnalysisResult.setGenesWithPrefilterPValueAboveValue(sub);
 			}
-			
+
 			if (params.isUserAdjustedPValueFilter())
 			{
-				sub = bmdStats
-						.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids, removedProbes)
-						.size();
+				sub = bmdStats.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids,
+						removedProbes).size();
 				categoryAnalysisResult.setGenesWithPrefilterAdjustedPValueAboveValue(sub);
 			}
 
@@ -525,7 +531,8 @@ public class CategoryMapTool
 
 			if (i % 10 == 0)
 			{
-				if(categoryMapProgress != null) {
+				if (categoryMapProgress != null)
+				{
 					categoryMapProgress.updateProgress(
 							"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
 							(double) i / (double) rows);
@@ -534,6 +541,8 @@ public class CategoryMapTool
 
 		}
 
+		if (params.getDeduplicateGeneSets())
+			categoryAnalysisResults.deDuplicateGeneSets();
 		return categoryAnalysisResults;
 	}
 
