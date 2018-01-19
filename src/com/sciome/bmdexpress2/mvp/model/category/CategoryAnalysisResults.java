@@ -2,7 +2,12 @@ package com.sciome.bmdexpress2.mvp.model.category;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -244,6 +249,102 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public Object getObject()
 	{
 		return this;
+	}
+
+	public void deDuplicateGeneSets()
+	{
+		getColumnHeader();
+		if (categoryAnalsyisResults == null || categoryAnalsyisResults.size() == 0)
+			return;
+
+		Map<String, List<CategoryAnalysisResult>> geneToResultMap = new HashMap<>();
+		// step 1: create a map with gene names as key
+		for (CategoryAnalysisResult catResult : categoryAnalsyisResults)
+		{
+			String genesKey = "";
+			if (catResult.getGenes() != null)
+			{
+				List<String> allGenes = Arrays.asList(catResult.getGenes().split(";"));
+				Collections.sort(allGenes);
+				genesKey = String.join(";", allGenes);
+			}
+			if (!geneToResultMap.containsKey(genesKey))
+				geneToResultMap.put(genesKey, new ArrayList<>());
+			geneToResultMap.get(genesKey).add(catResult);
+		}
+
+		List<CategoryAnalysisResult> deDupList = new ArrayList<>();
+		// step 2: now loop through the groups and create a new list that is de duplicated.
+		for (String genesKey : geneToResultMap.keySet())
+		{
+			List<CategoryAnalysisResult> thisList = geneToResultMap.get(genesKey);
+			if (genesKey.equals(""))
+			{
+				deDupList.addAll(thisList);
+				continue;
+			}
+			thisList.sort(new Comparator<CategoryAnalysisResult>() {
+
+				@Override
+				public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
+				{
+					return o1.getPercentage().compareTo(o2.getPercentage());
+				}
+			});
+
+			thisList.sort(new Comparator<CategoryAnalysisResult>() {
+				@Override
+				public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
+				{
+					return o1.getBmdlMedian().compareTo(o2.getBmdMedian());
+				}
+			});
+
+			if (categoryAnalsyisResults.get(0) instanceof GOAnalysisResult)
+			{
+				thisList.sort(new Comparator<CategoryAnalysisResult>() {
+					@Override
+					public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
+					{
+						return ((GOAnalysisResult) o2).getGotermLevel()
+								.compareTo(((GOAnalysisResult) o1).getGotermLevel());
+					}
+				});
+			}
+
+			// now that the sorting is done, let's loop through this list and pick the winner(s)
+			List<CategoryAnalysisResult> winners = new ArrayList<>();
+			int i = -1;
+			CategoryAnalysisResult firstWinner = null;
+			for (CategoryAnalysisResult result : thisList)
+			{
+				i++;
+				if (i == 0)
+				{
+					firstWinner = result;
+					winners.add(result);
+					continue;
+				}
+				// now look for ties
+				if (firstWinner.getPercentage().equals(result.getPercentage())
+						&& firstWinner.getBmdMedian().equals(result.getBmdMedian()))
+				{
+					if (result instanceof GOAnalysisResult)
+						if (((GOAnalysisResult) firstWinner).getGotermLevel()
+								.intValue() > ((GOAnalysisResult) result).getGotermLevel().intValue())
+							break; // first winner is cool.
+
+					winners.add(result); // this is a tie. show both results.
+				}
+				else
+					break; // we found a clear winner
+
+			}
+
+			deDupList.addAll(winners);
+		}
+
+		this.categoryAnalsyisResults = deDupList;
 	}
 
 }

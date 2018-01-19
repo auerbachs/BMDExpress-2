@@ -254,13 +254,14 @@ public class CategoryMapTool
 			analysisInfo.getNotes().add("Remove Genes With Prefilter P Value >: " + params.getPValue());
 			rstName += "_pvalue" + df1.format(params.getPValue());
 		}
-		
+
 		if (params.isUserAdjustedPValueFilter())
 		{
-			analysisInfo.getNotes().add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
+			analysisInfo.getNotes()
+					.add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
 			rstName += "_adjustedpvalue" + df1.format(params.getAdjustedPValue());
 		}
-		
+
 		if (params.isIdentifyConflictingProbeSets())
 		{
 			analysisInfo.getNotes().add(
@@ -480,20 +481,18 @@ public class CategoryMapTool
 						.size();
 				categoryAnalysisResult.setGenesWithFoldChangeAboveValue(sub);
 			}
-			
+
 			if (params.isUserPValueFilter())
 			{
-				sub = bmdStats
-						.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
+				sub = bmdStats.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
 						.size();
 				categoryAnalysisResult.setGenesWithPrefilterPValueAboveValue(sub);
 			}
-			
+
 			if (params.isUserAdjustedPValueFilter())
 			{
-				sub = bmdStats
-						.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids, removedProbes)
-						.size();
+				sub = bmdStats.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids,
+						removedProbes).size();
 				categoryAnalysisResult.setGenesWithPrefilterAdjustedPValueAboveValue(sub);
 			}
 
@@ -525,7 +524,8 @@ public class CategoryMapTool
 
 			if (i % 10 == 0)
 			{
-				if(categoryMapProgress != null) {
+				if (categoryMapProgress != null)
+				{
 					categoryMapProgress.updateProgress(
 							"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
 							(double) i / (double) rows);
@@ -534,6 +534,8 @@ public class CategoryMapTool
 
 		}
 
+		// TODO: perform deduplication here. need to set up a parameter first.
+		// categoryAnalysisResults.deDuplicateGeneSets();
 		return categoryAnalysisResults;
 	}
 
