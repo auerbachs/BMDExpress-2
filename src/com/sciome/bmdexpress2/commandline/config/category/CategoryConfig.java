@@ -24,12 +24,14 @@ public abstract class CategoryConfig
 	private Double	bmduBMDRatioMin;
 	private Double	bmduBMDLRatioMin;
 	private Double	nFoldBelowLowestDose;
-	private Double 	maxFoldChange;
+	private Double	maxFoldChange;
 	private Double	prefilterPValueMin;
 	private Double	prefilterAdjustedPValueMin;
 
 	private Boolean	identifyConflictingProbeSets;
 	private Double	correlationCutoffForConflictingProbeSets;
+
+	private Boolean	deduplicateGeneSets	= false;
 
 	public String getInputName()
 	{
@@ -121,27 +123,33 @@ public abstract class CategoryConfig
 		this.nFoldBelowLowestDose = nFoldBelowLowestDose;
 	}
 
-	public Double getMaxFoldChange() {
+	public Double getMaxFoldChange()
+	{
 		return maxFoldChange;
 	}
 
-	public void setMaxFoldChange(Double maxFoldChange) {
+	public void setMaxFoldChange(Double maxFoldChange)
+	{
 		this.maxFoldChange = maxFoldChange;
 	}
 
-	public Double getPrefilterPValueMin() {
+	public Double getPrefilterPValueMin()
+	{
 		return prefilterPValueMin;
 	}
 
-	public void setPrefilterPValueMin(Double pValueMin) {
+	public void setPrefilterPValueMin(Double pValueMin)
+	{
 		this.prefilterPValueMin = pValueMin;
 	}
 
-	public Double getPrefilterAdjustedPValueMin() {
+	public Double getPrefilterAdjustedPValueMin()
+	{
 		return prefilterAdjustedPValueMin;
 	}
 
-	public void setPrefilterAdjustedPValueMin(Double adjustedPValueMin) {
+	public void setPrefilterAdjustedPValueMin(Double adjustedPValueMin)
+	{
 		this.prefilterAdjustedPValueMin = adjustedPValueMin;
 	}
 
@@ -163,6 +171,16 @@ public abstract class CategoryConfig
 	public void setCorrelationCutoffForConflictingProbeSets(Double correlationCutoffForConflictingProbeSets)
 	{
 		this.correlationCutoffForConflictingProbeSets = correlationCutoffForConflictingProbeSets;
+	}
+
+	public Boolean getDeduplicateGeneSets()
+	{
+		return deduplicateGeneSets;
+	}
+
+	public void setDeduplicateGeneSets(Boolean deduplicateGeneSets)
+	{
+		this.deduplicateGeneSets = deduplicateGeneSets;
 	}
 
 }

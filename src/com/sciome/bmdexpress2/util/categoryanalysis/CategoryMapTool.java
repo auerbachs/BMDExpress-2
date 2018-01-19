@@ -191,6 +191,10 @@ public class CategoryMapTool
 			probeGeneMaps = probeCategoryGeneMaps;
 		}
 
+		if (params.getDeduplicateGeneSets())
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: true");
+		else
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: false");
 		analysisInfo.getNotes().add("Data Source: " + bmdResults.getDoseResponseExperiment().getName());
 		analysisInfo.getNotes().add("Work Source: " + bmdResults.getName());
 		analysisInfo.getNotes()
@@ -274,6 +278,9 @@ public class CategoryMapTool
 			analysisInfo.getNotes().add("Probe File: " + params.getProbeFileParameters().getFileName());
 			analysisInfo.getNotes().add("Category File: " + params.getCategoryFileParameters().getFileName());
 		}
+
+		if (params.getDeduplicateGeneSets())
+			rstName += "_deduplicate";
 		this.probeGeneMaps = probeGeneMaps;
 		this.categoryGeneMap = catMap;
 		this.rstName = rstName;
@@ -534,8 +541,8 @@ public class CategoryMapTool
 
 		}
 
-		// TODO: perform deduplication here. need to set up a parameter first.
-		// categoryAnalysisResults.deDuplicateGeneSets();
+		if (params.getDeduplicateGeneSets())
+			categoryAnalysisResults.deDuplicateGeneSets();
 		return categoryAnalysisResults;
 	}
 
