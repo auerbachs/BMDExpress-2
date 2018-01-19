@@ -107,7 +107,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER" layoutX="10.0" layoutY="503.0" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
                                              <children>
-                                                <CheckBox fx:id="deduplicateGeneSetsCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="441.0" selected="false" text="Deduplicate Gene Sets" wrapText="true" />
+                                                <CheckBox fx:id="deduplicateGeneSetsCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="441.0" selected="false" text="Eliminate Gene Set Redundancy" wrapText="true" />
                                              </children>
                                           </HBox>
                           </children>
