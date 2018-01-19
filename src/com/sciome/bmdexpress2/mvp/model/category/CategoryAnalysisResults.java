@@ -283,31 +283,21 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 				deDupList.addAll(thisList);
 				continue;
 			}
-			thisList.sort(new Comparator<CategoryAnalysisResult>() {
-
-				@Override
-				public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
-				{
-					return o1.getPercentage().compareTo(o2.getPercentage());
-				}
-			});
-
-			thisList.sort(new Comparator<CategoryAnalysisResult>() {
-				@Override
-				public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
-				{
-					return o1.getBmdlMedian().compareTo(o2.getBmdMedian());
-				}
-			});
-
 			if (categoryAnalsyisResults.get(0) instanceof GOAnalysisResult)
 			{
 				thisList.sort(new Comparator<CategoryAnalysisResult>() {
 					@Override
 					public int compare(CategoryAnalysisResult o1, CategoryAnalysisResult o2)
 					{
-						return ((GOAnalysisResult) o2).getGotermLevel()
-								.compareTo(((GOAnalysisResult) o1).getGotermLevel());
+						int c;
+						c = o2.getPercentage().compareTo(o1.getPercentage());
+						if (c == 0)
+							c = o1.getBmdMedian().compareTo(o2.getBmdMedian());
+						if (c == 0 && categoryAnalsyisResults.get(0) instanceof GOAnalysisResult)
+							c = ((GOAnalysisResult) o2).getGotermLevel()
+									.compareTo(((GOAnalysisResult) o1).getGotermLevel());
+						return c;
+
 					}
 				});
 			}
