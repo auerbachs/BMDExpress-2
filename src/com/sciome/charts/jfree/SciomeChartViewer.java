@@ -19,6 +19,9 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.util.ShapeUtils;
 
+import com.sciome.charts.jfree.editor.ChartEditor;
+import com.sciome.charts.jfree.editor.ChartEditorManager;
+
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -176,7 +179,7 @@ public class SciomeChartViewer extends ChartViewer
 
 	private void handleProperties()
 	{
-		org.jfree.chart.editor.ChartEditor editor = org.jfree.chart.editor.ChartEditorManager
+		ChartEditor editor = ChartEditorManager
 				.getChartEditor(this.getChart());
 		JPanel panel = new JPanel();
 		panel.add((JComponent) editor);
