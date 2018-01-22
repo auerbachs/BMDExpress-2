@@ -151,7 +151,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 		// set this to be disabled until data is present
 		this.addYourOwnChartButton.setDisable(true);
-		h2.getChildren().addAll(new Label("Select Graph View"), cBox);
+		h2.getChildren().addAll(new Label("Select Chart View"), cBox);
 		h.getChildren().addAll(h1, h2);
 
 		HBox.setHgrow(h2, Priority.ALWAYS);
