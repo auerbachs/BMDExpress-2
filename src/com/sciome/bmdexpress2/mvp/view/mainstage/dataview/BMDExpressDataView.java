@@ -596,17 +596,16 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 		VBox vbox = new VBox();
 
-		String instructionText = "Enter one gene sybmol or entrez id per line. ";
+		String instructionText = "Enter one gene symbol or entrez id per line. ";
 		if (this instanceof CategoryAnalysisDataView)
 			instructionText = "Enter one pathway per line.";
-		Label hintLabel1 = new Label("Marked data points are labeled in charts and not filterable.");
-		Label hintLabel2 = new Label(instructionText);
+		Label hintLabel2 = new Label("Marking data causes it to be labeled in the charts.");
+		Label hintLabel1 = new Label(instructionText);
 		vbox.getChildren().add(hintLabel1);
 		vbox.getChildren().add(hintLabel2);
 		if (dbToPathwayToGeneSet != null && dbToPathwayToGeneSet.keySet().size() > 0)
 		{
-			hintLabel2.setText(
-					instructionText + " You can also select pathways to help find data points to mark.");
+			hintLabel1.setText(instructionText);
 			ComboBox<String> howtodostring;
 			// Create the CheckComboBox with the data
 			howtodostring = new ComboBox<String>(
