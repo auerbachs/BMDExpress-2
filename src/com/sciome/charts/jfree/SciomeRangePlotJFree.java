@@ -160,17 +160,20 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 
 		if (plot.getOrientation() == PlotOrientation.VERTICAL)
 			plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
-
 		for (int i = 0; i < dataset.getColumnCount(); i++)
 		{
 			if (i % 2 == 0)
 				plot.addDomainMarker(new CategoryMarker(dataset.getColumnKey(i),
-						new Color(211, 211, 211, 100), new BasicStroke(10000)), Layer.BACKGROUND);
+						new Color(200, 200, 200, 100), new BasicStroke(10000)), Layer.BACKGROUND);
+			else
+				plot.addDomainMarker(new CategoryMarker(dataset.getColumnKey(i),
+						new Color(240, 240, 240, 100), new BasicStroke(10000)), Layer.BACKGROUND);
 		}
 
 		setSliders(dataset.getColumnCount());
 
 		RangePlotRenderer renderer = new RangePlotRenderer();
+		renderer.setSeriesOutlinePaint(0, Color.BLACK);
 		// Set tooltip string
 		StandardCategoryToolTipGenerator tooltipGenerator = new StandardCategoryToolTipGenerator() {
 			@Override
