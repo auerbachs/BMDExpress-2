@@ -14,7 +14,7 @@ New Release
 <ul>
 <li>Marked data pointd are not sticky.  They now obey the filter </li>
 <li>Charts are editable by right click then "Properties" </li>
-<li>Converted Range Plot to JFree. </li>
+<li>Converted Range Plot to JFree. There is one minor issue to deal with when viewing with horizontal orientation. </li>
 </ul>
 
 
