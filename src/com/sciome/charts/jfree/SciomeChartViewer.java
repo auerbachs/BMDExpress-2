@@ -3,16 +3,20 @@ package com.sciome.charts.jfree;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYAnnotationEntity;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.ChartCanvas;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.fx.interaction.AbstractMouseHandlerFX;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -34,7 +38,7 @@ public class SciomeChartViewer extends ChartViewer
 {
 	public static final double	CHART_WIDTH		= 500;
 	public static final double	CHART_HEIGHT	= 500;
-
+	
 	public SciomeChartViewer(JFreeChart chart)
 	{
 		this(chart, CHART_WIDTH, CHART_HEIGHT);
@@ -43,6 +47,7 @@ public class SciomeChartViewer extends ChartViewer
 	public SciomeChartViewer(JFreeChart chart, double width, double height)
 	{
 		super(chart);
+		
 		ChartCanvas canvas = getCanvas();
 
 		// Remove the zoom handler because zoom is now done with rangeslider
@@ -64,7 +69,7 @@ public class SciomeChartViewer extends ChartViewer
 	{
 		return getCanvas().getRenderingInfo().getEntityCollection().getEntity(x, y);
 	}
-
+	
 	private void addDragDropMouseHandler()
 	{
 		getCanvas().addMouseHandler(new AbstractMouseHandlerFX("drag", false, false, false, false) {
@@ -202,6 +207,13 @@ public class SciomeChartViewer extends ChartViewer
 			if (buttonType == ButtonType.OK)
 			{
 				editor.updateChart(getChart());
+				if(getChart().getPlot() instanceof CategoryPlot) {
+					CategoryPlot plot = getChart().getCategoryPlot();
+					if(plot.getOrientation() == PlotOrientation.VERTICAL) 
+						plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+					else
+						plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
+				}
 			}
 			return "";
 		});

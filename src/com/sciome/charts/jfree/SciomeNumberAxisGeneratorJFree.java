@@ -1,10 +1,7 @@
 package com.sciome.charts.jfree;
 
-import java.text.NumberFormat;
-
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.util.LogFormat;
 
 public class SciomeNumberAxisGeneratorJFree
 {

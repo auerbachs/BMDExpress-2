@@ -1,5 +1,6 @@
 package com.sciome.charts.jfree;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -19,13 +20,17 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.EntityCollection;
+import org.jfree.chart.event.ChartChangeEvent;
+import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryMarker;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRendererState;
 import org.jfree.chart.renderer.category.MinMaxCategoryRenderer;
+import org.jfree.chart.ui.Layer;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.SlidingCategoryDataset;
@@ -98,7 +103,6 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		ChartKey highKey = keys[3];
 		ChartKey middleKey = keys[4];
 		
-//		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		RangePlotDataset dataset = new RangePlotDataset();
 		for (SciomeSeries<String, Number> series : getSeriesData()) {
 			String seriesName = series.getName();
@@ -121,15 +125,26 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setRangePannable(true);
 		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "BMDL Median, BMD Median, BMDU "));
-		if(getLockYAxis().isSelected()) {
+		
+		if(getLockYAxis().isSelected() || getLogYAxis().isSelected()) {
 			plot.getRangeAxis().setAutoRange(false);
-			plot.getRangeAxis().setRange(new Range(0, getMaxMax(maxKey)));
+			double maxRange = getMaxMax(maxKey);
+			if(maxRange > 0)
+				plot.getRangeAxis().setRange(new Range(0, getMaxMax(maxKey)));
+			else
+				plot.getRangeAxis().setAutoRange(true);
 		} else {
 			plot.getRangeAxis().setAutoRange(true);
 		}
 		
-		plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
-
+		if(plot.getOrientation() == PlotOrientation.VERTICAL)
+			plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+			
+		for(int i = 0; i < dataset.getColumnCount(); i++) {
+			if(i % 2 == 0)
+				plot.addDomainMarker(new CategoryMarker(dataset.getColumnKey(i), new Color(211, 211, 211, 100), new BasicStroke(10000)), Layer.BACKGROUND);
+		}
+		
 		setSliders(dataset.getColumnCount());
 		
 		RangePlotRenderer renderer = new RangePlotRenderer();
@@ -170,7 +185,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 				// ignore for now
 			}
 		});
-
+		
 		return chartView;
 	}
 
@@ -267,23 +282,13 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		// shared data labels
 		Map<String, Integer> countMap = getCountMap();
 
-		Double sum = 0.0;
-		int count = 0;
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
 				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-				if (dataPointValue != null)
-					sum += dataPointValue;
-
-				count++;
 			}
 		}
-
-		Double avg = 0.0;
-		if (count > 0)
-			avg = sum / count;
 
 		List<SciomeSeries<String, Number>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
@@ -298,8 +303,6 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 
 				if (dataPointValue == null)
 					continue;
-
-				sum += dataPointValue;
 
 				Double dataPointValueMinKey = (Double) chartData.getDataPoints().get(minKey);
 				Double dataPointValueMaxKey = (Double) chartData.getDataPoints().get(maxKey);
@@ -323,8 +326,8 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 			{
 				if (!chartLabelSet.contains(chartedKey))
 				{
-					SciomeData<String, Number> xyData = new SciomeData<>(chartedKey, chartedKey, avg, 
-							new RangePlotExtraValue(chartedKey, countMap.get(chartedKey), avg, avg, avg, "",
+					SciomeData<String, Number> xyData = new SciomeData<>(chartedKey, chartedKey, 0.0, 
+							new RangePlotExtraValue(chartedKey, countMap.get(chartedKey), 0.0, 0.0, 0.0, "",
 									null));
 
 					series1.getData().add(xyData);
@@ -480,48 +483,49 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 	        double mid = value.get(1).doubleValue();
 	        double max = value.get(2).doubleValue();
 	        
-            g2.setPaint(this.getGroupPaint());
-            g2.setStroke(this.getGroupStroke());
-            double minY = rangeAxis.valueToJava2D(min, dataArea,
-                    plot.getRangeAxisEdge());
-            double maxY = rangeAxis.valueToJava2D(max, dataArea,
-                    plot.getRangeAxisEdge());
-            
-            double xWidth = dataArea.getWidth() / (MAX_NODES_SHOWN * rangePlotDataset.getRowCount());
-            
-            g2.setPaint(getItemPaint(row, column));
-            g2.setStroke(getItemStroke(row, column));
-            
-            for(int i = 0; i < value.size(); i++) {
-	            double x1 = domainAxis.getCategoryStart(column, getColumnCount(),
-	            dataArea, plot.getDomainAxisEdge()) + (xWidth * row);
-			    double y1 = rangeAxis.valueToJava2D(value.get(i).doubleValue(), dataArea,
-			            plot.getRangeAxisEdge());
-			    Shape hotspot = new Rectangle2D.Double(x1 - 4, y1 - 4, 8.0, 8.0);
+	        if(!(min == 0 && min == mid && min == max)) {
+	            double minY = rangeAxis.valueToJava2D(min, dataArea,
+	                    plot.getRangeAxisEdge());
+	            double maxY = rangeAxis.valueToJava2D(max, dataArea,
+	                    plot.getRangeAxisEdge());
+
+                double start = domainAxis.getCategoryStart(column, getColumnCount(), dataArea, plot.getDomainAxisEdge());
+                double end = domainAxis.getCategoryEnd(column, getColumnCount(), dataArea, plot.getDomainAxisEdge());
+	            double xWidth = (end - start) / (rangePlotDataset.getRowCount() + 1);
 	            
-	
-	            PlotOrientation orient = plot.getOrientation();
-	            if (orient == PlotOrientation.VERTICAL) {
-	                this.getObjectIcon().paintIcon(null, g2, (int) x1, (int) y1);
-	            } else {
-	            	this.getObjectIcon().paintIcon(null, g2, (int) y1, (int) x1);
+	            for(int i = 0; i < value.size(); i++) {
+	                g2.setPaint(getItemPaint(row, column));
+	                g2.setStroke(getItemStroke(row, column));
+	                
+		            double x1 = domainAxis.getCategoryStart(column, getColumnCount(),
+		            dataArea, plot.getDomainAxisEdge()) + (xWidth * (row + 1));
+				    double y1 = rangeAxis.valueToJava2D(value.get(i).doubleValue(), dataArea,
+				            plot.getRangeAxisEdge());
+				    Shape hotspot = new Rectangle2D.Double(x1 - 4, y1 - 4, 8.0, 8.0);
+		            
+		            PlotOrientation orient = plot.getOrientation();
+		            if (orient == PlotOrientation.VERTICAL) {
+		                this.getObjectIcon().paintIcon(null, g2, (int) x1, (int) y1);
+		            } else {
+		            	this.getObjectIcon().paintIcon(null, g2, (int) y1, (int) x1);
+		            }
+		            
+		            if (orient == PlotOrientation.VERTICAL) {
+		                g2.draw(new Line2D.Double(x1, minY, x1, maxY));
+		                this.getMinIcon().paintIcon(null, g2, (int) x1, (int) minY);
+		                this.getMaxIcon().paintIcon(null, g2, (int) x1, (int) maxY);
+		            }
+		            else {
+		                g2.draw(new Line2D.Double(minY, x1, maxY, x1));
+		                this.getMinIcon().paintIcon(null, g2, (int) minY, (int) x1);
+		                this.getMaxIcon().paintIcon(null, g2, (int) maxY, (int) x1);
+		            }
+		            EntityCollection entities = state.getEntityCollection();
+		            if (entities != null) {
+		                addItemEntity(entities, dataset, row, column, hotspot);
+		            }
 	            }
-	            
-	            if (orient == PlotOrientation.VERTICAL) {
-	                g2.draw(new Line2D.Double(x1, minY, x1, maxY));
-	                this.getMinIcon().paintIcon(null, g2, (int) x1, (int) minY);
-	                this.getMaxIcon().paintIcon(null, g2, (int) x1, (int) maxY);
-	            }
-	            else {
-	                g2.draw(new Line2D.Double(minY, x1, maxY, x1));
-	                this.getMinIcon().paintIcon(null, g2, (int) minY, (int) x1);
-	                this.getMaxIcon().paintIcon(null, g2, (int) maxY, (int) x1);
-	            } 
-	            EntityCollection entities = state.getEntityCollection();
-	            if (entities != null) {
-	                addItemEntity(entities, dataset, row, column, hotspot);
-	            }
-            }
+	        }
 		}
 	}
 }
