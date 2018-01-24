@@ -134,12 +134,12 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		}
 		slidingDataset = new SlidingCategoryDataset(dataset, 0, MAX_NODES_SHOWN);
 
-		chart = ChartFactory.createBarChart("Range Plot", "BMDL Median, BMD Median, BMDU ", "Category",
+		chart = ChartFactory.createBarChart("Range Plot", "BMDL Median, BMD Median, BMDU Median ", "Category",
 				slidingDataset, PlotOrientation.VERTICAL, true, true, false);
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setRangePannable(true);
 		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
-				"BMDL Median, BMD Median, BMDU "));
+				"BMDL Median, BMD Median, BMDU Median"));
 
 		if (getLockYAxis().isSelected() || getLogYAxis().isSelected())
 		{
@@ -553,6 +553,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 					else
 					{
 						this.getObjectIcon().paintIcon(null, g2, (int) y1, (int) x1);
+						hotspot = new Rectangle2D.Double(y1 - 4, x1 - 4, 8.0, 8.0);
 					}
 
 					if (orient == PlotOrientation.VERTICAL)
