@@ -135,7 +135,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		slidingDataset = new SlidingCategoryDataset(dataset, 0, MAX_NODES_SHOWN);
 
 		chart = ChartFactory.createBarChart("Range Plot", "BMDL Median, BMD Median, BMDU Median ", "Category",
-				slidingDataset, PlotOrientation.VERTICAL, true, true, false);
+				slidingDataset, PlotOrientation.HORIZONTAL, true, true, false);
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setRangePannable(true);
 		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
