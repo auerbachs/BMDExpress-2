@@ -2,8 +2,13 @@ package com.sciome.charts.jfree;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -13,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.Icon;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -519,6 +526,8 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 				double minY = rangeAxis.valueToJava2D(min, dataArea, plot.getRangeAxisEdge());
 				double maxY = rangeAxis.valueToJava2D(max, dataArea, plot.getRangeAxisEdge());
 
+				double midValue = rangeAxis.valueToJava2D(mid, dataArea, plot.getRangeAxisEdge());
+
 				double start = domainAxis.getCategoryStart(column, getColumnCount(), dataArea,
 						plot.getDomainAxisEdge());
 				double end = domainAxis.getCategoryEnd(column, getColumnCount(), dataArea,
@@ -527,7 +536,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 
 				for (int i = 0; i < value.size(); i++)
 				{
-					g2.setPaint(getItemPaint(row, column));
+					// g2.setPaint(getItemPaint(row, column));
 					g2.setStroke(getItemStroke(row, column));
 
 					double x1 = domainAxis.getCategoryStart(column, getColumnCount(), dataArea,
@@ -549,14 +558,21 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 					if (orient == PlotOrientation.VERTICAL)
 					{
 						g2.draw(new Line2D.Double(x1, minY, x1, maxY));
-						this.getMinIcon().paintIcon(null, g2, (int) x1, (int) minY);
-						this.getMaxIcon().paintIcon(null, g2, (int) x1, (int) maxY);
+						getIcon(getItemShape(row, column), getItemPaint(row, column),
+								getItemOutlinePaint(row, column)).paintIcon(null, g2, (int) x1, (int) minY);
+						getIcon(getItemShape(row, column), getItemPaint(row, column),
+								getItemOutlinePaint(row, column)).paintIcon(null, g2, (int) x1, (int) maxY);
+						this.getMaxIcon().paintIcon(null, g2, (int) x1, (int) midValue);
+
 					}
 					else
 					{
 						g2.draw(new Line2D.Double(minY, x1, maxY, x1));
-						this.getMinIcon().paintIcon(null, g2, (int) minY, (int) x1);
-						this.getMaxIcon().paintIcon(null, g2, (int) maxY, (int) x1);
+						getIcon(getItemShape(row, column), getItemPaint(row, column),
+								getItemOutlinePaint(row, column)).paintIcon(null, g2, (int) minY, (int) x1);
+						getIcon(getItemShape(row, column), getItemPaint(row, column),
+								getItemOutlinePaint(row, column)).paintIcon(null, g2, (int) maxY, (int) x1);
+						this.getMaxIcon().paintIcon(null, g2, (int) midValue, (int) x1);
 					}
 					EntityCollection entities = state.getEntityCollection();
 					if (entities != null)
@@ -566,5 +582,44 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 				}
 			}
 		}
+	}
+
+	private Icon getIcon(Shape shape, final Paint fillPaint, final Paint outlinePaint)
+	{
+
+		final int width = shape.getBounds().width;
+		final int height = shape.getBounds().height;
+		final GeneralPath path = new GeneralPath(shape);
+		return new Icon() {
+			@Override
+			public void paintIcon(Component c, Graphics g, int x, int y)
+			{
+				Graphics2D g2 = (Graphics2D) g;
+				path.transform(AffineTransform.getTranslateInstance(x, y));
+				if (fillPaint != null)
+				{
+					g2.setPaint(fillPaint);
+					g2.fill(path);
+				}
+				if (outlinePaint != null)
+				{
+					g2.setPaint(outlinePaint);
+					g2.draw(path);
+				}
+				path.transform(AffineTransform.getTranslateInstance(-x, -y));
+			}
+
+			@Override
+			public int getIconWidth()
+			{
+				return width;
+			}
+
+			@Override
+			public int getIconHeight()
+			{
+				return height;
+			}
+		};
 	}
 }
