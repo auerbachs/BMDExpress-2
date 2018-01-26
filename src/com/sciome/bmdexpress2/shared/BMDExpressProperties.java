@@ -21,7 +21,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 
@@ -47,6 +54,16 @@ public class BMDExpressProperties
 	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
 
 	private Properties					versionProperties	= new Properties();
+	
+	private WilliamsTrendInput			williamsInput;
+	
+	private OriogenInput				oriogenInput;
+	
+	private OneWayANOVAInput			oneWayInput;
+	
+	private BMDInput					bmdInput;
+	
+	private CategoryInput				categoryInput;
 
 	protected BMDExpressProperties()
 	{
@@ -61,9 +78,109 @@ public class BMDExpressProperties
 		loadProperties();
 		readPreferences();
 		loadDefaultFilters();
-
+		try {
+			loadInputs();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
-
+	
+	private void loadInputs() throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		
+		File williamsInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "williamsInput.json");
+		File oneWayInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oneWayInput.json");
+		File oriogenInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oriogenInput.json");
+		File bmdInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
+		File categoryInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
+		
+		if(williamsInputFile.exists()) {
+			williamsInput = mapper.readValue(williamsInputFile, WilliamsTrendInput.class);
+		} else {
+			williamsInput = new WilliamsTrendInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(williamsInputFile, williamsInput);
+		}
+		if(oneWayInputFile.exists()) {
+			oneWayInput = mapper.readValue(oneWayInputFile, OneWayANOVAInput.class);
+		} else {
+			oneWayInput = new OneWayANOVAInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oneWayInputFile, oneWayInput);
+		}
+		if(oriogenInputFile.exists()) {
+			oriogenInput = mapper.readValue(oriogenInputFile, OriogenInput.class);
+		} else {
+			oriogenInput = new OriogenInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oriogenInputFile, oriogenInput);
+		}
+		if(bmdInputFile.exists()) {
+			bmdInput = mapper.readValue(bmdInputFile, BMDInput.class);
+		} else {
+			bmdInput = new BMDInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		}
+		if(categoryInputFile.exists()) {
+			categoryInput = mapper.readValue(categoryInputFile, CategoryInput.class);
+		} else {
+			categoryInput = new CategoryInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(categoryInputFile, categoryInput);
+		}
+	}
+	
+	public void saveWilliamsInput(WilliamsTrendInput input) {
+		File williamsInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "williamsInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.williamsInput = input;
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(williamsInputFile, williamsInput);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveOriogenInput(OriogenInput input) {
+		File oriogenInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oriogenInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.oriogenInput = input;
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oriogenInputFile, oriogenInput);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveOneWayANOVAInput(OneWayANOVAInput input) {
+		File oneWayInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oneWayInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.oneWayInput = input;
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oneWayInputFile, oneWayInput);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveBMDInput(BMDInput input) {
+		File bmdInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.bmdInput = input;
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveCategoryInput(CategoryInput input) {
+		File categoryInputFile = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.categoryInput = input;
+		try {
+			mapper.writerWithDefaultPrettyPrinter().writeValue(categoryInputFile, categoryInput);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void loadDefaultFilters()
 	{
 		// BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER"),
@@ -81,7 +198,6 @@ public class BMDExpressProperties
 				{
 					e.printStackTrace();
 				}
-
 			}
 		}
 
@@ -818,6 +934,26 @@ public class BMDExpressProperties
 	public String getExponentialVersion()
 	{
 		return exponentialVersion;
+	}
+
+	public WilliamsTrendInput getWilliamsInput() {
+		return williamsInput;
+	}
+	
+	public OriogenInput getOriogenInput() {
+		return oriogenInput;
+	}
+
+	public OneWayANOVAInput getOneWayInput() {
+		return oneWayInput;
+	}
+	
+	public BMDInput getBmdInput() {
+		return bmdInput;
+	}
+
+	public CategoryInput getCategoryInput() {
+		return categoryInput;
 	}
 
 	public void updateFilter(String name, List<String> values)

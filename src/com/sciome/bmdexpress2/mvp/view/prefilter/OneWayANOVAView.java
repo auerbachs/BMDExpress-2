@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OneWayANOVAPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
 import com.sciome.bmdexpress2.service.PrefilterService;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
@@ -40,6 +42,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
 
+	private OneWayANOVAInput			input;
+	
 	OneWayANOVAPresenter				presenter;
 
 	public OneWayANOVAView()
@@ -55,6 +59,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		super();
 		PrefilterService service = new PrefilterService();
 		presenter = new OneWayANOVAPresenter(this, service, eventBus);
+		input = BMDExpressProperties.getInstance().getOneWayInput();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -65,12 +70,6 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 
 		this.processableData = processableData;
 		this.processableDatas = processableDatas;
-
-		adjustedPValueCutoffComboBox.getItems().add("0.05");
-		adjustedPValueCutoffComboBox.getItems().add("0.01");
-		adjustedPValueCutoffComboBox.getItems().add("0.10");
-		adjustedPValueCutoffComboBox.getItems().add("None");
-		adjustedPValueCutoffComboBox.getSelectionModel().select(0);
 
 		for (IStatModelProcessable experiment : processableDatas)
 		{
@@ -84,6 +83,17 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		{
 			expressionDataComboBox.setDisable(true);
 		}
+		
+		adjustedPValueCutoffComboBox.getItems().add("0.05");
+		adjustedPValueCutoffComboBox.getItems().add("0.01");
+		adjustedPValueCutoffComboBox.getItems().add("0.10");
+		adjustedPValueCutoffComboBox.getItems().add("None");
+		adjustedPValueCutoffComboBox.setValue(input.getpValueCutOff());
+
+		benAndHochCheckBox.setSelected(input.isUseBenAndHoch());
+		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
+		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
+		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -119,7 +129,17 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		this.closeWindow();
 
 	}
-
+	
+	public void handle_saveSettingsButtonPressed(ActionEvent event) {
+		input.setFilterControlGenes(this.filterControlGenesCheckBox.isSelected());
+		input.setUseBenAndHoch(this.benAndHochCheckBox.isSelected());
+		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
+		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
+		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
+		
+		BMDExpressProperties.getInstance().saveOneWayANOVAInput(input);
+	}
+	
 	public void handle_UseFoldChangeFilter()
 	{
 		if (this.useFoldChangeCheckBox.isSelected())

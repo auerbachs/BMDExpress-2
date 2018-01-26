@@ -319,6 +319,7 @@
                                           <Insets left="20.0" right="20.0" />
                                        </HBox.margin>
                                     </Button>
+                                    <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
                                     <Button fx:id="cancelButton" alignment="BASELINE_CENTER" mnemonicParsing="false" onAction="#handle_cancel" text="Cancel">
                                        <HBox.margin>
                                           <Insets left="20.0" right="20.0" />

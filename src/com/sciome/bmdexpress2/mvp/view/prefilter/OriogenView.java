@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OriogenPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
 import com.sciome.bmdexpress2.service.PrefilterService;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
@@ -49,11 +51,15 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	@FXML
 	private Button						startButton;
 	@FXML
+	private Button						saveSettingsButton;
+	@FXML
 	private Button						stopButton;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
 
+	private	OriogenInput				input;
+	
 	OriogenPresenter					presenter;
 
 	public OriogenView()
@@ -69,6 +75,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		super();
 		PrefilterService service = new PrefilterService();
 		presenter = new OriogenPresenter(this, service, eventBus);
+		input = BMDExpressProperties.getInstance().getOriogenInput();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -79,28 +86,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 
 		this.processableData = processableData;
 		this.processableDatas = processableDatas;
-		
-		adjustedPValueCutoffComboBox.getItems().add("0.05");
-		adjustedPValueCutoffComboBox.getItems().add("0.01");
-		adjustedPValueCutoffComboBox.getItems().add("0.10");
-		adjustedPValueCutoffComboBox.getItems().add("None");
-		adjustedPValueCutoffComboBox.getSelectionModel().select(0);
 
-		initialBootstrapComboBox.getItems().add("250");
-		initialBootstrapComboBox.getItems().add("500");
-		initialBootstrapComboBox.getItems().add("1000");
-		initialBootstrapComboBox.getSelectionModel().select(1);
-		
-		maxBootstrapComboBox.getItems().add("500");
-		maxBootstrapComboBox.getItems().add("1000");
-		maxBootstrapComboBox.getItems().add("2500");
-		maxBootstrapComboBox.getSelectionModel().select(1);
-		
-		s0AdjustmentComboBox.getItems().add("1.0");
-		s0AdjustmentComboBox.getItems().add("5.0");
-		s0AdjustmentComboBox.getItems().add("10.0");
-		s0AdjustmentComboBox.getSelectionModel().select(1);
-		
 		for (IStatModelProcessable experiment : processableDatas)
 		{
 			expressionDataComboBox.getItems().add(experiment);
@@ -112,6 +98,33 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		{
 			expressionDataComboBox.setDisable(true);
 		}
+		
+		adjustedPValueCutoffComboBox.getItems().add("0.05");
+		adjustedPValueCutoffComboBox.getItems().add("0.01");
+		adjustedPValueCutoffComboBox.getItems().add("0.10");
+		adjustedPValueCutoffComboBox.getItems().add("None");
+		adjustedPValueCutoffComboBox.setValue(input.getpValueCutOff());
+
+		initialBootstrapComboBox.getItems().add("250");
+		initialBootstrapComboBox.getItems().add("500");
+		initialBootstrapComboBox.getItems().add("1000");
+		initialBootstrapComboBox.setValue(input.getNumInitialBootstraps());
+		
+		maxBootstrapComboBox.getItems().add("500");
+		maxBootstrapComboBox.getItems().add("1000");
+		maxBootstrapComboBox.getItems().add("2500");
+		maxBootstrapComboBox.setValue(input.getNumMaximumBootstraps());
+		
+		s0AdjustmentComboBox.getItems().add("1.0");
+		s0AdjustmentComboBox.getItems().add("5.0");
+		s0AdjustmentComboBox.getItems().add("10.0");
+		s0AdjustmentComboBox.setValue(input.getShrinkagePercentile());
+
+		benAndHochCheckBox.setSelected(input.isUseBenAndHoch());
+		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
+		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
+		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
+		
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -155,6 +168,19 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 			presenter.cancel();
 			startButton.setDisable(false);
 		}
+	}
+	
+	public void handle_saveSettingsButtonPressed(ActionEvent event) {
+		input.setFilterControlGenes(this.filterControlGenesCheckBox.isSelected());
+		input.setUseBenAndHoch(this.benAndHochCheckBox.isSelected());
+		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
+		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
+		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
+		
+		input.setNumInitialBootstraps(Integer.parseInt(this.initialBootstrapComboBox.getEditor().getText()));
+		input.setNumMaximumBootstraps(Integer.parseInt(this.maxBootstrapComboBox.getEditor().getText()));
+		input.setShrinkagePercentile(Double.parseDouble(this.s0AdjustmentComboBox.getEditor().getText()));
+		BMDExpressProperties.getInstance().saveOriogenInput(input);
 	}
 
 	public void handle_UseFoldChangeFilter()

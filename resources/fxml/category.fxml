@@ -154,6 +154,7 @@
                 <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" spacing="50.0" AnchorPane.bottomAnchor="-0.5" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.5">
                   <children>
                     <Button fx:id="startButton" mnemonicParsing="false" onAction="#handle_start" text="Start" />
+                              <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
                     <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handle_close" text="Close" />
                   </children>
                 </HBox>

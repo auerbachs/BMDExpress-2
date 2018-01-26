@@ -5,26 +5,27 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.WilliamsTrendPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IWilliamsTrendView;
 import com.sciome.bmdexpress2.service.PrefilterService;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Label;
-import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTrendView, Initializable
 {
-
 	@FXML
 	private ComboBox					expressionDataComboBox;
 	@FXML
@@ -46,11 +47,15 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	@FXML
 	private Button						startButton;
 	@FXML
+	private Button						saveSettingsButton;
+	@FXML
 	private Button						stopButton;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
 
+	private WilliamsTrendInput			input;
+	
 	WilliamsTrendPresenter				presenter;
 
 	public WilliamsTrendView()
@@ -66,6 +71,7 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		super();
 		PrefilterService service = new PrefilterService();
 		presenter = new WilliamsTrendPresenter(this, service, eventBus);
+		input = BMDExpressProperties.getInstance().getWilliamsInput();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,18 +83,6 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		this.processableData = processableData;
 		this.processableDatas = processableDatas;
 
-		adjustedPValueCutoffComboBox.getItems().add("0.05");
-		adjustedPValueCutoffComboBox.getItems().add("0.01");
-		adjustedPValueCutoffComboBox.getItems().add("0.10");
-		adjustedPValueCutoffComboBox.getItems().add("None");
-		adjustedPValueCutoffComboBox.getSelectionModel().select(0);
-
-		numberOfPermutationsComboBox.getItems().add("50");
-		numberOfPermutationsComboBox.getItems().add("100");
-		numberOfPermutationsComboBox.getItems().add("250");
-		numberOfPermutationsComboBox.getItems().add("500");
-		numberOfPermutationsComboBox.getSelectionModel().select(1);
-		
 		for (IStatModelProcessable experiment : processableDatas)
 		{
 			expressionDataComboBox.getItems().add(experiment);
@@ -101,6 +95,23 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		{
 			expressionDataComboBox.setDisable(true);
 		}
+		
+		adjustedPValueCutoffComboBox.getItems().add("0.01");
+		adjustedPValueCutoffComboBox.getItems().add("0.05");
+		adjustedPValueCutoffComboBox.getItems().add("0.10");
+		adjustedPValueCutoffComboBox.getItems().add("None");
+		adjustedPValueCutoffComboBox.setValue(input.getpValueCutOff());
+
+		numberOfPermutationsComboBox.getItems().add("50");
+		numberOfPermutationsComboBox.getItems().add("100");
+		numberOfPermutationsComboBox.getItems().add("250");
+		numberOfPermutationsComboBox.getItems().add("500");
+		numberOfPermutationsComboBox.setValue((int)input.getNumPermutations());
+		
+		benAndHochCheckBox.setSelected(input.isUseBenAndHoch());
+		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
+		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
+		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -140,6 +151,18 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 			presenter.cancel();
 			startButton.setDisable(false);
 		}
+	}
+	
+	public void handle_saveSettingsButtonPressed(ActionEvent event) {
+		input.setFilterControlGenes(this.filterControlGenesCheckBox.isSelected());
+		input.setUseBenAndHoch(this.benAndHochCheckBox.isSelected());
+		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
+		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
+		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
+		
+		input.setNumPermutations(Double.parseDouble(this.numberOfPermutationsComboBox.getEditor().getText()));
+		
+		BMDExpressProperties.getInstance().saveWilliamsInput(input);
 	}
 
 	public void handle_UseFoldChangeFilter()
