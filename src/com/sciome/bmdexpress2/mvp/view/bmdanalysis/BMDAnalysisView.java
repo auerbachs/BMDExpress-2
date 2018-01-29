@@ -32,6 +32,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -307,6 +309,13 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setBestModelWithFlaggedHill((BestModelSelectionWithFlaggedHillModelEnum)this.bestModelSeletionWithFlaggedHillComboBox.getValue());
 		
 		BMDExpressProperties.getInstance().saveBMDInput(input);
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
 	}
 	
 	/*

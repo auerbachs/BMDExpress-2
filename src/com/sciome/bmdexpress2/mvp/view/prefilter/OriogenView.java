@@ -16,12 +16,14 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class OriogenView extends BMDExpressViewBase implements IOriogenView, Initializable{
@@ -181,6 +183,13 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		input.setNumMaximumBootstraps(Integer.parseInt(this.maxBootstrapComboBox.getEditor().getText()));
 		input.setShrinkagePercentile(Double.parseDouble(this.s0AdjustmentComboBox.getEditor().getText()));
 		BMDExpressProperties.getInstance().saveOriogenInput(input);
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
 	}
 
 	public void handle_UseFoldChangeFilter()

@@ -16,9 +16,11 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAView, Initializable
@@ -138,6 +140,13 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
 		
 		BMDExpressProperties.getInstance().saveOneWayANOVAInput(input);
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
 	}
 	
 	public void handle_UseFoldChangeFilter()
