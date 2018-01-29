@@ -25,4 +25,9 @@ public class BMRFactor {
 	{
 		return value;
 	}
+
+	/* This is only needed for the purpose of converting to json */
+	public String getDescription() {
+		return description;
+	}
 }
