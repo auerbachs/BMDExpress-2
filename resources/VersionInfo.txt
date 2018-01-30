@@ -13,6 +13,7 @@ New Release
 </h3>
 <ul>
 <li>Save the configuration for analyses.  </li>
+<li>Fixed a bug that causes renaming to occur when loading project </li>
 </ul>
 
 
