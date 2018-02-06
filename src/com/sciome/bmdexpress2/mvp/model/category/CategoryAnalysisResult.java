@@ -147,6 +147,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	private transient AdverseDirectionEnum		overallDirection;
 	private transient Double					percentWithOverallDirectionUP;
 	private transient Double					percentWithOverallDirectionDOWN;
+	private transient Double					percentWithOverallDirectionConflict;
 
 	// fold change stats
 	private transient Double					totalFoldChange;
@@ -1289,6 +1290,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		row.add(this.overallDirection);
 		row.add(this.percentWithOverallDirectionUP);
 		row.add(this.percentWithOverallDirectionDOWN);
+		row.add(this.percentWithOverallDirectionConflict);
 
 	}
 
@@ -2097,24 +2099,37 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		int upcount = 0;
 		int downcount = 0;
 		int totalcount = 0;
+		int conflictcount = 0;
 
 		for (ReferenceGeneProbeStatResult rp : referenceGeneProbeStatResults)
+		{
+			int pupcount = 0;
+			int pdowncount = 0;
 			for (ProbeStatResult probeStatResult : rp.getProbeStatResults())
+			{
 				if (probeStatResult.getBestStatResult() != null)
 				{
 					if (probeStatResult.getBestStatResult().getAdverseDirection() == 1)
-						upcount++;
+						pupcount++;
 					else if (probeStatResult.getBestStatResult().getAdverseDirection() == -1)
-						downcount++;
-
-					totalcount++;
-
+						pdowncount++;
 				}
+			}
+			if (pupcount > 0 && pdowncount == 0)
+				upcount++;
+
+			else if (pdowncount > 0 && pupcount == 0)
+				downcount++;
+			else
+				conflictcount++;
+			totalcount++;
+		}
 
 		if (totalcount > 0)
 		{
 			this.percentWithOverallDirectionDOWN = (double) downcount / (double) totalcount;
 			this.percentWithOverallDirectionUP = (double) upcount / (double) totalcount;
+			this.percentWithOverallDirectionConflict = (double) conflictcount / (double) totalcount;
 			if ((float) upcount / totalcount >= 0.6f)
 			{
 				this.overallDirection = AdverseDirectionEnum.UP;

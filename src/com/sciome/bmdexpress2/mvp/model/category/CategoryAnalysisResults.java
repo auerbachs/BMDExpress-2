@@ -26,7 +26,7 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	/**
 	 * 
 	 */
-	private static final long				serialVersionUID					= -5369568518892492798L;
+	private static final long				serialVersionUID						= -5369568518892492798L;
 
 	private String							name;
 	private List<CategoryAnalysisResult>	categoryAnalsyisResults;
@@ -39,81 +39,82 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	private Long							id;
 
 	/* define chartabble and/or filterable key values */
-	public static final String				BMD_MEAN							= "BMD Mean";
-	public static final String				BMD_MEDIAN							= "BMD Median";
-	public static final String				BMD_SD								= "BMD Standard Deviation";
-	public static final String				BMD_MINIUMUM						= "BMD Minimum";
-	public static final String				BMD_MAXIMUM							= "BMD Maximum";
-	public static final String				BMDUP_MEAN							= "BMD Up Mean";
-	public static final String				BMDUP_MEDIAN						= "BMD Up Median";
-	public static final String				BMDUP_SD							= "BMD Up Standard Deviation";
-	public static final String				BMDDOWN_MEAN						= "BMD Down Mean";
-	public static final String				BMDDOWN_MEDIAN						= "BMD Down Median";
-	public static final String				BMDDOWN_SD							= "BMD Down Standard Deviation";
-	public static final String				BMD_FIFTH_MEAN						= "BMD 5th Percentile";
-	public static final String				BMD_TENTH_MEAN						= "BMD 10th Percentile";
-	public static final String				BMDL_MEAN							= "BMDL Mean";
-	public static final String				BMDL_MEDIAN							= "BMDL Median";
-	public static final String				BMDL_SD								= "BMDL Standard Deviation";
-	public static final String				BMDL_MINIUMUM						= "BMDL Minimum";
-	public static final String				BMDL_MAXIMUM						= "BMDL Maximum";
-	public static final String				BMDLUP_MEAN							= "BMDL Up Mean";
-	public static final String				BMDLUP_MEDIAN						= "BMDL Up Median";
-	public static final String				BMDLUP_SD							= "BMDL Up Standard Deviation";
-	public static final String				BMDLDOWN_MEAN						= "BMDL Down Mean";
-	public static final String				BMDLDOWN_MEDIAN						= "BMDL Down Median";
-	public static final String				BMDLDOWN_SD							= "BMDL Down Standard Deviation";
+	public static final String				BMD_MEAN								= "BMD Mean";
+	public static final String				BMD_MEDIAN								= "BMD Median";
+	public static final String				BMD_SD									= "BMD Standard Deviation";
+	public static final String				BMD_MINIUMUM							= "BMD Minimum";
+	public static final String				BMD_MAXIMUM								= "BMD Maximum";
+	public static final String				BMDUP_MEAN								= "BMD Up Mean";
+	public static final String				BMDUP_MEDIAN							= "BMD Up Median";
+	public static final String				BMDUP_SD								= "BMD Up Standard Deviation";
+	public static final String				BMDDOWN_MEAN							= "BMD Down Mean";
+	public static final String				BMDDOWN_MEDIAN							= "BMD Down Median";
+	public static final String				BMDDOWN_SD								= "BMD Down Standard Deviation";
+	public static final String				BMD_FIFTH_MEAN							= "BMD 5th Percentile";
+	public static final String				BMD_TENTH_MEAN							= "BMD 10th Percentile";
+	public static final String				BMDL_MEAN								= "BMDL Mean";
+	public static final String				BMDL_MEDIAN								= "BMDL Median";
+	public static final String				BMDL_SD									= "BMDL Standard Deviation";
+	public static final String				BMDL_MINIUMUM							= "BMDL Minimum";
+	public static final String				BMDL_MAXIMUM							= "BMDL Maximum";
+	public static final String				BMDLUP_MEAN								= "BMDL Up Mean";
+	public static final String				BMDLUP_MEDIAN							= "BMDL Up Median";
+	public static final String				BMDLUP_SD								= "BMDL Up Standard Deviation";
+	public static final String				BMDLDOWN_MEAN							= "BMDL Down Mean";
+	public static final String				BMDLDOWN_MEDIAN							= "BMDL Down Median";
+	public static final String				BMDLDOWN_SD								= "BMDL Down Standard Deviation";
 
-	public static final String				BMDU_MEAN							= "BMDU Mean";
-	public static final String				BMDU_MEDIAN							= "BMDU Median";
-	public static final String				BMDU_SD								= "BMDU Standard Deviation";
-	public static final String				BMDU_MINIUMUM						= "BMDU Minimum";
-	public static final String				BMDU_MAXIMUM						= "BMDU Maximum";
-	public static final String				BMDUUP_MEAN							= "BMDU Up Mean";
-	public static final String				BMDUUP_MEDIAN						= "BMDU Up Median";
-	public static final String				BMDUUP_SD							= "BMDU Up Standard Deviation";
-	public static final String				BMDUDOWN_MEAN						= "BMDU Down Mean";
-	public static final String				BMDUDOWN_MEDIAN						= "BMDU Down Median";
-	public static final String				BMDUDOWN_SD							= "BMDU Down Standard Deviation";
+	public static final String				BMDU_MEAN								= "BMDU Mean";
+	public static final String				BMDU_MEDIAN								= "BMDU Median";
+	public static final String				BMDU_SD									= "BMDU Standard Deviation";
+	public static final String				BMDU_MINIUMUM							= "BMDU Minimum";
+	public static final String				BMDU_MAXIMUM							= "BMDU Maximum";
+	public static final String				BMDUUP_MEAN								= "BMDU Up Mean";
+	public static final String				BMDUUP_MEDIAN							= "BMDU Up Median";
+	public static final String				BMDUUP_SD								= "BMDU Up Standard Deviation";
+	public static final String				BMDUDOWN_MEAN							= "BMDU Down Mean";
+	public static final String				BMDUDOWN_MEDIAN							= "BMDU Down Median";
+	public static final String				BMDUDOWN_SD								= "BMDU Down Standard Deviation";
 
-	public static final String				FISHERS_TWO_TAIL					= "Fisher's Exact Two Tail";
-	public static final String				NUM_SIGNFICANT_GENES				= "Input Genes";
+	public static final String				FISHERS_TWO_TAIL						= "Fisher's Exact Two Tail";
+	public static final String				NUM_SIGNFICANT_GENES					= "Input Genes";
 
-	public static final String				FISHERS_LEFT						= "Fisher's Exact Left P-Value";
-	public static final String				FISHERS_RIGHT						= "Fisher's Exact Right P-Value";
-	public static final String				FISHERS_TWO_TAIL_NEG_LOG			= "Negative Log of Fisher's Two Tail";
+	public static final String				FISHERS_LEFT							= "Fisher's Exact Left P-Value";
+	public static final String				FISHERS_RIGHT							= "Fisher's Exact Right P-Value";
+	public static final String				FISHERS_TWO_TAIL_NEG_LOG				= "Negative Log of Fisher's Two Tail";
 
-	public static final String				BMDU_BMDL_MEDIAN_RATIO				= "BMDU Median/BMDL Median";
-	public static final String				BMD_BMDL_MEDIAN_RATIO				= "BMD Median/BMDL Median";
-	public static final String				BMDU_BMD_MEDIAN_RATIO				= "BMDU Median/BMD Median";
+	public static final String				BMDU_BMDL_MEDIAN_RATIO					= "BMDU Median/BMDL Median";
+	public static final String				BMD_BMDL_MEDIAN_RATIO					= "BMD Median/BMDL Median";
+	public static final String				BMDU_BMD_MEDIAN_RATIO					= "BMDU Median/BMD Median";
 
-	public static final String				BMDU_BMDL_MEAN_RATIO				= "BMDU Mean/BMDL Mean";
-	public static final String				BMD_BMDL_MEAN_RATIO					= "BMD Mean/BMDL Mean";
-	public static final String				BMDU_BMD_MEAN_RATIO					= "BMDU Mean/BMD Mean";
+	public static final String				BMDU_BMDL_MEAN_RATIO					= "BMDU Mean/BMDL Mean";
+	public static final String				BMD_BMDL_MEAN_RATIO						= "BMD Mean/BMDL Mean";
+	public static final String				BMDU_BMD_MEAN_RATIO						= "BMDU Mean/BMD Mean";
 
-	public static final String				CATEGORY_ID							= "Pathway ID";
-	public static final String				CATEGORY_DESCRIPTION				= "Pathway Name";
-	public static final String				GO_TERM_LEVEL						= "GO Term Level";
+	public static final String				CATEGORY_ID								= "Pathway ID";
+	public static final String				CATEGORY_DESCRIPTION					= "Pathway Name";
+	public static final String				GO_TERM_LEVEL							= "GO Term Level";
 
-	public static final String				OVERALL_DIRECTION					= "Overall Direction";
-	public static final String				PERCENT_WITH_OVERALL_DIRECTION_UP	= "Percent Probe Sets With Overall Direction Up";
-	public static final String				PERCENT_WITH_OVERALL_DIRECTION_DOWN	= "Percent Probe Sets With Overall Direction Down";
+	public static final String				OVERALL_DIRECTION						= "Overall Direction";
+	public static final String				PERCENT_WITH_OVERALL_DIRECTION_UP		= "Percent Genes With Overall Direction Up";
+	public static final String				PERCENT_WITH_OVERALL_DIRECTION_DOWN		= "Percent Genes With Overall Direction Down";
+	public static final String				PERCENT_WITH_OVERALL_DIRECTION_CONFLICT	= "Percent Genes With Overall Direction Conflict";
 
 	// fold change stats
-	public static final String				TOTAL_FOLD_CHANGE					= "Total Fold Change";
-	public static final String				MEAN_FOLD_CHANGE					= "Mean Fold Change";
-	public static final String				MEDIAN_FOLD_CHANGE					= "Median Fold Change";
-	public static final String				MAX_FOLD_CHANGE						= "Max Fold Change";
-	public static final String				MIN_FOLD_CHANGE						= "Min Fold Change";
-	public static final String				STDDEV_FOLD_CHANGE					= "Standard Deviation Fold Change";
+	public static final String				TOTAL_FOLD_CHANGE						= "Total Fold Change";
+	public static final String				MEAN_FOLD_CHANGE						= "Mean Fold Change";
+	public static final String				MEDIAN_FOLD_CHANGE						= "Median Fold Change";
+	public static final String				MAX_FOLD_CHANGE							= "Max Fold Change";
+	public static final String				MIN_FOLD_CHANGE							= "Min Fold Change";
+	public static final String				STDDEV_FOLD_CHANGE						= "Standard Deviation Fold Change";
 
 	// 95% confidence interval stats
-	public static final String				BMDLOWER95							= "Lower bound of the 95% confidence interval -  BMD";
-	public static final String				BMDUPPER95							= "Upper bound of the 95% confidence interval -  BMD";
-	public static final String				BMDLLOWER95							= "Lower bound of the 95% confidence interval -  BMDL";
-	public static final String				BMDLUPPER95							= "Upper bound of the 95% confidence interval -  BMDL";
-	public static final String				BMDUUPPER95							= "Upper bound of the 95% confidence interval -  BMDU";
-	public static final String				BMDULOWER95							= "Lower bound of the 95% confidence interval -  BMDU";
+	public static final String				BMDLOWER95								= "Lower bound of the 95% confidence interval -  BMD";
+	public static final String				BMDUPPER95								= "Upper bound of the 95% confidence interval -  BMD";
+	public static final String				BMDLLOWER95								= "Lower bound of the 95% confidence interval -  BMDL";
+	public static final String				BMDLUPPER95								= "Upper bound of the 95% confidence interval -  BMDL";
+	public static final String				BMDUUPPER95								= "Upper bound of the 95% confidence interval -  BMDU";
+	public static final String				BMDULOWER95								= "Lower bound of the 95% confidence interval -  BMDU";
 
 	@JsonIgnore
 	public Long getID()
@@ -213,6 +214,7 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 		columnHeader.add(OVERALL_DIRECTION);
 		columnHeader.add(PERCENT_WITH_OVERALL_DIRECTION_UP);
 		columnHeader.add(PERCENT_WITH_OVERALL_DIRECTION_DOWN);
+		columnHeader.add(PERCENT_WITH_OVERALL_DIRECTION_CONFLICT);
 	}
 
 	@Override
