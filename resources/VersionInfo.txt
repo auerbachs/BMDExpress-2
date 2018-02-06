@@ -4,7 +4,7 @@
  BMDExpress 2.2 Preview
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 24, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 30, 2018</h2>
 
 
 
@@ -12,9 +12,8 @@
 New Release
 </h3>
 <ul>
-<li>Marked data pointd are not sticky.  They now obey the filter </li>
-<li>Charts are editable by right click then "Properties" </li>
-<li>Converted Range Plot to JFree. There is one minor issue to deal with when viewing with horizontal orientation. </li>
+<li>Save the configuration for analyses.  </li>
+<li>Fixed a bug that causes renaming to occur when loading project </li>
 </ul>
 
 

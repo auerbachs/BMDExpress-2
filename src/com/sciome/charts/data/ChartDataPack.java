@@ -79,7 +79,7 @@ public class ChartDataPack
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					// e.printStackTrace();
 				}
 			}
 		}

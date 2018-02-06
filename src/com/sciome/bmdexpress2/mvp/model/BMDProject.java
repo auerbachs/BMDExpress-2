@@ -138,22 +138,30 @@ public class BMDProject implements Serializable
 
 		// now make sure all the names are unique
 		for (OneWayANOVAResults data : oneWayANOVAResults)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (WilliamsTrendResults data : williamsTrendResults)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (OriogenResults data : oriogenResults)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (BMDResult data : bMDResult)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (DoseResponseExperiment data : doseResponseExperiments)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (CategoryAnalysisResults data : categoryAnalysisResults)
-			giveBMDAnalysisUniqueName(data, data.getName());
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public void giveBMDAnalysisUniqueName(BMDExpressAnalysisDataSet dataSet, String proposedName)
+	{
+		giveBMDAnalysisUniqueName(dataSet, proposedName, 0);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void giveBMDAnalysisUniqueName(BMDExpressAnalysisDataSet dataSet, String proposedName,
+			int allowed)
 	{
 		Set<String> names = new HashSet<>();
 		List<BMDExpressAnalysisDataSet> dataSetWithNames = null;
@@ -170,10 +178,14 @@ public class BMDProject implements Serializable
 		else if (dataSet instanceof DoseResponseExperiment)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
 
+		int count = 0;
 		for (BMDExpressAnalysisDataSet ds : dataSetWithNames)
+		{
 			names.add(ds.getName());
-
-		if (names.contains(proposedName))
+			if (ds.getName().equals(proposedName))
+				count++;
+		}
+		if (count > allowed)
 		{
 			String appendage = "";
 			int i = 1;
