@@ -79,11 +79,9 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 
 		// Set plot parameters
 		XYPlot plot = chart.getXYPlot();
-		plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
-		plot.setRangeAxis(
-				SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key.toString()));
+		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "Count"));
 		setSliders(getMinMin(key), getMaxMax(key));
 
 		// Set renderer parameters
@@ -98,13 +96,12 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				return String.valueOf(joinAllObjects(objects));
 			}
 		};
+		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		renderer.setSeriesFillPaint(0, Color.white);
 		renderer.setDefaultOutlinePaint(Color.black);
-		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		renderer.setBarPainter(new StandardXYBarPainter());
 		renderer.setShadowVisible(false);
 		plot.setBackgroundPaint(Color.white);
-		chart.getPlot().setForegroundAlpha(0.5f);
 
 		chart.addChangeListener(new ChartChangeListener() {
 			@Override
