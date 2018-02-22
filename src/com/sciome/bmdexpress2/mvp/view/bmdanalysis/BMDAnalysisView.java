@@ -85,11 +85,11 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	@FXML
 	private TextField maximumIterationsTextField;
 	@FXML
-	private ComboBox bMRFactorComboBox;
-	@FXML
 	private TextField modifyFlaggedHillBMDTextField;
 
 	// ComboBoxes
+	@FXML
+	private ComboBox bMRFactorComboBox;
 	@FXML
 	private ComboBox confidenceLevelComboBox;
 	@FXML
@@ -107,6 +107,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	@FXML
 	private ComboBox numberOfThreadsComboBox;
+	@FXML
+	private ComboBox killTimeComboBox;
 
 	// labels
 	@FXML
@@ -297,6 +299,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		//Set numerical values
 		input.setMaxIterations(Integer.parseInt(this.maximumIterationsTextField.getText()));
 		input.setNumThreads(Integer.parseInt(this.numberOfThreadsComboBox.getEditor().getText()));
+		input.setKillTime(Integer.parseInt(this.killTimeComboBox.getEditor().getText()));
 		input.setConfidenceLevel(Double.parseDouble(this.confidenceLevelComboBox.getEditor().getText()));
 		input.setpValueCutoff(Double.parseDouble(this.pValueCutoffComboBox.getEditor().getText()));
 		input.setModifyBMDFlaggedHill(Double.parseDouble(this.modifyFlaggedHillBMDTextField.getText()));
@@ -481,6 +484,15 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		}
 		numberOfThreadsComboBox.setValue(input.getNumThreads());
 
+		//Add values to kill time combo box
+		killTimeComboBox.getItems().add("30");
+		killTimeComboBox.getItems().add("60");
+		killTimeComboBox.getItems().add("90");
+		killTimeComboBox.getItems().add("120");
+		killTimeComboBox.getItems().add("150");
+		killTimeComboBox.getItems().add("180");
+		killTimeComboBox.setValue(input.getKillTime());
+		
 		// remove most of the panes.
 		if (selectModelsOnly)
 		{
@@ -513,7 +525,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			inputParameters.setBmrLevel(Double.valueOf(
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
-
+			//Multiply by 1000 to convert seconds to milliseconds
+			inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);

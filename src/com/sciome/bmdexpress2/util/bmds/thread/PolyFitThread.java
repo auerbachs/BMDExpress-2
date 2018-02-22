@@ -19,19 +19,14 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class PolyFitThread extends Thread implements IFitThread
 {
-	private String					name;
 	private CountDownLatch			cdLatch;
 	private FilePolyFit				fPolyFit			= null;
 
-	private int						col, degree, start, end;
+	private int						degree;
 	private ModelInputParameters	inputParameters;
 
 	private float[]					doses;
 
-	private Object[][]				outMatrix;
-	private double[][]				parameters;
-
-	private final double			DEFAULTDOUBLE		= -9999;
 	private final int[]				adversDirections	= { 0, 1, -1 };
 
 	List<ProbeResponse>				probeResponses;
@@ -44,7 +39,7 @@ public class PolyFitThread extends Thread implements IFitThread
 	private boolean					cancel				= false;
 
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
-			List<StatResult> polyResults, int numThreads, int instanceIndex,
+			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -56,7 +51,7 @@ public class PolyFitThread extends Thread implements IFitThread
 		this.polyResults = polyResults;
 		this.probeIndexGetter = probeIndexGetter;
 
-		fPolyFit = new FilePolyFit();
+		fPolyFit = new FilePolyFit(killTime);
 
 	}
 

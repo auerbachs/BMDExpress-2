@@ -10,7 +10,12 @@ import java.util.regex.Pattern;
 
 public abstract class FileFitBase
 {
-
+	private int killTime;
+	
+	protected FileFitBase(int killTime) {
+		this.killTime = killTime;
+	}
+	
 	protected void executeModel(String EXE, String fName)
 	{
 		// System.out.println("Path = " + path);absolutePath
@@ -39,7 +44,7 @@ public abstract class FileFitBase
 				// process is executing, but only give it a certain amount of time to execute.
 				// give it 30 seconds to complete otherwise kill it.
 				boolean processSurvived = false;
-				while (System.currentTimeMillis() - startTime < 30000)
+				while (System.currentTimeMillis() - startTime < killTime)
 				{
 					Thread.sleep(1000);
 					if (!process.isAlive())

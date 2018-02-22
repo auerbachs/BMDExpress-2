@@ -59,6 +59,7 @@ public class ModelInputParameters
 
 	// threading
 	private int			numThreads;
+	private int			killTime;
 
 	private String		defNegative			= "-9999";
 
@@ -434,4 +435,11 @@ public class ModelInputParameters
 		this.columns = columns;
 	}
 
+	public int getKillTime() {
+		return killTime;
+	}
+
+	public void setKillTime(int killTime) {
+		this.killTime = killTime;
+	}
 }

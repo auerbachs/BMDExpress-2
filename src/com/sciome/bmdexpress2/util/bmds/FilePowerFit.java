@@ -35,8 +35,9 @@ public class FilePowerFit extends FileFitBase
 	private final String[]	FLAGS		= { "Parameter Estimates", "Likelihoods of Interest",
 			"Tests of Interest", "control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
 
-	public FilePowerFit()
+	public FilePowerFit(int killTime)
 	{
+		super(killTime);
 		this.powerEXE = BMDExpressProperties.getInstance().getPowerEXE();
 		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 	}

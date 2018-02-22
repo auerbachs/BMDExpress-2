@@ -19,19 +19,13 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class PowerFitThread extends Thread implements IFitThread
 {
-	private String name;
 	private CountDownLatch cdLatch;
 	private FilePowerFit fPowerFit = null;
 
-	private int col, maxParams;
 	private ModelInputParameters inputParameters;
 
 	private float[] doses;
 
-	private Object[][] outMatrix;
-	private double[][] parameters;
-
-	private final double DEFAULTDOUBLE = -9999;
 	private final int[] adversDirections = { 0, 1, -1 };
 	private List<ProbeResponse> probeResponses;
 	private List<StatResult> powerResults;
@@ -42,7 +36,7 @@ public class PowerFitThread extends Thread implements IFitThread
 	private boolean cancel = false;
 
 	public PowerFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> powerResults, int numThread, int instanceIndex,
+			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -53,7 +47,7 @@ public class PowerFitThread extends Thread implements IFitThread
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
 
-		fPowerFit = new FilePowerFit();
+		fPowerFit = new FilePowerFit(killTime);
 
 	}
 

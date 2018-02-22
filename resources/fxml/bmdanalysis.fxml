@@ -291,19 +291,14 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                        <children>
-                                          <GridPane prefHeight="59.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <HBox alignment="CENTER_LEFT" layoutX="187.0" layoutY="26.6" prefHeight="45.0" prefWidth="409.0" AnchorPane.bottomAnchor="18.0" AnchorPane.topAnchor="17.0">
                                              <children>
-                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" prefHeight="26.0" prefWidth="78.0" GridPane.columnIndex="1" />
-                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="591.0" text="Number of Threads: " />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="400.0" text="Number of Threads: " />
+                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" prefHeight="26.0" prefWidth="350.0" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="400.0" text="Timeout (secs):" />
+                                                <ComboBox fx:id="killTimeComboBox" editable="true" prefHeight="26.0" prefWidth="350.0" />
                                              </children>
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="440.0" minWidth="10.0" prefWidth="439.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="339.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                          </GridPane>
+                                          </HBox>
                                        </children>
                                     </AnchorPane>
                                  </content>

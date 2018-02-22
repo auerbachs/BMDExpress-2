@@ -430,7 +430,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			HillFitThread hillThread = new HillFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 			hillThread.setFlag(modelSelectionParameters.isFlagHillModel(), flagDose);
 			hillThread.setDoses(doses);
 			hillThread.setObjects(inputParameters);
@@ -474,7 +474,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 
 			PowerFitThread powerThread = new PowerFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 
 			powerThread.setDoses(doses);
 			powerThread.setObjects(inputParameters);
@@ -521,7 +521,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			inputParameters.setPolyDegree(degree);
 			PolyFitThread polyThread = new PolyFitThread(cDownLatch, degree, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 			polyThread.setDoses(doses);
 			polyThread.setObjects(degree, inputParameters);
 			polyThread.start();
@@ -566,7 +566,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			ExponentialFitThread expThread = new ExponentialFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, option, this, this);
+					inputParameters.getNumThreads(), i, option, inputParameters.getKillTime(), this, this);
 			expThread.setDoses(doses);
 			expThread.setObjects(inputParameters);
 			expThread.start();

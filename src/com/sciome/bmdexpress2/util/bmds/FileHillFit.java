@@ -37,8 +37,9 @@ public class FileHillFit extends FileFitBase
 			"Likelihoods of Interest", "Tests of Interest", "beta_", "fitted ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
-	public FileHillFit()
+	public FileHillFit(int killTime)
 	{
+		super(killTime);
 		this.hillEXE = BMDExpressProperties.getInstance().getHillEXE();
 		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 	}

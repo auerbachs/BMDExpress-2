@@ -21,6 +21,7 @@ public class BMDInput {
 	private boolean 											flagHillModel;
 	private int 												maxIterations;
 	private int 												numThreads;
+	private int													killTime;
 	private double 												confidenceLevel;
 	private double 												pValueCutoff;
 	private double 												modifyBMDFlaggedHill;
@@ -48,6 +49,7 @@ public class BMDInput {
 		pValueCutoff = .05;
 		modifyBMDFlaggedHill = 0.5;
 		numThreads = 1;
+		killTime = 30;
 		
 		BMRFactor = new BMRFactor("1.021 (5%)", "1.021");
 		restrictPower = RestrictPowerEnum.NO_RESTRICTION;
@@ -140,6 +142,15 @@ public class BMDInput {
 	public void setNumThreads(int numThreads) {
 		this.numThreads = numThreads;
 	}
+	
+	public int getKillTime() {
+		return killTime;
+	}
+
+	public void setKillTime(int killTime) {
+		this.killTime = killTime;
+	}
+
 	public double getConfidenceLevel() {
 		return confidenceLevel;
 	}

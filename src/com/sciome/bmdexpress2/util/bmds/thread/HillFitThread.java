@@ -28,9 +28,7 @@ public class HillFitThread extends Thread implements IFitThread
 	private double flagDose;
 	private float[] doses;
 
-	private final double DEFAULTDOUBLE = -9999;
 	private final int[] adversDirections = { 0, 1, -1 };
-	private final Integer ZERO = new Integer(0), ONE = new Integer(1);
 	private List<ProbeResponse> probeResponses;
 	private List<StatResult> hillResults;
 
@@ -42,8 +40,8 @@ public class HillFitThread extends Thread implements IFitThread
 	private IModelProgressUpdater progressUpdater;
 	private IProbeIndexGetter probeIndexGetter;
 
-	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> hillResults, int numThreads, int instanceIndex,
+	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses, 
+			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -54,7 +52,7 @@ public class HillFitThread extends Thread implements IFitThread
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
 
-		fHillFit = new FileHillFit();
+		fHillFit = new FileHillFit(killTime);
 	}
 
 	/*
@@ -145,8 +143,6 @@ public class HillFitThread extends Thread implements IFitThread
 	 */
 	private void fillOutput(double[] results, HillResult hillResult)
 	{
-		int len = results.length;
-
 		hillResult.setBMD(results[0]);
 		hillResult.setBMDL(results[1]);
 		hillResult.setBMDU(results[2]);
@@ -162,7 +158,6 @@ public class HillFitThread extends Thread implements IFitThread
 		}
 		hillResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		hillResult.setAdverseDirection((short) direction);
-
 	}
 
 	@Override
