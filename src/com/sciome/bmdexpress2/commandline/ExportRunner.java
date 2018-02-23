@@ -25,10 +25,10 @@ public class ExportRunner
 {
 
 	BMDProject project = new BMDProject();
-	
+
 	public void analyze(String inputBM2, String outputFile, String analysisGroup, String analysisName)
 	{
-		
+
 		if (new File(inputBM2).exists())
 		{
 			try
@@ -52,93 +52,132 @@ public class ExportRunner
 		}
 
 		System.out.println("export");
-		System.out.println(
-				inputBM2 + " " + outputFile  + " " + analysisGroup + " " + analysisName);
-		
+		System.out.println(inputBM2 + " " + outputFile + " " + analysisGroup + " " + analysisName);
+
 		ProjectNavigationService service = new ProjectNavigationService();
 		DataCombinerService combinerService = new DataCombinerService();
-		
-		if(analysisGroup.equals(BMDExpressCommandLine.EXPRESSION)) {
-			if(analysisName == null) {
+
+		if (analysisGroup.equals(BMDExpressCommandLine.EXPRESSION))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
 				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(DoseResponseExperiment experiment : project.getDoseResponseExperiments()) {
+				for (DoseResponseExperiment experiment : project.getDoseResponseExperiments())
+				{
 					dataset.add(experiment);
 				}
 				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
 				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else {
-				for(DoseResponseExperiment experiment : project.getDoseResponseExperiments()) {
-					if(analysisName.equals(experiment.getName())) {
+			}
+			else
+			{
+				for (DoseResponseExperiment experiment : project.getDoseResponseExperiments())
+				{
+					if (analysisName.equals(experiment.getName()))
+					{
 						service.exportDoseResponseExperiment(experiment, new File(outputFile));
 					}
 				}
 			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.ONE_WAY_ANOVA)) {
-			if(analysisName == null) {
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.ONE_WAY_ANOVA))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
 				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(OneWayANOVAResults experiment : project.getOneWayANOVAResults()) {
+				for (OneWayANOVAResults experiment : project.getOneWayANOVAResults())
+				{
 					dataset.add(experiment);
 				}
 				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
 				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else {
-				for(OneWayANOVAResults experiment : project.getOneWayANOVAResults()) {
+			}
+			else
+			{
+				for (OneWayANOVAResults experiment : project.getOneWayANOVAResults())
+				{
 					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
 				}
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.ORIOGEN)) {
-			if(analysisName == null) {
-				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(OriogenResults experiment : project.getOriogenResults()) {
-					dataset.add(experiment);
-				}
-				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
-				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else {
-				for(OriogenResults experiment : project.getOriogenResults()) {
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
-				}
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.WILLIAMS)) {
-			if(analysisName == null) {
-				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(WilliamsTrendResults experiment : project.getWilliamsTrendResults()) {
-					dataset.add(experiment);
-				}
-				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
-				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else {
-				for(WilliamsTrendResults experiment : project.getWilliamsTrendResults()) {
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
-				}
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.BMD_ANALYSIS)) {
-			if(analysisName == null) {
-				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(BMDResult experiment : project.getbMDResult()) {
-					dataset.add(experiment);
-				}
-				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
-				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else {
-				for(BMDResult experiment : project.getbMDResult()) {
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
-				}
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.CATEGORICAL)) {
-			if(analysisName == null) {
-				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
-				for(CategoryAnalysisResults experiment : project.getCategoryAnalysisResults()) {
-					dataset.add(experiment);
-				}
-				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
-				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
-			} else 
-			for(CategoryAnalysisResults experiment : project.getCategoryAnalysisResults()) {
-				service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
 			}
 		}
-		
+		else if (analysisGroup.equals(BMDExpressCommandLine.ORIOGEN))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
+				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
+				for (OriogenResults experiment : project.getOriogenResults())
+				{
+					dataset.add(experiment);
+				}
+				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
+				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
+			}
+			else
+			{
+				for (OriogenResults experiment : project.getOriogenResults())
+				{
+					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+				}
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.WILLIAMS))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
+				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
+				for (WilliamsTrendResults experiment : project.getWilliamsTrendResults())
+				{
+					dataset.add(experiment);
+				}
+				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
+				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
+			}
+			else
+			{
+				for (WilliamsTrendResults experiment : project.getWilliamsTrendResults())
+				{
+					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+				}
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.BMD_ANALYSIS))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
+				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
+				for (BMDResult experiment : project.getbMDResult())
+				{
+					dataset.add(experiment);
+				}
+				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
+				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
+			}
+			else
+			{
+				for (BMDResult experiment : project.getbMDResult())
+				{
+					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+				}
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.CATEGORICAL))
+		{
+			if (analysisName == null || analysisName.trim().equals(""))
+			{
+				List<BMDExpressAnalysisDataSet> dataset = new ArrayList<BMDExpressAnalysisDataSet>();
+				for (CategoryAnalysisResults experiment : project.getCategoryAnalysisResults())
+				{
+					dataset.add(experiment);
+				}
+				CombinedDataSet combinedDataSet = combinerService.combineBMDExpressAnalysisDataSets(dataset);
+				service.exportBMDExpressAnalysisDataSet(combinedDataSet, new File(outputFile));
+			}
+			else
+				for (CategoryAnalysisResults experiment : project.getCategoryAnalysisResults())
+				{
+					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+				}
+		}
 
 	}
 
