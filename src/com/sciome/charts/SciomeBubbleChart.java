@@ -1,6 +1,7 @@
 package com.sciome.charts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,11 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 	private int				nodeCount;
 
 	public SciomeBubbleChart(String title, List<ChartDataPack> chartDataPacks, ChartKey key1, ChartKey key2,
-			ChartKey key3, boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
+			ChartKey key3, boolean allowXAxisSlider, boolean allowYAxisSlider,
+			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key1, key2, key3 }, allowXAxisSlider, allowYAxisSlider, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2, key3 }, allowXAxisSlider, allowYAxisSlider,
+				chartListener);
 		showChart();
 
 	}
@@ -78,6 +81,7 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 		ChartKey key1 = keys[0];
 		ChartKey key2 = keys[1];
 		ChartKey key3 = keys[2];
+		List<ChartKey> keyList = Arrays.asList(key1, key2, key3);
 		Double max1 = getMaxMax(key1);
 		Double max3 = getMaxMax(key3);
 		Double bubbleScale = (1.0 / BUBBLE_SCALE_FRACTION) / (max3 / max1);
@@ -97,6 +101,8 @@ public abstract class SciomeBubbleChart extends SciomeChartBase<Number, Number> 
 				if (chartData.getDataPoints().containsKey(key1) && chartData.getDataPoints().containsKey(key2)
 						&& chartData.getDataPoints().containsKey(key3))
 				{
+					if (!keysCheckOut(keyList, chartData))
+						continue;
 					SciomeData<Number, Number> theData = new SciomeData<>(chartData.getDataPointLabel(),
 							(Double) chartData.getDataPoints().get(key1),
 							(Double) chartData.getDataPoints().get(key2),

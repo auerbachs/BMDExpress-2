@@ -1,6 +1,7 @@
 package com.sciome.charts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,8 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		ChartKey middleKey = keys[4];
 		Double axisMin = getMinMin(minKey);
 		Double axisMax = getMaxMax(maxKey);
+
+		List<ChartKey> keyList = Arrays.asList(key, minKey, maxKey, middleKey);
 		if (axisMax == 0.0)
 			axisMax = getMaxMax(key);
 
@@ -117,6 +120,10 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 		{
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
+
+				if (!keysCheckOut(keyList, chartData))
+					continue;
+
 				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
 				if (dataPointValue != null)
 					sum += dataPointValue;
@@ -138,6 +145,8 @@ public abstract class SciomeRangePlot extends ScrollableSciomeChartFX<Number, St
 
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
+				if (!keysCheckOut(keyList, chartData))
+					continue;
 				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
 
 				if (dataPointValue == null)

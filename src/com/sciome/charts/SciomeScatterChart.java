@@ -1,6 +1,7 @@
 package com.sciome.charts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
@@ -27,7 +28,8 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 			boolean allowXLogAxis, boolean allowYLogAxis, boolean allowXAxisSlider, boolean allowYAxisSlider,
 			SciomeChartListener chartListener)
 	{
-		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, allowXAxisSlider, allowYAxisSlider, chartListener);
+		super(title, chartDataPacks, new ChartKey[] { key1, key2 }, allowXAxisSlider, allowYAxisSlider,
+				chartListener);
 
 		// this chart defines how the axes can be edited by the user in the chart configuration.
 		showLogAxes(allowXLogAxis, allowYLogAxis, false, false);
@@ -104,6 +106,7 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 	{
 		ChartKey key1 = keys[0];
 		ChartKey key2 = keys[1];
+		List<ChartKey> keyList = Arrays.asList(key1, key2);
 
 		List<SciomeSeries<Number, Number>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
@@ -114,6 +117,8 @@ public abstract class SciomeScatterChart extends SciomeChartBase<Number, Number>
 
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
+				if (!keysCheckOut(keyList, chartData))
+					continue;
 				Double dataPointValue1 = (Double) chartData.getDataPoints().get(key1);
 				Double dataPointValue2 = (Double) chartData.getDataPoints().get(key2);
 

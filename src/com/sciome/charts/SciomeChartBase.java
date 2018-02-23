@@ -11,25 +11,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.controlsfx.control.RangeSlider;
-
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.charts.data.ChartConfiguration;
+import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.data.ChartStatistics;
 import com.sciome.charts.export.ChartDataExporter;
-import com.sciome.charts.jfree.SciomeChartViewer;
 import com.sciome.charts.model.SciomeSeries;
 
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -49,6 +44,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
+
 /*
  * The Chart Base class will contain all the things that make a chart a chart.
  * All charts will inherit from this base class.  This class contains the raw data: (chartDataPacks) which
@@ -71,7 +67,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private Control						hSlider;
 	private boolean						allowXAxisSlider;
 	private boolean						allowYAxisSlider;
-	
+
 	private Button						exportToTextButton;
 	private Button						maxMinButton;
 	private Button						closeButton;
@@ -165,13 +161,13 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		this.setPickOnBounds(false);
 		StackPane.setMargin(vBox, new Insets(25.0, 5.0, 5.0, 5.0));
 	}
-	
+
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			SciomeChartListener chartListener)
 	{
 		this(title, chartDataPacks, keys, false, false, chartListener);
 	}
-	
+
 	public List<ChartKey> getChartableKeys()
 	{
 		List<ChartKey> keys = new ArrayList<>();
@@ -248,15 +244,16 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		vBox.getChildren().remove(chartBox);
 		vBox.getChildren().remove(hSlider);
 		vBox.getChildren().remove(caption2);
-		
+
 		chart = generateChart(this.chartableKeys, chartConfiguration);
 		chartBox = new HBox();
-		
-		if(allowYAxisSlider) {
+
+		if (allowYAxisSlider)
+		{
 			chartBox.getChildren().add(vSlider);
 		}
 		chartBox.getChildren().add(chart);
-		
+
 		int insertIndex = 0;
 		if (vBox.getChildren().contains(checkBoxes))
 			insertIndex++;
@@ -264,7 +261,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			insertIndex++;
 
 		vBox.getChildren().add(insertIndex, chartBox);
-		if(allowXAxisSlider)
+		if (allowXAxisSlider)
 			vBox.getChildren().add(hSlider);
 		if (caption2 != null)
 			vBox.getChildren().add(caption2);
@@ -467,36 +464,53 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 		return lockYAxis;
 	}
 
-	protected Control getvSlider() {
+	protected Control getvSlider()
+	{
 		return vSlider;
 	}
 
-	protected void setvSlider(Control vSlider) {
+	protected void setvSlider(Control vSlider)
+	{
 		this.vSlider = vSlider;
 	}
 
-	protected Control gethSlider() {
+	protected Control gethSlider()
+	{
 		return hSlider;
 	}
 
-	protected void sethSlider(Control hSlider) {
+	protected void sethSlider(Control hSlider)
+	{
 		this.hSlider = hSlider;
 	}
-	
-	protected boolean isAllowXAxisSlider() {
+
+	protected boolean isAllowXAxisSlider()
+	{
 		return allowXAxisSlider;
 	}
 
-	protected void setAllowXAxisSlider(boolean allowXAxisSlider) {
+	protected void setAllowXAxisSlider(boolean allowXAxisSlider)
+	{
 		this.allowXAxisSlider = allowXAxisSlider;
 	}
 
-	protected boolean isAllowYAxisSlider() {
+	protected boolean isAllowYAxisSlider()
+	{
 		return allowYAxisSlider;
 	}
 
-	protected void setAllowYAxisSlider(boolean allowYAxisSlider) {
+	protected void setAllowYAxisSlider(boolean allowYAxisSlider)
+	{
 		this.allowYAxisSlider = allowYAxisSlider;
+	}
+
+	protected boolean keysCheckOut(List<ChartKey> keyList, ChartData chartData)
+	{
+		for (ChartKey key : keyList)
+			if (chartData.getDataPoints().get(key) == null)
+				return false;
+
+		return true;
 	}
 
 	// show the configuration to the user.

@@ -21,8 +21,8 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 
 	private static final String	UNADJUSTED_PVALUE_HISTOGRAM			= "Unadjusted P-Value Histogram";
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
-	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Best Fold Change Histogram";
-	private static final String	BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM	= "Best Fold Change (Unsigned) Histogram";
+	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Max Fold Change Histogram";
+	private static final String	BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM	= "Max Fold Change (Unsigned) Histogram";
 
 	public OneWayANOVADataVisualizationView()
 	{
