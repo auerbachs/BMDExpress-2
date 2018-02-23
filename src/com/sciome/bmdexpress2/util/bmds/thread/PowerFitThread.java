@@ -140,6 +140,7 @@ public class PowerFitThread extends Thread implements IFitThread
 		}
 		powerResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		powerResult.setAdverseDirection((short) direction);
+		powerResult.setSuccess("" + fPowerFit.isSuccess());
 	}
 
 	@Override

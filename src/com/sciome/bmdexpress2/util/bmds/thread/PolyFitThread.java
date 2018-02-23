@@ -140,6 +140,7 @@ public class PolyFitThread extends Thread implements IFitThread
 		}
 		polyResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		polyResult.setAdverseDirection((short) direction);
+		polyResult.setSuccess("" + fPolyFit.isSuccess());
 	}
 
 	@Override

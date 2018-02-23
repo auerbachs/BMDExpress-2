@@ -36,6 +36,7 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	private double				fitLogLikelihood;
 	private double				AIC;
 	private short				adverseDirection;
+	private String				success;
 
 	public double[]				curveParameters;
 
@@ -136,6 +137,14 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	public void setCurveParameters(double[] curveParameters)
 	{
 		this.curveParameters = curveParameters;
+	}
+
+	public String getSuccess() {
+		return success;
+	}
+
+	public void setSuccess(String success) {
+		this.success = success;
 	}
 
 	@JsonIgnore

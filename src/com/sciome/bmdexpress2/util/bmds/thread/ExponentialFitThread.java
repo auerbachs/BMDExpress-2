@@ -142,6 +142,7 @@ public class ExponentialFitThread extends Thread implements IFitThread
 		}
 		expResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		expResult.setAdverseDirection((short) direction);
+		expResult.setSuccess("" + fExponentialFit.isSuccess());
 	}
 
 	@Override

@@ -158,6 +158,7 @@ public class HillFitThread extends Thread implements IFitThread
 		}
 		hillResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		hillResult.setAdverseDirection((short) direction);
+		hillResult.setSuccess("" + fHillFit.isSuccess());
 	}
 
 	@Override

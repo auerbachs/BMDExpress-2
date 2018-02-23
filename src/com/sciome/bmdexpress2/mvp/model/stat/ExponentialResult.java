@@ -35,7 +35,7 @@ public class ExponentialResult extends StatResult
 		String expName = "Exp " + option;
 		List<String> returnList = new ArrayList<String>(Arrays.asList(expName + " BMD", expName + " BMDL",
 				expName + " BMDU", "Exp " + option + " fitPValue", expName + " fitLogLikelihood",
-				expName + " AIC", expName + " adverseDirection", expName + " BMD/BMDL"));
+				expName + " AIC", expName + " adverseDirection", expName + " BMD/BMDL", expName + " Success"));
 
 		List<String> parameters = this.getParametersNames();
 		for (String parameter : parameters)
@@ -50,7 +50,7 @@ public class ExponentialResult extends StatResult
 	{
 		List<Object> returnList = new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()),
 				(this.getBMDU()), (this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
-				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL())));
+				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), this.getSuccess()));
 		int pcount = 2;
 		int start = 1;
 		// option 2 and 3 have a "sign" as a parameter too.

@@ -11,9 +11,11 @@ import java.util.regex.Pattern;
 public abstract class FileFitBase
 {
 	private int killTime;
+	private boolean success;
 	
 	protected FileFitBase(int killTime) {
 		this.killTime = killTime;
+		this.success = true;
 	}
 	
 	protected void executeModel(String EXE, String fName)
@@ -55,7 +57,7 @@ public abstract class FileFitBase
 				}
 				if (!processSurvived)
 				{
-
+					success = false;
 					System.out.println("Destroying process: " + process.toString());
 					process.destroyForcibly();
 					System.out.println(getStringFromInputStream(process.getErrorStream()));
@@ -133,5 +135,9 @@ public abstract class FileFitBase
 				return p.matcher(file.getName()).matches();
 			}
 		});
+	}
+
+	public boolean isSuccess() {
+		return success;
 	}
 }

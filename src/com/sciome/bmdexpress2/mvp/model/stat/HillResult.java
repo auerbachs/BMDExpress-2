@@ -35,7 +35,7 @@ public class HillResult extends StatResult
 
 		return new ArrayList<String>(Arrays.asList("Hill BMD", "Hill BMDL", "Hill BMDU", "Hill fitPValue",
 				"Hill fitLogLikelihood", "Hill AIC", "Hill adverseDirection", "Hill BMD/BMDL", "Flagged Hill",
-				"Hill Parameter Intercept", "Hill Parameter v", "Hill Parameter n", "Hill Parameter k"));
+				"Hill Parameter Intercept", "Hill Parameter v", "Hill Parameter n", "Hill Parameter k", "Hill Succcess"));
 
 	}
 
@@ -58,7 +58,7 @@ public class HillResult extends StatResult
 				Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()), (this.getFitPValue()),
 						(this.getFitLogLikelihood()), (this.getAIC()), (this.getAdverseDirection()),
 						(this.getBMD() / this.getBMDL()), (this.getkFlag()), param1,
-						param2, param3, param4));
+						param2, param3, param4, this.getSuccess()));
 	
 	}
 

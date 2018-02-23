@@ -90,7 +90,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private List<IFitThread>							fitThreads			= new ArrayList<>();
 	private boolean										cancel				= false;
 	private AnalysisInfo								analysisInfo;
-	private com.sciome.bmdexpress2.util.stat.DosesStat	dosesStat;
+	private DosesStat									dosesStat;
 	private List<Integer>								doseResponseQueue	= new ArrayList<>();
 
 	/**
