@@ -18,6 +18,8 @@ public class BMDSConfig
 	// name of output for the analysis
 	private String							outputName;
 
+	private Integer							killTime;
+
 	private Integer							numberOfThreads	= 1;
 
 	public String getInputCategory()
@@ -88,6 +90,16 @@ public class BMDSConfig
 	public void setNumberOfThreads(Integer numberOfThreads)
 	{
 		this.numberOfThreads = numberOfThreads;
+	}
+
+	public Integer getKillTime()
+	{
+		return killTime;
+	}
+
+	public void setKillTime(Integer killTime)
+	{
+		this.killTime = killTime;
 	}
 
 }

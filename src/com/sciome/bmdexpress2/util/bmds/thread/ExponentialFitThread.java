@@ -36,8 +36,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 	private boolean					cancel				= false;
 	private int						expOption			= 0;
 
-	public ExponentialFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses, 
-			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime, int option,
+	public ExponentialFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
+			List<StatResult> powerResults, int numThread, int instanceIndex, int option, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;

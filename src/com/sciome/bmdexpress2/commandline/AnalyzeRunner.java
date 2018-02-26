@@ -329,6 +329,10 @@ public class AnalyzeRunner
 		inputParameters.setConfidence(bmdsConfig.getBmdsInputConfig().getConfidenceLevel());
 		inputParameters.setBmrLevel(bmdsConfig.getBmdsInputConfig().getBmrFactor());
 		inputParameters.setNumThreads(bmdsConfig.getNumberOfThreads());
+		if (bmdsConfig.getKillTime() != null)
+			inputParameters.setKillTime(bmdsConfig.getKillTime().intValue());
+		else
+			inputParameters.setKillTime(30);
 
 		inputParameters.setBmdlCalculation(1);
 		inputParameters.setBmdCalculation(1);

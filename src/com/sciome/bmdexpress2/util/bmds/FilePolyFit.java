@@ -23,14 +23,14 @@ import com.sciome.bmdexpress2.util.NumberManager;
  */
 public class FilePolyFit extends FileFitBase
 {
-	private String polyEXE, dPath;
+	private String			polyEXE, dPath;
 
-	private final int SIX = 6;
-	private final double minDouble = -9999;
-	private final String newline = "\n";
-	private final String space1 = " ";
+	private final int		SIX			= 6;
+	private final double	minDouble	= -9999;
+	private final String	newline		= "\n";
+	private final String	space1		= " ";
 
-	private final String[] FLAGS = { "Wald Confidence Interval", "Asymptotic Correlation Matrix",
+	private final String[]	FLAGS		= { "Wald Confidence Interval", "Asymptotic Correlation Matrix",
 			"Likelihoods of Interest", "Tests of Interest", "beta_", "fitted ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
@@ -57,9 +57,20 @@ public class FilePolyFit extends FileFitBase
 			executeModel(polyEXE, infile.getPath());// infile.getAbsolutePath());
 			File outFile = readOutputs(fileName, outputs);
 			infile.delete();
-			outFile.delete();
-			(new File(dPath, fileName + ".002")).delete();
-			(new File(dPath, fileName + "-poly.log")).delete();
+			if (outFile != null && outFile.exists())
+				outFile.delete();
+			try
+			{
+				(new File(dPath, fileName + ".002")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, fileName + "-poly.log")).delete();
+			}
+			catch (Exception e)
+			{}
 		}
 
 		return outputs;
@@ -144,6 +155,9 @@ public class FilePolyFit extends FileFitBase
 	 */
 	private File readOutputs(String fileName, double[] outputs)
 	{
+
+		if (!success)
+			return null;
 		try
 		{
 			File file = new File(dPath, fileName + ".out");
@@ -240,12 +254,12 @@ public class FilePolyFit extends FileFitBase
 							outputs[2] = NumberManager.parseDouble(bmdu, minDouble);
 						}
 					}
-
 					fr.close();
+
 				}
 				catch (IOException e)
 				{
-					System.out.println("Read file problem: " + e);
+
 				}
 			}
 
@@ -253,7 +267,6 @@ public class FilePolyFit extends FileFitBase
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println("Input file problem: " + e);
 			return null;
 		}
 	}
@@ -290,8 +303,6 @@ public class FilePolyFit extends FileFitBase
 			fthread.start();
 			loop++;
 		}
-
-		System.out.println("Loops: " + loop);
 
 		return file.exists();
 	}

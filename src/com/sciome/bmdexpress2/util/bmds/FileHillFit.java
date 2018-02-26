@@ -25,15 +25,15 @@ import com.sciome.bmdexpress2.util.NumberManager;
  */
 public class FileHillFit extends FileFitBase
 {
-	private String hillEXE, dPath;
-	private int[] intParams;
-	private final int SIX = 6;
-	private final int outMax = 10;
-	private final double minDouble = -9999;
-	private final String newline = "\n";
-	private final String space1 = " ";
+	private String			hillEXE, dPath;
+	private int[]			intParams;
+	private final int		SIX			= 6;
+	private final int		outMax		= 10;
+	private final double	minDouble	= -9999;
+	private final String	newline		= "\n";
+	private final String	space1		= " ";
 
-	private final String[] FLAGS = { "Wald Confidence Interval", "Asymptotic Correlation Matrix",
+	private final String[]	FLAGS		= { "Wald Confidence Interval", "Asymptotic Correlation Matrix",
 			"Likelihoods of Interest", "Tests of Interest", "beta_", "fitted ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
@@ -67,10 +67,26 @@ public class FileHillFit extends FileFitBase
 			executeModel(hillEXE, infile.getPath());// infile.getAbsolutePath());
 			File outFile = readOutputs(name, outputs);
 			infile.delete();
-			outFile.delete();
-			(new File(dPath, name + "_hill.002")).delete();
-			(new File(dPath, name + "-hill.log")).delete();
-			(new File(dPath, name + "_hill-Hil.log")).delete();
+			if (outFile != null && outFile.exists())
+				outFile.delete();
+			try
+			{
+				(new File(dPath, name + "_hill.002")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, name + "-hill.log")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, name + "_hill-Hil.log")).delete();
+			}
+			catch (Exception e)
+			{}
 		}
 
 		return outputs;
@@ -148,6 +164,8 @@ public class FileHillFit extends FileFitBase
 
 	private File readOutputs(String name, double[] outputs)
 	{
+		if (!success)
+			return null;
 		try
 		{
 			File file = new File(dPath, name + "_hill.out");
@@ -271,19 +289,18 @@ public class FileHillFit extends FileFitBase
 						outputs[2] = NumberManager.parseDouble(bmdu, minDouble);
 					}
 				}
-
 				fr.close();
 			}
 			catch (IOException e)
 			{
-				System.out.println("Read file problem: " + e);
+
 			}
 
 			return file;
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println("Input file problem: " + e);
+
 			return null;
 		}
 	}

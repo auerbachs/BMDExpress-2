@@ -65,10 +65,26 @@ public class FilePowerFit extends FileFitBase
 			executeModel(powerEXE, infile.getPath());// infile.getAbsolutePath());
 			File outFile = readOutputs(fileName, outputs);
 			infile.delete();
-			outFile.delete();
-			(new File(dPath, fileName + ".002")).delete();
-			(new File(dPath, fileName + "-power.log")).delete();
-			(new File(dPath, fileName + "-pow.log")).delete();
+			if (outFile != null && outFile.exists())
+				outFile.delete();
+			try
+			{
+				(new File(dPath, fileName + ".002")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, fileName + "-power.log")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, fileName + "-pow.log")).delete();
+			}
+			catch (Exception e)
+			{}
 		}
 
 		return outputs;
@@ -144,6 +160,8 @@ public class FilePowerFit extends FileFitBase
 
 	private File readOutputs(String fileName, double[] outputs)
 	{
+		if (!success)
+			return null;
 		try
 		{
 			File file = new File(dPath, fileName + ".out");
@@ -272,7 +290,6 @@ public class FilePowerFit extends FileFitBase
 
 					}
 				}
-
 				fr.close();
 			}
 			catch (IOException e)
