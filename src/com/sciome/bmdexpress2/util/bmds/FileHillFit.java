@@ -165,7 +165,7 @@ public class FileHillFit extends FileFitBase
 	private File readOutputs(String name, double[] outputs)
 	{
 		if (!success)
-			return null;
+			return new File(dPath, name + "_hill.out");
 		try
 		{
 			File file = new File(dPath, name + "_hill.out");

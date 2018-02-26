@@ -157,7 +157,7 @@ public class FilePolyFit extends FileFitBase
 	{
 
 		if (!success)
-			return null;
+			return new File(dPath, fileName + ".out");
 		try
 		{
 			File file = new File(dPath, fileName + ".out");

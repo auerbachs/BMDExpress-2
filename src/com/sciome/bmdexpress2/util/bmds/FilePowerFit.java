@@ -161,7 +161,7 @@ public class FilePowerFit extends FileFitBase
 	private File readOutputs(String fileName, double[] outputs)
 	{
 		if (!success)
-			return null;
+			return new File(dPath, fileName + ".out");
 		try
 		{
 			File file = new File(dPath, fileName + ".out");

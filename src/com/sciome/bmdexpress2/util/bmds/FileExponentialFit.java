@@ -215,7 +215,7 @@ public class FileExponentialFit extends FileFitBase
 	private File readOutputs(String name, double[] outputs)
 	{
 		if (!success)
-			return null;
+			return new File(dPath, name + "_exponential.out");
 		int afterSix = 1;
 		List<Double> means = new ArrayList<>();
 		try
