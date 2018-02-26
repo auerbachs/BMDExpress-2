@@ -64,34 +64,34 @@ import com.sciome.bmdexpress2.util.stat.DosesStat;
  */
 public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 {
-	private Vector<File>								tempFiles;
-	private BufferedWriter								LOGOUT;
+	private Vector<File>				tempFiles;
+	private BufferedWriter				LOGOUT;
 
-	private double										maxDose, lowPDose, flagDose, flagRatio;
+	private double						maxDose, lowPDose, flagDose, flagRatio;
 
-	private final String								TEMPDIR				= "temp";
+	private final String				TEMPDIR				= "temp";
 
-	private final double								DEFAULTDOUBLE		= -9999;
-	private final double								p05					= 0.05;
+	private final double				DEFAULTDOUBLE		= -9999;
+	private final double				p05					= 0.05;
 
-	private List<ProbeResponse>							probeResponses;
-	private ModelInputParameters						inputParameters;
-	private ModelSelectionParameters					modelSelectionParameters;
-	private List<StatModel>								modelsToRun;
-	private float[]										doses;
-	private BMDResult									bmdResults			= new BMDResult();
+	private List<ProbeResponse>			probeResponses;
+	private ModelInputParameters		inputParameters;
+	private ModelSelectionParameters	modelSelectionParameters;
+	private List<StatModel>				modelsToRun;
+	private float[]						doses;
+	private BMDResult					bmdResults			= new BMDResult();
 
-	private int											numberOfProbesRun	= 0;
-	private String										currentMessage		= "";
+	private int							numberOfProbesRun	= 0;
+	private String						currentMessage		= "";
 
 	// the calling thing that needs to update progress to a view or something.
-	private IBMDSToolProgress							progressReciever	= null;
+	private IBMDSToolProgress			progressReciever	= null;
 
-	private List<IFitThread>							fitThreads			= new ArrayList<>();
-	private boolean										cancel				= false;
-	private AnalysisInfo								analysisInfo;
-	private DosesStat									dosesStat;
-	private List<Integer>								doseResponseQueue	= new ArrayList<>();
+	private List<IFitThread>			fitThreads			= new ArrayList<>();
+	private boolean						cancel				= false;
+	private AnalysisInfo				analysisInfo;
+	private DosesStat					dosesStat;
+	private List<Integer>				doseResponseQueue	= new ArrayList<>();
 
 	/**
 	 * Class constructor
@@ -166,6 +166,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 
 		notes.add("Fit Selected Models with Multiple Threads: " + inputParameters.getNumThreads());
+		notes.add("Destory Model Processes If Run More Than: " + inputParameters.getKillTime()
+				+ " milliseconds.");
 		analysisInfo.setNotes(notes);
 
 	}

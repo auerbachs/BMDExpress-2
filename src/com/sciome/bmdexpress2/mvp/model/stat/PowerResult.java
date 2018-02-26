@@ -23,7 +23,8 @@ public class PowerResult extends StatResult
 	{
 		return new ArrayList<String>(Arrays.asList("Power BMD", "Power BMDL", "Power BMDU", "Power fitPValue",
 				"Power fitLogLikelihood", "Power AIC", "Power adverseDirection", "Power BMD/BMDL",
-				"Power Parameter control", "Power Parameter slope", "Power Parameter power", "Power Success"));
+				"Power Parameter control", "Power Parameter slope", "Power Parameter power",
+				"Power Execution Complete"));
 
 	}
 
@@ -31,18 +32,18 @@ public class PowerResult extends StatResult
 	public List<Object> getRow()
 	{
 		Double param1 = null;
-		Double param2= null;
+		Double param2 = null;
 		Double param3 = null;
-		if(curveParameters !=null)
+		if (curveParameters != null)
 		{
 			param1 = curveParameters[0];
 			param2 = curveParameters[1];
 			param3 = curveParameters[2];
 		}
-		return new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()),
-				(this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
-				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), param1,
-				param2, param3, this.getSuccess()));
+		return new ArrayList<Object>(
+				Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()), (this.getFitPValue()),
+						(this.getFitLogLikelihood()), (this.getAIC()), (this.getAdverseDirection()),
+						(this.getBMD() / this.getBMDL()), param1, param2, param3, this.getSuccess()));
 	}
 
 	@Override

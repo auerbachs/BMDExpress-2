@@ -565,7 +565,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 								viewCode.close();
 							}
 						});
-						stage.sizeToScene();
+						// stage.sizeToScene();
 						stage.show();
 					}
 					catch (IOException e)

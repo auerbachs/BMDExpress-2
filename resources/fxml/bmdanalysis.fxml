@@ -58,7 +58,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="modelsPane" prefHeight="193.0" prefWidth="800.0">
+                        <AnchorPane fx:id="modelsPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="135.0" prefWidth="800.0">
                            <children>
                               <TitledPane collapsible="false" prefHeight="98.0" prefWidth="800.0" text="Continuous Models" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
@@ -135,7 +135,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="parametersPane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="129.0" prefWidth="800.0" VBox.vgrow="NEVER">
                            <children>
                               <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
                                  <content>
@@ -187,7 +187,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="modelSelectionPane" prefHeight="213.0" prefWidth="800.0" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="modelSelectionPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="800.0" VBox.vgrow="NEVER">
                            <children>
                               <TitledPane collapsible="false" layoutY="-27.0" prefHeight="156.0" prefWidth="800.0" text="Model Selection" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-27.0">
                                  <content>
@@ -289,14 +289,14 @@
                            <children>
                               <TitledPane collapsible="false" layoutY="-19.0" prefHeight="79.0" prefWidth="800.0" text="Multiple Threads" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-19.0">
                                  <content>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" layoutX="187.0" layoutY="26.6" prefHeight="45.0" prefWidth="409.0" AnchorPane.bottomAnchor="18.0" AnchorPane.topAnchor="17.0">
+                                          <HBox alignment="CENTER_LEFT" layoutX="29.0" layoutY="51.4" prefHeight="49.0" prefWidth="740.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
                                              <children>
-                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="400.0" text="Number of Threads: " />
-                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" prefHeight="26.0" prefWidth="350.0" />
-                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="400.0" text="Timeout (secs):" />
-                                                <ComboBox fx:id="killTimeComboBox" editable="true" prefHeight="26.0" prefWidth="350.0" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="157.0" text="Number of Threads: " />
+                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="90.0" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="282.0" text="Model Execution Timeout (secs):" />
+                                                <ComboBox fx:id="killTimeComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="90.0" />
                                              </children>
                                           </HBox>
                                        </children>

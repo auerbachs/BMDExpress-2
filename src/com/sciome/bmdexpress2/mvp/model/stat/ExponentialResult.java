@@ -7,12 +7,12 @@ import java.util.List;
 public class ExponentialResult extends StatResult
 {
 
-	private static final long serialVersionUID = -527776055122273597L;
+	private static final long	serialVersionUID	= -527776055122273597L;
 
 	/**
 	 * 
 	 */
-	private int option;
+	private int					option;
 
 	public ExponentialResult()
 	{
@@ -35,7 +35,8 @@ public class ExponentialResult extends StatResult
 		String expName = "Exp " + option;
 		List<String> returnList = new ArrayList<String>(Arrays.asList(expName + " BMD", expName + " BMDL",
 				expName + " BMDU", "Exp " + option + " fitPValue", expName + " fitLogLikelihood",
-				expName + " AIC", expName + " adverseDirection", expName + " BMD/BMDL", expName + " Success"));
+				expName + " AIC", expName + " adverseDirection", expName + " BMD/BMDL",
+				expName + " Execution Complete"));
 
 		List<String> parameters = this.getParametersNames();
 		for (String parameter : parameters)
@@ -63,10 +64,11 @@ public class ExponentialResult extends StatResult
 		else if (option == 5)
 			pcount = 4;
 		for (int i = start; i <= pcount; i++)
-		{if(curveParameters !=null)
-			returnList.add(new Double(this.curveParameters[i]));
-		else
-			returnList.add(null);
+		{
+			if (curveParameters != null)
+				returnList.add(new Double(this.curveParameters[i]));
+			else
+				returnList.add(null);
 		}
 
 		return returnList;
