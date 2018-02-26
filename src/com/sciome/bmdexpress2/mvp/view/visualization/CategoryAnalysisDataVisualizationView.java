@@ -58,14 +58,14 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 				BMDExpressEventBus.getInstance());
 
 		chartCache.put("PIE-CHART",
-				new SciomePieChartJFree(getBMDStatResultCountsFromCatAnalysis(results, null, true), null, null,
-						"BMDS Model Counts (unique)", CategoryAnalysisDataVisualizationView.this));
+				new SciomePieChartJFree(getBMDStatResultCountsFromCatAnalysis(results, null, true), null,
+						null, "BMDS Model Counts (unique)", CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotJFree("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
 						new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null), null,
-						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), null, 
+						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), null,
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
@@ -317,7 +317,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		else if (chartKey.equals(CURVEPLOT))
 		{
 			ignoreCustomCharts = true;
-			chartsList.add(new PathwayCurveViewer(results, pack));
+			chartsList.add(new PathwayCurveViewer(results, pack, CategoryAnalysisDataVisualizationView.this));
 
 		}
 		else if (chartKey.equals(DEFAULT_CHARTS))

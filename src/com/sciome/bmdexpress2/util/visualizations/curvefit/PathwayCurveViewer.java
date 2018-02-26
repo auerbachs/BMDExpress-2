@@ -35,29 +35,36 @@ import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.CombinedRow;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.ReferenceGeneProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.data.ChartConfiguration;
+import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 /**
  */
-public class PathwayCurveViewer extends VBox
+public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 {
 
 	private List<String>							pathways						= new ArrayList<>();
@@ -75,11 +82,15 @@ public class PathwayCurveViewer extends VBox
 	private JFreeCurve								jfreeCurve;
 	private HBox									hbox;
 	private DataFilterPack							filterPack;
+	private VBox									vBox							= new VBox(8);
 
 	public PathwayCurveViewer(List<BMDExpressAnalysisDataSet> categoryAnalysisResults,
-			DataFilterPack filterPack)
+			DataFilterPack filterPack, SciomeChartListener chartListener)
 	{
-		super(8);
+		// super(8);
+		super("Pathway Curve Viewer", null, new ChartKey[0], chartListener);
+		super.removeOverLayButton(closeButton);
+		super.removeOverLayButton(configurationButton);
 		this.filterPack = filterPack;
 		this.categoryAnalysisResults = categoryAnalysisResults;
 		boolean areAnyBMDResultNull = false;
@@ -127,7 +138,7 @@ public class PathwayCurveViewer extends VBox
 		Label l = new Label("Select a pathway, analyses and then genes:  ");
 		hbox.getChildren().addAll(l, howtodostring, pathwayAutoCompleteTextField);
 		l.setAlignment(Pos.CENTER_LEFT);
-		this.getChildren().addAll(hbox);
+		vBox.getChildren().addAll(hbox);
 
 		TextFields.bindAutoCompletion(pathwayAutoCompleteTextField,
 				new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
@@ -205,12 +216,17 @@ public class PathwayCurveViewer extends VBox
 
 				// remove the chart from the view (if it exists)
 				if (jfreeCurve != null)
-					PathwayCurveViewer.this.getChildren().remove(jfreeCurve.getChartViewer());
+				{
+					PathwayCurveViewer.this.vBox.getChildren().remove(jfreeCurve.getChartViewer());
+
+					VBox.setVgrow(jfreeCurve.getChartViewer(), Priority.ALWAYS);
+				}
 				if (bmdResultMap.keySet().size() > 0)
 				{
 					jfreeCurve = new JFreeCurve(null, pathwayAutoCompleteTextField.getText(), bmdResultMap);
 					// add newly created chart to the view
-					PathwayCurveViewer.this.getChildren().add(jfreeCurve.getChartViewer());
+					PathwayCurveViewer.this.vBox.getChildren().add(jfreeCurve.getChartViewer());
+					VBox.setVgrow(jfreeCurve.getChartViewer(), Priority.ALWAYS);
 				}
 				else
 					jfreeCurve = null;
@@ -360,6 +376,54 @@ public class PathwayCurveViewer extends VBox
 		Collections.sort(returnList);
 
 		return returnMap;
+	}
+
+	@Override
+	public void reactToChattingCharts()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration)
+	{
+		return vBox;
+	}
+
+	@Override
+	protected boolean isXAxisDefineable()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean isYAxisDefineable()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected void redrawChart()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

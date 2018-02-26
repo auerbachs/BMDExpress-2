@@ -68,13 +68,14 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	private boolean						allowXAxisSlider;
 	private boolean						allowYAxisSlider;
 
-	private Button						exportToTextButton;
-	private Button						maxMinButton;
-	private Button						closeButton;
+	protected Button					exportToTextButton;
+	protected Button					maxMinButton;
+	protected Button					closeButton;
 	protected Button					configurationButton;
 	private HBox						checkBoxes;
 	private ChartKey[]					chartableKeys;
 	private ChartConfiguration			chartConfiguration;
+	private HBox						overlayButtons;
 
 	private List<SciomeSeries<X, Y>>	seriesData				= new ArrayList<>();
 
@@ -115,7 +116,7 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 		});
 
-		HBox overlayButtons = new HBox();
+		overlayButtons = new HBox();
 
 		// maximize the chart. Tell the chartListener object to expand it.
 		maxMinButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -676,6 +677,11 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 			return label;
 		}
 
+	}
+
+	protected void removeOverLayButton(Button b)
+	{
+		overlayButtons.getChildren().remove(b);
 	}
 
 	protected void postObjectsForChattingCharts(List<Object> objects)
