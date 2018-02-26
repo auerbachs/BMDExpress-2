@@ -4,7 +4,7 @@
  BMDExpress 2.2 Preview
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 30, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on February 25, 2018</h2>
 
 
 
@@ -12,8 +12,12 @@
 New Release
 </h3>
 <ul>
-<li>Save the configuration for analyses.  </li>
-<li>Fixed a bug that causes renaming to occur when loading project </li>
+<li>Added column to BMD Analysis Results that tells you if the model was destroyed due to timeout  </li>
+<li>Added configuration to BMD Analysis to define amount of time to allow process to execute before having it automatically destroyed </li>
+<li>Pathway Curve Viewer can now be expanded and viewed in separate resizeable window </li>
+<li>Fixed Y-Axis label on histograms to say "Count"</li>
+<li>OVERALL DIRECTION in category analysis is now being created at the gene level instead of probe level</li>
+<li>Fixed a bug that threw Null Pointer Exception when creating custom charts </li>
 </ul>
 
 
