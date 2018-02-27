@@ -48,8 +48,8 @@ public class BMDExpressCommandLine
 	public final static String	QUERY				= "query";
 	public final static String	EXPORT				= "export";
 	public final static String	DELETE				= "delete";
-	
-	//Analysis Group names
+
+	// Analysis Group names Current working directory
 	public final static String	EXPRESSION			= "expression";
 	public final static String	ONE_WAY_ANOVA		= "anova";
 	public final static String	WILLIAMS			= "williams";
@@ -69,7 +69,7 @@ public class BMDExpressCommandLine
 		Options deleteOptions = new Options();
 
 		Options queryOptions = new Options();
-		
+
 		analyzeOptions
 				.addOption(Option.builder().longOpt(CONFIG_FILE).hasArg().argName("JSON").required().build());
 
@@ -93,20 +93,21 @@ public class BMDExpressCommandLine
 		HelpFormatter formatter = new HelpFormatter();
 
 		formatter.setWidth(160);
-		formatter.printHelp("bmdexpress2 " + ANALYZE, "", analyzeOptions, "", true);
+		formatter.printHelp("bmdexpress2-cmd " + ANALYZE, "", analyzeOptions, "", true);
 
-		formatter.printHelp("bmdexpress2 " + EXPORT, "", exportOptions, "", true);
+		formatter.printHelp("bmdexpress2-cmd " + EXPORT, "", exportOptions, "", true);
 
-		formatter.printHelp("bmdexpress2 " + DELETE, "", deleteOptions, "", true);
-		formatter.printHelp("bmdexpress2 " + QUERY, "", queryOptions, "", true);
-		
-		//List of group possibilities
-		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " +
-				ORIOGEN + ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
- 
+		formatter.printHelp("bmdexpress2-cmd " + DELETE, "", deleteOptions, "", true);
+		formatter.printHelp("bmdexpress2-cmd " + QUERY, "", queryOptions, "", true);
+
+		// List of group possibilities
+		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " + ORIOGEN
+				+ ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
+
 		try
 		{
-
+			if (args.length < 1)
+				return;
 			String[] theArgs = Arrays.copyOfRange(args, 1, args.length);
 			if (args[0].equals(ANALYZE))
 			{
@@ -141,7 +142,7 @@ public class BMDExpressCommandLine
 			System.out.println("Unexpected exception:" + exp.getMessage());
 			exp.printStackTrace();
 		}
-//		new BMDExpressCommandLine().createStrawMan();
+		// new BMDExpressCommandLine().createStrawMan();
 
 	}
 
