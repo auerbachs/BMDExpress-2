@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -208,10 +207,6 @@ public abstract class CategoryMapBase
 		}
 
 		long date = httpCon.getLastModified();
-		if (date == 0)
-			System.out.println("No last-modified information.");
-		else
-			System.out.println("Last-Modified: " + new Date(date));
 
 		return date;
 	}
