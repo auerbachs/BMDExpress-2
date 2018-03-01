@@ -177,7 +177,10 @@ public class AnalyzeRunner
 			analysisSpecificMessage = "Pathway = " + ((PathwayConfig) catConfig).getSignalingPathway();
 		}
 
-		System.out.println(catAn.toString() + " analysis on " + catConfig.getInputName());
+		if (catConfig.getInputName() != null)
+			System.out.println(catAn.toString() + " analysis on " + catConfig.getInputName());
+		else
+			System.out.println(catAn.toString() + " analysis");
 
 		System.out.println(analysisSpecificMessage);
 
@@ -335,8 +338,11 @@ public class AnalyzeRunner
 	 */
 	private void doBMDSAnalysis(BMDSConfig bmdsConfig)
 	{
-		System.out.println("bmd analysis on " + bmdsConfig.getInputName() + " from group "
-				+ bmdsConfig.getInputCategory());
+		if (bmdsConfig.getInputName() != null)
+			System.out.println("bmd analysis on " + bmdsConfig.getInputName() + " from group "
+					+ bmdsConfig.getInputCategory());
+		else
+			System.out.println("bmd analysis on group " + bmdsConfig.getInputCategory());
 		// first set up the model input parameters basedo n
 		// bmdsConfig setup
 		ModelInputParameters inputParameters = new ModelInputParameters();
@@ -505,10 +511,14 @@ public class AnalyzeRunner
 			else if (exp.getName().equalsIgnoreCase(preFilterConfig.getInputName()))
 				processables.add(exp);
 
+		String stdoutInfo = "";
 		if (preFilterConfig instanceof ANOVAConfig)
 		{
 			ANOVARunner anovaRunner = new ANOVARunner();
-			System.out.println("One-way ANOVA on " + preFilterConfig.getInputName());
+			if (preFilterConfig.getInputName() != null)
+				stdoutInfo = "One-way ANOVA on " + preFilterConfig.getInputName();
+			else
+				stdoutInfo = "One-way ANOVA";
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
@@ -522,7 +532,10 @@ public class AnalyzeRunner
 		{
 			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
 
-			System.out.println("Williams trend test on " + preFilterConfig.getInputName());
+			if (preFilterConfig.getInputName() != null)
+				stdoutInfo = "Williams Trend Test on " + preFilterConfig.getInputName();
+			else
+				stdoutInfo = "Williams Trend Test";
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
@@ -537,7 +550,10 @@ public class AnalyzeRunner
 		{
 			OriogenRunner oriogenRunner = new OriogenRunner();
 
-			System.out.println("Oriogen prefilter on " + preFilterConfig.getInputName());
+			if (preFilterConfig.getInputName() != null)
+				stdoutInfo = "Oriogen on " + preFilterConfig.getInputName();
+			else
+				stdoutInfo = "Oriogen";
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
@@ -551,7 +567,7 @@ public class AnalyzeRunner
 						project));
 			}
 		}
-		System.out.println("prefilter analysis");
+		System.out.println(stdoutInfo);
 
 	}
 
