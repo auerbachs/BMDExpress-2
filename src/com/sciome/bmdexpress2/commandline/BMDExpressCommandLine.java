@@ -80,10 +80,11 @@ public class BMDExpressCommandLine
 
 		exportOptions.addOption(
 				Option.builder().longOpt(INPUT_BM2).hasArg().required().argName("BM2FILE").build());
-		exportOptions.addOption(Option.builder().longOpt(ANALYSIS_GROUP).hasArg().argName("GROUP").build());
+		exportOptions.addOption(
+				Option.builder().longOpt(ANALYSIS_GROUP).hasArg().required().argName("GROUP").build());
 		exportOptions.addOption(Option.builder().longOpt(ANALYSIS_NAME).hasArg().argName("NAME").build());
-		exportOptions
-				.addOption(Option.builder().longOpt(OUTPUT_FILE_NAME).hasArg().argName("OUTPUT").build());
+		exportOptions.addOption(
+				Option.builder().longOpt(OUTPUT_FILE_NAME).hasArg().required().argName("OUTPUT").build());
 
 		deleteOptions.addOption(
 				Option.builder().longOpt(INPUT_BM2).hasArg().required().argName("BM2FILE").build());

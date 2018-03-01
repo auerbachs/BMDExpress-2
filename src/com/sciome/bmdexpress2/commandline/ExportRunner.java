@@ -51,9 +51,6 @@ public class ExportRunner
 			}
 		}
 
-		System.out.println("export");
-		System.out.println(inputBM2 + " " + outputFile + " " + analysisGroup + " " + analysisName);
-
 		ProjectNavigationService service = new ProjectNavigationService();
 		DataCombinerService combinerService = new DataCombinerService();
 

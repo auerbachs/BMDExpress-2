@@ -41,35 +41,49 @@ public class QueryRunner
 				c.printStackTrace();
 			}
 		}
-		
-		if(analysisGroup.equals(BMDExpressCommandLine.EXPRESSION)) {
-			for(DoseResponseExperiment experiment : project.getDoseResponseExperiments()) {
-				System.out.println(experiment.getName());
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.ONE_WAY_ANOVA)) {
-			for(OneWayANOVAResults experiment : project.getOneWayANOVAResults()) {
-				System.out.println(experiment.getName());
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.ORIOGEN)) {
-			for(OriogenResults experiment : project.getOriogenResults()) {
-				System.out.println(experiment.getName());
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.WILLIAMS)) {
-			for(WilliamsTrendResults experiment : project.getWilliamsTrendResults()) {
-				System.out.println(experiment.getName());
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.BMD_ANALYSIS)) {
-			for(BMDResult experiment : project.getbMDResult()) {
-				System.out.println(experiment.getName());
-			}
-		} else if(analysisGroup.equals(BMDExpressCommandLine.CATEGORICAL)) {
-			for(CategoryAnalysisResults experiment : project.getCategoryAnalysisResults()) {
+
+		if (analysisGroup.equals(BMDExpressCommandLine.EXPRESSION))
+		{
+			for (DoseResponseExperiment experiment : project.getDoseResponseExperiments())
+			{
 				System.out.println(experiment.getName());
 			}
 		}
-		
-		System.out.println("query");
-		System.out.println(inputBM2 + " " + analysisGroup);
+		else if (analysisGroup.equals(BMDExpressCommandLine.ONE_WAY_ANOVA))
+		{
+			for (OneWayANOVAResults experiment : project.getOneWayANOVAResults())
+			{
+				System.out.println(experiment.getName());
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.ORIOGEN))
+		{
+			for (OriogenResults experiment : project.getOriogenResults())
+			{
+				System.out.println(experiment.getName());
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.WILLIAMS))
+		{
+			for (WilliamsTrendResults experiment : project.getWilliamsTrendResults())
+			{
+				System.out.println(experiment.getName());
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.BMD_ANALYSIS))
+		{
+			for (BMDResult experiment : project.getbMDResult())
+			{
+				System.out.println(experiment.getName());
+			}
+		}
+		else if (analysisGroup.equals(BMDExpressCommandLine.CATEGORICAL))
+		{
+			for (CategoryAnalysisResults experiment : project.getCategoryAnalysisResults())
+			{
+				System.out.println(experiment.getName());
+			}
+		}
 
 	}
 }

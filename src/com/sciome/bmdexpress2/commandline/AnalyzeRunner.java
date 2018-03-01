@@ -66,7 +66,6 @@ public class AnalyzeRunner
 
 	public void analyze(String configFile) throws Exception
 	{
-		System.out.println("analyze");
 
 		// deserialize the config file that was passed on commandline
 		RunConfig runConfig = getRunConfig(configFile);
@@ -574,7 +573,7 @@ public class AnalyzeRunner
 	private void doExpressionConfig(ExpressionDataConfig expressionConfig)
 	{
 
-		System.out.println("import expression");
+		System.out.println("import expression: " + expressionConfig.getInputFileName());
 		List<File> files = new ArrayList<>();
 
 		// if the inputfilename is a directory, then loop through each file
