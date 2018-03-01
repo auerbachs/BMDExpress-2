@@ -67,7 +67,6 @@ public class AnalyzeRunner
 	public void analyze(String configFile) throws Exception
 	{
 		System.out.println("analyze");
-		System.out.println(configFile);
 
 		// deserialize the config file that was passed on commandline
 		RunConfig runConfig = getRunConfig(configFile);
@@ -148,6 +147,7 @@ public class AnalyzeRunner
 	// invoke the export to json functionality.
 	private void doJsonExport(String jsonExportFileName) throws Exception
 	{
+		System.out.println("export to json");
 		new ExportRunner().exportToJson(project, jsonExportFileName);
 	}
 
@@ -156,15 +156,30 @@ public class AnalyzeRunner
 	 */
 	private void doCatAnalysis(CategoryConfig catConfig)
 	{
-		System.out.println("category analysis");
 
 		CategoryAnalysisEnum catAn = null;
+		String analysisSpecificMessage = "";
 		if (catConfig instanceof GOConfig)
+		{
 			catAn = CategoryAnalysisEnum.GO;
+			analysisSpecificMessage = "GO category = " + ((GOConfig) catConfig).getGoCategory();
+		}
 		else if (catConfig instanceof DefinedConfig)
+		{
 			catAn = CategoryAnalysisEnum.DEFINED;
+
+			analysisSpecificMessage = "probe file=" + ((DefinedConfig) catConfig).getProbeFilePath() + "\n"
+					+ "category file=" + ((DefinedConfig) catConfig).getCategoryFilePath();
+		}
 		else if (catConfig instanceof PathwayConfig)
+		{
 			catAn = CategoryAnalysisEnum.PATHWAY;
+			analysisSpecificMessage = "Pathway = " + ((PathwayConfig) catConfig).getSignalingPathway();
+		}
+
+		System.out.println(catAn.toString() + " analysis on " + catConfig.getInputName());
+
+		System.out.println(analysisSpecificMessage);
 
 		List<BMDResult> bmdResultsToRun = new ArrayList<>();
 		for (BMDResult result : project.getbMDResult())
@@ -320,7 +335,8 @@ public class AnalyzeRunner
 	 */
 	private void doBMDSAnalysis(BMDSConfig bmdsConfig)
 	{
-
+		System.out.println("bmd analysis on " + bmdsConfig.getInputName() + " from group "
+				+ bmdsConfig.getInputCategory());
 		// first set up the model input parameters basedo n
 		// bmdsConfig setup
 		ModelInputParameters inputParameters = new ModelInputParameters();
@@ -492,7 +508,7 @@ public class AnalyzeRunner
 		if (preFilterConfig instanceof ANOVAConfig)
 		{
 			ANOVARunner anovaRunner = new ANOVARunner();
-
+			System.out.println("One-way ANOVA on " + preFilterConfig.getInputName());
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
@@ -506,6 +522,7 @@ public class AnalyzeRunner
 		{
 			WilliamsTrendRunner williamsRunner = new WilliamsTrendRunner();
 
+			System.out.println("Williams trend test on " + preFilterConfig.getInputName());
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
@@ -520,6 +537,7 @@ public class AnalyzeRunner
 		{
 			OriogenRunner oriogenRunner = new OriogenRunner();
 
+			System.out.println("Oriogen prefilter on " + preFilterConfig.getInputName());
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
@@ -540,6 +558,7 @@ public class AnalyzeRunner
 	private void doExpressionConfig(ExpressionDataConfig expressionConfig)
 	{
 
+		System.out.println("import expression");
 		List<File> files = new ArrayList<>();
 
 		// if the inputfilename is a directory, then loop through each file

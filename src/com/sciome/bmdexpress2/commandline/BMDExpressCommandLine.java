@@ -56,20 +56,25 @@ public class BMDExpressCommandLine
 	public final static String	ORIOGEN				= "oriogen";
 	public final static String	BMD_ANALYSIS		= "bmd";
 	public final static String	CATEGORICAL			= "categorical";
+	Options						analyzeOptions		= new Options();
+
+	Options						exportOptions		= new Options();
+
+	Options						deleteOptions		= new Options();
+
+	Options						queryOptions		= new Options();
 
 	public static void main(String[] args)
 	{
-		BMDExpressProperties.getInstance().setIsConsole(true);
+
+		new BMDExpressCommandLine().run(args);
+
+	}
+
+	private void run(String[] args)
+	{
 		CommandLineParser parser = new DefaultParser();
-
-		Options analyzeOptions = new Options();
-
-		Options exportOptions = new Options();
-
-		Options deleteOptions = new Options();
-
-		Options queryOptions = new Options();
-
+		BMDExpressProperties.getInstance().setIsConsole(true);
 		analyzeOptions
 				.addOption(Option.builder().longOpt(CONFIG_FILE).hasArg().argName("JSON").required().build());
 
@@ -89,25 +94,16 @@ public class BMDExpressCommandLine
 
 		queryOptions.addOption(
 				Option.builder().longOpt(INPUT_BM2).hasArg().required().argName("BM2FILE").build());
-		queryOptions.addOption(Option.builder().longOpt(ANALYSIS_GROUP).hasArg().argName("GROUP").build());
-		HelpFormatter formatter = new HelpFormatter();
-
-		formatter.setWidth(160);
-		formatter.printHelp("bmdexpress2-cmd " + ANALYZE, "", analyzeOptions, "", true);
-
-		formatter.printHelp("bmdexpress2-cmd " + EXPORT, "", exportOptions, "", true);
-
-		formatter.printHelp("bmdexpress2-cmd " + DELETE, "", deleteOptions, "", true);
-		formatter.printHelp("bmdexpress2-cmd " + QUERY, "", queryOptions, "", true);
-
-		// List of group possibilities
-		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " + ORIOGEN
-				+ ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
+		queryOptions.addOption(
+				Option.builder().longOpt(ANALYSIS_GROUP).hasArg().required().argName("GROUP").build());
 
 		try
 		{
 			if (args.length < 1)
+			{
+				printHelp();
 				return;
+			}
 			String[] theArgs = Arrays.copyOfRange(args, 1, args.length);
 			if (args[0].equals(ANALYZE))
 			{
@@ -139,11 +135,27 @@ public class BMDExpressCommandLine
 		}
 		catch (Exception exp)
 		{
-			System.out.println("Unexpected exception:" + exp.getMessage());
-			exp.printStackTrace();
+			System.out.println("Error:" + exp.getMessage());
+			printHelp();
 		}
-		// new BMDExpressCommandLine().createStrawMan();
 
+	}
+
+	private void printHelp()
+	{
+		HelpFormatter formatter = new HelpFormatter();
+
+		formatter.setWidth(160);
+		formatter.printHelp("bmdexpress2-cmd " + ANALYZE, "", analyzeOptions, "", true);
+
+		formatter.printHelp("bmdexpress2-cmd " + EXPORT, "", exportOptions, "", true);
+
+		formatter.printHelp("bmdexpress2-cmd " + DELETE, "", deleteOptions, "", true);
+		formatter.printHelp("bmdexpress2-cmd " + QUERY, "", queryOptions, "", true);
+
+		// List of group possibilities
+		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " + ORIOGEN
+				+ ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
 	}
 
 	public void createStrawMan()

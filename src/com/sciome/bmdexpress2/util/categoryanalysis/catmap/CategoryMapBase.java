@@ -79,8 +79,8 @@ public abstract class CategoryMapBase
 
 		if (inFile.exists() && BMDExpressProperties.getInstance().isConsole())
 		{
-			System.out.println("This is console application and the file: " + inFile.getName()
-					+ " exists.  Not looking for update on server.");
+			// System.out.println("This is console application and the file: " + inFile.getName()
+			// + " exists. Not looking for update on server.");
 			return inFile;
 		}
 

@@ -862,7 +862,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	 */
 	private void selectBestModel(BMDResult bmdResults)
 	{
-		System.out.println("selectBestModel()");
+		// System.out.println("selectBestModel()");
 
 		for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
 		{

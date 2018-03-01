@@ -14,7 +14,7 @@ public class ExpressionDataConfig
 	// is the first line labels or doses?
 	private Boolean					hasHeaders;
 
-	// GPL id for most things.
+	// GPL id for most things. selectBestModel()
 	private String					platform;
 
 	// specify the log transformation

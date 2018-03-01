@@ -46,8 +46,8 @@ public class ChipInfoReader
 			// if infile exists and this is a console, then do not look for updates.
 			if (inFile.exists() && BMDExpressProperties.getInstance().isConsole())
 			{
-				System.out.println("This is console application and the file: " + inFile.getName()
-						+ " exists.  Not looking for update on server.");
+				// System.out.println("This is console application and the file: " + inFile.getName()
+				// + " exists. Not looking for update on server.");
 			}
 			else if (URLUtils.updateAvailable(http, inFile))
 			{// !inFile.exists() ||
