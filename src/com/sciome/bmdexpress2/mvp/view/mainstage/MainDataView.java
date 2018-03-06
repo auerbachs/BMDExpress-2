@@ -177,7 +177,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 		else if (dataSet instanceof WilliamsTrendResults)
 		{
 			tableView = new WilliamsTrendDataView((WilliamsTrendResults) dataSet, "spreadsheet");
-			resultDesc = "William's Trend Results: ";
+			resultDesc = "Williams Trend Test Results: ";
 		}
 		else if (dataSet instanceof OriogenResults)
 		{

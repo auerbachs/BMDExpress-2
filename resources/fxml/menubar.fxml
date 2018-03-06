@@ -49,7 +49,7 @@
          <items>
             <Menu mnemonicParsing="false" text="Prefilter">
               <items>            
-                  <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="William's Trend" />
+                  <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="Williams Trend Test" />
                   <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />    
                   <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />
               </items>

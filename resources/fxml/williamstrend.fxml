@@ -13,7 +13,7 @@
          <children>
             <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
                <children>
-                  <TitledPane collapsible="false" minHeight="250.0" prefHeight="350.0" prefWidth="600.0" text="William's Trend" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TitledPane collapsible="false" minHeight="250.0" prefHeight="350.0" prefWidth="600.0" text="Williams Trend Test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <GridPane prefHeight="180.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>

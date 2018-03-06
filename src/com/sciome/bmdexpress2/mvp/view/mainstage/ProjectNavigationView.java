@@ -79,7 +79,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	private final String									EXPRESSION_DATA				= "Expression Data";
 	private final String									ONEWAY_DATA					= "One-way ANOVA";
-	private final String									WILLIAMS_DATA				= "William's Trend";
+	private final String									WILLIAMS_DATA				= "Williams Trend Test";
 	private final String									ORIOGEN_DATA				= "Oriogen";
 	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
 	private final String									CATEGORY_DATA				= "Functional Classifications";
@@ -436,7 +436,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						FXMLLoader loader = new FXMLLoader(
 								getClass().getResource("/fxml/williamstrend.fxml"));
 
-						Stage stage = BMDExpressFXUtils.getInstance().generateStage("William's Trend");
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Williams Trend Test");
 						stage.setScene(new Scene((BorderPane) loader.load()));
 						WilliamsTrendView controller = loader.<WilliamsTrendView> getController();
 						controller.initData(selectedItems, processableDatas);
@@ -739,7 +739,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
-		setContextMenuCommonHandlers("William's Trend", ctxMenu, williamsTrendResult);
+		setContextMenuCommonHandlers("Williams Trend Test", ctxMenu, williamsTrendResult);
 		return ctxMenu;
 	}
 

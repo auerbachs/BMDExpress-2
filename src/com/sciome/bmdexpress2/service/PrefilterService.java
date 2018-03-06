@@ -31,10 +31,11 @@ import com.sciome.commons.math.oriogen.OriogenUtil;
 import com.sciome.commons.math.williams.WilliamsTrendTestResult;
 import com.sciome.commons.math.williams.WilliamsTrendTestUtil;
 
-public class PrefilterService implements IPrefilterService {
-	private WilliamsTrendTestUtil williamsUtil = new WilliamsTrendTestUtil();
-	private OriogenUtil oriogenUtil = new OriogenUtil();
-	private boolean cancel = false;
+public class PrefilterService implements IPrefilterService
+{
+	private WilliamsTrendTestUtil	williamsUtil	= new WilliamsTrendTestUtil();
+	private OriogenUtil				oriogenUtil		= new OriogenUtil();
+	private boolean					cancel			= false;
 
 	/**
 	 * Performs a william's trend analysis and returns the corresponding WilliamsTrendResult object
@@ -42,10 +43,11 @@ public class PrefilterService implements IPrefilterService {
 	@Override
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater) {
+			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater)
+	{
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
-		
+
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
 		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
@@ -54,46 +56,51 @@ public class PrefilterService implements IPrefilterService {
 			baseValue = 2.718281828459045;
 		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
 			isLogTransformation = false;
-		
+
 		// get a list of williamsTrendResult
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
 		double[] doseVector = new double[treatments.size()];
-		
-		//Fill numeric matrix
-		for(int i = 0; i < numericMatrix.length; i++) {
-			for(int j = 0; j < numericMatrix[i].length; j++) {
+
+		// Fill numeric matrix
+		for (int i = 0; i < numericMatrix.length; i++)
+		{
+			for (int j = 0; j < numericMatrix[i].length; j++)
+			{
 				numericMatrix[i][j] = responses.get(i).getResponses().get(j);
 			}
 		}
-		
-		//Fill doseVector
-		for(int i = 0; i < doseVector.length; i++) {
+
+		// Fill doseVector
+		for (int i = 0; i < doseVector.length; i++)
+		{
 			doseVector[i] = treatments.get(i).getDose();
 		}
-		
+
 		WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
-				MatrixUtils.createRealVector(doseVector),
-				23524,
-				Integer.valueOf(numberOfPermutations),
-				null,
+				MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
 				updater);
 
-		if(result == null) {
+		if (result == null)
+		{
 			updater.setProgress(0);
 			return null;
 		}
-		
+
 		List<WilliamsTrendResult> williamsTrendResultList = new ArrayList<WilliamsTrendResult>();
-		for(int i = 0; i < result.getTestStatistic().getDimension(); i++) {
-			if(!cancel) {
+		for (int i = 0; i < result.getTestStatistic().getDimension(); i++)
+		{
+			if (!cancel)
+			{
 				WilliamsTrendResult singleResult = new WilliamsTrendResult();
 				singleResult.setAdjustedPValue(result.getAdjustedPValue().getEntry(i));
 				singleResult.setpValue(result.getpValue().getEntry(i));
 				singleResult.setProbeResponse(responses.get(i));
 				williamsTrendResultList.add(singleResult);
-			} else {
+			}
+			else
+			{
 				updater.setProgress(0);
 				return null;
 			}
@@ -103,7 +110,8 @@ public class PrefilterService implements IPrefilterService {
 
 		for (int i = 0; i < resultSize; i++)
 		{
-			if(!cancel) {
+			if (!cancel)
+			{
 				WilliamsTrendResult williamsTrendResult = williamsTrendResultList.get(i);
 
 				double pValueToCheck = williamsTrendResult.getpValue();
@@ -118,8 +126,8 @@ public class PrefilterService implements IPrefilterService {
 				// first check the pValue
 				((Double.isNaN(pValueToCheck) && pCutOff < 9999) || pValueToCheck >= pCutOff) ||
 				// second check if it is a control gene
-						(filterOutControlGenes
-								&& williamsTrendResult.getProbeResponse().getProbe().getId().startsWith("AFFX"))
+						(filterOutControlGenes && williamsTrendResult.getProbeResponse().getProbe().getId()
+								.startsWith("AFFX"))
 
 				)
 				{
@@ -127,40 +135,41 @@ public class PrefilterService implements IPrefilterService {
 					i--;
 					resultSize--;
 				}
-			} else {
+			}
+			else
+			{
 				updater.setProgress(0);
 				return null;
 			}
 		}
-		
 
 		// create a new WilliamsTrendResults object and put it on the Event BuS
 		WilliamsTrendResults williamsTrendResults = new WilliamsTrendResults();
 		williamsTrendResults.setDoseResponseExperiement(doseResponseExperiment);
 		williamsTrendResults.setWilliamsTrendResults(williamsTrendResultList);
-		
+
 		performFoldFilter(williamsTrendResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		
+
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
 
 		AnalysisInfo analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
-		notes.add("William's Trend");
+		notes.add("Williams Trend Test");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
-		
-		if(multipleTestingCorrection)
+
+		if (multipleTestingCorrection)
 			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
 		else
 			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
-		
+
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
@@ -195,57 +204,69 @@ public class PrefilterService implements IPrefilterService {
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, float s0Adjustment,
 			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue,
-			SimpleProgressUpdater updater) {
+			SimpleProgressUpdater updater)
+	{
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 
 		Origen_Data data = new Origen_Data();
-		
+
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
-		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10)) {
+		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
+		{
 			data.setLogTransformType(4);
 			baseValue = 10.0f;
 		}
-		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL)) {
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+		{
 			data.setLogTransformType(3);
 			baseValue = 2.718281828459045;
 		}
-		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE)) {
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
+		{
 			data.setLogTransformType(1);
 			isLogTransformation = false;
-		} else {
+		}
+		else
+		{
 			data.setLogTransformType(2);
 		}
-		
+
 		// get a list of oriogenResult
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
 		double[] doseVector = new double[treatments.size()];
-		
-		//Fill numeric matrix
-		for(int i = 0; i < numericMatrix.length; i++) {
-			for(int j = 0; j < numericMatrix[i].length; j++) {
+
+		// Fill numeric matrix
+		for (int i = 0; i < numericMatrix.length; i++)
+		{
+			for (int j = 0; j < numericMatrix[i].length; j++)
+			{
 				numericMatrix[i][j] = responses.get(i).getResponses().get(j);
 			}
 		}
-		
-		//Fill doseVector
+
+		// Fill doseVector
 		double current = doseVector[0];
 		int count = 0;
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		for(int i = 0; i < doseVector.length; i++) {
+		for (int i = 0; i < doseVector.length; i++)
+		{
 			doseVector[i] = treatments.get(i).getDose();
-			if(current == doseVector[i]) {
+			if (current == doseVector[i])
+			{
 				count++;
-			} else {
+			}
+			else
+			{
 				list.add(count);
 				count = 1;
 			}
 			current = doseVector[i];
 		}
-		
+
 		data.setInputData(MatrixUtils.createRealMatrix(numericMatrix));
 		data.setNumTimePoints(MathUtil.uniqueValues(MatrixUtils.createRealVector(doseVector)));
 		data.setNumInitialBootStraps(initialBootstraps);
@@ -258,35 +279,44 @@ public class PrefilterService implements IPrefilterService {
 		data.setS0Percentile(s0Adjustment);
 		data.setmdFdr(false);
 		data.setTwoGroups(false);
-		
+
 		int[] values = new int[30];
-		for(int i = 0; i < values.length; i++) {
-			if(i < list.size()) {
+		for (int i = 0; i < values.length; i++)
+		{
+			if (i < list.size())
+			{
 				values[i] = list.get(i);
-			} else {
+			}
+			else
+			{
 				values[i] = list.get(list.size() - 1);
 			}
 		}
 		data.setSampleSizeDefault(values);
 		data.setNumGenes(numericMatrix.length);
-		
+
 		ArrayList<OriogenTestResult> result = oriogenUtil.oriogen(data, updater);
 
-		if(result == null) {
+		if (result == null)
+		{
 			updater.setProgress(0);
 			return null;
 		}
-		
+
 		List<OriogenResult> oriogenResultList = new ArrayList<OriogenResult>();
-		for(int i = 0; i < result.size(); i++) {
-			if(!cancel) {
+		for (int i = 0; i < result.size(); i++)
+		{
+			if (!cancel)
+			{
 				OriogenResult singleResult = new OriogenResult();
 				singleResult.setAdjustedPValue(result.get(i).getqValue());
 				singleResult.setpValue(result.get(i).getpValue());
 				singleResult.setProbeResponse(responses.get(i));
 				singleResult.setProfile(result.get(i).getProfileString());
 				oriogenResultList.add(singleResult);
-			} else {
+			}
+			else
+			{
 				updater.setProgress(0);
 				return null;
 			}
@@ -296,7 +326,8 @@ public class PrefilterService implements IPrefilterService {
 
 		for (int i = 0; i < resultSize; i++)
 		{
-			if(!cancel) {
+			if (!cancel)
+			{
 				OriogenResult oriogenResult = oriogenResultList.get(i);
 
 				double pValueToCheck = oriogenResult.getpValue();
@@ -320,12 +351,13 @@ public class PrefilterService implements IPrefilterService {
 					i--;
 					resultSize--;
 				}
-			} else {
+			}
+			else
+			{
 				updater.setProgress(0);
 				return null;
 			}
 		}
-
 
 		// create a new OriogenResults object and put it on the Event BuS
 		OriogenResults oriogenResults = new OriogenResults();
@@ -334,7 +366,7 @@ public class PrefilterService implements IPrefilterService {
 
 		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		
+
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_oriogen_" + df.format(pCutOff);
 
@@ -346,12 +378,12 @@ public class PrefilterService implements IPrefilterService {
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-		
-		if(multipleTestingCorrection)
+
+		if (multipleTestingCorrection)
 			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
 		else
 			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
-		
+
 		notes.add("Number of Initial Bootstraps: " + String.valueOf(initialBootstraps));
 		notes.add("Number of Maximum Bootstraps: " + String.valueOf(maxBootstraps));
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
@@ -388,10 +420,11 @@ public class PrefilterService implements IPrefilterService {
 	@Override
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue) {
+			String foldFilterValue)
+	{
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
-		//This class should eventually be moved to sciome commons
+		// This class should eventually be moved to sciome commons
 		OneWayANOVAAnalysis aNOVAAnalysis = new OneWayANOVAAnalysis();
 
 		double baseValue = 2.0;
@@ -442,9 +475,9 @@ public class PrefilterService implements IPrefilterService {
 		oneWayResults.setDoseResponseExperiement(doseResponseExperiment);
 		oneWayResults.setOneWayANOVAResults(oneWayResultList);
 
-		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue),
-				isLogTransformation, baseValue, useFoldFilter);
-		
+		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
+				baseValue, useFoldFilter);
+
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
 
@@ -457,11 +490,11 @@ public class PrefilterService implements IPrefilterService {
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 
-		if(multipleTestingCorrection)
+		if (multipleTestingCorrection)
 			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
 		else
 			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
-		
+
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
@@ -489,15 +522,17 @@ public class PrefilterService implements IPrefilterService {
 
 		return oneWayResults;
 	}
-	
-	public void cancel() {
+
+	public void cancel()
+	{
 		williamsUtil.cancel();
 		oriogenUtil.cancel();
 		this.cancel = true;
 	}
-	
+
 	private void performFoldFilter(PrefilterResults prefilterResults, IStatModelProcessable processableData,
-			Float foldFilterValue, boolean isLogTransformation, double baseValue, boolean useFoldFilter) {
+			Float foldFilterValue, boolean isLogTransformation, double baseValue, boolean useFoldFilter)
+	{
 		int resultSize = prefilterResults.getPrefilterResults().size();
 
 		FoldChange foldChange = new FoldChange(
@@ -505,8 +540,8 @@ public class PrefilterService implements IPrefilterService {
 				baseValue);
 		for (int i = 0; i < resultSize; i++)
 		{
-			Float bestFoldChange = foldChange
-					.getBestFoldChangeValue(prefilterResults.getPrefilterResults().get(i).getProbeResponse().getResponses());
+			Float bestFoldChange = foldChange.getBestFoldChangeValue(
+					prefilterResults.getPrefilterResults().get(i).getProbeResponse().getResponses());
 			prefilterResults.getPrefilterResults().get(i).setBestFoldChange(bestFoldChange);
 			prefilterResults.getPrefilterResults().get(i).setFoldChanges(foldChange.getFoldChanges());
 
