@@ -48,6 +48,7 @@ public class BMDExpressCommandLine
 	public final static String	QUERY				= "query";
 	public final static String	EXPORT				= "export";
 	public final static String	DELETE				= "delete";
+	public final static String  VERSION				= "--version";
 
 	// Analysis Group names Current working directory
 	public final static String	EXPRESSION			= "expression";
@@ -132,6 +133,10 @@ public class BMDExpressCommandLine
 				QueryRunner qRunner = new QueryRunner();
 				qRunner.analyze(cmd.getOptionValue(INPUT_BM2), cmd.getOptionValue(ANALYSIS_GROUP));
 			}
+			else if (args[0].equals(VERSION))
+			{
+				System.out.println(BMDExpressProperties.getInstance().getVersion());
+			}
 
 		}
 		catch (Exception exp)
@@ -147,6 +152,7 @@ public class BMDExpressCommandLine
 		HelpFormatter formatter = new HelpFormatter();
 
 		formatter.setWidth(160);
+		System.out.println("usage: bmdexpress2-cmd " + VERSION);
 		formatter.printHelp("bmdexpress2-cmd " + ANALYZE, "", analyzeOptions, "", true);
 
 		formatter.printHelp("bmdexpress2-cmd " + EXPORT, "", exportOptions, "", true);
