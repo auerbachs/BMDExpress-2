@@ -56,7 +56,6 @@ Contributors
 -   Carole Yauk, Health Canada (Design Consultant)
 -   Byron Kuo, Health Canada (Design Consultant)
 -   Alex Sedyh, Sciome (Statistical and Modeling Consultant)
--   Jason Pirone, Sciome (Statistical and Modeling Consultant)
 -   Russell Thomas, US EPA, originally The Hamner Institute (BMDExpress v1 Project Lead)
 -   Longlong Yang, Vistronix, originally The Hamner Institute (BMDExpress v1 Lead Software Engineer)
 -   Mel Anderson, Scitovation, orignally The Hamner Institute (BMDExpress v1 contributor)
