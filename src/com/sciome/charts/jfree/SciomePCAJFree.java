@@ -90,7 +90,7 @@ public class SciomePCAJFree extends SciomePCA
 		chart = ChartFactory.createScatterPlot(key1.toString() + " Vs. " + key2.toString(), key1.toString(),
 				key2.toString(), dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = chart.getXYPlot();
-		plot.setForegroundAlpha(0.1f);
+		// plot.setForegroundAlpha(0.1f);
 		plot.setDomainPannable(true);
 		plot.setRangePannable(true);
 		plot.setDomainAxis(
@@ -161,7 +161,7 @@ public class SciomePCAJFree extends SciomePCA
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		plot.setBackgroundPaint(Color.white);
-		plot.setForegroundAlpha(0.5f);
+		// plot.setForegroundAlpha(0.5f);
 
 		// Order the elements in the legend from smallest to largest
 		LegendItemCollection collection = renderer.getLegendItems();
@@ -193,10 +193,10 @@ public class SciomePCAJFree extends SciomePCA
 				{
 					Range xAxis = event.getChart().getXYPlot().getDomainAxis().getRange();
 					Range yAxis = event.getChart().getXYPlot().getRangeAxis().getRange();
-					((RangeSlider)gethSlider()).setLowValue(xAxis.getLowerBound());
-					((RangeSlider)gethSlider()).setHighValue(xAxis.getUpperBound());
-					((RangeSlider)getvSlider()).setLowValue(yAxis.getLowerBound());
-					((RangeSlider)getvSlider()).setHighValue(yAxis.getUpperBound());
+					((RangeSlider) gethSlider()).setLowValue(xAxis.getLowerBound());
+					((RangeSlider) gethSlider()).setHighValue(xAxis.getUpperBound());
+					((RangeSlider) getvSlider()).setLowValue(yAxis.getLowerBound());
+					((RangeSlider) getvSlider()).setHighValue(yAxis.getUpperBound());
 				}
 			}
 		});
