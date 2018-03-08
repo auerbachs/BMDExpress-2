@@ -103,7 +103,10 @@ public class BMDExpressInformation
 		dialog.getDialogPane().setMinWidth(800);
 		ScrollPane sp = new ScrollPane();
 
-		Label label = new Label("Placeholder for License information.");
+		Label label = new Label(BMDExpressProperties.getInstance().getLicense());
+		label.setMaxWidth(700);
+		label.setWrapText(true);
+		label.setStyle("-fx-padding: 10 10 10 10");
 		AnchorPane ap = new AnchorPane();
 		ap.getChildren().add(label);
 

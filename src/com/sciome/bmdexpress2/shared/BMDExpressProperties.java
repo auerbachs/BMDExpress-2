@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -974,6 +977,22 @@ public class BMDExpressProperties
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public String getLicense()
+	{
+
+		try
+		{
+			InputStream in = this.getClass().getResourceAsStream("/license.txt");
+			return IOUtils.toString(in, StandardCharsets.UTF_8.name());
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	public String getExponentialVersion()
