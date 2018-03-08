@@ -1,23 +1,29 @@
 <html>
 <body>
 <h1>
- BMDExpress 2.2 Preview
+ BMDExpress 2.2
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on February 25, 2018</h2>
-
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on March 9, 2018</h2>
 
 
 <h3>
-New Release
+New Major Release
 </h3>
 <ul>
-<li>Added column to BMD Analysis Results that tells you if the model was destroyed due to timeout  </li>
-<li>Added configuration to BMD Analysis to define amount of time to allow process to execute before having it automatically destroyed </li>
-<li>Pathway Curve Viewer can now be expanded and viewed in separate resizeable window </li>
-<li>Fixed Y-Axis label on histograms to say "Count"</li>
-<li>OVERALL DIRECTION in category analysis is now being created at the gene level instead of probe level</li>
-<li>Fixed a bug that threw Null Pointer Exception when creating custom charts </li>
+<li>Williams Trend Test and Oriogen Prefilters were added as alternatives to One-Way ANOVA </li>
+<li>Mark and label data points in charts </li>
+<li>Create your own charts</li>
+<li>Edit chart properties</li>
+<li>View multiple curves on same plot</li>
+<li>PCA Plots for viewing expression data</li>
+<li>Enhanced filtering capabilities</li>
+<li>Command line version </li>
+<li>Combine multiple anlayses for easier visualization and export</li>
+<li>Export and import project files as JSON</li>
+<li>You can now add projects to an existing project</li>
+<li>Many new metrics in grids</li>
+<li>Many new pre-analyis filters </li>
 </ul>
 
 

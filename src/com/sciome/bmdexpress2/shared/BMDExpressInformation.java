@@ -101,12 +101,11 @@ public class BMDExpressInformation
 
 		dialog.getDialogPane().setMinHeight(600);
 		dialog.getDialogPane().setMinWidth(800);
-		ScrollPane sp = new ScrollPane();
 
-		Label label = new Label(BMDExpressProperties.getInstance().getLicense());
-		label.setMaxWidth(700);
-		label.setWrapText(true);
-		label.setStyle("-fx-padding: 10 10 10 10");
+		WebView label = new WebView();
+		label.setMaxHeight(500);
+		String content = BMDExpressProperties.getInstance().getLicense();
+		label.getEngine().loadContent(content);
 		AnchorPane ap = new AnchorPane();
 		ap.getChildren().add(label);
 

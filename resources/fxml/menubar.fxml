@@ -12,9 +12,9 @@
             <MenuItem mnemonicParsing="false" onAction="#handle_openProject" text="Open Project" />
             <MenuItem mnemonicParsing="false" onAction="#handle_addProject" text="Add Project" />
             <Menu mnemonicParsing="false" text="Import">
-              <items>            
+              <items>
+	              <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Expression Data" />            
                   <MenuItem mnemonicParsing="false" onAction="#handle_importJSON" text="JSON File" />
-	              <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Expression Data" />
 	              <MenuItem mnemonicParsing="false" onAction="#handle_importBMDFile" text="BMD File" />
               </items>
             </Menu>
