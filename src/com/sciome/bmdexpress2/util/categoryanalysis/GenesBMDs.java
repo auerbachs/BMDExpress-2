@@ -69,16 +69,10 @@ public class GenesBMDs
 			bmdIndices = new int[max];
 			bmdlIndices = new int[max];
 
-			// System.out.println("BMD before sort:");
 			avgBMDs = ascendSort(avgBMDs, bmdIndices);
-			// System.out.println("BMDL before sort:");
 			avgBMDLs = ascendSort(avgBMDLs, bmdlIndices);
-			// System.out.println("BMD after sort:");
 			bmdSortGenes = orderGenes(bmdIndices);
-			// printOut(bmdSortGenes, avgBMDs);
-			// System.out.println("BMDL after sort:");
 			bmdlSortGenes = orderGenes(bmdlIndices);
-			// printOut(bmdlSortGenes, avgBMDLs);
 			vectGenes.removeAllElements();
 			vectGenes = null;
 
@@ -95,7 +89,6 @@ public class GenesBMDs
 		for (int i = 0; i < max; i++)
 		{
 			double value = values[i] / counts[i];
-			// System.out.println(vectGenes.get(i) + "\t" + value);
 
 			for (int j = i; j >= 0; j--)
 			{

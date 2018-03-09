@@ -1,36 +1,66 @@
 package com.sciome.bmdexpress2.mvp.model.stat;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
+import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableDataPoint;
-import com.sciome.charts.annotation.ChartableDataPointLabel;
-import com.sciome.filter.annotation.Filterable;
+import com.sciome.bmdexpress2.util.NumberManager;
 
-public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
+public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializable, IGeneContainer, IMarkable
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8457191085367967268L;
+	private static final long		serialVersionUID	= 8457191085367967268L;
 
-	private ProbeResponse probeResponse;
-	private StatResult bestStatResult;
-	private StatResult bestPolyStatResult;
-	private List<StatResult> statResults;
-	private List<ChiSquareResult> chiSquaredResults;
+	private ProbeResponse			probeResponse;
+	private StatResult				bestStatResult;
+	private StatResult				bestPolyStatResult;
+	private List<StatResult>		statResults;
+	private List<ChiSquareResult>	chiSquaredResults;
 
 	// convenience variables for easy query and reduced processing.
-	private transient List<Object> row;
-	private transient String genes;
-	private transient String geneSymbols;
+	private transient List<Object>	row;
+	private transient String		genes;
+	private transient String		geneSymbols;
+	private transient Set<String>	geneSet				= new HashSet<>();
+	private transient Set<String>	geneSymbolSet		= new HashSet<>();
+
+	private transient Double		prefilterAdjustedPValue;
+	private transient Double		prefilterPvalue;
+	private transient Double		prefilterBestFoldChange;
+	private transient Double		prefilterBestABSFoldChange;
+
+	private Long					id;
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	public ProbeResponse getProbeResponse()
 	{
@@ -84,10 +114,15 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	// calculate columns and rows. The purpose of this is to agregate all the results
 	// so the data can be viewed by a table.
-	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations)
+	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations,
+			Double adjustedPValue, Double pValue, Double bestFoldChange, List<Float> foldChanges)
 	{
 		row = new ArrayList<Object>();
 		row.add(probeResponse.getProbe().getId());
+		if (geneSet == null)
+			geneSet = new HashSet<>();
+		if (geneSymbolSet == null)
+			geneSymbolSet = new HashSet<>();
 
 		// Add the gene and gene symbol information to the data.
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
@@ -107,6 +142,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 				}
 				genes.append(refGene.getId());
 				geneSymbols.append(refGene.getGeneSymbol());
+				geneSet.add(refGene.getId());
+				geneSymbolSet.add(refGene.getGeneSymbol());
 			}
 		}
 		row.add(genes.toString());
@@ -149,6 +186,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add("none");
 			row.add("none");
 			row.add("none");
+			row.add("none");
+			row.add("none");
 		}
 		else
 		{
@@ -161,22 +200,46 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getAIC());
 			row.add(bestStatResult.getAdverseDirection());
 			row.add(bestStatResult.getBMD() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMDL());
+			row.add(bestStatResult.getBMDU() / bestStatResult.getBMD());
 		}
+
+		row.add(pValue);
+		this.prefilterPvalue = pValue;
+
+		row.add(adjustedPValue);
+		this.prefilterAdjustedPValue = adjustedPValue;
+
+		row.add(bestFoldChange);
+		this.prefilterBestFoldChange = bestFoldChange;
+
+		if (bestFoldChange == null)
+			row.add(null);
+		else
+		{
+			row.add(Math.abs(bestFoldChange));
+			this.prefilterBestABSFoldChange = Math.abs(bestFoldChange);
+		}
+
+		for (Float fc : foldChanges)
+			row.add(fc);
 
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getRow()
 	{
 		return row;
 	}
 
+	@JsonIgnore
 	public List<String> generateColumnHeader()
 	{
 		List<String> columnHeader = new ArrayList<String>();
-		columnHeader.add("Probe ID");
-		columnHeader.add("Entrez Gene IDs");
-		columnHeader.add("Genes Symbols");
+		columnHeader.add(BMDResult.PROBE_ID);
+		columnHeader.add(BMDResult.GENE_IDS);
+		columnHeader.add(BMDResult.GENE_SYMBOLS);
 		for (StatResult statResult : statResults)
 		{
 			columnHeader.addAll(statResult.getColumnNames());
@@ -218,23 +281,25 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 		if (bestPolyStatResult != null)
 		{
-			columnHeader.add("Best Poly");
+			columnHeader.add(BMDResult.BEST_POLY);
 		}
 
-		columnHeader.add("Best Model");
-		columnHeader.add("Best BMD");
-		columnHeader.add("Best BMDL");
-		columnHeader.add("Best BMDU");
-		columnHeader.add("Best fitPValue");
-		columnHeader.add("Best fitLogLikelihood");
-		columnHeader.add("Best AIC");
-		columnHeader.add("Best adverseDirection");
-		columnHeader.add("Best BMD/BMDL");
+		columnHeader.add(BMDResult.BEST_MODEL);
+		columnHeader.add(BMDResult.BEST_BMD);
+		columnHeader.add(BMDResult.BEST_BMDL);
+		columnHeader.add(BMDResult.BEST_BMDU);
+		columnHeader.add(BMDResult.BEST_FITPVALUE);
+		columnHeader.add(BMDResult.BEST_LOGLIKLIHOOD);
+		columnHeader.add(BMDResult.BEST_AIC);
+		columnHeader.add(BMDResult.BEST_ADVERSE_DIRECTION);
+		columnHeader.add(BMDResult.BEST_BMD_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMDL_RATIO);
+		columnHeader.add(BMDResult.BEST_BMDU_BMD_RATIO);
 
 		return columnHeader;
 	}
 
-	@Filterable(key = "Entrez Gene ID")
+	@JsonIgnore
 	public String getGenes()
 	{
 		return genes;
@@ -245,7 +310,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		this.genes = genes;
 	}
 
-	@Filterable(key = "Gene Symbols")
+	@JsonIgnore
 	public String getGeneSymbols()
 	{
 		return geneSymbols;
@@ -261,6 +326,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	 * list of StatResults that are of PolyResult type. Though it could be used to get a list of other
 	 * model(s) as well.
 	 */
+	@JsonIgnore
 	public List<StatResult> getStatResultsOfClassType(Class type)
 	{
 		List<StatResult> returnList = new ArrayList<>();
@@ -284,8 +350,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	 * make charttable stuff work with best stat model
 	 */
 
-	@Filterable(key = BMDResult.BMD)
-	@ChartableDataPoint(key = BMDResult.BMD)
+	@JsonIgnore
 	public Double getBestBMD()
 	{
 		if (bestStatResult == null)
@@ -293,8 +358,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMD();
 	}
 
-	@Filterable(key = BMDResult.BMDL)
-	@ChartableDataPoint(key = BMDResult.BMDL)
+	@JsonIgnore
 	public Double getBestBMDL()
 	{
 		if (bestStatResult == null)
@@ -302,8 +366,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.FIT_PVALUE)
-	@ChartableDataPoint(key = BMDResult.FIT_PVALUE)
+	@JsonIgnore
 	public Double getBestFitPValue()
 	{
 		if (bestStatResult == null)
@@ -311,8 +374,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getFitPValue();
 	}
 
-	@Filterable(key = BMDResult.FIT_LOG_LIKELIHOOD)
-	@ChartableDataPoint(key = BMDResult.FIT_LOG_LIKELIHOOD)
+	@JsonIgnore
 	public Double getBestFitLogLikelihood()
 	{
 		if (bestStatResult == null)
@@ -320,8 +382,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getFitLogLikelihood();
 	}
 
-	@Filterable(key = BMDResult.BMDU)
-	@ChartableDataPoint(key = BMDResult.BMDU)
+	@JsonIgnore
 	public Double getBestBMDU()
 	{
 		if (bestStatResult == null)
@@ -329,8 +390,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU();
 	}
 
-	@Filterable(key = BMDResult.BMD_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMD_BMDL_RATIO)
+	@JsonIgnore
 	public Double getBestBMDdiffBMDL()
 	{
 		if (bestStatResult == null)
@@ -338,8 +398,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMD() / bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMDL_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMDL_RATIO)
+	@JsonIgnore
 	public Double getBestBMDUdiffBMDL()
 	{
 		if (bestStatResult == null)
@@ -347,8 +406,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU() / bestStatResult.getBMDL();
 	}
 
-	@Filterable(key = BMDResult.BMDU_BMD_RATIO)
-	@ChartableDataPoint(key = BMDResult.BMDU_BMD_RATIO)
+	@JsonIgnore
 	public Double getBestBMDUdiffBMD()
 	{
 		if (bestStatResult == null)
@@ -356,7 +414,31 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		return bestStatResult.getBMDU() / bestStatResult.getBMD();
 	}
 
-	@ChartableDataPointLabel
+	@JsonIgnore
+	public Double getPrefilterAdjustedPValue()
+	{
+		return prefilterAdjustedPValue;
+	}
+
+	@JsonIgnore
+	public Double getPrefilterPValue()
+	{
+		return prefilterPvalue;
+	}
+
+	@JsonIgnore
+	public Double getBestFoldChange()
+	{
+		return prefilterBestFoldChange;
+	}
+
+	@JsonIgnore
+	public Double getBestABSFoldChange()
+	{
+		return prefilterBestABSFoldChange;
+	}
+
+	@JsonIgnore
 	public String getChartableDataLabel()
 	{
 		return getProbeResponse().getProbe().getId();
@@ -366,6 +448,55 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public String toString()
 	{
 		return getProbeResponse().getProbe().getId() + " : " + genes + " : " + geneSymbols;
+	}
+
+	@JsonIgnore
+	@Override
+	public Set<String> containsGenes(Set<String> genes)
+	{
+		Set<String> genesContained = new HashSet<>();
+
+		for (String gene : geneSet)
+			if (genes.contains(gene))
+				genesContained.add(gene);
+
+		for (String gene : geneSymbolSet)
+			if (genes.contains(gene.toLowerCase()))
+				genesContained.add(gene);
+		return genesContained;
+	}
+
+	@JsonIgnore
+	@Override
+	public Object getObject()
+	{
+		return this;
+	}
+
+	@JsonIgnore
+	@Override
+	public Set<String> getMarkableKeys()
+	{
+		if (geneSymbolSet == null)
+			return new HashSet<>();
+		return geneSymbolSet;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getMarkableLabel()
+	{
+		return this.getGeneSymbols() + ": FC=" + NumberManager.numberFormat(2, this.getBestFoldChange());
+	}
+
+	@JsonIgnore
+	@Override
+	public Color getMarkableColor()
+	{
+		if (this.getBestStatResult() == null || this.getBestStatResult().getAdverseDirection() > 0)
+			return Color.yellow;
+		else
+			return Color.blue;
 	}
 
 }

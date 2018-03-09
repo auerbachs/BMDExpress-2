@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -23,6 +22,7 @@ import java.util.Vector;
 
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.annotation.FileInfo;
 import com.sciome.bmdexpress2.util.annotation.URLUtils;
 import com.sciome.bmdexpress2.util.categoryanalysis.ProbeGeneMaps;
@@ -37,16 +37,16 @@ import com.sciome.bmdexpress2.util.categoryanalysis.ProbeGeneMaps;
  */
 public abstract class CategoryMapBase
 {
-	protected ProbeGeneMaps probeGeneMaps;
-	protected String organismCode;
-	protected Hashtable<String, String> titleHash;
-	protected Hashtable<String, Vector> subHash, allHash, dataSetGeneHash;
-	protected Vector<CategoryIdentifier> categoryIdentifiers;
+	protected ProbeGeneMaps					probeGeneMaps;
+	protected String						organismCode;
+	protected Hashtable<String, String>		titleHash;
+	protected Hashtable<String, Vector>		subHash, allHash, dataSetGeneHash;
+	protected Vector<CategoryIdentifier>	categoryIdentifiers;
 
-	protected Hashtable<String, String> categoryHash;
+	protected Hashtable<String, String>		categoryHash;
 
-	protected ChipInfo chipInfo;
-	private long categoryFileVersionDate;
+	protected ChipInfo						chipInfo;
+	private long							categoryFileVersionDate;
 
 	/**
 	 * class contructor used for gene's pathways
@@ -75,6 +75,13 @@ public abstract class CategoryMapBase
 		inFile = new File(inFile.getAbsolutePath(), fName);
 		long httpmod = getDateOfHTTPFile(http);
 		long localmod = inFile.lastModified();
+
+		if (inFile.exists() && BMDExpressProperties.getInstance().isConsole())
+		{
+			// System.out.println("This is console application and the file: " + inFile.getName()
+			// + " exists. Not looking for update on server.");
+			return inFile;
+		}
 
 		if (!inFile.exists() || httpmod > localmod)
 		{
@@ -200,10 +207,6 @@ public abstract class CategoryMapBase
 		}
 
 		long date = httpCon.getLastModified();
-		if (date == 0)
-			System.out.println("No last-modified information.");
-		else
-			System.out.println("Last-Modified: " + new Date(date));
 
 		return date;
 	}

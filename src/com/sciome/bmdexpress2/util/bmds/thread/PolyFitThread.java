@@ -19,32 +19,27 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class PolyFitThread extends Thread implements IFitThread
 {
-	private String name;
-	private CountDownLatch cdLatch;
-	private FilePolyFit fPolyFit = null;
+	private CountDownLatch			cdLatch;
+	private FilePolyFit				fPolyFit			= null;
 
-	private int col, degree, start, end;
-	private ModelInputParameters inputParameters;
+	private int						degree;
+	private ModelInputParameters	inputParameters;
 
-	private float[] doses;
+	private float[]					doses;
 
-	private Object[][] outMatrix;
-	private double[][] parameters;
+	private final int[]				adversDirections	= { 0, 1, -1 };
 
-	private final double DEFAULTDOUBLE = -9999;
-	private final int[] adversDirections = { 0, 1, -1 };
+	List<ProbeResponse>				probeResponses;
+	List<StatResult>				polyResults;
+	int								numThreads;
+	int								instanceIndex;
+	private IModelProgressUpdater	progressUpdater;
+	private IProbeIndexGetter		probeIndexGetter;
 
-	List<ProbeResponse> probeResponses;
-	List<StatResult> polyResults;
-	int numThreads;
-	int instanceIndex;
-	private IModelProgressUpdater progressUpdater;
-	private IProbeIndexGetter probeIndexGetter;
-
-	private boolean cancel = false;
+	private boolean					cancel				= false;
 
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
-			List<StatResult> polyResults, int numThreads, int instanceIndex,
+			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -56,7 +51,7 @@ public class PolyFitThread extends Thread implements IFitThread
 		this.polyResults = polyResults;
 		this.probeIndexGetter = probeIndexGetter;
 
-		fPolyFit = new FilePolyFit();
+		fPolyFit = new FilePolyFit(killTime);
 
 	}
 
@@ -98,52 +93,26 @@ public class PolyFitThread extends Thread implements IFitThread
 		{
 
 			PolyResult polyResult = (PolyResult) polyResults.get(probeIndex);
-
 			try
 			{
 				double direction = 0;
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
-
 				inputParameters.setAdversDirection(adversDirections[0]);
 
 				if (cancel)
-				{
 					break;
-				}
-				if (degree > 1)
-				{
-					inputParameters.setAdversDirection(adversDirections[1]);
-				}
 
 				double[] results = fPolyFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
 						doses, responses);
 
-				if (degree > 1)
-				{
-					inputParameters.setAdversDirection(adversDirections[2]);
-					double[] pResults1 = fPolyFit.fitModel(id, inputParameters, doses, responses);
-
-					if ((results[0] > pResults1[0] && pResults1[0] != DEFAULTDOUBLE)
-							|| results[0] == DEFAULTDOUBLE)
-					{
-						results = pResults1;
-					}
-				}
-
 				if (results[6] > 0)
-				{
 					direction = 1;
-				}
 				else
-				{
 					direction = -1;
-				}
 
 				if (results != null)
-				{
 					fillOutput(results, polyResult);
-				}
 			}
 			catch (Exception e)
 			{
@@ -171,6 +140,7 @@ public class PolyFitThread extends Thread implements IFitThread
 		}
 		polyResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
 		polyResult.setAdverseDirection((short) direction);
+		polyResult.setSuccess("" + fPolyFit.isSuccess());
 	}
 
 	@Override

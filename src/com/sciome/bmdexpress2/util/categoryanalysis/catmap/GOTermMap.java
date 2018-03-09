@@ -41,9 +41,9 @@ import com.sciome.bmdexpress2.util.categoryanalysis.ProbeGeneMaps;
 public class GOTermMap extends CategoryMapBase
 {
 
-	private int goTermIdx = 0;
+	private int						goTermIdx	= 0;
 
-	private final String[] folders = { "go", "arrays" };
+	public static final String[]	folders		= { "go", "arrays" };
 
 	/**
 	 * class contructor used for gene's pathways

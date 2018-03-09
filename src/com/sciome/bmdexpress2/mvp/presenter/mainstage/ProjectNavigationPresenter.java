@@ -1,9 +1,6 @@
 package com.sciome.bmdexpress2.mvp.presenter.mainstage;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,50 +8,61 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
-import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
-import com.sciome.bmdexpress2.mvp.model.probe.Probe;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
-import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
-import com.sciome.bmdexpress2.mvp.model.refgene.EntrezGene;
-import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGene;
-import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
-import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
-import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
+import com.sciome.bmdexpress2.mvp.view.mainstage.ProjectNavigationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
-import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.service.DataCombinerService;
+import com.sciome.bmdexpress2.serviceInterface.IDataCombinerService;
+import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVARequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterDataLoadedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterRequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.PathwayFilterSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowBMDExpressDataAnalysisInSeparateWindow;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ShowDoseResponseExperimentInSeparateWindowEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.WilliamsTrendRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.AddProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectSavedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseApplicationRequestEvent;
@@ -62,12 +70,13 @@ import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.GiveMeProjectRequest;
 import com.sciome.bmdexpress2.shared.eventbus.project.HeresYourProjectEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ImportBMDEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.ImportJSONEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.LoadProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.RequestFileNameForProjectSaveEvent;
+import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsJSONRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectAsRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.SaveProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.bmdexpress2.shared.eventbus.project.ShowMessageEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.TryCloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.DataVisualizationRequestRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowDataVisualizationEvent;
@@ -75,19 +84,18 @@ import com.sciome.bmdexpress2.util.DialogWithThreadProcess;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
-import javafx.scene.control.TreeItem;
-
-public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigationView>
+public class ProjectNavigationPresenter
+		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
 {
 
-	private BMDProject currentProject = new BMDProject();
-	private File currentProjectFile;
+	private BMDProject				currentProject	= new BMDProject();
+	private File					currentProjectFile;
+	private IDataCombinerService	combinerService	= new DataCombinerService();
 
-	private final int MAX_FILES_FOR_MULTI_EXPORT = 10;
-
-	public ProjectNavigationPresenter(IProjectNavigationView view, BMDExpressEventBus eventBus)
+	public ProjectNavigationPresenter(IProjectNavigationView view, IProjectNavigationService service,
+			BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -107,18 +115,48 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	}
 
 	/*
-	 * post the onewayaonove result was selected.
+	 * post the onewayaonova result was selected.
 	 */
 	public void BMDExpressAnalysisDataSetSelected(BMDExpressAnalysisDataSet dataset)
 	{
 		if (dataset instanceof OneWayANOVAResults)
 			getEventBus().post(new OneWayANOVADataSelectedEvent((OneWayANOVAResults) dataset));
-		else if (dataset instanceof PathwayFilterResults)
-			getEventBus().post(new PathwayFilterSelectedEvent((PathwayFilterResults) dataset));
+		else if (dataset instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataSelectedEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof OriogenResults)
+			getEventBus().post(new OriogenDataSelectedEvent((OriogenResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
 			getEventBus().post(new CategoryAnalysisDataSelectedEvent((CategoryAnalysisResults) dataset));
 		else if (dataset instanceof BMDResult)
 			getEventBus().post(new BMDAnalysisDataSelectedEvent((BMDResult) dataset));
+
+	}
+
+	/*
+	 * dose response data selected, post it to event bus
+	 */
+	public void doseResponseExperimentSelectedForProcessing(DoseResponseExperiment doseResponseExperiment)
+	{
+		getEventBus().post(new ExpressionDataSelectedForProcessingEvent(doseResponseExperiment));
+	}
+
+	/*
+	 * post the onewayaonova result was selected.
+	 */
+	public void BMDExpressAnalysisDataSetSelectedForProcessing(BMDExpressAnalysisDataSet dataset)
+	{
+		if (dataset instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataSelectedForProcessingEvent((OneWayANOVAResults) dataset));
+		else if (dataset instanceof WilliamsTrendResults)
+			getEventBus()
+					.post(new WilliamsTrendDataSelectedForProcessingEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof OriogenResults)
+			getEventBus().post(new OriogenDataSelectedForProcessingEvent((OriogenResults) dataset));
+		else if (dataset instanceof CategoryAnalysisResults)
+			getEventBus().post(
+					new CategoryAnalysisDataSelectedForProcessingEvent((CategoryAnalysisResults) dataset));
+		else if (dataset instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataSelectedForProcessingEvent((BMDResult) dataset));
 
 	}
 
@@ -157,6 +195,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		}
 		for (DoseResponseExperiment experiment : experiments)
 		{
+			currentProject.giveBMDAnalysisUniqueName(experiment, experiment.getName());
 			currentProject.getDoseResponseExperiments().add(experiment);
 
 			getView().addDoseResponseExperiement(experiment, true);
@@ -170,18 +209,34 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	@Subscribe
 	public void onLoadOneWayANOVAAnalysis(OneWayANOVADataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addOneWayANOVAAnalysis(event.GetPayload(), true);
 		currentProject.getOneWayANOVAResults().add(event.GetPayload());
 	}
 
 	/*
-	 * load pathway filter results into the view.
+	 * load williams trend results into the view.
 	 */
 	@Subscribe
-	public void onLoadPathwayFilterResults(PathwayFilterDataLoadedEvent event)
+	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
 	{
-		getView().addPathwayFilterResults(event.GetPayload(), true);
-		currentProject.getPathwayFilterResults().add(event.GetPayload());
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
+		getView().addWilliamsTrendAnalysis(event.GetPayload(), true);
+		currentProject.getWilliamsTrendResults().add(event.GetPayload());
+	}
+
+	/*
+	 * load williams trend results into the view.
+	 */
+	@Subscribe
+	public void onLoadOriogenAnalysis(OriogenDataLoadedEvent event)
+	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
+		getView().addOriogenAnalysis(event.GetPayload(), true);
+		currentProject.getOriogenResults().add(event.GetPayload());
 	}
 
 	/*
@@ -190,6 +245,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	@Subscribe
 	public void onLoadBMDAnalysis(BMDAnalysisDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addBMDAnalysis(event.GetPayload(), true);
 		currentProject.getbMDResult().add(event.GetPayload());
 	}
@@ -200,6 +257,8 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	@Subscribe
 	public void onLoadCategoryAnalysis(CategoryAnalysisDataLoadedEvent event)
 	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
 		getView().addCategoryAnalysis(event.GetPayload(), true);
 		currentProject.getCategoryAnalysisResults().add(event.GetPayload());
 	}
@@ -217,13 +276,26 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	}
 
 	/*
-	 * someone asked to perform a pathway filter analysis.
+	 * some one asked to do a williams trend. So let's tell the view about it so it can figure out what
+	 * objects are selected and do the right thing
 	 */
 	@Subscribe
-	public void onPathwayFilterAnalysisRequest(PathwayFilterRequestEvent event)
+	public void onWilliamsTrendAnalsyisRequest(WilliamsTrendRequestEvent event)
 	{
 
-		getView().performPathwayFilter();
+		getView().performWilliamsTrend();
+
+	}
+
+	/*
+	 * some one asked to do an oriogen test. So let's tell the view about it so it can figure out what objects
+	 * are selected and do the right thing
+	 */
+	@Subscribe
+	public void onOriogenAnalsyisRequest(OriogenRequestEvent event)
+	{
+
+		getView().performOriogen();
 
 	}
 
@@ -274,10 +346,16 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			getView().addOneWayANOVAAnalysis(oneWayResult, false);
 		}
 
-		// populate all the anova data
-		for (PathwayFilterResults pathWayResults : bmdProject.getPathwayFilterResults())
+		// populate all the williams trend data
+		for (WilliamsTrendResults williamsTrendResult : bmdProject.getWilliamsTrendResults())
 		{
-			getView().addPathwayFilterResults(pathWayResults, false);
+			getView().addWilliamsTrendAnalysis(williamsTrendResult, false);
+		}
+
+		// populate all the oriogen data
+		for (OriogenResults oriogenResult : bmdProject.getOriogenResults())
+		{
+			getView().addOriogenAnalysis(oriogenResult, false);
 		}
 
 		// populate all the categorization data
@@ -293,6 +371,78 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		}
 
 		getView().expandTree();
+
+	}
+
+	/*
+	 * add project event has been fired.
+	 */
+	@Subscribe
+	public void onProjectAddRequest(AddProjectRequestEvent addProjectRequestEvent)
+	{
+		try
+		{
+			if ((currentProject != null && !currentProject.isProjectEmpty()) && saveProjectFirstMaybe() == -1)
+			{
+				return;
+			}
+			File selectedFile = getView().askForAProjectFileToOpen();
+
+			if (selectedFile == null)
+			{
+				return;
+			}
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
+			BMDProject newProject = loadDialog.addProject(selectedFile);
+
+			if (newProject != null)
+			{
+				// add files to the current project
+				for (DoseResponseExperiment data : newProject.getDoseResponseExperiments())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getDoseResponseExperiments().add(data);
+				}
+				for (WilliamsTrendResults data : newProject.getWilliamsTrendResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getWilliamsTrendResults().add(data);
+				}
+				for (OneWayANOVAResults data : newProject.getOneWayANOVAResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getOneWayANOVAResults().add(data);
+				}
+				for (OriogenResults data : newProject.getOriogenResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getOriogenResults().add(data);
+				}
+
+				for (BMDResult data : newProject.getbMDResult())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getbMDResult().add(data);
+				}
+				for (CategoryAnalysisResults data : newProject.getCategoryAnalysisResults())
+				{
+					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
+					currentProject.getCategoryAnalysisResults().add(data);
+				}
+
+				// Set project file to null to request new file name for saving
+				currentProjectFile = null;
+
+				this.getEventBus().post(new BMDProjectLoadedEvent(currentProject));
+			}
+		}
+		catch (Exception exception)
+		{
+			this.getEventBus().post(new ShowErrorEvent(exception.getMessage()));
+		}
 
 	}
 
@@ -314,7 +464,10 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			{
 				return;
 			}
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.loadProject(selectedFile);
 
 			if (newProject != null)
@@ -353,9 +506,50 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			{
 				return;
 			}
-			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(getView().getWindow());
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
 			BMDProject newProject = loadDialog.importBMDFile(selectedFile);
 			String newFileName = selectedFile.getAbsolutePath().replace(".bmd", ".bm2");
+
+			if (newProject != null)
+			{
+				File newFile = new File(newFileName);
+				newProject.setName(newFile.getName());
+				currentProject = newProject;
+				currentProjectFile = newFile;
+				this.getEventBus().post(new BMDProjectLoadedEvent(currentProject));
+			}
+		}
+		catch (Exception exception)
+		{
+			this.getEventBus().post(new ShowErrorEvent(exception.getMessage()));
+		}
+
+	}
+
+	@Subscribe
+	public void importJSONFileRequest(ImportJSONEvent importJSONEvent)
+	{
+		try
+		{
+			if ((currentProject != null && !currentProject.isProjectEmpty()) && saveProjectFirstMaybe() == -1)
+			{
+				return;
+			}
+			File selectedFile = getView().askForAJSONFileToImport();
+
+			if (selectedFile == null)
+			{
+				return;
+			}
+
+			// TODO this is a hack. needs to be in the view.
+			DialogWithThreadProcess loadDialog = new DialogWithThreadProcess(
+					((ProjectNavigationView) getView()).getWindow());
+			BMDProject newProject = loadDialog.importJSONFile(selectedFile);
+			String newFileName = selectedFile.getAbsolutePath().replace(".json", ".bm2");
 
 			if (newProject != null)
 			{
@@ -387,6 +581,17 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		saveProject(selectedFile);
 	}
 
+	@Subscribe
+	public void onSaveProjectAsJSONRequest(SaveProjectAsJSONRequestEvent event)
+	{
+		File selectedFile = event.GetPayload();
+		if (selectedFile == null)
+		{
+			return;
+		}
+		saveJSONProject(selectedFile);
+	}
+
 	private void saveProject(File selectedFile)
 	{
 
@@ -394,8 +599,30 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 		{
 			return;
 		}
-		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(getView().getWindow());
+
+		// TODO this is a hack. needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(
+				((ProjectNavigationView) getView()).getWindow());
 		saveDialog.saveProject(currentProject, selectedFile);
+		currentProject.setName(selectedFile.getName());
+		currentProjectFile = selectedFile;
+
+		this.getEventBus().post(new BMDProjectSavedEvent(currentProject));
+
+	}
+
+	private void saveJSONProject(File selectedFile)
+	{
+
+		if (selectedFile == null)
+		{
+			return;
+		}
+
+		// TODO this is a hack. needs to be in the view.
+		DialogWithThreadProcess saveDialog = new DialogWithThreadProcess(
+				((ProjectNavigationView) getView()).getWindow());
+		saveDialog.saveJSONProject(currentProject, selectedFile);
 		currentProject.setName(selectedFile.getName());
 		currentProjectFile = selectedFile;
 
@@ -423,96 +650,11 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	/*
 	 * set up the gene annotation data for the dose response experiment
 	 */
-	@SuppressWarnings("unchecked")
+
 	public void assignArrayAnnotations(ChipInfo chipInfo, List<DoseResponseExperiment> experiments,
 			FileAnnotation fileAnnotation)
 	{
-
-		// set up the analysis information
-		for (DoseResponseExperiment doseResponseExperiment : experiments)
-		{
-			AnalysisInfo analysisInfo = new AnalysisInfo();
-			List<String> notes = new ArrayList<>();
-
-			if (chipInfo == null)
-			{
-				notes.add("Chip: Generic");
-				chipInfo = new ChipInfo();
-				chipInfo.setName("Generic");
-				chipInfo.setSpecies("Generic");
-				chipInfo.setProvider("Generic");
-				chipInfo.setId("Generic");
-
-			}
-			else
-			{
-				notes.add("Chip: " + chipInfo.getGeoName());
-				notes.add("Provider: " + chipInfo.getProvider());
-			}
-			notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-			notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-			analysisInfo.setNotes(notes);
-			doseResponseExperiment.setAnalysisInfo(analysisInfo);
-
-			doseResponseExperiment.setChip(chipInfo);
-
-			// try to avoid storing duplicate genes.
-			Map<String, ReferenceGene> refCache = new HashMap<>();
-			List<ReferenceGeneAnnotation> referenceGeneAnnotations = new ArrayList<>();
-			// if there is no chip selected, the set it as Generic and load empty
-			// referencegeneannotation
-			if (chipInfo.getName().equals("Generic"))
-			{
-				doseResponseExperiment.setReferenceGeneAnnotations(referenceGeneAnnotations);
-				continue;
-			}
-			fileAnnotation.setChip(chipInfo.getGeoID());
-			fileAnnotation.arrayProbesGenes();
-			fileAnnotation.arrayGenesSymbols();
-
-			fileAnnotation.getGene2ProbeHash();
-
-			Hashtable<String, Vector> probesToGene = fileAnnotation.getProbe2GeneHash();
-			Hashtable<String, String> geneSymbolHash = fileAnnotation.getGene2SymbolHash();
-
-			try
-			{
-
-				// let's create referenceGeneAnnotations
-				for (ProbeResponse probeResponse : doseResponseExperiment.getProbeResponses())
-				{
-					Probe probe = probeResponse.getProbe();
-					Vector<String> genes = probesToGene.get(probe.getId());
-					ReferenceGeneAnnotation referenceGeneAnnotation = new ReferenceGeneAnnotation();
-					List<ReferenceGene> referenceGenes = new ArrayList<>();
-					if (genes == null)
-						continue;
-					for (String gene : genes)
-					{
-						ReferenceGene refGene = refCache.get(gene);
-						if (refGene == null)
-						{
-							refGene = new EntrezGene();
-							refGene.setId(gene);
-							refGene.setGeneSymbol(geneSymbolHash.get(gene));
-							refCache.put(gene, refGene);
-						}
-						referenceGenes.add(refGene);
-					}
-					referenceGeneAnnotation.setReferenceGenes(referenceGenes);
-					referenceGeneAnnotation.setProbe(probe);
-
-					referenceGeneAnnotations.add(referenceGeneAnnotation);
-				}
-
-				doseResponseExperiment.setReferenceGeneAnnotations(referenceGeneAnnotations);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-
+		getService().assignArrayAnnotations(chipInfo, experiments, fileAnnotation);
 	}
 
 	/*
@@ -526,8 +668,10 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 			this.currentProject.getbMDResult().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof OneWayANOVAResults)
 			this.currentProject.getOneWayANOVAResults().remove(catAnalysisResults);
-		else if (catAnalysisResults instanceof PathwayFilterResults)
-			this.currentProject.getPathwayFilterResults().remove(catAnalysisResults);
+		else if (catAnalysisResults instanceof WilliamsTrendResults)
+			this.currentProject.getWilliamsTrendResults().remove(catAnalysisResults);
+		else if (catAnalysisResults instanceof OriogenResults)
+			this.currentProject.getOriogenResults().remove(catAnalysisResults);
 		else if (catAnalysisResults instanceof DoseResponseExperiment)
 			this.currentProject.getDoseResponseExperiments().remove(catAnalysisResults);
 
@@ -547,62 +691,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	 */
 	public void exportDoseResponseExperiment(DoseResponseExperiment doseResponseExperiment, File selectedFile)
 	{
-
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-			writer.write(String.join("\n", doseResponseExperiment.getAnalysisInfo().getNotes()));
-			writer.write("\n");
-			writer.write(getExperimentToWrite(doseResponseExperiment, false));
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
-
-	private String getExperimentToWrite(DoseResponseExperiment doseResponseExperiment, boolean prependname)
-	{
-		StringBuffer sb = new StringBuffer();
-		List<String> row = new ArrayList<>();
-		row.add("Something");
-
-		for (Treatment treatment : doseResponseExperiment.getTreatments())
-		{
-			row.add(treatment.getName());
-		}
-		if (prependname)
-		{
-			sb.append(doseResponseExperiment.getName() + "\t");
-		}
-		sb.append(String.join("\t", row) + "\n");
-		row.clear();
-		row.add("Doses");
-
-		for (Treatment treatment : doseResponseExperiment.getTreatments())
-		{
-			row.add(String.valueOf(treatment.getDose()));
-		}
-		sb.append(String.join("\t", row) + "\n");
-
-		for (ProbeResponse result : doseResponseExperiment.getProbeResponses())
-		{
-			row.clear();
-			row.add(result.getProbe().getId());
-			for (Float response : result.getResponses())
-			{
-				row.add(String.valueOf(response));
-			}
-			if (prependname)
-			{
-				sb.append(doseResponseExperiment.getName() + "\t");
-			}
-			sb.append(String.join("\t", row) + "\n");
-		}
-
-		return sb.toString();
+		getService().exportDoseResponseExperiment(doseResponseExperiment, selectedFile);
 	}
 
 	/*
@@ -610,33 +699,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	 */
 	public void exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
 	{
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
-			writer.write("\n");
-			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
-			writer.write(exportBMDExpressAnalysisDataSet(bmdResults, false));
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-	}
-
-	private String exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, boolean prepend)
-	{
-		StringBuffer sb = new StringBuffer();
-
-		for (BMDExpressAnalysisRow result : bmdResults.getAnalysisRows())
-		{
-			if (prepend)
-				sb.append(bmdResults.getName() + "\t");
-			sb.append(joinRowData(result.getRow(), "\t") + "\n");
-		}
-		return sb.toString();
+		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
 
 	/*
@@ -644,54 +707,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	 */
 	public void exportBMDResultBestModel(BMDResult bmdResults, File selectedFile)
 	{
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
-			writer.write("\n");
-
-			boolean hasHill = false;
-			for (ProbeStatResult result : bmdResults.getProbeStatResults())
-			{
-				if (result.getBestStatResult() != null && result.getBestStatResult() instanceof HillResult)
-				{
-					hasHill = true;
-					break;
-				}
-			}
-
-			writer.write("Probe Id\tBMDS Model\t");
-			writer.write("\tGenes\tGene Symbols\t");
-			writer.write("BMD\tBMDL\tBMDU\tfitPValue\tfitLogLikelihood\tAIC\tadverseDirection\t2BMD/BMDL");
-			if (hasHill)
-				writer.write("\tFlagged Hill");
-			writer.write("\n");
-			for (ProbeStatResult result : bmdResults.getProbeStatResults())
-			{
-				if (result.getBestStatResult() != null)
-				{
-					writer.write(result.getProbeResponse().getProbe().getId() + "\t"
-							+ result.getBestStatResult() + "\t");
-					writer.write("\t" + result.getGenes() + "\t" + result.getGeneSymbols() + "\t");
-					writer.write(joinRowData(result.getBestStatResult().getRow(), "\t"));
-					if (!(result.getBestStatResult() instanceof HillResult))
-					{// add an extra column on account of hill's k-flag
-						writer.write("\t");
-					}
-					writer.write("\n");
-				}
-				else
-				{
-					writer.write(result.getProbeResponse().getProbe().getId() + "\t" + "none");
-					writer.write("\t" + result.getGenes() + "\t" + result.getGeneSymbols() + "\n");
-				}
-			}
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		getService().exportBMDResultBestModel(bmdResults, selectedFile);
 	}
 
 	/*
@@ -700,35 +716,7 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	public void showProbeToGeneMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 
-		Object[][] matrixData = null;
-		if (doseResponseExperiment.getReferenceGeneAnnotations() != null)
-		{
-			matrixData = new Object[doseResponseExperiment.getReferenceGeneAnnotations().size()][];
-
-			int i = 0;
-			for (ReferenceGeneAnnotation refGeneAnnotation : doseResponseExperiment
-					.getReferenceGeneAnnotations())
-			{
-				StringBuilder symbolBuilder = new StringBuilder();
-				StringBuilder geneBuilder = new StringBuilder();
-				String probeId = refGeneAnnotation.getProbe().getId();
-				for (ReferenceGene refGene : refGeneAnnotation.getReferenceGenes())
-				{
-					if (symbolBuilder.length() > 0)
-					{
-						symbolBuilder.append(";");
-						geneBuilder.append(";");
-					}
-					symbolBuilder.append(refGene.getGeneSymbol());
-					geneBuilder.append(refGene.getId());
-				}
-				Object[] rowData = { probeId, geneBuilder.toString(), symbolBuilder.toString() };
-				matrixData[i] = rowData;
-				i++;
-			}
-		}
-		else
-			matrixData = new Object[0][];
+		Object[][] matrixData = getService().showGenesToProbeMatrix(doseResponseExperiment);
 
 		String[] columnNames = { "Probe Set ID", "Entrez Genes", "Gene Symbols" };
 
@@ -743,67 +731,12 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	public void showGenesToProbeMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 
-		Object[][] matrixData = null;
-		if (doseResponseExperiment.getReferenceGeneAnnotations() != null)
-		{
-			Map<ReferenceGene, List<String>> geneProbeMap = new HashMap<>();
-
-			for (ReferenceGeneAnnotation refGeneAnnotation : doseResponseExperiment
-					.getReferenceGeneAnnotations())
-			{
-				for (ReferenceGene refGene : refGeneAnnotation.getReferenceGenes())
-				{
-					if (!geneProbeMap.containsKey(refGene))
-					{
-						geneProbeMap.put(refGene, new ArrayList<>());
-					}
-					geneProbeMap.get(refGene).add(refGeneAnnotation.getProbe().getId());
-				}
-			}
-			matrixData = new Object[geneProbeMap.keySet().size()][];
-			int i = 0;
-
-			for (ReferenceGene refGeneKey : geneProbeMap.keySet())
-			{
-				Object rowData[] = { refGeneKey.getId(), refGeneKey.getGeneSymbol(),
-						String.join(";", geneProbeMap.get(refGeneKey)) };
-				matrixData[i] = rowData;
-				i++;
-			}
-		}
-		else
-		{
-			matrixData = new Object[0][];
-		}
+		Object[][] matrixData = getService().showGenesToProbeMatrix(doseResponseExperiment);
 
 		String[] columnNames = { "Entrez Gene", "Gene Symbol", "Probe Set ID's" };
 		getView().showMatrixPreview("Gene to Probes: " + doseResponseExperiment.getName(),
 				new MatrixData("", columnNames, matrixData));
 
-	}
-
-	private String joinRowData(List<Object> datas, String delimiter)
-	{
-		StringBuffer bf = new StringBuffer();
-		int i = 0;
-		if (datas == null)
-		{
-			return "";
-		}
-		for (Object data : datas)
-		{
-			if (data != null)
-			{
-				bf.append(data);
-			}
-
-			if (i < datas.size())
-			{
-				bf.append(delimiter);
-			}
-		}
-
-		return bf.toString();
 	}
 
 	public void handle_DataAnalysisResultsSpreadSheetView(BMDExpressAnalysisDataSet results)
@@ -897,98 +830,27 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 
 	}
 
-	/*
-	 * A list of analysis data sets will be exported to one or more files.
-	 * If there are datasets with varying headers, then we will export to more than
-	 * one file.
-	 */
-	public void exportMultipleResults(List<TreeItem> selectedItems, File selectedFile)
+	public void clearMenuViewForProcessing()
 	{
-		Map<String, Set<BMDExpressAnalysisDataSet>> header2Rows = new HashMap<>();
-		for (TreeItem treeItem : selectedItems)
-		{
-			if (treeItem.getValue() instanceof BMDExpressAnalysisDataSet)
-			{
-				// produce a key that will be the header joined by nothing.
-				String headerKey = String.join("",
-						((BMDExpressAnalysisDataSet) treeItem.getValue()).getColumnHeader());
-				if (header2Rows.get(headerKey) == null)
-					header2Rows.put(headerKey, new HashSet<>());
+		getEventBus().post(new NoDataSelectedForProcessingEvent(null));
 
-				header2Rows.get(headerKey).add((BMDExpressAnalysisDataSet) treeItem.getValue());
-			}
+	}
 
-		}
-		if (header2Rows.keySet().size() > MAX_FILES_FOR_MULTI_EXPORT)
-		{
-			BMDExpressEventBus.getInstance().post(new ShowErrorEvent(
-					"There are too many distinct data sets being created due to varying column headers.  There are "
-							+ header2Rows.keySet().size()
-							+ " files to be created but there can only be a maximum of "
-							+ MAX_FILES_FOR_MULTI_EXPORT
-							+ ".  Please reduce the number of distinct datasets that you wish to export."));
-			return;
-		}
-		String filesCreateString = "The following file was created: ";
-		if (header2Rows.keySet().size() > 1)
-			filesCreateString = "The following files were created (please be aware the that multiple files were generated due to varying column headers : ";
+	/*
+	 * A list of analysis data sets will be exported to one or more files. If there are datasets with varying
+	 * headers, then we will export to more than one file.
+	 */
+	public void exportMultipleResults(List<BMDExpressAnalysisDataSet> selectedItems, File selectedFile)
+	{
+		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
+		for (BMDExpressAnalysisDataSet item : selectedItems)
+			datasets.add(item);
 
-		String fileName = selectedFile.getAbsolutePath();
-		String fileNameWOExtension = fileName.replaceAll("\\.txt$", "");
-		List<String> filesThatWereCreated = new ArrayList<>();
-		int i = 0;
-		for (String key : header2Rows.keySet())
-		{
-			BufferedWriter writer = null;
-			i++;
-			try
-			{
-				// if there are datasets with multiple headers, then we need to create separate files for each
-				if (header2Rows.keySet().size() > 1)
-					selectedFile = new File(fileNameWOExtension + "-" + i + ".txt");
-				writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-				Set<BMDExpressAnalysisDataSet> dataSets = header2Rows.get(key);
-				filesThatWereCreated.add(selectedFile.getName());
-				boolean started = false;
-				for (BMDExpressAnalysisDataSet dataSet : dataSets)
-				{
-					if (dataSet instanceof BMDExpressAnalysisDataSet)
-					{
-						if (!started) // this will only allow the unique header to be written once.
-						{
-							// this ensures the row data is filled.
-							List<String> header = dataSet.getColumnHeader();
-							// write the type of data being exported.
-							// write the header.
-							writer.write("Analysis\t");
-							writer.write(String.join("\t", header) + "\n");
-						}
-						writer.write(exportBMDExpressAnalysisDataSet(dataSet, true));
-					}
-					else if (dataSet instanceof DoseResponseExperiment)
-					{
-						writer.write(getExperimentToWrite((DoseResponseExperiment) dataSet, true));
-					}
-					started = true;
-				}
-				writer.close();
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(datasets);
 
-			}
-			catch (IOException e)
-			{
-				BMDExpressEventBus.getInstance().post(new ShowErrorEvent(
-						"There are too many distinct data sets being created due to varying column headers.  There are "
-								+ header2Rows.keySet().size()
-								+ " files to be created but there can only be a maximum of "
-								+ MAX_FILES_FOR_MULTI_EXPORT
-								+ ".  Please reduce the number of distinct datasets that you wish to export."));
-				e.printStackTrace();
-			}
+		getService().exportBMDExpressAnalysisDataSet(combined, selectedFile);
 
-		}
-		filesCreateString += String.join(",", filesThatWereCreated);
-
-		BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
+		// BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
 
 	}
 
@@ -999,45 +861,107 @@ public class ProjectNavigationPresenter extends PresenterBase<IProjectNavigation
 	 */
 	public void exportModelParameters(BMDProject bmdProject)
 	{
-		File selectedFile = new File("/tmp/modelParams.txt");
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+		getService().exportModelParameters(bmdProject);
+	}
 
-			for (BMDResult bmdResults : bmdProject.getbMDResult())
+	public void multipleDataSetsSelected(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+
+		if (!isDataListPure(selectedItems))
+		{
+			getEventBus().post(new NoDataSelectedEvent(null));
+			return;
+		}
+		List<BMDExpressAnalysisDataSet> bmdAnalysisDataSet = new ArrayList<>();
+		for (Object obj : selectedItems)
+			bmdAnalysisDataSet.add((BMDExpressAnalysisDataSet) obj);
+
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(bmdAnalysisDataSet);
+
+		if (selectedItems.get(0) instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof OriogenResults)
+			getEventBus().post(new OriogenDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
+			getEventBus().post(new CategoryAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof DoseResponseExperiment)
+		{
+			// clear the data view
+			getEventBus().post(new NoDataSelectedEvent(""));
+			// this will inform the menubar to update accordingingly
+			getEventBus().post(new ExpressionDataCombinedSelectedEvent(combined));
+		}
+
+	}
+
+	private boolean isDataListPure(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+		List<BMDExpressAnalysisDataSet> bmdAnalysisDataSet = new ArrayList<>();
+		Map<Class, Integer> classesOfInterestMapCount = new HashMap<>();
+		Set<Class> classesOfInterest = new HashSet<>();
+		classesOfInterest.add(CategoryAnalysisResults.class);
+		classesOfInterest.add(BMDResult.class);
+		classesOfInterest.add(WilliamsTrendResults.class);
+		classesOfInterest.add(OneWayANOVAResults.class);
+		classesOfInterest.add(OriogenResults.class);
+		classesOfInterest.add(DoseResponseExperiment.class);
+		for (Class c : classesOfInterest)
+			classesOfInterestMapCount.put(c, 0);
+		for (Object obj : selectedItems)
+			for (Class c : classesOfInterest)
+				if (c.isInstance(obj))
+					classesOfInterestMapCount.put(c, classesOfInterestMapCount.get(c) + 1);
+
+		boolean isPure = false;
+		for (Integer val : classesOfInterestMapCount.values())
+		{
+			if (val.intValue() == selectedItems.size())
 			{
-
-				for (ProbeStatResult result : bmdResults.getProbeStatResults())
-				{
-					for (StatResult statResult : result.getStatResults())
-					{
-						writer.write(bmdResults.getName() + "\t"
-								+ result.getProbeResponse().getProbe().getId() + "\t"
-								+ result.getBestStatResult().toString() + "\t" + statResult.toString());
-						double[] params = statResult.getCurveParameters();
-
-						for (int i = 0; i < params.length; i++)
-						{
-							writer.write("\t" + params[i]);
-						}
-
-						for (String pname : statResult.getParametersNames())
-						{
-							writer.write("\t" + pname);
-						}
-
-						writer.write("\n");
-					}
-				}
-
+				isPure = true;
+				break;
 			}
+		}
 
-			writer.close();
-		}
-		catch (IOException e)
+		return isPure;
+	}
+
+	public void multipleDataSetsSelectedForProcessing(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+
+		if (!isDataListPure(selectedItems))
 		{
-			e.printStackTrace();
+			getEventBus().post(new NoDataSelectedForProcessingEvent(null));
+			return;
 		}
+
+		if (selectedItems.get(0) instanceof OneWayANOVAResults)
+			getEventBus().post(new OneWayANOVADataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
+			getEventBus().post(new WilliamsTrendDataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof OriogenResults)
+			getEventBus().post(new OriogenDataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
+			getEventBus().post(new CategoryAnalysisDataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof BMDResult)
+			getEventBus().post(new BMDAnalysisDataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof DoseResponseExperiment)
+		{
+			// clear the data view
+			getEventBus().post(new NoDataSelectedForProcessingEvent(""));
+			// this will inform the menubar to update accordingingly
+			getEventBus().post(new ExpressionDataSelectedForProcessingEvent(null));
+		}
+
+	}
+
+	public void changeAnalysisName(BMDExpressAnalysisDataSet bmdAnalysisDataSet, String newName)
+	{
+		currentProject.giveBMDAnalysisUniqueName(bmdAnalysisDataSet, newName);
+
 	}
 
 }

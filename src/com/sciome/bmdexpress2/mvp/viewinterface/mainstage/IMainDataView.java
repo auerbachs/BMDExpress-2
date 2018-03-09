@@ -2,25 +2,23 @@ package com.sciome.bmdexpress2.mvp.viewinterface.mainstage;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
-import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
-import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 
 public interface IMainDataView
 {
 	/*
 	 * Sets the list of projects
 	 */
-	void loadDoseResponseExperiment(DoseResponseExperiment doseResponseExperiement);
+	void loadDoseResponseExperiment(BMDExpressAnalysisDataSet doseResponseExperiement);
 
-	void loadOneWayANOVAAnalysis(OneWayANOVAResults getPayload);
+	void loadOneWayANOVAAnalysis(BMDExpressAnalysisDataSet getPayload);
 
-	void loadBMDResultAnalysis(BMDResult getPayload);
+	void loadWilliamsTrendAnalysis(BMDExpressAnalysisDataSet getPayload);
 
-	void loadCategoryAnalysis(CategoryAnalysisResults getPayload);
+	void loadOriogenAnalysis(BMDExpressAnalysisDataSet getPayload);
 
-	void loadPathwayFilterAnalysis(PathwayFilterResults getPayload);
+	void loadBMDResultAnalysis(BMDExpressAnalysisDataSet getPayload);
+
+	void loadCategoryAnalysis(BMDExpressAnalysisDataSet getPayload);
 
 	void showBMDExpressAnalysisInSeparateWindow(BMDExpressAnalysisDataSet getPayload);
 

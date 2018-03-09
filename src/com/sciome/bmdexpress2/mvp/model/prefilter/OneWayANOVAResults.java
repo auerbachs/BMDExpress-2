@@ -6,45 +6,50 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
-import com.sciome.charts.annotation.ChartableData;
-import com.sciome.charts.annotation.ChartableDataLabel;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
-		implements Serializable, IStatModelProcessable
+		implements Serializable, IStatModelProcessable, PrefilterResults
 {
 
 	/**
 	 * 
 	 */
-	private static final long		serialVersionUID			= -5704632335867988973L;
+	private static final long		serialVersionUID	= -5704632335867988973L;
 
 	private String					name;
+
 	private DoseResponseExperiment	doseResponseExperiment;
 	private List<OneWayANOVAResult>	oneWayANOVAResults;
 	private AnalysisInfo			analysisInfo;
 	private transient List<String>	columnHeader;
 
-	/* define chartabble key values */
-	public static final String		FVALUE						= "F-Value";
-	public static final String		UNADJUSTED_PVALUE			= "Unadjusted P-Value";
-	public static final String		ADJUSTED_PVALUE				= "Adjusted P-Value";
-	public static final String		NEG_LOG_ADJUSTED_PVALUE		= "Negative Log 10 Adjusted P-Value";
-	public static final String		BEST_FOLD_CHANGE			= "Max Fold Change";
-	public static final String		BEST_FOLD_CHANGE_ABS		= "Max Fold Change Unsigned";
-	public static final String		FOLD_CHANGE					= "Fold Change";
-	public static final String		GENE_ID						= "Gene ID";
-	public static final String		GENE_SYMBOL					= "Gene Symbol";
-	public static final String		PROBE_ID					= "Probe ID";
+	private Long					id;
 
-	public static final String		NEG_LOG_UNADJUSTED_PVALUE	= "Negative Log 10 Unadjusted P-Value";
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
 
-	@ChartableData(key = "One Way ANOVA")
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
+
 	public List<OneWayANOVAResult> getOneWayANOVAResults()
 	{
 		return oneWayANOVAResults;
@@ -55,7 +60,6 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		this.oneWayANOVAResults = oneWayANOVAResults;
 	}
 
-	@ChartableDataLabel(key = "One Way ANOVA")
 	@Override
 	public String getName()
 	{
@@ -83,6 +87,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		return name;
 	}
 
+	@JsonIgnore
 	public List<ProbeResponse> getProbeResponses()
 	{
 		List<ProbeResponse> probeResponses = new ArrayList<>();
@@ -103,18 +108,21 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	 */
 
 	@Override
+	@JsonIgnore
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
 	{
 		return this.doseResponseExperiment;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<ProbeResponse> getProcessableProbeResponses()
 	{
 		return this.getProbeResponses();
 	}
 
 	@Override
+	@JsonIgnore
 	public String getParentDataSetName()
 	{
 		return this.doseResponseExperiment.toString();
@@ -142,26 +150,27 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 			return;
 		}
 
-		columnHeader.add("Probe ID");
+		columnHeader.add(PrefilterResults.PROBE_ID);
 
-		columnHeader.add("Genes");
+		columnHeader.add(PrefilterResults.GENE_ID);
 
-		columnHeader.add("Gene Symbols");
+		columnHeader.add(PrefilterResults.GENE_SYMBOL);
 		columnHeader.add("Df1");
 
 		columnHeader.add("Df2");
 
-		columnHeader.add("F-Value");
+		columnHeader.add(PrefilterResults.FVALUE);
 
 		// p value
-		columnHeader.add("P-Value");
+		columnHeader.add(PrefilterResults.UNADJUSTED_PVALUE);
 
 		// adjusted p value
-		columnHeader.add("Adjusted P-Value");
+		columnHeader.add(PrefilterResults.ADJUSTED_PVALUE);
 
 		if (oneWayANOVAResults.get(0).getBestFoldChange() != null)
 		{
-			columnHeader.add("Max Fold Change Value");
+			columnHeader.add(PrefilterResults.BEST_FOLD_CHANGE);
+			columnHeader.add(PrefilterResults.BEST_FOLD_CHANGE_ABS);
 		}
 
 		if (oneWayANOVAResults.get(0).getFoldChanges() != null)
@@ -177,6 +186,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null || columnHeader.size() == 0)
@@ -209,16 +219,40 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List getAnalysisRows()
 	{
 		return oneWayANOVAResults;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getColumnHeader2()
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@JsonIgnore
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<PrefilterResult> getPrefilterResults()
+	{
+		return (List<PrefilterResult>) (List<?>) oneWayANOVAResults;
+	}
+
+	@Override
+	@JsonIgnore
+	public LogTransformationEnum getLogTransformation()
+	{
+		return this.getDoseResponseExperiement().getLogTransformation();
+	}
+
+	@JsonIgnore
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

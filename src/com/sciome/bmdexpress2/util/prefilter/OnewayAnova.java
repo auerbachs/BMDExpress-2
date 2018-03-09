@@ -164,7 +164,6 @@ public class OnewayAnova
 			double MSe = SSerror / dfe;
 			F = MSt / MSe;
 			pValue = FDist.probabilityOf(F, dft, dfe);
-			// System.out.println(C + "\t" + SStotal + "\t" + SStreat + "\t" + SSerror);
 		}
 	}
 

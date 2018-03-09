@@ -10,9 +10,9 @@ public class PolyResult extends StatResult
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8080785183059201658L;
+	private static final long	serialVersionUID	= -8080785183059201658L;
 
-	private int degree;
+	private int					degree;
 
 	public PolyResult()
 	{
@@ -40,7 +40,8 @@ public class PolyResult extends StatResult
 		}
 		List<String> returnList = new ArrayList<String>(Arrays.asList(polyname + " BMD", polyname + " BMDL",
 				polyname + " BMDU", polyname + " fitPValue", polyname + " fitLogLikelihood",
-				polyname + " AIC", polyname + " adverseDirection", polyname + " BMD/BMDL"));
+				polyname + " AIC", polyname + " adverseDirection", polyname + " BMD/BMDL",
+				polyname + " Execution Complete"));
 
 		for (int i = 0; i < this.curveParameters.length; i++)
 			returnList.add(polyname + " Parameter beta_" + i);
@@ -54,12 +55,12 @@ public class PolyResult extends StatResult
 	{
 		List<Object> returnList = new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()),
 				(this.getBMDU()), (this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
-				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL())));
+				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), this.getSuccess()));
 
 		for (int i = 0; i < this.curveParameters.length; i++)
 		{
-			if(curveParameters!=null)
-			returnList.add(new Double(this.curveParameters[i]));
+			if (curveParameters != null)
+				returnList.add(new Double(this.curveParameters[i]));
 			else
 				returnList.add(null);
 		}

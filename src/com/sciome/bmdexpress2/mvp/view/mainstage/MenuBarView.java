@@ -39,32 +39,33 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	// Menu Bar
 	@FXML
-	private MenuBar menuBar;
+	private MenuBar			menuBar;
 
 	// Menu check items
 	@FXML
-	private CheckMenuItem useWebServiceCheckMenu;
+	private CheckMenuItem	useWebServiceCheckMenu;
 	@FXML
-	private CheckMenuItem usePrecisionCheckMenu;
+	private CheckMenuItem	usePrecisionCheckMenu;
 	@FXML
-	private CheckMenuItem autoUpdateCheckMenu;
+	private CheckMenuItem	autoUpdateCheckMenu;
 
 	// Menu items
 	@FXML
-	private MenuItem oneWayANOVAMenuItem;
+	private MenuItem		oneWayANOVAMenuItem;
 	@FXML
-	private MenuItem pathwayFilterMenuItem;
+	private MenuItem		williamsTrendMenuItem;
+	@FXML
+	private MenuItem		oriogenMenuItem;
+	@FXML
+	private MenuItem		bMDAnalysesMenuItem;
+	@FXML
+	private MenuItem		GOAnalysesMenuItem;
+	@FXML
+	private MenuItem		pathwayAnalysesMenuItem;
+	@FXML
+	private MenuItem		definedCategoryAnalysesMenuItem;
 
-	@FXML
-	private MenuItem bMDAnalysesMenuItem;
-	@FXML
-	private MenuItem GOAnalysesMenuItem;
-	@FXML
-	private MenuItem pathwayAnalysesMenuItem;
-	@FXML
-	private MenuItem definedCategoryAnalysesMenuItem;
-
-	MenuBarPresenter presenter;
+	MenuBarPresenter		presenter;
 
 	public MenuBarView()
 	{
@@ -91,18 +92,6 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			final String os = System.getProperty("os.name");
 			if (os != null && os.toLowerCase().contains("mac"))
 				menuBar.useSystemMenuBarProperty().set(true);
-
-			// only allow bmdsanalysis and oneway filtering on windows platform.
-			// this is particularly important for bmds analysis because the
-			// bmds executables are only tested and valid on windows platform
-			// linux and mac executables are giving different results
-			// This allows users to view bm2 files and perform functional
-			// classifications on mac and linux.
-			if (os != null && !os.toLowerCase().contains("windows"))
-			{
-				//bMDAnalysesMenuItem.setVisible(false);
-				//oneWayANOVAMenuItem.setVisible(false);
-			}
 		}
 		catch (Exception e)
 		{
@@ -122,6 +111,14 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		presenter.loadProject(null);
 
+	}
+
+	/*
+	 * add a project
+	 */
+	public void handle_addProject(ActionEvent event)
+	{
+		presenter.addProject(null);
 	}
 
 	/*
@@ -206,6 +203,15 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
+	public void handle_exportAsJSON(ActionEvent event)
+	{
+		File selectedFile = ViewUtilities.getInstance().getSaveAsJSONFile(menuBar.getScene().getWindow());
+		if (selectedFile != null)
+		{
+			presenter.saveProjectAsJSON(selectedFile);
+		}
+	}
+
 	/*
 	 * save the project to disk. invoke serialization
 	 */
@@ -282,10 +288,24 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
-	@Override
-	public void handle_pathwayFilter(ActionEvent event)
+	/*
+	 * williams trend analysis
+	 */
+	public void handle_williamsTrend(ActionEvent event)
 	{
-		presenter.performPathWayFilter();
+
+		presenter.performWilliamsTrend();
+
+	}
+
+	/*
+	 * oriogen analysis
+	 */
+	public void handle_oriogen(ActionEvent event)
+	{
+
+		presenter.performOriogen();
+
 	}
 
 	/*
@@ -329,13 +349,17 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	 */
 	public void handle_tutorial(ActionEvent event)
 	{
-		try {
-			java.awt.Desktop.getDesktop().browse(new URI(
-					BMDExpressConstants.getInstance().TUTORIAL_URL)) ;
-		} catch (IOException e) {
+		try
+		{
+			java.awt.Desktop.getDesktop().browse(new URI(BMDExpressConstants.getInstance().TUTORIAL_URL));
+		}
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (URISyntaxException e) {
+		}
+		catch (URISyntaxException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -372,6 +396,11 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.importBMDFile();
 	}
 
+	public void handle_importJSON(ActionEvent event)
+	{
+		presenter.importJSONFile();
+	}
+
 	public void handle_dataVisualization(ActionEvent event)
 	{
 		presenter.performDataVisualization();
@@ -387,8 +416,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void expressionDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(false);
-		this.pathwayFilterMenuItem.setDisable(true); // keep disabled until published and tested.
+		togglePrefilterMenuItems(false);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -399,8 +427,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void oneWayANOVADataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);// keep disabled until published and tested.
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -408,11 +435,30 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	}
 
 	@Override
+	public void williamsTrendDataSelected()
+	{
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
+	}
+
+	@Override
+	public void oriogenDataSelected()
+	{
+		this.bMDAnalysesMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
+	}
+
+	@Override
 	public void bMDAnalysisDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(false);
 		this.pathwayAnalysesMenuItem.setDisable(false);
 		this.definedCategoryAnalysesMenuItem.setDisable(false);
@@ -423,19 +469,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void functionalCategoryDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
-		this.oneWayANOVAMenuItem.setDisable(true);
-		this.pathwayFilterMenuItem.setDisable(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
-	}
-
-	@Override
-	public void pathwayFilterSelected()
-	{
-		this.bMDAnalysesMenuItem.setDisable(false);
-		this.oneWayANOVAMenuItem.setDisable(false);
-		this.pathwayFilterMenuItem.setDisable(true);
+		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);
 		this.definedCategoryAnalysesMenuItem.setDisable(true);
@@ -464,6 +498,35 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 			// inform subscribers.
 			presenter.saveProjectAs(selectedFile);
 		}
+
+	}
+
+	/**
+	 * True to disable all prefilter items and false otherwise
+	 * 
+	 * @param disabled
+	 */
+	private void togglePrefilterMenuItems(boolean disabled)
+	{
+		this.oneWayANOVAMenuItem.setDisable(disabled);
+		this.williamsTrendMenuItem.setDisable(disabled);
+		this.oriogenMenuItem.setDisable(disabled);
+	}
+
+	@Override
+	public void combinedSelected()
+	{
+
+	}
+
+	@Override
+	public void noDataSelected()
+	{
+		this.bMDAnalysesMenuItem.setDisable(true);
+		togglePrefilterMenuItems(true);
+		this.GOAnalysesMenuItem.setDisable(true);
+		this.pathwayAnalysesMenuItem.setDisable(true);
+		this.definedCategoryAnalysesMenuItem.setDisable(true);
 
 	}
 

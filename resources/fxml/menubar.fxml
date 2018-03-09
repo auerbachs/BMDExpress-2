@@ -10,12 +10,19 @@
       <Menu mnemonicParsing="false" text="File">
          <items>
             <MenuItem mnemonicParsing="false" onAction="#handle_openProject" text="Open Project" />
-            <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Import Expression Data" />
-            <MenuItem mnemonicParsing="false" onAction="#handle_importBMDFile" text="Import BMD File" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_addProject" text="Add Project" />
+            <Menu mnemonicParsing="false" text="Import">
+              <items>
+	              <MenuItem mnemonicParsing="false" onAction="#handle_importExpressionData" text="Expression Data" />            
+                  <MenuItem mnemonicParsing="false" onAction="#handle_importJSON" text="JSON File" />
+	              <MenuItem mnemonicParsing="false" onAction="#handle_importBMDFile" text="BMD File" />
+              </items>
+            </Menu>
             <MenuItem fx:id="dataVisualizationMenuItem" mnemonicParsing="false" onAction="#handle_dataVisualization" text="Data Visualization" visible="false" />
             <MenuItem mnemonicParsing="false" text="Save Selection As" visible="false" />
             <MenuItem mnemonicParsing="false" onAction="#handle_saveProject" text="Save Project" />
             <MenuItem mnemonicParsing="false" onAction="#handle_saveAs" text="Save Project As" />
+            <MenuItem mnemonicParsing="false" onAction="#handle_exportAsJSON" text="Export as JSON" />
             <MenuItem mnemonicParsing="false" onAction="#handle_closeProject" text="Close Project" />
             <MenuItem mnemonicParsing="false" onAction="#handle_annotationsFromWeb" text="Update Annotations" />
             <MenuItem mnemonicParsing="false" onAction="#handle_exit" text="Exit" />
@@ -40,8 +47,13 @@
       </Menu>
       <Menu mnemonicParsing="false" text="Tools">
          <items>
-            <MenuItem fx:id="pathwayFilterMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayFilter" text="Pathway Filter" visible="false" />
-            <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />
+            <Menu mnemonicParsing="false" text="Prefilter">
+              <items>            
+                  <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="Williams Trend Test" />
+                  <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One-way Anova" />    
+                  <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />
+              </items>
+            </Menu>
             <MenuItem fx:id="bMDAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalyses" text="Benchmark Dose Analyses" />
             <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
             <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />

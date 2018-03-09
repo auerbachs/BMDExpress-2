@@ -6,8 +6,9 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
+import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
@@ -24,20 +25,22 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implements IBMDSToolProgress
+public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView, IBMDAnalysisService>
+		implements IBMDSToolProgress
 {
 
 	BMDSTool							bMDSTool;
 
 	private List<IStatModelProcessable>	processableDatas;
-
+	private boolean						cancel	= false;
 	/*
 	 * Constructors
 	 */
 
-	public BMDAnalysisPresenter(IBMDAnalysisView view, BMDExpressEventBus eventBus)
+	public BMDAnalysisPresenter(IBMDAnalysisView view, IBMDAnalysisService service,
+			BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -58,6 +61,7 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 	public void performBMDAnalysis(ModelInputParameters inputParameters,
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun)
 	{
+		cancel = false;
 
 		// send this to the bmdanalysis tool so some progress can be updated.
 		IBMDSToolProgress me = this;
@@ -68,18 +72,12 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 			{
 				for (IStatModelProcessable processableData : processableDatas)
 				{
+					if (cancel)
+						continue;
 					try
 					{
-						inputParameters.setObservations(processableData.getProcessableDoseResponseExperiment()
-								.getTreatments().size());
-						bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
-								processableData.getProcessableDoseResponseExperiment().getTreatments(),
-								inputParameters, modelSelectionParameters, modelsToRun, me, processableData);
-						BMDResult bMDResults = bMDSTool.bmdAnalyses();
-						if (bMDResults == null)
-							return 0;
-						bMDResults.setDoseResponseExperiment(
-								processableData.getProcessableDoseResponseExperiment());
+						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters,
+								modelSelectionParameters, modelsToRun, me);
 
 						// post a the new result set to the event bus
 
@@ -90,7 +88,6 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 							if (bMDResults != null)
 							{
 
-								bMDResults.setName(processableData.toString() + "_BMD");
 								getEventBus().post(new BMDAnalysisDataLoadedEvent(bMDResults));
 
 							}
@@ -137,7 +134,7 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 			bMDSTool.selectBestModels((BMDResult) processableData);
 
 			// refresh the tabular data inside of bmdresults
-			((BMDResult) processableData).refreshTableData();
+			((BMDResult) processableData).getColumnHeader();
 
 			getEventBus().post(new BMDAnalysisDataSelectedEvent(((BMDResult) processableData)));
 		}
@@ -157,12 +154,9 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 
 	public boolean cancel()
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-			return true;
-		}
-		return false;
+		cancel = true;
+		return getService().cancel();
+
 	}
 
 	@Override
@@ -178,20 +172,14 @@ public class BMDAnalysisPresenter extends PresenterBase<IBMDAnalysisView> implem
 	@Subscribe
 	public void onProjectLoadedEvent(BMDProjectLoadedEvent event)
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-		}
+		getService().cancel();
 		getView().closeWindow();
 	}
 
 	@Subscribe
 	public void onProjectClosedEvent(CloseProjectRequestEvent event)
 	{
-		if (bMDSTool != null)
-		{
-			bMDSTool.cancel();
-		}
+		getService().cancel();
 		getView().closeWindow();
 	}
 }

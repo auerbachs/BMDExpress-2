@@ -1,35 +1,46 @@
 package com.sciome.filter;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+
 /*
  * deals with String filtration.
  */
-public class StringFilter<T> extends DataFilter<String, T>
+public class StringFilter extends DataFilter<String>
 {
 
-	public StringFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			String value1)
+	public StringFilter()
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1);
+		super();
 	}
 
-	public StringFilter(DataFilterType dataFilterType, Class<T> filterableAnnotatedClass, String key,
-			String value1, String value2)
+	public StringFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet dataset, String key,
+			List<Object> value1)
 	{
-		super(dataFilterType, filterableAnnotatedClass, key, value1, value2);
+		super(dataFilterType, dataset, key, value1);
 	}
 
 	@Override
-	public boolean passesFilter(T object)
+	public boolean passesFilter(BMDExpressAnalysisRow object)
 	{
+		Set<Object> stringSet = new HashSet<>(getValues());
 		try
 		{
-			String objectValue = (String) filterAnnotationExtractor.getFilterableValue(object, key);
+
+			String objectValue = (filterAnnotationExtractor.getFilterableValue(object, key)).toString()
+					.toLowerCase();
 			switch (dataFilterType)
 			{
 				case EQUALS:
-					return objectValue.equalsIgnoreCase(value1);
+					return stringSet.contains(objectValue);
 				case CONTAINS:
-					return objectValue.toLowerCase().contains(value1.toLowerCase());
+					for (Object obj : stringSet)
+						if (objectValue.contains(obj.toString().toLowerCase()))
+							return true;
 				default:
 					break;
 			}
@@ -40,6 +51,17 @@ public class StringFilter<T> extends DataFilter<String, T>
 		}
 
 		return false;
+	}
+
+	@Override
+	public StringFilter copy()
+	{
+		StringFilter sfi = new StringFilter();
+		sfi.setKey(this.getKey());
+		sfi.setValues(this.getValues());
+		sfi.setDataFilterType(this.getDataFilterType());
+
+		return sfi;
 	}
 
 }

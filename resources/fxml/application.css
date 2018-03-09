@@ -137,3 +137,8 @@
 }
 
 
+.textboxfilterchanged {
+  -fx-control-inner-background: #F0FFF0;
+}
+
+

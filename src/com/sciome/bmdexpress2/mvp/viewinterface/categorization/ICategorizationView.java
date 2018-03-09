@@ -17,6 +17,8 @@ public interface ICategorizationView
 	void handle_start(ActionEvent event);
 
 	void handle_close(ActionEvent event);
+	
+	public void handle_saveSettingsButtonPressed(ActionEvent event);
 
 	public void finishedCategorization();
 

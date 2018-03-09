@@ -2,32 +2,38 @@ package com.sciome.bmdexpress2.mvp.view.mainstage;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 
-import com.sciome.bmdexpress2.BMDExpress2Main;
+import org.controlsfx.control.CheckListView;
+
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
-import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView;
 import com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
-import com.sciome.bmdexpress2.mvp.view.prefilter.PathwayFilterView;
+import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
+import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.service.ProjectNavigationService;
+import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
@@ -39,53 +45,52 @@ import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
-public class ProjectNavigationView extends BMDExpressViewBase implements IProjectNavigationView, Initializable
+//treeViewContainer
+public class ProjectNavigationView extends VBox implements IProjectNavigationView
 {
 
-	// Navigation View
-	@FXML
-	private TreeView navigationTreeView;
+	private final String									EXPRESSION_DATA				= "Expression Data";
+	private final String									ONEWAY_DATA					= "One-way ANOVA";
+	private final String									WILLIAMS_DATA				= "Williams Trend Test";
+	private final String									ORIOGEN_DATA				= "Oriogen";
+	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
+	private final String									CATEGORY_DATA				= "Functional Classifications";
 
-	// base tree items.
-	private TreeItem<DoseResponseExperiment> expressionDataTreeItem = null;
-	private TreeItem<OneWayANOVAResults> oneWayANOVATreeItem = null;
-	private TreeItem<PathwayFilterResults> pathwayFilterTreeItem = null;
-	private TreeItem<BMDResult> bMDDoseAnalysesTreeItem = null;
-	private TreeItem<CategoryAnalysisResults> functionalClassificationsTreeItem = null;
+	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
+	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
+	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
 
-	ProjectNavigationPresenter presenter;
+	ProjectNavigationPresenter								presenter;
+	private boolean											fireSelection				= false;
+	private boolean											selectionChangeInProgress	= false;
 
 	public ProjectNavigationView()
 	{
@@ -93,122 +98,51 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	}
 
 	/*
-	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus
+	 * Event bus is passed as an argument so the unit tests can pass their own custom eventbus Datq
 	 */
 	public ProjectNavigationView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new ProjectNavigationPresenter(this, eventBus);
+		IProjectNavigationService service = new ProjectNavigationService();
+		presenter = new ProjectNavigationPresenter(this, service, eventBus);
+		initialize();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void initialize(URL location, ResourceBundle resources)
+	public void initialize()
 	{
-		// let's initialize the navigation Tree
-		Node homeImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/home.png")));
-		navigationTreeView.setRoot(new TreeItem("Data Tree", homeImage));
-		navigationTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		initializeDataSetMap();
+		initializeDataGroupCombo();
 
-		// instantiate first level treeitems
-		// A tree item requires its own instance of a node for the image...cannot use same image across
-		// multiple treeitems.
-		Node node1 = new ImageView(new Image(BMDExpress2Main.class.getResourceAsStream("/icons/folder.png")));
-		Node node2 = new ImageView(new Image(BMDExpress2Main.class.getResourceAsStream("/icons/folder.png")));
-		Node node3 = new ImageView(new Image(BMDExpress2Main.class.getResourceAsStream("/icons/folder.png")));
-		Node node4 = new ImageView(new Image(BMDExpress2Main.class.getResourceAsStream("/icons/folder.png")));
-		Node node5 = new ImageView(new Image(BMDExpress2Main.class.getResourceAsStream("/icons/folder.png")));
-		expressionDataTreeItem = new TreeItem("Expression Data", node1);
+		HBox hbox = new HBox();
+		hbox.getChildren().add(dataGroupCombo);
 
-		oneWayANOVATreeItem = new TreeItem("One-way ANOVA", node2);
-		bMDDoseAnalysesTreeItem = new TreeItem("Benchmark Dose Analyses", node3);
-		functionalClassificationsTreeItem = new TreeItem("Functional Classifications", node4);
-		pathwayFilterTreeItem = new TreeItem("Pathway Filter", node5);
-		// add tree items to navigation tree
-		navigationTreeView.getRoot().getChildren().add(expressionDataTreeItem);
-		navigationTreeView.getRoot().getChildren().add(oneWayANOVATreeItem);
-		// remove pathwayFilterTreeItem
-		// navigationTreeView.getRoot().getChildren().add(pathwayFilterTreeItem);
-		navigationTreeView.getRoot().getChildren().add(bMDDoseAnalysesTreeItem);
-		navigationTreeView.getRoot().getChildren().add(functionalClassificationsTreeItem);
+		Button clearButton = new Button("Clear");
+		Button checkAllButton = new Button("Check All");
+		hbox.getChildren().add(checkAllButton);
+		hbox.getChildren().add(clearButton);
+		getChildren().add(hbox);
+		initializeAnalysisList();
 
-		// add a selection change listener to the tree
-		navigationTreeView.getSelectionModel().selectedItemProperty()
-				.addListener(new ChangeListener<Object>() {
-					@Override
-					public void changed(ObservableValue<?> observable, Object oldValue, Object newValue)
-					{
-						TreeItem selectedItem = (TreeItem) newValue;
-						if (selectedItem != null)
-							handle_navigationTreeViewSelection(selectedItem);
-					}
+		checkAllButton.setOnAction(new EventHandler<ActionEvent>() {
 
-				});
-
-		navigationTreeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent mouseEvent)
+			public void handle(ActionEvent event)
 			{
-
-				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
-				{
-					System.out.println(mouseEvent.getSource());
-					Object selectedItem = ((TreeItem) navigationTreeView.getSelectionModel()
-							.getSelectedItem()).getValue();
-
-					ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-							.getSelectedItems();
-					List<TreeItem> selectedItems = new ArrayList<>();
-					for (TreeItem tItem : treeItems)
-					{
-						selectedItems.add(tItem);
-					}
-
-					if (selectedItems.size() == 1)
-						dealWithRightClickOnTree(selectedItem, mouseEvent);
-					else if (selectedItems.size() > 1)
-						dealWithRightClickOnTreeMultiSelected(selectedItems, mouseEvent);
-
-				}
+				analysisCheckList.getCheckModel().checkAll();
+				delayedCheckBoxReaction();
 
 			}
 		});
 
-		navigationTreeView.getRoot().setExpanded(true);
+		clearButton.setOnAction(new EventHandler<ActionEvent>() {
 
-		navigationTreeView.setCellFactory(tv ->
-		{
-			final Tooltip tooltip = new Tooltip();
-			TreeCell<Object> cell = new TreeCell<Object>() {
-				@Override
-				public void updateItem(Object item, boolean empty)
-				{
-					super.updateItem(item, empty);
-					if (empty)
-					{
-						setText(null);
-						setTooltip(null);
-						setGraphic(null);
-					}
-					else
-					{
-						setText(item.toString());
-						tooltip.setText(item.toString());
-						setTooltip(tooltip);
-						setGraphic(getTreeItem().getGraphic());
-					}
-				}
-			};
-			cell.setOnMouseClicked(e ->
+			@Override
+			public void handle(ActionEvent event)
 			{
-				if (e.getClickCount() == 2 && !cell.isEmpty())
-				{
-					// Path file = cell.getItem();
-					// do whatever you need with path...
-				}
-			});
-			return cell;
+				analysisCheckList.getCheckModel().clearChecks();
+				delayedCheckBoxReaction();
+
+			}
 		});
 
 	}
@@ -216,38 +150,45 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	/*
 	 * method to handle right clicks on tree nodes.
 	 */
-	private void dealWithRightClickOnTree(Object selectedItem, MouseEvent mouseEvent)
+	private void dealWithRightClickOnTree(BMDExpressAnalysisDataSet selectedItem, MouseEvent mouseEvent)
 	{
 		if (selectedItem instanceof DoseResponseExperiment)
 		{
 			showDoseExperimentContextMenu((DoseResponseExperiment) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 		}
 		else if (selectedItem instanceof OneWayANOVAResults)
 		{
 			showOneWayAnovaContextMenu((OneWayANOVAResults) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 
 		}
-		else if (selectedItem instanceof PathwayFilterResults)
+		else if (selectedItem instanceof WilliamsTrendResults)
 		{
-			showPathwayFilterContextMenu((PathwayFilterResults) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+			showWilliamsTrendContextMenu((WilliamsTrendResults) selectedItem).show(
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
+					mouseEvent.getScreenY());
+
+		}
+		else if (selectedItem instanceof OriogenResults)
+		{
+			showOriogenContextMenu((OriogenResults) selectedItem).show(
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 
 		}
 		else if (selectedItem instanceof CategoryAnalysisResults)
 		{
 			showCategorizationContextMenu((CategoryAnalysisResults) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 		}
 		else if (selectedItem instanceof BMDResult)
 		{
 			showBMDAnalysisContextMenu((BMDResult) selectedItem).show(
-					this.navigationTreeView.getScene().getWindow(), mouseEvent.getScreenX(),
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 		}
 	}
@@ -256,20 +197,48 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	 * method to handle right clicks on tree nodes.
 	 */
 	private void dealWithRightClickOnTreeMultiSelected(
-			@SuppressWarnings("rawtypes") List<TreeItem> selectedItems, MouseEvent mouseEvent)
+			@SuppressWarnings("rawtypes") List<BMDExpressAnalysisDataSet> selectedItems,
+			MouseEvent mouseEvent)
 	{
-		showMultiSelectedContextMenu(selectedItems).show(this.navigationTreeView.getScene().getWindow(),
+		showMultiSelectedContextMenu(selectedItems).show(this.analysisCheckList.getScene().getWindow(),
 				mouseEvent.getScreenX(), mouseEvent.getScreenY());;
 	}
 
 	@Override
 	public void clearNavigationTree()
 	{
-		expressionDataTreeItem.getChildren().clear();
-		oneWayANOVATreeItem.getChildren().clear();
-		pathwayFilterTreeItem.getChildren().clear();
-		bMDDoseAnalysesTreeItem.getChildren().clear();
-		functionalClassificationsTreeItem.getChildren().clear();
+		presenter.clearMainDataView();
+		clearChecks(null);
+		this.getChildren().remove(analysisCheckList);
+		initializeAnalysisList();
+		initializeDataSetMap();
+		refreshAnalysisList(this.dataGroupCombo.getValue());
+
+	}
+
+	/*
+	 * handle navigation tree view check change
+	 */
+	@SuppressWarnings("rawtypes")
+	private void handle_navigationTreeViewChecked()
+	{
+
+		List<BMDExpressAnalysisDataSet> datasets = getCheckedItems();
+		BMDExpressAnalysisDataSet selectedItem = null;
+
+		// if (datasets.size() > 0)
+		// presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
+
+		if (datasets.size() == 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.doseResponseExperimentSelected((DoseResponseExperiment) datasets.get(0));
+		else if (datasets.size() == 1)
+			presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
+		else if (datasets.size() > 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.multipleDataSetsSelected(datasets); // not combining dose response data
+		else if (datasets.size() > 1)
+			presenter.multipleDataSetsSelected(datasets);
+		else
+			presenter.clearMainDataView();
 
 	}
 
@@ -277,21 +246,25 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	 * handle navigation tree view selection change
 	 */
 	@SuppressWarnings("rawtypes")
-	private void handle_navigationTreeViewSelection(TreeItem selectedItem)
+	private void handle_navigationTreeViewSelection()
 	{
-		if (selectedItem.getValue() instanceof DoseResponseExperiment)
-		{
-			DoseResponseExperiment dRE = (DoseResponseExperiment) selectedItem.getValue();
-			presenter.doseResponseExperimentSelected(dRE);
-		}
-		else if (selectedItem.getValue() instanceof BMDExpressAnalysisDataSet)
-		{
-			presenter.BMDExpressAnalysisDataSetSelected((BMDExpressAnalysisDataSet) selectedItem.getValue());
-		}
+
+		List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+		BMDExpressAnalysisDataSet selectedItem = null;
+
+		// if (datasets.size() > 0)
+		// presenter.BMDExpressAnalysisDataSetSelected(datasets.get(0));
+
+		if (datasets.size() == 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.doseResponseExperimentSelectedForProcessing((DoseResponseExperiment) datasets.get(0));
+		else if (datasets.size() == 1)
+			presenter.BMDExpressAnalysisDataSetSelectedForProcessing(datasets.get(0));
+		else if (datasets.size() > 1 && datasets.get(0) instanceof DoseResponseExperiment)
+			presenter.multipleDataSetsSelectedForProcessing(datasets); // not combining dose response data
+		else if (datasets.size() > 1)
+			presenter.multipleDataSetsSelectedForProcessing(datasets);
 		else
-		{
-			presenter.clearMainDataView();
-		}
+			presenter.clearMenuViewForProcessing();
 
 	}
 
@@ -302,15 +275,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void addDoseResponseExperiement(DoseResponseExperiment doseResponseExperiment, boolean selectIt)
 	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<DoseResponseExperiment> newTreeItem = new TreeItem<>(doseResponseExperiment, docImage);
-		expressionDataTreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
+		addDataSetToList(EXPRESSION_DATA, doseResponseExperiment);
 
 	}
 
@@ -321,33 +286,29 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void addOneWayANOVAAnalysis(OneWayANOVAResults oneWayANOVAResults, boolean selectIt)
 	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<OneWayANOVAResults> newTreeItem = new TreeItem<>(oneWayANOVAResults, docImage);
-		oneWayANOVATreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
+		addDataSetToList(ONEWAY_DATA, oneWayANOVAResults);
 	}
 
 	/*
-	 * put the oneway result into the tree.
+	 * put the williams trend result into the tree.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void addPathwayFilterResults(PathwayFilterResults pathwayFilterResults, boolean selectIt)
+	public void addWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults, boolean selectIt)
 	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<PathwayFilterResults> newTreeItem = new TreeItem<>(pathwayFilterResults, docImage);
-		pathwayFilterTreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
+		addDataSetToList(WILLIAMS_DATA, williamsTrendResults);
+
+	}
+
+	/*
+	 * put the oriogen result into the tree.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addOriogenAnalysis(OriogenResults oriogenResults, boolean selectIt)
+	{
+		addDataSetToList(ORIOGEN_DATA, oriogenResults);
+
 	}
 
 	/*
@@ -357,15 +318,9 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void addBMDAnalysis(BMDResult bMDResult, boolean selectIt)
 	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<BMDResult> newTreeItem = new TreeItem<>(bMDResult, docImage);
-		bMDDoseAnalysesTreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
+
+		addDataSetToList(BENCHMARK_DATA, bMDResult);
+
 	}
 
 	/*
@@ -375,15 +330,9 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void addCategoryAnalysis(CategoryAnalysisResults categoryAnalysisResults, boolean selectIt)
 	{
-		Node docImage = new ImageView(
-				new Image(BMDExpress2Main.class.getResourceAsStream("/icons/document.png")));
-		TreeItem<CategoryAnalysisResults> newTreeItem = new TreeItem<>(categoryAnalysisResults, docImage);
-		functionalClassificationsTreeItem.getChildren().add(newTreeItem);
-		if (selectIt)
-		{
-			navigationTreeView.getSelectionModel().clearSelection();
-			navigationTreeView.getSelectionModel().select(newTreeItem);
-		}
+
+		addDataSetToList(CATEGORY_DATA, categoryAnalysisResults);
+
 	}
 
 	/*
@@ -402,32 +351,25 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			@Override
 			public void run()
 			{
-				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-						.getSelectedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
-				for (TreeItem tItem : treeItems)
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
 				{
-					Object selectedItem = tItem.getValue();
 					if (selectedItem instanceof IStatModelProcessable)
 					{
 						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
 						selectedItems.add(processableData);
 					}
 				}
-				TreeItem treeItem = (TreeItem) navigationTreeView.getSelectionModel().getSelectedItem();
 
-				if (selectedItems.size() > 0)
+				if (datasets.size() > 0)
 				{
 					// now create a list of doseResponseExperement objects so the oneway anova view can offer
 					// a selection list.
-
-					List<IStatModelProcessable> processabeDatas = new ArrayList<>();
-
-					for (int i = 0; i < treeItem.getParent().getChildren().size(); i++)
-					{
-						TreeItem item = (TreeItem) treeItem.getParent().getChildren().get(i);
-						processabeDatas.add((IStatModelProcessable) item.getValue());
-					}
+					List<IStatModelProcessable> processableDatas = new ArrayList<>();
+					for (BMDExpressAnalysisDataSet item : analysisCheckList.getItems())
+						processableDatas.add((IStatModelProcessable) item);
 					try
 					{
 
@@ -436,7 +378,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 						Stage stage = BMDExpressFXUtils.getInstance().generateStage("One Way ANOVA");
 						stage.setScene(new Scene((BorderPane) loader.load()));
 						OneWayANOVAView controller = loader.<OneWayANOVAView> getController();
-						controller.initData(selectedItems, processabeDatas);
+						controller.initData(selectedItems, processableDatas);
 
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 							@Override
@@ -458,13 +400,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 	}
 
-	/*
-	 * pathway filter view. pass it the dose response experiement data and start let user do stuff from there.
-	 *
-	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void performPathwayFilter()
+	public void performWilliamsTrend()
 	{
 		// need to run this on the main ui thread. this is being called from event bus thread..hence the
 		// runlater.
@@ -474,42 +411,35 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			@Override
 			public void run()
 			{
-				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-						.getSelectedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
-				for (TreeItem tItem : treeItems)
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
 				{
-					Object selectedItem = tItem.getValue();
 					if (selectedItem instanceof IStatModelProcessable)
 					{
 						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
 						selectedItems.add(processableData);
 					}
 				}
-				TreeItem treeItem = (TreeItem) navigationTreeView.getSelectionModel().getSelectedItem();
-				if (selectedItems.size() > 0)
+
+				if (datasets.size() > 0)
 				{
 					// now create a list of doseResponseExperement objects so the oneway anova view can offer
 					// a selection list.
-
-					List<IStatModelProcessable> processabeDatas = new ArrayList<>();
-
-					for (int i = 0; i < treeItem.getParent().getChildren().size(); i++)
-					{
-						TreeItem item = (TreeItem) treeItem.getParent().getChildren().get(i);
-						processabeDatas.add((IStatModelProcessable) item.getValue());
-					}
+					List<IStatModelProcessable> processableDatas = new ArrayList<>();
+					for (BMDExpressAnalysisDataSet item : analysisCheckList.getItems())
+						processableDatas.add((IStatModelProcessable) item);
 					try
 					{
 
 						FXMLLoader loader = new FXMLLoader(
-								getClass().getResource("/fxml/pathwayfilter.fxml"));
+								getClass().getResource("/fxml/williamstrend.fxml"));
 
-						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Pathway Filter");
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Williams Trend Test");
 						stage.setScene(new Scene((BorderPane) loader.load()));
-						PathwayFilterView controller = loader.<PathwayFilterView> getController();
-
-						controller.initData(selectedItems, processabeDatas);
+						WilliamsTrendView controller = loader.<WilliamsTrendView> getController();
+						controller.initData(selectedItems, processableDatas);
 
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 							@Override
@@ -528,7 +458,65 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 				}
 			}
 		});
+	}
 
+	@Override
+	public void performOriogen()
+	{
+		// need to run this on the main ui thread. this is being called from event bus thread..hence the
+		// runlater.
+		Platform.runLater(new Runnable() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void run()
+			{
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
+				List<IStatModelProcessable> selectedItems = new ArrayList<>();
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
+				{
+					if (selectedItem instanceof IStatModelProcessable)
+					{
+						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
+						selectedItems.add(processableData);
+					}
+				}
+
+				if (datasets.size() > 0)
+				{
+					// now create a list of doseResponseExperement objects so the oneway anova view can offer
+					// a selection list.
+					List<IStatModelProcessable> processableDatas = new ArrayList<>();
+					for (BMDExpressAnalysisDataSet item : analysisCheckList.getItems())
+						processableDatas.add((IStatModelProcessable) item);
+					try
+					{
+
+						FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/oriogen.fxml"));
+
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Oriogen");
+						stage.setScene(new Scene((BorderPane) loader.load()));
+						OriogenView controller = loader.<OriogenView> getController();
+						controller.initData(selectedItems, processableDatas);
+
+						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+							@Override
+							public void handle(WindowEvent event)
+							{
+								controller.close();
+							}
+						});
+						stage.sizeToScene();
+						stage.show();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	/*
@@ -546,12 +534,11 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			public void run()
 			{
 
-				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-						.getSelectedItems();
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
-				for (TreeItem tItem : treeItems)
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
 				{
-					Object selectedItem = tItem.getValue();
 					if ((selectedItem instanceof IStatModelProcessable
 							&& ((IStatModelProcessable) selectedItem).getProcessableProbeResponses() != null))
 					{
@@ -578,7 +565,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 								viewCode.close();
 							}
 						});
-						stage.sizeToScene();
+						// stage.sizeToScene();
 						stage.show();
 					}
 					catch (IOException e)
@@ -599,11 +586,10 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void performCategoryAnalysis(CategoryAnalysisEnum catAnalysisType)
 	{
-		ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel().getSelectedItems();
+		List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 		List<BMDResult> selectedItems = new ArrayList<>();
-		for (TreeItem tItem : treeItems)
+		for (BMDExpressAnalysisDataSet selectedItem : datasets)
 		{
-			Object selectedItem = tItem.getValue();
 			if (selectedItem instanceof BMDResult)
 			{
 				BMDResult processableData = (BMDResult) selectedItem;
@@ -699,9 +685,35 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		annationDialog.setGraphic(null);
 		annationDialog.setHeaderText("Platform chooser");
 		annationDialog.setContentText("Choose a platform");
-		annationDialog.initOwner(navigationTreeView.getScene().getWindow());
+		annationDialog.initOwner(analysisCheckList.getScene().getWindow());
 		annationDialog.initModality(Modality.WINDOW_MODAL);
 		Optional<ChipInfo> myvalue = annationDialog.showAndWait();
+
+		try
+		{
+			ChoiceDialog<LogTransformationEnum> logTransFormationDialog = new ChoiceDialog<>(
+					LogTransformationEnum.BASE2, LogTransformationEnum.values());
+
+			logTransFormationDialog.setTitle("How is your data transformed?");
+			logTransFormationDialog.setGraphic(null);
+			logTransFormationDialog.setHeaderText("Log Transformation chooser");
+			logTransFormationDialog.setContentText("Choose a Log Transformation");
+			logTransFormationDialog.initOwner(analysisCheckList.getScene().getWindow());
+			logTransFormationDialog.initModality(Modality.WINDOW_MODAL);
+			Optional<LogTransformationEnum> logtransform = logTransFormationDialog.showAndWait();
+
+			LogTransformationEnum lt = LogTransformationEnum.BASE2;;
+			if (logtransform.isPresent())
+				lt = logtransform.get();
+
+			for (DoseResponseExperiment de : doseResponseExperiment)
+				de.setLogTransformation(lt);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
 		if (myvalue.isPresent())
 			presenter.assignArrayAnnotations(myvalue.get(), doseResponseExperiment, fileAnnotation);
@@ -722,11 +734,21 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		return ctxMenu;
 	}
 
-	private ContextMenu showPathwayFilterContextMenu(PathwayFilterResults pathWayResult)
+	private ContextMenu showWilliamsTrendContextMenu(WilliamsTrendResults williamsTrendResult)
 	{
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
-		setContextMenuCommonHandlers("Pathway Filter", ctxMenu, pathWayResult);
+
+		setContextMenuCommonHandlers("Williams Trend Test", ctxMenu, williamsTrendResult);
+		return ctxMenu;
+	}
+
+	private ContextMenu showOriogenContextMenu(OriogenResults oriogenResult)
+	{
+		ContextMenu ctxMenu = new ContextMenu();
+		ctxMenu.getItems().addAll(getCommonMenuItems());
+
+		setContextMenuCommonHandlers("Oriogen", ctxMenu, oriogenResult);
 		return ctxMenu;
 	}
 
@@ -808,13 +830,12 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 						handle_DataAnalysisResultsSpreadSheetView(analysisDataSet);
 						break;
 				}
-
 			}
 		});
 	}
 
 	@SuppressWarnings("rawtypes")
-	private ContextMenu showMultiSelectedContextMenu(List<TreeItem> selectedItems)
+	private ContextMenu showMultiSelectedContextMenu(List<BMDExpressAnalysisDataSet> selectedItems)
 	{
 		ContextMenu ctxMenu = new ContextMenu();
 
@@ -828,7 +849,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 				switch (((MenuItem) event.getTarget()).getText())
 				{
 
-					case "Remove":
+					case "Remove All Selected Items":
 						handle_MultiSelectRemove(selectedItems);
 						break;
 					case "Export":
@@ -914,7 +935,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	private List<MenuItem> getCommonMultiSelectMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Remove"));
+		menuItems.add(new MenuItem("Remove All Selected Items"));
 		menuItems.add(new MenuItem("Export"));
 
 		return menuItems;
@@ -928,24 +949,23 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 		presenter.removeBMDExpressAnalysisDataSetFromProject(analysisDataSet);
 
-		for (Object ti : navigationTreeView.getRoot().getChildren())
-		{
-			((TreeItem) ti).getChildren().remove(navigationTreeView.getSelectionModel().getSelectedItem());
-		}
-		navigationTreeView.refresh();
+		removeItem(analysisDataSet);
+		refreshAnalysisList(dataGroupCombo.getValue());
+
 	}
 
-	private void handle_BMDExpressAnalysisDataSetRename(BMDExpressAnalysisDataSet catAnalysisResults,
+	private void handle_BMDExpressAnalysisDataSetRename(BMDExpressAnalysisDataSet bmdAnalysisDataSet,
 			String title)
 	{
-		String newName = textInputDialog(catAnalysisResults.toString(), title, "Rename",
+		String newName = textInputDialog(bmdAnalysisDataSet.toString(), title, "Rename",
 				"Enter the new name.");
 
 		if (newName == null)
 			return;
 
-		catAnalysisResults.setName(newName);
-		navigationTreeView.refresh();
+		presenter.changeAnalysisName(bmdAnalysisDataSet, newName);
+
+		analysisCheckList.refresh();
 
 	}
 
@@ -970,10 +990,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			return;
 
 		presenter.removeDoseResponseExperimentFromProject(doseResponseExperiment);
-		this.expressionDataTreeItem.getChildren()
-				.remove(navigationTreeView.getSelectionModel().getSelectedItem());
-		// this.expressionDataTreeItem.
-		navigationTreeView.refresh();
+		removeItem(doseResponseExperiment);
+		refreshAnalysisList(dataGroupCombo.getValue());
 	}
 
 	private void handle_DoseResponseExperimentRename(DoseResponseExperiment doseResponseExperiment)
@@ -984,8 +1002,8 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		if (newName == null)
 			return;
 
-		doseResponseExperiment.setName(newName);
-		navigationTreeView.refresh();
+		presenter.changeAnalysisName(doseResponseExperiment, newName);
+		analysisCheckList.refresh();
 	}
 
 	private void handle_DoseResponseViewGenesToProbe(DoseResponseExperiment doseResponseExperiment)
@@ -1035,13 +1053,11 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 			@Override
 			public void run()
 			{
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
 
-				ObservableList<TreeItem> treeItems = navigationTreeView.getSelectionModel()
-						.getSelectedItems();
 				List<IStatModelProcessable> selectedItems = new ArrayList<>();
-				for (TreeItem tItem : treeItems)
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
 				{
-					Object selectedItem = tItem.getValue();
 					if ((selectedItem instanceof IStatModelProcessable
 							&& ((IStatModelProcessable) selectedItem).getProcessableProbeResponses() != null))
 					{
@@ -1093,39 +1109,48 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void handle_MultiSelectRemove(List<TreeItem> selectedItems)
+	private void handle_MultiSelectRemove(List<BMDExpressAnalysisDataSet> selectedItems)
 	{
 
 		if (!showAlert("Remove Multiple Items Confirmation", "Remove",
 				"Are you sure you want to remove these results?"))
 			return;
 
-		navigationTreeView.getSelectionModel().clearSelection();
-		for (TreeItem selectedItem : selectedItems)
+		refreshAnalysisList(dataGroupCombo.getValue());
+		for (BMDExpressAnalysisDataSet selectedItem : selectedItems)
+			removeItem(selectedItem);
+
+		presenter.clearMainDataView();
+	}
+
+	private void removeItem(BMDExpressAnalysisDataSet selectedItem)
+	{
+
+		removeFromDataSetMap(selectedItem);
+		if (selectedItem instanceof DoseResponseExperiment)
 		{
-			if (selectedItem.getValue() instanceof BMDExpressAnalysisDataSet)
-			{
-				presenter.removeBMDExpressAnalysisDataSetFromProject(
-						(BMDExpressAnalysisDataSet) selectedItem.getValue());
-				for (Object ti : navigationTreeView.getRoot().getChildren())
-				{
-					((TreeItem) ti).getChildren().remove(selectedItem);
-				}
-				navigationTreeView.refresh();
-			}
-			else if (selectedItem.getValue() instanceof DoseResponseExperiment)
-			{
-				presenter.removeDoseResponseExperimentFromProject(
-						(DoseResponseExperiment) selectedItem.getValue());
-				this.expressionDataTreeItem.getChildren().remove(selectedItem);
-				navigationTreeView.refresh();
-			}
+			presenter.removeDoseResponseExperimentFromProject((DoseResponseExperiment) selectedItem);
+			analysisCheckList.getItems().remove(selectedItem);
+		}
+		else
+		{
+			presenter.removeBMDExpressAnalysisDataSetFromProject(selectedItem);
+			analysisCheckList.getItems().remove(selectedItem);
 		}
 
 	}
 
+	private void clearChecks(BMDExpressAnalysisDataSet selectedItem)
+	{
+		// so the handler doesn't fire off events while clearing.
+		if (selectedItem == null)
+			analysisCheckList.getCheckModel().clearChecks();
+		else
+			analysisCheckList.getCheckModel().clearCheck(selectedItem);
+	}
+
 	@SuppressWarnings("rawtypes")
-	private void handle_MultiSelectExport(List<TreeItem> selectedItems)
+	private void handle_MultiSelectExport(List<BMDExpressAnalysisDataSet> selectedItems)
 	{
 		File selectedFile = getFileToSave("Export Multi Selected Results", "multiselect_results.txt");
 		if (selectedFile == null)
@@ -1145,7 +1170,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		if (initialDirectory.exists())
 			fileChooser.setInitialDirectory(initialDirectory);
 		fileChooser.setInitialFileName(initName);
-		File selectedFile = fileChooser.showSaveDialog(navigationTreeView.getScene().getWindow());
+		File selectedFile = fileChooser.showSaveDialog(analysisCheckList.getScene().getWindow());
 
 		if (selectedFile != null)
 		{
@@ -1163,10 +1188,10 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(content);
-		alert.initOwner(navigationTreeView.getScene().getWindow());
+		alert.initOwner(analysisCheckList.getScene().getWindow());
 		alert.initModality(Modality.WINDOW_MODAL);
 		Optional<ButtonType> result = alert.showAndWait();
-		((Stage) navigationTreeView.getScene().getWindow()).toFront();
+		((Stage) analysisCheckList.getScene().getWindow()).toFront();
 		if (result.get() == ButtonType.OK)
 		{
 			return true;
@@ -1184,13 +1209,13 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 		dialog.setTitle(title);
 		dialog.setHeaderText(header);
 		dialog.setContentText(content);
-		dialog.initOwner(navigationTreeView.getScene().getWindow());
+		dialog.initOwner(analysisCheckList.getScene().getWindow());
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.getDialogPane().setMinWidth(500);
 		dialog.setResizable(true);
 		// Traditional way to get the response value.
 		Optional<String> result = dialog.showAndWait();
-		((Stage) navigationTreeView.getScene().getWindow()).toFront();
+		((Stage) analysisCheckList.getScene().getWindow()).toFront();
 		if (result.isPresent())
 		{
 			return result.get();
@@ -1203,11 +1228,6 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void expandTree()
 	{
-		navigationTreeView.getRoot().setExpanded(true);
-		for (Object treeItem : navigationTreeView.getRoot().getChildren())
-		{
-			((TreeItem) treeItem).setExpanded(true);
-		}
 
 	}
 
@@ -1237,20 +1257,26 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public File askForAProjectFile()
 	{
-		return ViewUtilities.getInstance().getSaveAsFile(navigationTreeView.getScene().getWindow());
+		return ViewUtilities.getInstance().getSaveAsFile(analysisCheckList.getScene().getWindow());
 	}
 
 	@Override
 	public File askForAProjectFileToOpen()
 	{
-		return ViewUtilities.getInstance().getOpenProjectFile(navigationTreeView.getScene().getWindow());
+		return ViewUtilities.getInstance().getOpenProjectFile(analysisCheckList.getScene().getWindow());
 	}
 
 	@Override
 	public File askForABMDFileToImport()
 	{
+		return ViewUtilities.getInstance().getBMDImportFileToImport(analysisCheckList.getScene().getWindow());
+	}
+
+	@Override
+	public File askForAJSONFileToImport()
+	{
 		return ViewUtilities.getInstance()
-				.getBMDImportFileToImport(navigationTreeView.getScene().getWindow());
+				.getJSONImportFileToImport(analysisCheckList.getScene().getWindow());
 	}
 
 	@Override
@@ -1263,7 +1289,7 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 	@Override
 	public void setWindowSizeProperties()
 	{
-		Stage stage = (Stage) navigationTreeView.getScene().getWindow();
+		Stage stage = (Stage) analysisCheckList.getScene().getWindow();
 		BMDExpressProperties.getInstance().setSizeY((int) stage.getHeight());
 		BMDExpressProperties.getInstance().setSizeX((int) stage.getWidth());
 		BMDExpressProperties.getInstance().setLocX((int) stage.getX());
@@ -1272,17 +1298,191 @@ public class ProjectNavigationView extends BMDExpressViewBase implements IProjec
 
 	}
 
-	@Override
 	public Window getWindow()
 	{
-		return navigationTreeView.getScene().getWindow();
+		return analysisCheckList.getScene().getWindow();
 	}
 
-	@Override
-	public void close()
+	private void initializeDataSetMap()
 	{
-		if (presenter != null)
-			presenter.destroy();
+		clearChecks(null);
+		analysisCheckList.getItems().clear();
+		dataSetMap.put(EXPRESSION_DATA, new ArrayList<>());
+		dataSetMap.put(ONEWAY_DATA, new ArrayList<>());
+		dataSetMap.put(WILLIAMS_DATA, new ArrayList<>());
+		dataSetMap.put(ORIOGEN_DATA, new ArrayList<>());
+		dataSetMap.put(BENCHMARK_DATA, new ArrayList<>());
+		dataSetMap.put(CATEGORY_DATA, new ArrayList<>());
+	}
+
+	private void refreshAnalysisList(String forDataGroup)
+	{
+		clearChecks(null);
+		analysisCheckList.getItems().setAll(new ArrayList<>(dataSetMap.get(forDataGroup)));
+		analysisCheckList.refresh();
+		presenter.clearMainDataView();
+	}
+
+	private void initializeDataGroupCombo()
+	{
+		dataGroupCombo.getItems().addAll(Arrays.asList(EXPRESSION_DATA, ONEWAY_DATA, WILLIAMS_DATA,
+				ORIOGEN_DATA, BENCHMARK_DATA, CATEGORY_DATA));
+
+		dataGroupCombo.setValue(EXPRESSION_DATA);
+
+		dataGroupCombo.valueProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue)
+			{
+				refreshAnalysisList(oldValue);
+				presenter.clearMainDataView();
+				refreshAnalysisList(newValue);
+
+			}
+		});
+	}
+
+	private void initializeAnalysisList()
+	{
+
+		analysisCheckList = new CheckListView<>();
+		analysisCheckList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		getChildren().add(analysisCheckList);
+		VBox.setVgrow(analysisCheckList, Priority.ALWAYS);
+
+		analysisCheckList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent)
+			{
+
+				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
+				{
+					System.out.println(mouseEvent.getSource());
+
+					List<BMDExpressAnalysisDataSet> selecteDataSets = getSelectedItems();
+
+					if (selecteDataSets.size() == 1)
+						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
+					else if (selecteDataSets.size() > 1)
+						dealWithRightClickOnTreeMultiSelected(selecteDataSets, mouseEvent);
+
+				}
+
+			}
+		});
+
+		analysisCheckList.getCheckModel().getCheckedItems()
+				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
+					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
+					{
+						delayedCheckBoxReaction();
+					}
+				});
+
+		analysisCheckList.getSelectionModel().selectedItemProperty()
+				.addListener(new ChangeListener<BMDExpressAnalysisDataSet>() {
+
+					@Override
+					public void changed(ObservableValue<? extends BMDExpressAnalysisDataSet> observable,
+							BMDExpressAnalysisDataSet oldValue, BMDExpressAnalysisDataSet newValue)
+					{
+						handle_navigationTreeViewSelection();
+					}
+				});
+	}
+
+	private void addDataSetToList(String group, BMDExpressAnalysisDataSet dataset)
+	{
+		dataSetMap.get(group).add(dataset);
+
+		if (dataGroupCombo.getValue().equals(group))
+			refreshAnalysisList(group);
+	}
+
+	private void removeFromDataSetMap(BMDExpressAnalysisDataSet selectedItem)
+	{
+		if (selectedItem instanceof DoseResponseExperiment)
+			dataSetMap.get(EXPRESSION_DATA).remove(selectedItem);
+		else if (selectedItem instanceof OneWayANOVAResults)
+			dataSetMap.get(ONEWAY_DATA).remove(selectedItem);
+		else if (selectedItem instanceof WilliamsTrendResults)
+			dataSetMap.get(WILLIAMS_DATA).remove(selectedItem);
+		else if (selectedItem instanceof OriogenResults)
+			dataSetMap.get(ORIOGEN_DATA).remove(selectedItem);
+		else if (selectedItem instanceof BMDResult)
+			dataSetMap.get(BENCHMARK_DATA).remove(selectedItem);
+		else if (selectedItem instanceof CategoryAnalysisResults)
+			dataSetMap.get(CATEGORY_DATA).remove(selectedItem);
+
+	}
+
+	private List<BMDExpressAnalysisDataSet> getCheckedItems()
+	{
+		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
+
+		for (BMDExpressAnalysisDataSet ds : analysisCheckList.getCheckModel().getCheckedItems())
+			if (ds != null)
+				datasets.add(ds);
+
+		return datasets;
+	}
+
+	private List<BMDExpressAnalysisDataSet> getSelectedItems()
+	{
+		List<BMDExpressAnalysisDataSet> datasets = new ArrayList<>();
+
+		for (BMDExpressAnalysisDataSet ds : analysisCheckList.getSelectionModel().getSelectedItems())
+			if (ds != null)
+				datasets.add(ds);
+
+		return datasets;
+	}
+
+	private void delayedCheckBoxReaction()
+	{
+		fireSelection = true;
+
+		if (!selectionChangeInProgress)
+		{
+			selectionChangeInProgress = true;
+			if (!analysisCheckList.getStyleClass().contains("textboxfilterchanged"))
+				analysisCheckList.getStyleClass().add("textboxfilterchanged");
+			new Thread(new Runnable() {
+
+				@Override
+				public void run()
+				{
+					while (fireSelection)
+					{
+						fireSelection = false; // set his global variable to false.
+						try
+						{
+							Thread.sleep(1000);
+						}
+						catch (InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run()
+						{
+							analysisCheckList.getStyleClass().remove("textboxfilterchanged");
+							handle_navigationTreeViewChecked();
+							selectionChangeInProgress = false;
+
+						}
+					});
+
+				}
+			}).start();
+
+		}
 
 	}
 

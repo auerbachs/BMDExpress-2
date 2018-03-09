@@ -9,36 +9,64 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
+import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 
 public class BMDExpressProperties
 {
 
-	private PropertiesParser propertiesParser;
-	private int locX, locY, sizeX, sizeY, precision;
-	private String user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet, proxyHost, proxyPort,
-			endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE, powerVersion, polyVersion,
-			hillVersion, exponentialEXE, exponentialVersion, Rscript, pathwayFilterScript, projectPath,
-			expressionPath, exportPath, definedPath;
-	private boolean useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate, isWindows, hideTable,
-			hideFilter, hideCharts, applyFilter;
+	private PropertiesParser			propertiesParser;
+	private int							locX, locY, sizeX, sizeY, precision;
+	private String						user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet,
+			proxyHost, proxyPort, endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE,
+			powerVersion, polyVersion, hillVersion, exponentialEXE, exponentialVersion, Rscript,
+			pathwayFilterScript, projectPath, expressionPath, exportPath, definedPath;
+	private boolean						useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate,
+			isWindows, hideTable, hideFilter, hideCharts, applyFilter;
 
-	private File propertyFile;
+	// boolean to be set if the console version is running
+	private boolean						isConsole			= false;
 
-	private static BMDExpressProperties instance = null;
+	private File						propertyFile;
 
-	private Map<String, DataFilterPack> dataFilterPackMap = new HashMap<>();
+	private static BMDExpressProperties	instance			= null;
 
-	private Properties versionProperties = new Properties();
+	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
+
+	private Properties					versionProperties	= new Properties();
+
+	private WilliamsTrendInput			williamsInput;
+
+	private OriogenInput				oriogenInput;
+
+	private OneWayANOVAInput			oneWayInput;
+
+	private BMDInput					bmdInput;
+
+	private CategoryInput				categoryInput;
 
 	protected BMDExpressProperties()
 	{
@@ -52,6 +80,178 @@ public class BMDExpressProperties
 
 		loadProperties();
 		readPreferences();
+		loadDefaultFilters();
+		try
+		{
+			loadInputs();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void loadInputs() throws JsonGenerationException, JsonMappingException, IOException
+	{
+		ObjectMapper mapper = new ObjectMapper();
+
+		File williamsInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "williamsInput.json");
+		File oneWayInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oneWayInput.json");
+		File oriogenInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oriogenInput.json");
+		File bmdInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
+		File categoryInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
+
+		if (williamsInputFile.exists())
+		{
+			williamsInput = mapper.readValue(williamsInputFile, WilliamsTrendInput.class);
+		}
+		else
+		{
+			williamsInput = new WilliamsTrendInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(williamsInputFile, williamsInput);
+		}
+		if (oneWayInputFile.exists())
+		{
+			oneWayInput = mapper.readValue(oneWayInputFile, OneWayANOVAInput.class);
+		}
+		else
+		{
+			oneWayInput = new OneWayANOVAInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oneWayInputFile, oneWayInput);
+		}
+		if (oriogenInputFile.exists())
+		{
+			oriogenInput = mapper.readValue(oriogenInputFile, OriogenInput.class);
+		}
+		else
+		{
+			oriogenInput = new OriogenInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oriogenInputFile, oriogenInput);
+		}
+		if (bmdInputFile.exists())
+		{
+			bmdInput = mapper.readValue(bmdInputFile, BMDInput.class);
+		}
+		else
+		{
+			bmdInput = new BMDInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		}
+		if (categoryInputFile.exists())
+		{
+			categoryInput = mapper.readValue(categoryInputFile, CategoryInput.class);
+		}
+		else
+		{
+			categoryInput = new CategoryInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(categoryInputFile, categoryInput);
+		}
+	}
+
+	public void saveWilliamsInput(WilliamsTrendInput input)
+	{
+		File williamsInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "williamsInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.williamsInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(williamsInputFile, williamsInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveOriogenInput(OriogenInput input)
+	{
+		File oriogenInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oriogenInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.oriogenInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oriogenInputFile, oriogenInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveOneWayANOVAInput(OneWayANOVAInput input)
+	{
+		File oneWayInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oneWayInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.oneWayInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(oneWayInputFile, oneWayInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveBMDInput(BMDInput input)
+	{
+		File bmdInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.bmdInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveCategoryInput(CategoryInput input)
+	{
+		File categoryInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.categoryInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(categoryInputFile, categoryInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void loadDefaultFilters()
+	{
+		// BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER"),
+
+		for (File file : new File(BMDExpressConstants.getInstance().BMDBASEPATH).listFiles())
+		{
+			if (file.getName().endsWith(".DEFAULTFILTER"))
+			{
+				try
+				{
+					String name = file.getName().replaceAll(".DEFAULTFILTER", "");
+					dataFilterPackMap.put(name, this.readDefaultFilter(name));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 
 	}
 
@@ -71,10 +271,6 @@ public class BMDExpressProperties
 
 	private void readPreferences()
 	{
-		String currentDirectory;
-		File file = new File(".");
-		currentDirectory = file.getAbsolutePath();
-		System.out.println("Current working directory : " + currentDirectory);
 
 		checkLocalFiles(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib"
 				+ File.separator + "PathwayFilter.R", "/PathwayFilter.R", false, false);
@@ -221,8 +417,6 @@ public class BMDExpressProperties
 				e.printStackTrace();
 			}
 
-			System.out.println();
-
 		}
 
 		if (makeExecutable)
@@ -234,7 +428,6 @@ public class BMDExpressProperties
 	private void checkOperatingSystem()
 	{
 		String os = System.getProperty("os.name");
-		// System.out.println("Operating System: " + os);
 		isWindows = false;
 		// if (os.startsWith("Linux")) { // for linux OS
 		if (os.toLowerCase().contains("mac"))
@@ -730,7 +923,10 @@ public class BMDExpressProperties
 
 	public void putDataFilterPackMap(String key, DataFilterPack pack)
 	{
-		dataFilterPackMap.put(key, pack);
+		// so we don't persist references to large datasets, let's make a copy of this.
+		DataFilterPack packCopy = pack.copy();
+		dataFilterPackMap.put(key, packCopy);
+		// this.saveDefaultFilter(key);
 	}
 
 	public String getTimeStamp()
@@ -783,9 +979,50 @@ public class BMDExpressProperties
 		}
 	}
 
+	public String getLicense()
+	{
+
+		try
+		{
+			InputStream in = this.getClass().getResourceAsStream("/license.txt");
+			return IOUtils.toString(in, StandardCharsets.UTF_8.name());
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	public String getExponentialVersion()
 	{
 		return exponentialVersion;
+	}
+
+	public WilliamsTrendInput getWilliamsInput()
+	{
+		return williamsInput;
+	}
+
+	public OriogenInput getOriogenInput()
+	{
+		return oriogenInput;
+	}
+
+	public OneWayANOVAInput getOneWayInput()
+	{
+		return oneWayInput;
+	}
+
+	public BMDInput getBmdInput()
+	{
+		return bmdInput;
+	}
+
+	public CategoryInput getCategoryInput()
+	{
+		return categoryInput;
 	}
 
 	public void updateFilter(String name, List<String> values)
@@ -806,17 +1043,72 @@ public class BMDExpressProperties
 
 	}
 
+	public void saveDefaultFilter(String name)
+	{
+		try
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			/**
+			 * To make the JSON String pretty use the below code
+			 */
+			mapper.writerWithDefaultPrettyPrinter().writeValue(new File(
+					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER"),
+					dataFilterPackMap.get(name));
+
+		}
+		catch (IOException e)
+		{
+			// do something
+			e.printStackTrace();
+		}
+
+	}
+
+	public DataFilterPack readDefaultFilter(String name)
+	{
+		try
+		{
+			File defaultFilterFile = new File(
+					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".DEFAULTFILTER");
+			if (!defaultFilterFile.exists())
+				return null;
+
+			ObjectMapper mapper = new ObjectMapper();
+			DataFilterPack filterpack = mapper.readValue(defaultFilterFile, DataFilterPack.class);
+			return filterpack;
+
+		}
+		catch (IOException e)
+		{
+			// do something
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	public List<String> getFilters(String name)
 	{
 		List<String> values = new ArrayList<>();
+		Set<String> valueSet = new HashSet<>();
 		if (!(new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".FILTER")
 				.exists()))
 			return values;
 		try
 		{
-			return Files.readAllLines((new File(
+			valueSet.addAll(Files.readAllLines((new File(
 					BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + name + ".FILTER")
-							.toPath()));
+							.toPath())));
+
+			DataFilterPack dfp = getDataFilterPackMap(name);
+			if (dfp != null && dfp.getDataFilters() != null)
+				for (DataFilter df : dfp.getDataFilters())
+					valueSet.add(df.getKey());
+
+			values.addAll(valueSet);
+			Collections.sort(values);
+			return values;
 		}
 		catch (IOException e)
 		{
@@ -910,6 +1202,16 @@ public class BMDExpressProperties
 
 		return sb.toString();
 
+	}
+
+	public boolean isConsole()
+	{
+		return isConsole;
+	}
+
+	public void setIsConsole(boolean is)
+	{
+		isConsole = is;
 	}
 
 }

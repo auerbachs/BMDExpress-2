@@ -18,4 +18,6 @@ public interface IStatModelProcessable
 
 	public String getParentDataSetName();
 
+	public LogTransformationEnum getLogTransformation();
+
 }

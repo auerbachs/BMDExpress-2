@@ -14,10 +14,18 @@ package com.sciome.bmdexpress2.mvp.model.chip;
 import java.io.IOException;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 /*
  * Used from originial source to store chip information.  This is useful for various analyses.  It is 
  * associated with Experiement data.
  */
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class ChipInfo implements Serializable
 {
 	/**
@@ -55,6 +63,12 @@ public class ChipInfo implements Serializable
 		}
 	}
 
+	@JsonIgnore
+	public String getId()
+	{
+		return chipId;
+	}
+
 	/**
 	 * Setter functions
 	 */
@@ -81,7 +95,7 @@ public class ChipInfo implements Serializable
 	/**
 	 * Getter functions
 	 */
-	public String getId()
+	public String getChipId()
 	{
 		return chipId;
 	}
