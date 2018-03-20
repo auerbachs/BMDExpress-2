@@ -39,22 +39,22 @@ import com.sciome.bmdexpress2.util.stat.SampleStats;
 public class BMDStatatistics
 {
 
-	private BMDResult bmdResults;
-	private ProbeGeneMaps probeGeneMaps;
-	private GenesBMDs genesBMDs;
-	private BestBMDModels bestBMDModels;
-	private final String BMD = "BMD";
-	private final String BMDL = "BMDL";
-	private final String BMDU = "BMDU";
+	private BMDResult		bmdResults;
+	private ProbeGeneMaps	probeGeneMaps;
+	private GenesBMDs		genesBMDs;
+	private BestBMDModels	bestBMDModels;
+	private final String	BMD		= "BMD";
+	private final String	BMDL	= "BMDL";
+	private final String	BMDU	= "BMDU";
 
-	private boolean removeMax, doRemovePCut, hasData, doneCorrelation, doEnrichment;
-	private double fitPCutoff, rCutoff, pCutoff = 0.05, maxDose = 0, minDose, minPositiveDose;
-	private Vector<String> subGenes, bmdProbes;
-	private int[] proIndices;
-	private double[] minCorrelations;
-	private double[][] bmds;
+	private boolean			removeMax, doRemovePCut, hasData, doneCorrelation, doEnrichment;
+	private double			fitPCutoff, rCutoff, pCutoff = 0.05, maxDose = 0, minDose, minPositiveDose;
+	private Vector<String>	subGenes, bmdProbes;
+	private int[]			proIndices;
+	private double[]		minCorrelations;
+	private double[][]		bmds;
 
-	private final String title = "BMD Statistics";
+	private final String	title	= "BMD Statistics";
 
 	/**
 	 * Class constructor
@@ -1052,7 +1052,7 @@ public class BMDStatatistics
 
 		}
 
-		boolean bool = genesBMDs.ascendSortBMDandBMDLs();
+		genesBMDs.ascendSortBMDandBMDLs();
 		// System.out.println(size + "Sorted BMDs: " + genesBMDs.maxGenes());
 	}
 
@@ -1150,6 +1150,52 @@ public class BMDStatatistics
 		return pcGenes;
 	}
 
+	public Vector<String> checkFoldChange(Vector<String> vectGenes, double foldchange,
+			Hashtable<String, Vector> subHashG2Ids, Set<String> removedProbes)
+	{
+
+		Vector<String> pcGenes = new Vector<String>();
+
+		if (vectGenes != null && vectGenes.size() > 0)
+		{
+			for (int i = vectGenes.size() - 1; i >= 0; i--)
+			{
+				String geneId = vectGenes.get(i);
+				Vector<String> probes = new Vector<>(subHashG2Ids.get(geneId));
+
+				if (probes != null && probes.size() > 0)
+				{
+					for (int j = probes.size() - 1; j >= 0; j--)
+					{
+						String st = probes.get(j);
+
+						ProbeStatResult probeStatResult = this.probeGeneMaps.getStatResultMap().get(st);
+						if (probeStatResult == null)
+							continue;
+
+						if (probeStatResult.getBestFoldChange() != null
+								&& Math.abs(probeStatResult.getBestFoldChange()) < foldchange)
+						{
+							probes.remove(st);
+							removedProbes.add(st);
+						}
+					}
+				}
+
+				if (probes == null || probes.isEmpty())
+				{
+					// vectGenes.remove(geneId);
+				}
+				else
+				{
+					pcGenes.add(geneId);
+				}
+			}
+		}
+
+		return pcGenes;
+	}
+
 	public Vector<String> checkBMDUBMDRatio(Vector<String> vectGenes, double ratio,
 			Hashtable<String, Vector> subHashG2Ids, Set<String> removedProbes)
 	{
@@ -1222,6 +1268,98 @@ public class BMDStatatistics
 
 						if (probeStatResult.getBestStatResult() == null || minPositiveDose
 								/ probeStatResult.getBestStatResult().getBMD() > nFoldbelowLowestDoseValue)
+						{
+							probes.remove(st);
+							removedProbes.add(st);
+						}
+					}
+				}
+
+				if (probes == null || probes.isEmpty())
+				{
+					// vectGenes.remove(geneId);
+				}
+				else
+				{
+					pcGenes.add(geneId);
+				}
+			}
+		}
+
+		return pcGenes;
+	}
+	
+	public Vector<String> checkPValueBelowDose(Vector<String> vectGenes,
+			double pValue, Hashtable<String, Vector> subHashG2Ids,
+			Set<String> removedProbes)
+	{
+		Vector<String> pcGenes = new Vector<String>();
+
+		if (vectGenes != null && vectGenes.size() > 0)
+		{
+			for (int i = vectGenes.size() - 1; i >= 0; i--)
+			{
+				String geneId = vectGenes.get(i);
+				Vector<String> probes = new Vector<>(subHashG2Ids.get(geneId));
+
+				if (probes != null && probes.size() > 0)
+				{
+					for (int j = probes.size() - 1; j >= 0; j--)
+					{
+						String st = probes.get(j);
+
+						ProbeStatResult probeStatResult = this.probeGeneMaps.getStatResultMap().get(st);
+						if (probeStatResult == null)
+							continue;
+
+						if (probeStatResult.getPrefilterPValue() != null
+								&& Math.abs(probeStatResult.getPrefilterPValue()) > pValue)
+						{
+							probes.remove(st);
+							removedProbes.add(st);
+						}
+					}
+				}
+
+				if (probes == null || probes.isEmpty())
+				{
+					// vectGenes.remove(geneId);
+				}
+				else
+				{
+					pcGenes.add(geneId);
+				}
+			}
+		}
+
+		return pcGenes;
+	}
+	
+	public Vector<String> checkAdjustedPValueBelowDose(Vector<String> vectGenes,
+			double adjustedPValue, Hashtable<String, Vector> subHashG2Ids,
+			Set<String> removedProbes)
+	{
+		Vector<String> pcGenes = new Vector<String>();
+
+		if (vectGenes != null && vectGenes.size() > 0)
+		{
+			for (int i = vectGenes.size() - 1; i >= 0; i--)
+			{
+				String geneId = vectGenes.get(i);
+				Vector<String> probes = new Vector<>(subHashG2Ids.get(geneId));
+
+				if (probes != null && probes.size() > 0)
+				{
+					for (int j = probes.size() - 1; j >= 0; j--)
+					{
+						String st = probes.get(j);
+
+						ProbeStatResult probeStatResult = this.probeGeneMaps.getStatResultMap().get(st);
+						if (probeStatResult == null)
+							continue;
+
+						if (probeStatResult.getPrefilterAdjustedPValue() != null
+								&& Math.abs(probeStatResult.getPrefilterAdjustedPValue()) > adjustedPValue)
 						{
 							probes.remove(st);
 							removedProbes.add(st);

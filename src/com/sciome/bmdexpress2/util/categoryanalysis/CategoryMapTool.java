@@ -57,16 +57,16 @@ import com.sciome.bmdexpress2.util.stat.FishersExact;
 public class CategoryMapTool
 {
 
-	private BMDResult bmdResults;
-	private ProbeGeneMaps probeGeneMaps;
-	private BMDStatatistics bmdStats;
-	private CategoryMapBase categoryGeneMap;
+	private BMDResult					bmdResults;
+	private ProbeGeneMaps				probeGeneMaps;
+	private BMDStatatistics				bmdStats;
+	private CategoryMapBase				categoryGeneMap;
 
-	private String rstName;
-	private ICategoryMapToolProgress categoryMapProgress;
-	private AnalysisInfo analysisInfo;
+	private String						rstName;
+	private ICategoryMapToolProgress	categoryMapProgress;
+	private AnalysisInfo				analysisInfo;
 
-	private CategoryAnalysisParameters params;
+	private CategoryAnalysisParameters	params;
 
 	/**
 	 * Class constructor
@@ -191,6 +191,10 @@ public class CategoryMapTool
 			probeGeneMaps = probeCategoryGeneMaps;
 		}
 
+		if (params.getDeduplicateGeneSets())
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: true");
+		else
+			analysisInfo.getNotes().add("Deduplicate Gene Sets: false");
 		analysisInfo.getNotes().add("Data Source: " + bmdResults.getDoseResponseExperiment().getName());
 		analysisInfo.getNotes().add("Work Source: " + bmdResults.getName());
 		analysisInfo.getNotes()
@@ -242,6 +246,26 @@ public class CategoryMapTool
 							+ params.getnFoldbelowLowestDoseValue());
 			rstName += "_nfold" + df2.format(params.getnFoldbelowLowestDoseValue());
 		}
+
+		if (params.isUserFoldChangeFilter())
+		{
+			analysisInfo.getNotes().add("Remove Genes With Max Fold Change <: " + params.getMaxFoldChange());
+			rstName += "_foldchange" + df1.format(params.getMaxFoldChange());
+		}
+
+		if (params.isUserPValueFilter())
+		{
+			analysisInfo.getNotes().add("Remove Genes With Prefilter P Value >: " + params.getPValue());
+			rstName += "_pvalue" + df1.format(params.getPValue());
+		}
+
+		if (params.isUserAdjustedPValueFilter())
+		{
+			analysisInfo.getNotes()
+					.add("Remove Genes With Prefilter Adjusted P Value >: " + params.getAdjustedPValue());
+			rstName += "_adjustedpvalue" + df1.format(params.getAdjustedPValue());
+		}
+
 		if (params.isIdentifyConflictingProbeSets())
 		{
 			analysisInfo.getNotes().add(
@@ -254,6 +278,9 @@ public class CategoryMapTool
 			analysisInfo.getNotes().add("Probe File: " + params.getProbeFileParameters().getFileName());
 			analysisInfo.getNotes().add("Category File: " + params.getCategoryFileParameters().getFileName());
 		}
+
+		if (params.getDeduplicateGeneSets())
+			rstName += "_deduplicate";
 		this.probeGeneMaps = probeGeneMaps;
 		this.categoryGeneMap = catMap;
 		this.rstName = rstName;
@@ -454,10 +481,32 @@ public class CategoryMapTool
 				categoryAnalysisResult.setGenesWithNFoldBelowLowPostiveDoseValue(sub);
 			}
 
+			if (params.isUserFoldChangeFilter())
+			{
+				sub = bmdStats
+						.checkFoldChange(subList, params.getMaxFoldChange(), subHashG2Ids, removedProbes)
+						.size();
+				categoryAnalysisResult.setGenesWithFoldChangeAboveValue(sub);
+			}
+
+			if (params.isUserPValueFilter())
+			{
+				sub = bmdStats.checkPValueBelowDose(subList, params.getPValue(), subHashG2Ids, removedProbes)
+						.size();
+				categoryAnalysisResult.setGenesWithPrefilterPValueAboveValue(sub);
+			}
+
+			if (params.isUserAdjustedPValueFilter())
+			{
+				sub = bmdStats.checkAdjustedPValueBelowDose(subList, params.getAdjustedPValue(), subHashG2Ids,
+						removedProbes).size();
+				categoryAnalysisResult.setGenesWithPrefilterAdjustedPValueAboveValue(sub);
+			}
+
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);
 
 			sub = subList.size();
-			categoryAnalysisResult.setAllGenesPassedAllFilters(sub);
+			categoryAnalysisResult.setGenesThatPassedAllFilters(sub);
 			// calculate Fisher's exact test values
 			double[] triple = fisherExactTest(sub, chgTotal, all, allTotal);
 			categoryAnalysisResult.setFishersExactLeftPValue(triple[0]);
@@ -482,13 +531,18 @@ public class CategoryMapTool
 
 			if (i % 10 == 0)
 			{
-				categoryMapProgress.updateProgress(
-						"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
-						(double) i / (double) rows);
+				if (categoryMapProgress != null)
+				{
+					categoryMapProgress.updateProgress(
+							"Processing record: " + String.valueOf(i) + "/" + String.valueOf(rows),
+							(double) i / (double) rows);
+				}
 			}
 
 		}
 
+		if (params.getDeduplicateGeneSets())
+			categoryAnalysisResults.deDuplicateGeneSets();
 		return categoryAnalysisResults;
 	}
 
@@ -514,8 +568,7 @@ public class CategoryMapTool
 			pValues[0] = NumberManager.numberFormat(5, test.pLeft());
 			pValues[1] = NumberManager.numberFormat(5, test.pRight());
 			pValues[2] = NumberManager.numberFormat(5, test.twoTail());
-			if (pValues[2] < .01)
-				System.out.println();
+
 		}
 
 		return pValues;// NumberManager.numberFormat(4, pValues);

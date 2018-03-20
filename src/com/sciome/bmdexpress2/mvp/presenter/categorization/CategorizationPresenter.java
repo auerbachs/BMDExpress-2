@@ -7,8 +7,10 @@ import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.categorization.ICategorizationView;
+import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
@@ -22,11 +24,10 @@ import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class CategorizationPresenter extends PresenterBase<ICategorizationView>
+public class CategorizationPresenter extends ServicePresenterBase<ICategorizationView, ICategoryAnalysisService>
 		implements ICategoryMapToolProgress
 {
 	private List<BMDResult>			bmdResults;
-	private CategoryMapTool			catMapTool;
 
 	private CategoryAnalysisEnum	catAnalysisEnum;
 
@@ -34,9 +35,9 @@ public class CategorizationPresenter extends PresenterBase<ICategorizationView>
 	 * Constructors
 	 */
 
-	public CategorizationPresenter(ICategorizationView view, BMDExpressEventBus eventBus)
+	public CategorizationPresenter(ICategorizationView view, ICategoryAnalysisService service, BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
@@ -72,17 +73,7 @@ public class CategorizationPresenter extends PresenterBase<ICategorizationView>
 					});
 					try
 					{
-
-						AnalysisInfo analysisInfo = new AnalysisInfo();
-						List<String> notes = new ArrayList<>();
-
-						analysisInfo.setNotes(notes);
-
-						catMapTool = new CategoryMapTool(params, bmdResult, catAnalysisEnum, me,
-								analysisInfo);
-						CategoryAnalysisResults categoryAnalysisResults = catMapTool.startAnalyses();
-
-						categoryAnalysisResults.setAnalysisInfo(analysisInfo);
+						CategoryAnalysisResults categoryAnalysisResults = getService().categoryAnalysis(params, bmdResult, catAnalysisEnum, me);
 
 						Platform.runLater(() ->
 						{

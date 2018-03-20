@@ -2,37 +2,39 @@ package com.sciome.bmdexpress2.mvp.presenter.visualization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.PresenterBase;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
+import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.GiveMeProjectRequest;
 import com.sciome.bmdexpress2.shared.eventbus.project.HeresYourProjectEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
-import com.sciome.charts.ChartDataPackMaker;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
-public abstract class DataVisualizationPresenter extends PresenterBase<IDataVisualizationView>
+public abstract class DataVisualizationPresenter
+		extends ServicePresenterBase<IDataVisualizationView, IVisualizationService>
 {
 	protected BMDProject	bmdProject	= null;
 	boolean					drawn		= false;
 
-	public DataVisualizationPresenter(IDataVisualizationView view, BMDExpressEventBus eventBus)
+	public DataVisualizationPresenter(IDataVisualizationView view, IVisualizationService service,
+			BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
+		super(view, service, eventBus);
 		init();
 	}
 
 	public void initData(BMDProject bmdProject)
 	{
 		this.bmdProject = bmdProject;
-
 	}
 
 	private void init()
@@ -40,42 +42,11 @@ public abstract class DataVisualizationPresenter extends PresenterBase<IDataVisu
 		getEventBus().post(new GiveMeProjectRequest("please"));
 	}
 
-	/*
-	 * look at the data point label of each data row. if it's in the selected id's list, then allow it to
-	 * pass.
-	 */
-	private void removeSelectedIds(List<ChartDataPack> chartDataPacks, List<String> selectedIds)
+	public List<ChartDataPack> getBMDAnalysisDataSetChartDataPack(List<BMDExpressAnalysisDataSet> catResults,
+			DataFilterPack pack, Set<ChartKey> useTheseKeysOnly, Set<ChartKey> mathedKeys, ChartKey label)
 	{
-		// don't worry about it if the ids list is null
-		if (selectedIds == null)
-			return;
-		for (int i = 0; i < chartDataPacks.size(); i++)
-		{
-			int chartDataSize = chartDataPacks.get(i).getChartData().size();
-			for (int j = 0; j < chartDataSize; j++)
-			{
-				if (!selectedIds.contains(chartDataPacks.get(i).getChartData().get(j).getDataPointLabel()))
-				{
-					chartDataPacks.get(i).getChartData().remove(j);
-					j--;
-					chartDataSize--;
-				}
-			}
-			// now that the data has changed, recomput the basic stats.
-			chartDataPacks.get(i).recomputeStats();
-
-		}
-
-	}
-
-	public List<ChartDataPack> getCategoryResultsChartPackData(List<BMDExpressAnalysisDataSet> catResults,
-			DataFilterPack pack, List<String> selectedIds)
-	{
-		ChartDataPackMaker<BMDExpressAnalysisDataSet, BMDExpressAnalysisRow> chartDataPackMaker = new ChartDataPackMaker<>(
-				pack);
-		List<ChartDataPack> chartDataPacks = chartDataPackMaker.generateDataPacks(catResults);
-		removeSelectedIds(chartDataPacks, selectedIds);
-		return chartDataPacks;
+		return getService().getBMDExpressAnalysisChartDataPack(catResults, pack, useTheseKeysOnly, mathedKeys,
+				label);
 	}
 
 	public abstract List<BMDExpressAnalysisDataSet> getResultsFromProject(
@@ -105,10 +76,17 @@ public abstract class DataVisualizationPresenter extends PresenterBase<IDataVisu
 	@Subscribe
 	public void onShowBMDAnalysisDataSet(ShowBMDAnalysisDataSetVisualizationsEvent event)
 	{
-		if (!drawn)
-			getView().drawResults(event.GetPayload());
+		try
+		{
+			if (!drawn)
+				getView().drawResults(event.GetPayload());
 
-		drawn = true;
+			drawn = true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Subscribe

@@ -4,11 +4,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.categorization.CategorizationPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.categorization.ICategorizationView;
+import com.sciome.bmdexpress2.service.CategoryAnalysisService;
+import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
@@ -18,12 +22,14 @@ import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFiles
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -31,94 +37,115 @@ import javafx.stage.Stage;
 public class CategorizationView extends BMDExpressViewBase implements ICategorizationView, Initializable
 {
 
-	CategorizationPresenter presenter;
+	CategorizationPresenter					presenter;
 
-	private CategoryAnalysisEnum catAnalysisEnum;
-	private DefinedCategoryFileParameters probeFileParameters;
-	private DefinedCategoryFileParameters categoryFileParameters;
+	private CategoryAnalysisEnum			catAnalysisEnum;
+	private DefinedCategoryFileParameters	probeFileParameters;
+	private DefinedCategoryFileParameters	categoryFileParameters;
 
 	// FXML injection
 
 	// checkboxes
 	@FXML
-	private CheckBox BMDUBMDCheckBox;
+	private CheckBox						BMDUBMDCheckBox;
 	@FXML
-	private CheckBox BMDUBMDLCheckBox;
+	private CheckBox						BMDUBMDLCheckBox;
 
 	@FXML
-	private CheckBox bmdFilter4CheckBox;
+	private CheckBox						bmdFilter4CheckBox;
 	@FXML
-	private CheckBox bmdFilter3CheckBox;
+	private CheckBox						bmdFilter3CheckBox;
 	@FXML
-	private CheckBox bmdFilter2CheckBox;
+	private CheckBox						bmdFilter2CheckBox;
 	@FXML
-	private CheckBox bmdFilter1CheckBox;
+	private CheckBox						bmdFilter1CheckBox;
 	@FXML
-	private CheckBox conflictingProbeSetsCheckBox;
+	private CheckBox						conflictingProbeSetsCheckBox;
 	@FXML
-	private CheckBox removePromiscuousProbesCheckBox;
+	private CheckBox						removePromiscuousProbesCheckBox;
+
+	@FXML
+	private CheckBox						deduplicateGeneSetsCheckBox;
 
 	// textfields
 	@FXML
-	private TextField correlationCutoffProbeSetsValue;
+	private TextField						correlationCutoffProbeSetsValue;
 	@FXML
-	private TextField bmdFilter2Value;
+	private TextField						bmdFilter2Value;
 	@FXML
-	private TextField bmdFilter3Value;
+	private TextField						bmdFilter3Value;
 	@FXML
-	private TextField bmdFilter4Value;
+	private TextField						bmdFilter4Value;
 
 	@FXML
-	private TextField BMDUBMDTextbox;
+	private TextField						BMDUBMDTextbox;
 	@FXML
-	private TextField BMDUBMDLTextbox;
+	private TextField						BMDUBMDLTextbox;
 
 	// ComboBoxes
 	@FXML
-	private ComboBox categoryComboBox;
+	private ComboBox						categoryComboBox;
 	@FXML
-	private Label selectionLabel;
+	private Label							selectionLabel;
 
 	@FXML
-	private HBox probeFileHBox;
+	private HBox							probeFileHBox;
 	@FXML
-	private HBox categoryFileHBox;
+	private HBox							categoryFileHBox;
 	@FXML
-	private HBox selectionHBox;
+	private HBox							selectionHBox;
 
 	@FXML
-	private VBox mainVBox;
+	private VBox							mainVBox;
 
 	@FXML
-	private Label probeFileLabel;
+	private Label							probeFileLabel;
 	@FXML
-	private TextField probeFileTextField;
+	private TextField						probeFileTextField;
 	@FXML
-	private Button browseProbeFile;
+	private Button							browseProbeFile;
 
 	@FXML
-	private Label categoryFileLabel;
+	private Label							categoryFileLabel;
 	@FXML
-	private TextField categoryFileTextField;
+	private TextField						categoryFileTextField;
 	@FXML
-	private Button browseCategoryFile;
+	private Button							browseCategoryFile;
 
 	// labels
 	@FXML
-	private Label bMDAnalysisName;
+	private Label							bMDAnalysisName;
 
 	@FXML
-	private ProgressBar progressBar;
+	private ProgressBar						progressBar;
 	@FXML
-	private Label progressLabel;
+	private Label							progressLabel;
 	@FXML
-	private HBox progressHBox;
+	private HBox							progressHBox;
 
 	@FXML
-	private Button startButton;
+	private Button							startButton;
 	@FXML
-	private Button closeButton;
+	private Button							closeButton;
+	@FXML
+	private Button							saveSettingsButton;
 
+	// ComboBoxes
+	@FXML
+	private CheckBox						bmdFilterMaxFoldChangeCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxFoldChangeValue;
+	@FXML
+	private CheckBox						bmdFilterMaxPValueCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxPValueChangeValue;
+	@FXML
+	private CheckBox						bmdFilterMaxAdjustedPValueCheckBox;
+	@FXML
+	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
+
+	private CategoryInput					input;
+	
 	public CategorizationView()
 	{
 		this(BMDExpressEventBus.getInstance());
@@ -130,7 +157,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	public CategorizationView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new CategorizationPresenter(this, eventBus);
+		ICategoryAnalysisService service = new CategoryAnalysisService();
+		presenter = new CategorizationPresenter(this, service, eventBus);
+		input = BMDExpressProperties.getInstance().getCategoryInput();
 	}
 
 	@Override
@@ -159,6 +188,41 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		if (params != null)
 			presenter.startAnalyses(params);
 
+	}
+	
+	@Override
+	public void handle_saveSettingsButtonPressed(ActionEvent event) {
+		input.setRemovePromiscuousProbes(this.removePromiscuousProbesCheckBox.isSelected());
+		input.setRemoveBMDGreaterThanHighestDose(this.bmdFilter1CheckBox.isSelected());
+		input.setRemoveBMDLessThanPValue(this.bmdFilter2CheckBox.isSelected());
+		input.setRemoveGenesWithBMD_BMDL(this.bmdFilter3CheckBox.isSelected());
+		input.setRemoveGenesWithBMDU_BMD(this.BMDUBMDCheckBox.isSelected());
+		input.setRemoveGenesWithBMDU_BMDL(this.BMDUBMDLCheckBox.isSelected());
+		input.setRemoveGenesWithBMDValuesGreaterThanNFold(this.bmdFilter4CheckBox.isSelected());
+		input.setRemoveGenesWithMaxFoldChangeLessThan(this.bmdFilterMaxFoldChangeCheckBox.isSelected());
+		input.setRemoveGenesWithPrefilterPValue(this.bmdFilterMaxPValueCheckBox.isSelected());
+		input.setRemoveGenesWithPrefilterAdjustedPValue(this.bmdFilterMaxAdjustedPValueCheckBox.isSelected());
+		input.setEliminateGeneSetRedundancy(this.deduplicateGeneSetsCheckBox.isSelected());
+		input.setIdentifyConflictingProbeSets(this.conflictingProbeSetsCheckBox.isSelected());
+		
+		input.setRemoveBMDLessThanPValueNumber(Double.parseDouble(this.bmdFilter2Value.getText()));
+		input.setRemoveGenesWithBMD_BMDLNumber(Double.parseDouble(this.bmdFilter3Value.getText()));
+		input.setRemoveGenesWithBMDU_BMDNumber(Double.parseDouble(this.BMDUBMDTextbox.getText()));
+		input.setRemoveGenesWithBMDU_BMDLNumber(Double.parseDouble(this.BMDUBMDLTextbox.getText()));
+		input.setRemoveGenesWithBMDValuesGreaterThanNFoldNumber(Double.parseDouble(this.bmdFilter4Value.getText()));
+		input.setRemoveGenesWithMaxFoldChangeLessThanNumber(Double.parseDouble(this.bmdFilterMaxFoldChangeValue.getText()));
+		input.setRemoveGenesWithPrefilterPValueNumber(Double.parseDouble(this.bmdFilterMaxPValueChangeValue.getText()));
+		input.setRemoveGenesWithPrefilterAdjustedPValueNumber(Double.parseDouble(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
+		input.setCorrelationCutoffForConflictingProbeSets(Double.parseDouble(this.correlationCutoffProbeSetsValue.getText()));
+		
+		BMDExpressProperties.getInstance().saveCategoryInput(input);
+		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -189,6 +253,30 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		{
 			mainVBox.getChildren().remove(selectionHBox);
 		}
+		
+		// Initalize fields using saved settings
+		this.removePromiscuousProbesCheckBox.setSelected(input.isRemovePromiscuousProbes());
+		this.bmdFilter1CheckBox.setSelected(input.isRemoveBMDGreaterThanHighestDose());
+		this.bmdFilter2CheckBox.setSelected(input.isRemoveBMDLessThanPValue());
+		this.bmdFilter3CheckBox.setSelected(input.isRemoveGenesWithBMD_BMDL());
+		this.bmdFilter4CheckBox.setSelected(input.isRemoveGenesWithBMDValuesGreaterThanNFold());
+		this.bmdFilterMaxAdjustedPValueCheckBox.setSelected(input.isRemoveGenesWithPrefilterAdjustedPValue());
+		this.bmdFilterMaxFoldChangeCheckBox.setSelected(input.isRemoveGenesWithMaxFoldChangeLessThan());
+		this.bmdFilterMaxPValueCheckBox.setSelected(input.isRemoveGenesWithPrefilterPValue());
+		this.BMDUBMDCheckBox.setSelected(input.isRemoveGenesWithBMDU_BMD());
+		this.BMDUBMDLCheckBox.setSelected(input.isRemoveGenesWithBMDU_BMDL());
+		this.conflictingProbeSetsCheckBox.setSelected(input.isIdentifyConflictingProbeSets());
+		this.deduplicateGeneSetsCheckBox.setSelected(input.isEliminateGeneSetRedundancy());
+		
+		this.bmdFilter2Value.setText("" + input.getRemoveBMDLessThanPValueNumber());
+		this.bmdFilter3Value.setText("" + input.getRemoveGenesWithBMD_BMDLNumber());
+		this.BMDUBMDTextbox.setText("" + input.getRemoveGenesWithBMDU_BMDNumber());
+		this.BMDUBMDLTextbox.setText("" + input.getRemoveGenesWithBMDU_BMDLNumber());
+		this.bmdFilter4Value.setText("" + input.getRemoveGenesWithBMDValuesGreaterThanNFoldNumber());
+		this.bmdFilterMaxFoldChangeValue.setText("" + input.getRemoveGenesWithMaxFoldChangeLessThanNumber());
+		this.bmdFilterMaxPValueChangeValue.setText("" + input.getRemoveGenesWithPrefilterPValueNumber());
+		this.bmdFilterMaxAdjustedPValueChangeValue.setText("" + input.getRemoveGenesWithPrefilterAdjustedPValueNumber());
+		this.correlationCutoffProbeSetsValue.setText("" + input.getCorrelationCutoffForConflictingProbeSets());
 		presenter.initData(bmdResults, catAnalysisEnum);
 
 	}
@@ -261,6 +349,17 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setRemoveBMDUBMDRatio(this.BMDUBMDCheckBox.isSelected());
 		params.setBmduBmdRatio(Double.valueOf(this.BMDUBMDTextbox.getText()));
+
+		params.setUserFoldChangeFilter(this.bmdFilterMaxFoldChangeCheckBox.isSelected());
+		params.setMaxFoldChange(Double.valueOf(this.bmdFilterMaxFoldChangeValue.getText()));
+
+		params.setUserPValueFilter(this.bmdFilterMaxPValueCheckBox.isSelected());
+		params.setPValue(Double.valueOf(this.bmdFilterMaxPValueChangeValue.getText()));
+
+		params.setUserAdjustedPValueFilter(this.bmdFilterMaxAdjustedPValueCheckBox.isSelected());
+		params.setAdjustedPValue(Double.valueOf(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
+
+		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
 		return params;
 

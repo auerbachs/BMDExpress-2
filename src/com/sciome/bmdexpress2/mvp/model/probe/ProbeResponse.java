@@ -6,8 +6,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 {
 
@@ -32,11 +39,25 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 	private transient float[]			responseArray;
 
 	// row data for the table view.
+	@JsonIgnore
 	protected transient List<Object>	row;
+
+	private Long						id;
 
 	public Probe getProbe()
 	{
 		return probe;
+	}
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
 	}
 
 	public void setProbe(Probe probe)
@@ -66,6 +87,7 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 		responsesBlob = byteBuffer.array();
 	}
 
+	@JsonIgnore
 	public byte[] getResponsesBlob()
 	{
 		return responsesBlob;
@@ -76,6 +98,7 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 		this.responsesBlob = responsesBlob;
 	}
 
+	@JsonIgnore
 	public float[] getResponseArray()
 	{
 		return responseArray;
@@ -103,6 +126,7 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 	}
 
 	@Override
+	@JsonIgnore
 	public List<Object> getRow()
 	{
 		if (row == null)
@@ -128,6 +152,18 @@ public class ProbeResponse extends BMDExpressAnalysisRow implements Serializable
 			row.add(response);
 		}
 
+	}
+
+	@Override
+	public String toString()
+	{
+		return this.probe.toString();
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

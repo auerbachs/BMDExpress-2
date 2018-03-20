@@ -32,6 +32,8 @@ public interface IBMDAnalysisView
 	void handle_start(ActionEvent event);
 
 	void handle_close(ActionEvent event);
+	
+	void handle_saveSettingsButtonPressed(ActionEvent event);
 
 	void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly);
 

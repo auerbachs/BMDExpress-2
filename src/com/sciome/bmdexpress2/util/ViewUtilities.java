@@ -144,6 +144,31 @@ public class ViewUtilities
 
 	}
 
+	public File getSaveAsJSONFile(Window window)
+	{
+		// prompt the user to select a file and then tell the presenter to fire off loading the experiment
+
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export BMDExpress2 Project As JSON");
+		fileChooser.getExtensionFilters()
+				.add(new FileChooser.ExtensionFilter("BMDExpress2(*.json)", "*.json"));
+		File initialDirectory = new File(BMDExpressProperties.getInstance().getProjectPath());
+		if (initialDirectory.exists())
+			fileChooser.setInitialDirectory(initialDirectory);
+		File selectedFile = fileChooser.showSaveDialog(window);
+		if (selectedFile != null)
+		{
+			BMDExpressProperties.getInstance().setProjectPath(selectedFile.getParent());
+			if (!selectedFile.getName().matches("^.*\\.json$"))
+			{
+				selectedFile = new File(selectedFile.getAbsolutePath() + ".json");
+			}
+
+		}
+		return selectedFile;
+
+	}
+
 	public File getOpenProjectFile(Window window)
 	{
 		// prompt the user to select a file and then tell the presenter to fire off loading the experiment
@@ -190,6 +215,28 @@ public class ViewUtilities
 		}
 		return selectedFile;
 
+	}
+
+	public File getJSONImportFileToImport(Window window)
+	{
+		// prompt the user to select a file and then tell the presenter to fire off loading the experiment
+		FileChooser fileChooser = new FileChooser();
+		File initialDirectory = new File(BMDExpressProperties.getInstance().getProjectPath());
+		if (initialDirectory.exists())
+			fileChooser.setInitialDirectory(initialDirectory);
+		fileChooser.setTitle("Import BMDExpress 2 Project in JSON Format");
+		fileChooser.getExtensionFilters()
+				.add(new FileChooser.ExtensionFilter("BMDExpress(*.json)", "*.json"));
+		File selectedFile = fileChooser.showOpenDialog(window);
+		if (selectedFile != null)
+		{
+
+			BMDExpressProperties.getInstance().setProjectPath(selectedFile.getParent());
+			if (!selectedFile.getName().matches("^.*\\.json$"))
+				selectedFile = new File(selectedFile.getAbsolutePath() + ".json");
+
+		}
+		return selectedFile;
 	}
 
 }

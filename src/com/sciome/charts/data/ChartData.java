@@ -2,32 +2,34 @@ package com.sciome.charts.data;
 
 import java.util.Map;
 
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
+
 /*
  * A Data Row that consists of multipe data points.  The map represents the dataPoints.  
  * The object represents the object that contains methods to grab those datapoints
  */
-public class ChartData<T>
+public class ChartData
 {
-	private T					charttableObject;
-	private String				dataPointLabel;
-	private Map<String, Number>	dataPoints;
+	private Object					charttableObject;
+	private String					dataPointLabel;
+	private Map<ChartKey, Double>	dataPoints;
 
-	public T getCharttableObject()
+	public Object getCharttableObject()
 	{
 		return charttableObject;
 	}
 
-	public void setCharttableObject(T charttableObject)
+	public void setCharttableObject(Object charttableObject)
 	{
 		this.charttableObject = charttableObject;
 	}
 
-	public Map<String, Number> getDataPoints()
+	public Map<ChartKey, Double> getDataPoints()
 	{
 		return dataPoints;
 	}
 
-	public void setDataPoints(Map<String, Number> dataPoints)
+	public void setDataPoints(Map<ChartKey, Double> dataPoints)
 	{
 		this.dataPoints = dataPoints;
 	}

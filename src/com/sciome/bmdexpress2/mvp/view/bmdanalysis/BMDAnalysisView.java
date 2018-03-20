@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
 import com.sciome.bmdexpress2.mvp.presenter.bmdanalysis.BMDAnalysisPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
+import com.sciome.bmdexpress2.service.BMDAnalysisService;
+import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
@@ -20,6 +24,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.RestrictPowerEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
 import javafx.beans.value.ChangeListener;
@@ -27,6 +32,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -40,110 +47,116 @@ import javafx.stage.Stage;
 public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisView, Initializable
 {
 
-	BMDAnalysisPresenter presenter;
+	BMDAnalysisPresenter				presenter;
 
 	// FXML injection
 
 	// checkboxes
 	@FXML
-	private CheckBox exponential2CheckBox;
+	private CheckBox					exponential2CheckBox;
 	@FXML
-	private CheckBox exponential3CheckBox;
+	private CheckBox					exponential3CheckBox;
 	@FXML
-	private CheckBox exponential4CheckBox;
+	private CheckBox					exponential4CheckBox;
 	@FXML
-	private CheckBox exponential5CheckBox;
+	private CheckBox					exponential5CheckBox;
 	@FXML
-	private CheckBox hillCheckBox;
+	private CheckBox					hillCheckBox;
 	@FXML
-	private CheckBox powerCheckBox;
+	private CheckBox					powerCheckBox;
 	@FXML
-	private CheckBox linearCheckBox;
+	private CheckBox					linearCheckBox;
 	@FXML
-	private CheckBox poly2CheckBox;
+	private CheckBox					poly2CheckBox;
 	@FXML
-	private CheckBox poly3CheckBox;
+	private CheckBox					poly3CheckBox;
 	@FXML
-	private CheckBox poly4CheckBox;
+	private CheckBox					poly4CheckBox;
 
 	@FXML
-	private CheckBox constantVarianceCheckBox;
+	private CheckBox					constantVarianceCheckBox;
 
 	@FXML
-	private CheckBox flagHillkParamCheckBox;
+	private CheckBox					flagHillkParamCheckBox;
 	@FXML
-	private CheckBox setThreadCheckBox;
+	private CheckBox					setThreadCheckBox;
 
 	// textfields
 	@FXML
-	private TextField maximumIterationsTextField;
+	private TextField					maximumIterationsTextField;
 	@FXML
-	private ComboBox bMRFactorComboBox;
-	@FXML
-	private TextField modifyFlaggedHillBMDTextField;
+	private TextField					modifyFlaggedHillBMDTextField;
 
 	// ComboBoxes
 	@FXML
-	private ComboBox confidenceLevelComboBox;
+	private ComboBox					bMRFactorComboBox;
 	@FXML
-	private ComboBox restrictPowerComboBox;
+	private ComboBox					confidenceLevelComboBox;
+	@FXML
+	private ComboBox					restrictPowerComboBox;
 
 	@FXML
-	private ComboBox bestPolyTestComboBox;
+	private ComboBox					bestPolyTestComboBox;
 	@FXML
-	private ComboBox pValueCutoffComboBox;
+	private ComboBox					pValueCutoffComboBox;
 
 	@FXML
-	private ComboBox flagHillkParamComboBox;
+	private ComboBox					flagHillkParamComboBox;
 	@FXML
-	private ComboBox bestModelSeletionWithFlaggedHillComboBox;
+	private ComboBox					bestModelSeletionWithFlaggedHillComboBox;
 
 	@FXML
-	private ComboBox numberOfThreadsComboBox;
+	private ComboBox					numberOfThreadsComboBox;
+	@FXML
+	private ComboBox					killTimeComboBox;
 
 	// labels
 	@FXML
-	private Label expressionDataLabel;
+	private Label						expressionDataLabel;
 	@FXML
-	private Label oneWayANOVADataLabel;
+	private Label						oneWayANOVADataLabel;
 	@FXML
-	private Label oneWayANOVADataLabelLabel;
+	private Label						oneWayANOVADataLabelLabel;
 	@FXML
-	private Label modifyFlaggedHillBMDLabel;
+	private Label						modifyFlaggedHillBMDLabel;
 	@FXML
-	private Label bestModelSeletionWithFlaggedHillLabel;
+	private Label						bestModelSeletionWithFlaggedHillLabel;
 	@FXML
-	private Label restrictPowerLabel;
+	private Label						restrictPowerLabel;
 
 	@FXML
-	private ProgressBar progressBar;
+	private ProgressBar					progressBar;
 	@FXML
-	private Label progressLabel;
+	private Label						progressLabel;
 
 	@FXML
-	private Button startButton;
+	private Button						startButton;
 	@FXML
-	private Button cancelButton;
+	private Button						saveSettingsButton;
+	@FXML
+	private Button						cancelButton;
 
 	@FXML
-	private VBox mainVBox;
+	private VBox						mainVBox;
 	// anchor panes
 	@FXML
-	private AnchorPane startCancelPane;
+	private AnchorPane					startCancelPane;
 	@FXML
-	private AnchorPane threadPane;
+	private AnchorPane					threadPane;
 	@FXML
-	private AnchorPane modelSelectionPane;
+	private AnchorPane					modelSelectionPane;
 	@FXML
-	private AnchorPane parametersPane;
+	private AnchorPane					parametersPane;
 	@FXML
-	private AnchorPane modelsPane;
+	private AnchorPane					modelsPane;
 	@FXML
-	private AnchorPane dataOptionsPane;
+	private AnchorPane					dataOptionsPane;
 
-	private List<IStatModelProcessable> processableData;
+	private List<IStatModelProcessable>	processableData;
 
-	private boolean selectModelsOnly = false;
+	private boolean						selectModelsOnly	= false;
+
+	private BMDInput					input;
 
 	public BMDAnalysisView()
 	{
@@ -156,7 +169,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	public BMDAnalysisView(BMDExpressEventBus eventBus)
 	{
 		super();
-		presenter = new BMDAnalysisPresenter(this, eventBus);
+		IBMDAnalysisService service = new BMDAnalysisService();
+		presenter = new BMDAnalysisPresenter(this, service, eventBus);
+		input = BMDExpressProperties.getInstance().getBmdInput();
 	}
 
 	@Override
@@ -265,6 +280,50 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			presenter.performBMDAnalysis(inputParameters, modelSectionParameters, modelsToRun);
 	}
 
+	@Override
+	public void handle_saveSettingsButtonPressed(ActionEvent event)
+	{
+		// Set check box values
+		input.setExp2(this.exponential2CheckBox.isSelected());
+		input.setExp3(this.exponential3CheckBox.isSelected());
+		input.setExp4(this.exponential4CheckBox.isSelected());
+		input.setExp5(this.exponential5CheckBox.isSelected());
+		input.setLinear(this.linearCheckBox.isSelected());
+		input.setPoly2(this.poly2CheckBox.isSelected());
+		input.setPoly3(this.poly3CheckBox.isSelected());
+		input.setPoly4(this.poly4CheckBox.isSelected());
+		input.setHill(this.hillCheckBox.isSelected());
+		input.setPower(this.powerCheckBox.isSelected());
+		input.setConstantVariance(this.constantVarianceCheckBox.isSelected());
+		input.setFlagHillModel(this.flagHillkParamCheckBox.isSelected());
+
+		// Set numerical values
+		input.setMaxIterations(Integer.parseInt(this.maximumIterationsTextField.getText()));
+		input.setNumThreads(Integer.parseInt(this.numberOfThreadsComboBox.getEditor().getText()));
+		input.setKillTime(Integer.parseInt(this.killTimeComboBox.getEditor().getText()));
+		input.setConfidenceLevel(Double.parseDouble(this.confidenceLevelComboBox.getEditor().getText()));
+		input.setpValueCutoff(Double.parseDouble(this.pValueCutoffComboBox.getEditor().getText()));
+		input.setModifyBMDFlaggedHill(Double.parseDouble(this.modifyFlaggedHillBMDTextField.getText()));
+
+		// Set String values
+		input.setBMRFactor((BMRFactor) this.bMRFactorComboBox.getValue());
+		input.setRestrictPower((RestrictPowerEnum) this.restrictPowerComboBox.getValue());
+		input.setBestPolyModelTest((BestPolyModelTestEnum) this.bestPolyTestComboBox.getValue());
+		input.setkParameterLessThan((FlagHillModelDoseEnum) this.flagHillkParamComboBox.getValue());
+		input.setBestModelWithFlaggedHill(
+				(BestModelSelectionWithFlaggedHillModelEnum) this.bestModelSeletionWithFlaggedHillComboBox
+						.getValue());
+
+		BMDExpressProperties.getInstance().saveBMDInput(input);
+
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
+	}
+
 	/*
 	 * use clicked done button
 	 */
@@ -331,7 +390,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		modifyFlaggedHillBMDLabel.setDisable(!hillCheckBox.isSelected());
 		modifyFlaggedHillBMDTextField.setDisable(!hillCheckBox.isSelected());
 		handle_FlagHillCheckBox(event);
-
 	}
 
 	@Override
@@ -364,19 +422,32 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			expressionDataLabel.setText(processableData.get(0).getParentDataSetName());
 		}
 
+		// init checkboxes
+		exponential2CheckBox.setSelected(input.isExp2());
+		exponential3CheckBox.setSelected(input.isExp3());
+		exponential4CheckBox.setSelected(input.isExp4());
+		exponential5CheckBox.setSelected(input.isExp5());
+		linearCheckBox.setSelected(input.isLinear());
+		poly2CheckBox.setSelected(input.isPoly2());
+		poly3CheckBox.setSelected(input.isPoly3());
+		poly4CheckBox.setSelected(input.isPoly4());
+		hillCheckBox.setSelected(input.isHill());
+		powerCheckBox.setSelected(input.isPower());
+		constantVarianceCheckBox.setSelected(input.isConstantVariance());
+		flagHillkParamCheckBox.setSelected(input.isFlagHillModel());
+
 		// init confidence level
 		confidenceLevelComboBox.getItems().add("0.95");
 		confidenceLevelComboBox.getItems().add("0.99");
-		confidenceLevelComboBox.getSelectionModel().select(0);
+		confidenceLevelComboBox.getSelectionModel().select(input.getConfidenceLevel());
 
 		// init restrict power
-		restrictPowerComboBox.getItems().add("No Restriction");
-		restrictPowerComboBox.getItems().add(">=1");
-		restrictPowerComboBox.getSelectionModel().select(1);
+		restrictPowerComboBox.getItems().addAll(RestrictPowerEnum.values());
+		restrictPowerComboBox.getSelectionModel().select(input.getRestrictPower());
 
 		// init best poly model test
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
-		bestPolyTestComboBox.getSelectionModel().select(0);
+		bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
 
 		// pValue Cut OFF
 		pValueCutoffComboBox.getItems().add("0.01");
@@ -384,17 +455,16 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		pValueCutoffComboBox.getItems().add("0.10");
 		pValueCutoffComboBox.getItems().add("0.5");
 		pValueCutoffComboBox.getItems().add("1");
-		pValueCutoffComboBox.getSelectionModel().select(1);
+		pValueCutoffComboBox.getSelectionModel().select(input.getpValueCutoff());
 
 		flagHillkParamComboBox.getItems().setAll(FlagHillModelDoseEnum.values());
-
-		flagHillkParamComboBox.getSelectionModel().select(FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE);
+		flagHillkParamComboBox.getSelectionModel().select(input.getkParameterLessThan());
 
 		bestModelSeletionWithFlaggedHillComboBox.getItems()
 				.setAll(BestModelSelectionWithFlaggedHillModelEnum.values());
 
 		bestModelSeletionWithFlaggedHillComboBox.getSelectionModel()
-				.select(BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5);
+				.select(input.getBestModelWithFlaggedHill());
 
 		bestModelSeletionWithFlaggedHillComboBox.valueProperty()
 				.addListener(new ChangeListener<BestModelSelectionWithFlaggedHillModelEnum>() {
@@ -410,12 +480,21 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 				});
 
-		// let's add 200 threads to drop down
-		for (int i = 1; i <= 200; i++)
+		// let's add 100 threads to drop down
+		for (int i = 1; i <= 100; i++)
 		{
 			numberOfThreadsComboBox.getItems().add(String.valueOf(i));
 		}
-		numberOfThreadsComboBox.getSelectionModel().select(0);
+		numberOfThreadsComboBox.setValue(input.getNumThreads());
+
+		// Add values to kill time combo box
+		killTimeComboBox.getItems().add("30");
+		killTimeComboBox.getItems().add("60");
+		killTimeComboBox.getItems().add("90");
+		killTimeComboBox.getItems().add("120");
+		killTimeComboBox.getItems().add("150");
+		killTimeComboBox.getItems().add("180");
+		killTimeComboBox.setValue(input.getKillTime());
 
 		// remove most of the panes.
 		if (selectModelsOnly)
@@ -432,8 +511,11 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		// add data to the bmrFactor combobox
 		bMRFactorComboBox.getItems().addAll(initBMRFactors());
-		bMRFactorComboBox.getSelectionModel().select(3);
+		bMRFactorComboBox.getSelectionModel().select(input.getBMRFactor());
 
+		ActionEvent event = new ActionEvent();
+		handle_HillCheckBox(event);
+		handle_PowerCheckBox(event);
 	}
 
 	private ModelInputParameters assignParameters()
@@ -446,7 +528,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			inputParameters.setBmrLevel(Double.valueOf(
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
-
+			// Multiply by 1000 to convert seconds to milliseconds
+			inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);
@@ -575,31 +658,4 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		factors.add(new BMRFactor("3 SD", "3.0"));
 		return factors;
 	}
-
-	/*
-	 * store the BMR Factors here.
-	 */
-	private class BMRFactor
-	{
-		private String description;
-		private String value;
-
-		public BMRFactor(String d, String v)
-		{
-			description = d;
-			value = v;
-		}
-
-		@Override
-		public String toString()
-		{
-			return description;
-		}
-
-		public String getValue()
-		{
-			return value;
-		}
-	}
-
 }

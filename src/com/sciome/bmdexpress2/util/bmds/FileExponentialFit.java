@@ -26,22 +26,23 @@ import com.sciome.bmdexpress2.util.NumberManager;
  */
 public class FileExponentialFit extends FileFitBase
 {
-	private String exponentialEXE, dPath;
-	private int[] intParams;
-	private final int SIX = 6;
-	private final int outMax = 11;
-	private final double minDouble = -9999;
-	private final String NEGPARAM = "-9999";
-	private final String newline = "\n";
-	private final String space1 = " ";
-	private int expOption = 0;
+	private String			exponentialEXE, dPath;
+	private int[]			intParams;
+	private final int		SIX			= 6;
+	private final int		outMax		= 11;
+	private final double	minDouble	= -9999;
+	private final String	NEGPARAM	= "-9999";
+	private final String	newline		= "\n";
+	private final String	space1		= " ";
+	private int				expOption	= 0;
 
-	private final String[] FLAGS = { "Parameter Estimates", "Asymptotic Correlation Matrix",
+	private final String[]	FLAGS		= { "Parameter Estimates", "Asymptotic Correlation Matrix",
 			"Likelihoods of Interest", "Tests of Interest", " A1 ", " Test 1 ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
-	public FileExponentialFit(int option)
+	public FileExponentialFit(int option, int killTime)
 	{
+		super(killTime);
 		this.exponentialEXE = BMDExpressProperties.getInstance().getExponentialEXE();
 		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 		this.expOption = option;
@@ -73,14 +74,46 @@ public class FileExponentialFit extends FileFitBase
 
 			if (outFile != null)
 			{
-				outFile.delete();
-				(new File(dPath, "M" + expOption + name + "_exponential.002")).delete();
-				(new File(dPath, "M" + expOption + name + "-_exponential.log")).delete();
+				if (outFile.exists())
+					outFile.delete();
+				try
+				{
+					(new File(dPath, "M" + expOption + name + "_exponential.002")).delete();
+				}
+				catch (Exception e)
+				{}
+
+				try
+				{
+					(new File(dPath, "M" + expOption + name + "-_exponential.log")).delete();
+				}
+				catch (Exception e)
+				{}
 			}
-			(new File(dPath, name + "_exponential.out")).delete();
-			(new File(dPath, name + "_exponential.002")).delete();
-			(new File(dPath, name + "-_exponential.log")).delete();
-			(new File(dPath, name + "_exponential-Exp.log")).delete();
+			try
+			{
+				(new File(dPath, name + "_exponential.out")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, name + "_exponential.002")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, name + "-_exponential.log")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, name + "_exponential-Exp.log")).delete();
+			}
+			catch (Exception e)
+			{}
 		}
 
 		return outputs;
@@ -181,6 +214,8 @@ public class FileExponentialFit extends FileFitBase
 
 	private File readOutputs(String name, double[] outputs)
 	{
+		if (!success)
+			return new File(dPath, name + "_exponential.out");
 		int afterSix = 1;
 		List<Double> means = new ArrayList<>();
 		try
@@ -340,7 +375,6 @@ public class FileExponentialFit extends FileFitBase
 						outputs[2] = NumberManager.parseDouble(bmdu, minDouble);
 					}
 				}
-
 				fr.close();
 			}
 			catch (IOException e)

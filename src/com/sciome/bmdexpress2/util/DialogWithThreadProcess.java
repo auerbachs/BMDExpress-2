@@ -8,9 +8,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 
 import org.ciit.io.ProjectReader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -36,6 +38,66 @@ public class DialogWithThreadProcess
 	public DialogWithThreadProcess(Window owner)
 	{
 		this.owner = owner;
+	}
+
+	public void saveJSONProject(BMDProject bmdProject, File selectedFile)
+	{
+		Task task = new Task<Void>() {
+
+			@Override
+			protected Void call() throws Exception
+			{
+				try
+				{
+
+					saveAsJSON(bmdProject, selectedFile);
+
+				}
+				catch (IOException i)
+				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Error saving file. " + i.toString()));
+
+						}
+					});
+					i.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void succeeded()
+			{
+				super.succeeded();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void cancelled()
+			{
+				super.cancelled();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void failed()
+			{
+				super.failed();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+		};
+		new Thread(task).start();
+
+		showWaitDialog("Save Project",
+				"Saving Project : " + bmdProject.getName() + " to " + selectedFile.getAbsolutePath());
 	}
 
 	public void saveProject(BMDProject bmdProject, File selectedFile)
@@ -67,7 +129,7 @@ public class DialogWithThreadProcess
 						public void run()
 						{
 							BMDExpressEventBus.getInstance()
-									.post(new ShowErrorEvent("Error saveing file. " + i.toString()));
+									.post(new ShowErrorEvent("Error saving file. " + i.toString()));
 
 						}
 					});
@@ -129,6 +191,16 @@ public class DialogWithThreadProcess
 				}
 				catch (IOException i)
 				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file corrupted. " + i.toString()));
+
+						}
+					});
 					i.printStackTrace();
 				}
 				catch (ClassNotFoundException c)
@@ -178,6 +250,89 @@ public class DialogWithThreadProcess
 		new Thread(task).start();
 
 		showWaitDialog("Load Project", "Loading Project from " + selectedFile.getAbsolutePath());
+		return (BMDProject) task.getValue();
+	}
+	
+	public BMDProject addProject(File selectedFile)
+	{
+		Task task = new Task<BMDProject>() {
+
+			BMDProject loadedProject = null;
+
+			@Override
+			protected BMDProject call() throws Exception
+			{
+				try
+				{
+					FileInputStream fileIn = new FileInputStream(selectedFile);
+					BufferedInputStream bIn = new BufferedInputStream(fileIn, 1024 * 2000);
+
+					ObjectInputStream in = new ObjectInputStream(bIn);
+					loadedProject = (BMDProject) in.readObject();
+					in.close();
+					fileIn.close();
+				}
+				catch (IOException i)
+				{
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file corrupted. " + i.toString()));
+
+						}
+					});
+					i.printStackTrace();
+				}
+				catch (ClassNotFoundException c)
+				{
+
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run()
+						{
+							BMDExpressEventBus.getInstance()
+									.post(new ShowErrorEvent("Project file incorrect. " + c.toString()));
+
+						}
+					});
+
+					c.printStackTrace();
+				}
+
+				return loadedProject;
+			}
+
+			@Override
+			protected void succeeded()
+			{
+				super.succeeded();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void cancelled()
+			{
+				super.cancelled();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+
+			@Override
+			protected void failed()
+			{
+				super.failed();
+				dialog.setResult("finished");
+				dialog.close();
+			}
+		};
+		new Thread(task).start();
+
+		showWaitDialog("Add Project", "Adding Project from " + selectedFile.getAbsolutePath());
 		return (BMDProject) task.getValue();
 	}
 
@@ -262,6 +417,26 @@ public class DialogWithThreadProcess
 		showWaitDialog("Load Project", "Loading Project from " + selectedFile.getAbsolutePath());
 		return (BMDProject) task.getValue();
 
+	}
+
+	private void saveAsJSON(BMDProject project, File theFile) throws Exception
+	{
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		/**
+		 * To make the JSON String pretty use the below code
+		 */
+		mapper.writerWithDefaultPrettyPrinter().writeValue(theFile, project);
+
+	}
+
+	public BMDProject importJSONFile(File selectedFile) throws Exception
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		BMDProject projecttest = mapper.readValue(selectedFile, BMDProject.class);
+
+		return projecttest;
 	}
 
 }

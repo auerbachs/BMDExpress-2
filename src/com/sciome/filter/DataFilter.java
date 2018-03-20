@@ -1,5 +1,16 @@
 package com.sciome.filter;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.filter.component.FilterDataExtractor;
+
 /*
  * abstract class for making a data filter
  * S represents the class that should be annotated for filtratoin
@@ -8,54 +19,50 @@ package com.sciome.filter;
  * to get the data that needs comparing.
  * 
  */
-public abstract class DataFilter<T, S>
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonSubTypes({ @Type(value = StringFilter.class, name = "string"),
+		@Type(value = NumberFilter.class, name = "number"),
+		@Type(value = IntegerFilter.class, name = "integer") })
+public abstract class DataFilter<T>
 {
 
-	protected DataFilterType					dataFilterType;
-	protected String							key;
-	protected GenericFilterAnnotationExtractor	filterAnnotationExtractor;
-	private Class<S>							filterableAnnotatedClass;
+	protected DataFilterType			dataFilterType;
+	protected String					key;
+
+	// these two fields are causing a memory leak
+	// because we are storing these filter instances in a hash
+	// that is cached.
+	protected FilterDataExtractor		filterAnnotationExtractor;
+	protected BMDExpressAnalysisDataSet	bmdanalysisDataSet;
+
 	// Value to compare object to
-	protected T									value1;
+	protected List<Object>				values;
 
-	// The other value to compare object to. this will be used for between comparisons.
-	protected T									value2;
+	public DataFilter()
+	{
 
-	public DataFilter(DataFilterType dataFilterType, Class<S> filterableAnnotatedClass, String key, T value1)
+	}
+
+	public DataFilter(DataFilterType dataFilterType, BMDExpressAnalysisDataSet bmdanalysisDataSet, String key,
+			List<Object> values)
 	{
 		this.key = key;
 		this.dataFilterType = dataFilterType;
-		this.value1 = value1;
-		this.filterableAnnotatedClass = filterableAnnotatedClass;
+		this.values = values;
+		this.bmdanalysisDataSet = bmdanalysisDataSet;
 		init();
 	}
 
-	public DataFilter(DataFilterType dataFilterType, Class<S> filterableAnnotatedClass, String key, T value1,
-			T value2)
+	public void init()
 	{
-		this.key = key;
-		this.dataFilterType = dataFilterType;
-		this.value1 = value1;
-		this.value2 = value2;
-		this.filterableAnnotatedClass = filterableAnnotatedClass;
-		init();
+		filterAnnotationExtractor = new FilterDataExtractor(bmdanalysisDataSet);
 	}
 
-	private void init()
-	{
-		filterAnnotationExtractor = new GenericFilterAnnotationExtractor(filterableAnnotatedClass);
-	}
+	public abstract boolean passesFilter(BMDExpressAnalysisRow object);
 
-	public abstract boolean passesFilter(S object);
-
-	public T getValue1()
+	public List<Object> getValues()
 	{
-		return value1;
-	}
-
-	public T getValue2()
-	{
-		return value2;
+		return values;
 	}
 
 	public DataFilterType getDataFilterType()
@@ -67,5 +74,44 @@ public abstract class DataFilter<T, S>
 	{
 		return key;
 	}
+
+	@JsonIgnore
+	public FilterDataExtractor getFilterAnnotationExtractor()
+	{
+		return filterAnnotationExtractor;
+	}
+
+	public void setFilterAnnotationExtractor(FilterDataExtractor filterAnnotationExtractor)
+	{
+		this.filterAnnotationExtractor = filterAnnotationExtractor;
+	}
+
+	@JsonIgnore
+	public BMDExpressAnalysisDataSet getBmdanalysisDataSet()
+	{
+		return bmdanalysisDataSet;
+	}
+
+	public void setBmdanalysisDataSet(BMDExpressAnalysisDataSet bmdanalysisDataSet)
+	{
+		this.bmdanalysisDataSet = bmdanalysisDataSet;
+	}
+
+	public void setDataFilterType(DataFilterType dataFilterType)
+	{
+		this.dataFilterType = dataFilterType;
+	}
+
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
+
+	public void setValues(List<Object> values)
+	{
+		this.values = values;
+	}
+
+	public abstract DataFilter copy();
 
 }

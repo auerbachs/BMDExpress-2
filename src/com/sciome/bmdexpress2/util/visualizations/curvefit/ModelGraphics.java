@@ -20,15 +20,10 @@ package com.sciome.bmdexpress2.util.visualizations.curvefit;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
-import java.text.CharacterIterator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
@@ -57,7 +52,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTick;
 import org.jfree.chart.editor.ChartEditor;
 import org.jfree.chart.editor.ChartEditorManager;
 import org.jfree.chart.plot.PlotOrientation;
@@ -67,8 +61,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.TextAnchor;
 
 import com.sciome.bmdexpress2.mvp.model.probe.Probe;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -77,6 +69,7 @@ import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.util.NumberManager;
 import com.sciome.bmdexpress2.util.prefilter.OnewayAnova;
+import com.sciome.charts.jfree.CustomJFreeLogAxis;
 
 /**
  * The ModelGraphics class
@@ -87,87 +80,87 @@ public class ModelGraphics extends JPanel
 	// Variables declaration
 
 	// Model Graphics Variables
-	private BMDResult bmdResults; // the matrix of data from the parent
-	private OnewayAnova oneway; //
-	private BMDoseModel bmdModel; //
-	private StatResult bestModel;
+	private BMDResult						bmdResults;					// the matrix of data from the parent
+	private OnewayAnova						oneway;						//
+	private BMDoseModel						bmdModel;					//
+	private StatResult						bestModel;
 
 	// srcName = getName() from called MatrixData to avoind create it again
 	// if called from selecting probe from parent displayview
-	private String srcName;
+	private String							srcName;
 
-	private double[] doses; // read in doses
-	private double[] responses; // holds responses
-	private double[] parameters; // read in parameters BMD, BMDL, BMDU,
-									// pValue...
+	private double[]						doses;						// read in doses
+	private double[]						responses;					// holds responses
+	private double[]						parameters;					// read in parameters BMD, BMDL, BMDU,
+																		// pValue...
 
-	private XYSeries dataSeries; // holds the raw data
-	private XYSeries modelSeries; // holds the model
-	private XYSeries bmdSeries; // holds the BMD drawing setup
-	private XYSeries bmdlSeries; // holds the BMDL drawing setup
-	private XYSeries bmduSeries; // holds the BMDU drawing setup
-	private XYSeriesCollection seriesSet; // holds the set of series currently
-											// displayed
+	private XYSeries						dataSeries;					// holds the raw data
+	private XYSeries						modelSeries;				// holds the model
+	private XYSeries						bmdSeries;					// holds the BMD drawing setup
+	private XYSeries						bmdlSeries;					// holds the BMDL drawing setup
+	private XYSeries						bmduSeries;					// holds the BMDU drawing setup
+	private XYSeriesCollection				seriesSet;					// holds the set of series currently
+																		// displayed
 
-	private Color[] chartColors; // holds the colors for various chart
-									// components
+	private Color[]							chartColors;				// holds the colors for various chart
+																		// components
 
-	private JFreeChart chart; // the displayed chart
-	private ChartPanel cP; // the panel for the chart
+	private JFreeChart						chart;						// the displayed chart
+	private ChartPanel						cP;							// the panel for the chart
 
-	private int NUM_SERIES; // holds the number of data series
+	private int								NUM_SERIES;					// holds the number of data series
 
-	private int CHART_WIDTH; // for the chart's width
-	private int CHART_HEIGHT; // for the chart's height
+	private int								CHART_WIDTH;				// for the chart's width
+	private int								CHART_HEIGHT;				// for the chart's height
 
-	private double HIGH; // holds the high y value
-	private double LOW; // holds the low y value
+	private double							HIGH;						// holds the high y value
+	private double							LOW;						// holds the low y value
 
 	// constants to set parameters
-	final int DATA;
-	final int POWER;
-	final int LINEAR;
-	final int TWODEG;
-	final int THREEDEG;
-	final double LBUFFER; // used to make model sample differ
-							// from data
-							// range
-	final double RBUFFER; // used to make model sample differ
-							// from data
-							// range
+	final int								DATA;
+	final int								POWER;
+	final int								LINEAR;
+	final int								TWODEG;
+	final int								THREEDEG;
+	final double							LBUFFER;					// used to make model sample differ
+																		// from data
+																		// range
+	final double							RBUFFER;					// used to make model sample differ
+																		// from data
+																		// range
 
-	private javax.swing.JButton printButton;
-	private javax.swing.JButton closeButton;
-	private javax.swing.JButton clearButton;
-	private javax.swing.JButton colorButton;
-	private javax.swing.JComboBox<String> modelBox;
-	private javax.swing.JComboBox<Probe> probeBox;
-	private javax.swing.JLabel modelLabel;
-	private javax.swing.JLabel addModelLabel;
-	private javax.swing.JLabel bmdlLabel;
-	private javax.swing.JLabel bmduLabel;
-	private javax.swing.JLabel bmdLabel;
-	private javax.swing.JLabel aicLabel;
-	private javax.swing.JLabel idLabel;
-	private javax.swing.JLabel pvLabel;
-	private javax.swing.JPanel jPanel1;
-	private javax.swing.JPanel jPanel2;
-	private javax.swing.JPanel jPanel3;
-	private javax.swing.JTextField modelField;
-	private javax.swing.JTextField bmdField;
-	private javax.swing.JTextField bmdLField;
-	private javax.swing.JTextField bmdUField;
-	private javax.swing.JTextField aicField;
-	private javax.swing.JTextField pvalField;
-	private javax.swing.JCheckBox allDataBox;
-	private javax.swing.JCheckBox meanStdBox;
-	private javax.swing.JCheckBox logDoseAxis;
-	private javax.swing.JSeparator jSep1;
+	private javax.swing.JButton				printButton;
+	private javax.swing.JButton				closeButton;
+	private javax.swing.JButton				clearButton;
+	private javax.swing.JButton				colorButton;
+	private javax.swing.JComboBox<String>	modelBox;
+	private javax.swing.JComboBox<Probe>	probeBox;
+	private javax.swing.JLabel				modelLabel;
+	private javax.swing.JLabel				addModelLabel;
+	private javax.swing.JLabel				bmdlLabel;
+	private javax.swing.JLabel				bmduLabel;
+	private javax.swing.JLabel				bmdLabel;
+	private javax.swing.JLabel				aicLabel;
+	private javax.swing.JLabel				idLabel;
+	private javax.swing.JLabel				pvLabel;
+	private javax.swing.JPanel				jPanel1;
+	private javax.swing.JPanel				jPanel2;
+	private javax.swing.JPanel				jPanel3;
+	private javax.swing.JTextField			modelField;
+	private javax.swing.JTextField			bmdField;
+	private javax.swing.JTextField			bmdLField;
+	private javax.swing.JTextField			bmdUField;
+	private javax.swing.JTextField			aicField;
+	private javax.swing.JTextField			pvalField;
+	private javax.swing.JCheckBox			allDataBox;
+	private javax.swing.JCheckBox			meanStdBox;
+	private javax.swing.JCheckBox			logDoseAxis;
+	private javax.swing.JSeparator			jSep1;
 
-	private Map<Probe, double[]> probeResponseMap;
-	private Map<Probe, ProbeStatResult> probeStatResultMap;
-	private ModelGraphicsEvent modelGraphicsEventListener;
-	private double logZeroDose;
+	private Map<Probe, double[]>			probeResponseMap;
+	private Map<Probe, ProbeStatResult>		probeStatResultMap;
+	private ModelGraphicsEvent				modelGraphicsEventListener;
+	private double							logZeroDose;
 
 	// End of variables declaration
 
@@ -215,8 +208,8 @@ public class ModelGraphics extends JPanel
 		oneway.setVariablesXX(0, doses);
 
 		// init const holders
-		CHART_HEIGHT = 325;
-		CHART_WIDTH = 550;
+		CHART_HEIGHT = 400;
+		CHART_WIDTH = 900;
 		NUM_SERIES = 0;
 		DATA = 0;
 		POWER = 1;
@@ -272,6 +265,7 @@ public class ModelGraphics extends JPanel
 		plot.setRenderer(renderer);
 
 		cP = new ChartPanel(chart);
+		cP.setMaximumSize(new Dimension(CHART_WIDTH, CHART_HEIGHT));
 
 		// setAlwaysOnTop(true);
 
@@ -433,8 +427,8 @@ public class ModelGraphics extends JPanel
 		comboBoxReader();
 
 		// Set up the panel to display charts
-		// jPanel2.setSize(CHART_WIDTH,CHART_HEIGHT);
-		jPanel2.add(cP);
+		jPanel2.setSize(CHART_WIDTH, CHART_HEIGHT);
+		// jPanel2.add(cP);
 		jSep1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
 		// Setup for the frame layouts
@@ -495,10 +489,10 @@ public class ModelGraphics extends JPanel
 										.addGap(13, 13, 13))
 								.addGroup(jPanel1Layout.createSequentialGroup().addComponent(printButton)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(clearButton)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(colorButton)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(clearButton).addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(colorButton).addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addComponent(closeButton)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
 						/// <>///
@@ -528,13 +522,11 @@ public class ModelGraphics extends JPanel
 		jPanel1Layout.setVerticalGroup(jPanel1Layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap()
-								.addGroup(jPanel1Layout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-										.addComponent(modelLabel)
-										.addComponent(modelField, javax.swing.GroupLayout.PREFERRED_SIZE,
+						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(
+								jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+										.addComponent(modelLabel).addComponent(modelField,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -641,7 +633,8 @@ public class ModelGraphics extends JPanel
 		);
 		jPanel3Layout.setVerticalGroup(
 				jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-						javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+						javax.swing.GroupLayout.Alignment.TRAILING,
+						jPanel3Layout.createSequentialGroup()
 								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(jPanel3Layout
 										.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -766,7 +759,7 @@ public class ModelGraphics extends JPanel
 				if (logDoseAxis.isSelected())
 				{
 
-					LogAxis logAxis = new CustomLogAxis();
+					LogAxis logAxis = new CustomJFreeLogAxis();
 					double lowRange = firstNonZeroDose(doses);
 					logAxis.setRange(new Range(lowRange, doses[doses.length - 1] * 1.1));
 					plot.setDomainAxis(logAxis);
@@ -976,7 +969,6 @@ public class ModelGraphics extends JPanel
 						frmOpt.setVisible(false);
 						frmOpt.setLocation(cP.getX(), cP.getY());
 						frmOpt.setAlwaysOnTop(true);
-						
 
 						int result = JOptionPane.showConfirmDialog(frmOpt, editor, "Chart Properties",
 								JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -1628,6 +1620,8 @@ public class ModelGraphics extends JPanel
 	private void mapProbesToData()
 	{
 		this.probeStatResultMap = new HashMap<>();
+		if (bmdResults == null)
+			return;
 		for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
 		{
 			probeStatResultMap.put(probeStatResult.getProbeResponse().getProbe(), probeStatResult);
@@ -1687,44 +1681,6 @@ public class ModelGraphics extends JPanel
 			return parameters;
 		}
 
-	}
-
-	private class CustomLogAxis extends LogAxis
-	{
-		@Override
-		protected List refreshTicksHorizontal(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge)
-		{
-
-			Range range = getRange();
-			List<NumberTick> ticks = new ArrayList<NumberTick>();
-			double start = Math.floor(calculateLog(getLowerBound()));
-			double end = Math.ceil(calculateLog(getUpperBound()));
-			for (int i = (int) start; i < end; i++)
-			{
-				double v = Math.pow(this.getBase(), i);
-				for (double j = 1; j <= this.getBase(); j++)
-				{
-					AttributedString s = createTickLabel(j * v);
-					StringBuilder sb = new StringBuilder();
-					AttributedCharacterIterator iterator = s.getIterator();
-					char c = iterator.first();
-					while (c != CharacterIterator.DONE)
-					{
-						sb.append(c);
-						c = iterator.next();
-					}
-					String l = sb.toString();
-					if (j != this.getBase())
-						l = "";
-					if (range.contains(j * v))
-					{
-						ticks.add(new NumberTick(new Double(j * v), l, TextAnchor.TOP_CENTER,
-								TextAnchor.CENTER, 0.0));
-					}
-				}
-			}
-			return ticks;
-		}
 	}
 
 }

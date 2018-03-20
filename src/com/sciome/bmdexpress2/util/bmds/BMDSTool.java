@@ -64,34 +64,34 @@ import com.sciome.bmdexpress2.util.stat.DosesStat;
  */
 public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 {
-	private Vector<File> tempFiles;
-	private BufferedWriter LOGOUT;
+	private Vector<File>				tempFiles;
+	private BufferedWriter				LOGOUT;
 
-	private double maxDose, lowPDose, flagDose, flagRatio;
+	private double						maxDose, lowPDose, flagDose, flagRatio;
 
-	private final String TEMPDIR = "temp";
+	private final String				TEMPDIR				= "temp";
 
-	private final double DEFAULTDOUBLE = -9999;
-	private final double p05 = 0.05;
+	private final double				DEFAULTDOUBLE		= -9999;
+	private final double				p05					= 0.05;
 
-	private List<ProbeResponse> probeResponses;
-	private ModelInputParameters inputParameters;
-	private ModelSelectionParameters modelSelectionParameters;
-	private List<StatModel> modelsToRun;
-	private float[] doses;
-	private BMDResult bmdResults = new BMDResult();
+	private List<ProbeResponse>			probeResponses;
+	private ModelInputParameters		inputParameters;
+	private ModelSelectionParameters	modelSelectionParameters;
+	private List<StatModel>				modelsToRun;
+	private float[]						doses;
+	private BMDResult					bmdResults			= new BMDResult();
 
-	private int numberOfProbesRun = 0;
-	private String currentMessage = "";
+	private int							numberOfProbesRun	= 0;
+	private String						currentMessage		= "";
 
 	// the calling thing that needs to update progress to a view or something.
-	private IBMDSToolProgress progressReciever = null;
+	private IBMDSToolProgress			progressReciever	= null;
 
-	private List<IFitThread> fitThreads = new ArrayList<>();
-	private boolean cancel = false;
-	private AnalysisInfo analysisInfo;
-	private com.sciome.bmdexpress2.util.stat.DosesStat dosesStat;
-	private List<Integer> doseResponseQueue = new ArrayList<>();
+	private List<IFitThread>			fitThreads			= new ArrayList<>();
+	private boolean						cancel				= false;
+	private AnalysisInfo				analysisInfo;
+	private DosesStat					dosesStat;
+	private List<Integer>				doseResponseQueue	= new ArrayList<>();
 
 	/**
 	 * Class constructor
@@ -106,7 +106,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		this.inputParameters = inputParameters;
 		this.modelSelectionParameters = modelSelectionParameters;
 		this.modelsToRun = modelsToRun;
-
+		bmdResults.setName(processableData.toString() + "_BMD");
 		// create an array of doubles for the doses for the old code to user.
 		doses = new float[treatments.size()];
 		for (int i = 0; i < treatments.size(); i++)
@@ -166,6 +166,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 
 		notes.add("Fit Selected Models with Multiple Threads: " + inputParameters.getNumThreads());
+		notes.add("Destory Model Processes If Run More Than: " + inputParameters.getKillTime()
+				+ " milliseconds.");
 		analysisInfo.setNotes(notes);
 
 	}
@@ -187,6 +189,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	{
 
 		bmdResults.setAnalysisInfo(analysisInfo);
+
 		if (probeResponses != null)
 		{
 
@@ -201,19 +204,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			}
 
 			tempFiles = new Vector<File>();
-			// HashSet<String> probeSet = indexingGenes();
-
-			// if (!(probeSet.size() > 0))
-			// {
-			// return;
-			// }
-
-			// initLogFile(srcName);
-			// tempFileOut(LOGOUT, "Start");
-			// String[] columnNames = assignColumnNames();
-			// int MAXROW = probeSet.size();
-			// int MAXCOL = columnNames.length;
-			// int curCol = prepareReponseData(probeSet);
 
 			boolean pass = fitSelectedModels();
 			closeOutFile(LOGOUT);
@@ -442,7 +432,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			HillFitThread hillThread = new HillFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 			hillThread.setFlag(modelSelectionParameters.isFlagHillModel(), flagDose);
 			hillThread.setDoses(doses);
 			hillThread.setObjects(inputParameters);
@@ -486,7 +476,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 
 			PowerFitThread powerThread = new PowerFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 
 			powerThread.setDoses(doses);
 			powerThread.setObjects(inputParameters);
@@ -533,7 +523,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			inputParameters.setPolyDegree(degree);
 			PolyFitThread polyThread = new PolyFitThread(cDownLatch, degree, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
 			polyThread.setDoses(doses);
 			polyThread.setObjects(degree, inputParameters);
 			polyThread.start();
@@ -578,7 +568,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			ExponentialFitThread expThread = new ExponentialFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, option, this, this);
+					inputParameters.getNumThreads(), i, option, inputParameters.getKillTime(), this, this);
 			expThread.setDoses(doses);
 			expThread.setObjects(inputParameters);
 			expThread.start();
@@ -872,7 +862,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	 */
 	private void selectBestModel(BMDResult bmdResults)
 	{
-		System.out.println("selectBestModel()");
+		// System.out.println("selectBestModel()");
 
 		for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
 		{

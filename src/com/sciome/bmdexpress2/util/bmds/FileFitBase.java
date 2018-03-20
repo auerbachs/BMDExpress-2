@@ -10,6 +10,14 @@ import java.util.regex.Pattern;
 
 public abstract class FileFitBase
 {
+	private int			killTime;
+	protected boolean	success;
+
+	protected FileFitBase(int killTime)
+	{
+		this.killTime = killTime;
+		this.success = true;
+	}
 
 	protected void executeModel(String EXE, String fName)
 	{
@@ -39,21 +47,20 @@ public abstract class FileFitBase
 				// process is executing, but only give it a certain amount of time to execute.
 				// give it 30 seconds to complete otherwise kill it.
 				boolean processSurvived = false;
-				while (System.currentTimeMillis() - startTime < 30000)
+				while (System.currentTimeMillis() - startTime < killTime)
 				{
-					Thread.sleep(1000);
+
 					if (!process.isAlive())
 					{
 						processSurvived = true;
 						break;
 					}
+					Thread.sleep(1000);
 				}
-				if (!processSurvived)
+				if (!processSurvived && process.isAlive())
 				{
-
-					System.out.println("Destroying process: " + process.toString());
 					process.destroyForcibly();
-					System.out.println(getStringFromInputStream(process.getErrorStream()));
+					success = false;
 				}
 
 			}
@@ -128,5 +135,10 @@ public abstract class FileFitBase
 				return p.matcher(file.getName()).matches();
 			}
 		});
+	}
+
+	public boolean isSuccess()
+	{
+		return success;
 	}
 }

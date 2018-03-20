@@ -2,18 +2,21 @@ package com.sciome.bmdexpress2.mvp.view.visualization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.DataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
-import com.sciome.charts.javafx.SciomeChartBase;
-import com.sciome.charts.javafx.SciomeChartListener;
-import com.sciome.charts.javafx.ScrollableSciomeChart;
+import com.sciome.charts.SciomeChartBase;
+import com.sciome.charts.SciomeChartListener;
+import com.sciome.charts.data.ChartDataPack;
 import com.sciome.filter.DataFilterPack;
 
 import javafx.beans.value.ChangeListener;
@@ -53,7 +56,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected final static String				DEFAULT_CHARTS			= "Default";
 	protected AnchorPane						graphViewAnchorPane;
 
-	List<Node>									chartsList;
+	protected List<Node>						chartsList				= new ArrayList<>();
+	protected List<Node>						customChartsList		= new ArrayList<>();
 
 	protected DataVisualizationPresenter		presenter;
 
@@ -61,19 +65,22 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	protected List<BMDExpressAnalysisDataSet>	results;
 	protected DataFilterPack					defaultDPack;
 
-	protected Button							addDataSet;
-
-	protected Button							removeDataSet;
+	private List<ChartDataPack>					chartDataPacks			= new ArrayList<>();
+	private Set<String>							markedData				= new HashSet<>();
 
 	private VBox								vBox;
 	protected ComboBox<String>					cBox;
+	private Button								addYourOwnChartButton	= new Button("Create Your Own Chart");
 	protected Map<String, SciomeChartBase>		chartCache				= new HashMap<>();
 
-	// a list of ids (data point labels) that should only be displayed
-	// the idea is that a user can selected a subset of the current data set to show.
-	// this can be null, in that case it will be ignored and all will be displayed.
-	protected List<String>						selectedIds;
-	private List<BMDExpressAnalysisDataSet>		originatingResults;
+	// set this up so that charts that redrawn. this is to keep track of the
+	// closed canned charts that are stored as a hash map in implementing clases
+	protected Set<Node>							removedCharts			= new HashSet<>();
+
+	// created this variable for the sake of the curve overlay.
+	// do not show custom charts with curve overlay plot.
+	// but also you don't have to show custom plots for anything.
+	protected boolean							ignoreCustomCharts		= false;
 
 	public DataVisualizationView()
 	{
@@ -97,11 +104,10 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 		graphViewAnchorPane = new AnchorPane();
 		vBox.getChildren().add(h);
 		vBox.getChildren().add(graphViewAnchorPane);
-		addDataSet = new Button("+");
-		removeDataSet = new Button("-");
 
 		HBox h1 = new HBox();
 		HBox h2 = new HBox();
+		h1.getChildren().add(this.addYourOwnChartButton);
 		h1.setAlignment(Pos.CENTER_LEFT);
 		h2.setAlignment(Pos.CENTER_RIGHT);
 		cBox = new ComboBox<>();
@@ -114,35 +120,44 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 			public void changed(ObservableValue<? extends String> observable, String oldValue,
 					String newValue)
 			{
-				redrawCharts(defaultDPack, selectedIds);
+				redrawCharts(defaultDPack);
 
 			}
 
 		});
-		Label label = new Label("<-- Add/Remove dataset in visualizations. ");
 
-		h1.getChildren().addAll(addDataSet, removeDataSet, label);
-		h2.getChildren().addAll(new Label("Select Graph View"), cBox);
+		addYourOwnChartButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				CreateYourOwnChart dialog = new CreateYourOwnChart(results.get(0),
+						DataVisualizationView.this);
+
+				dialog.initModality(Modality.WINDOW_MODAL);
+				dialog.initOwner(graphViewAnchorPane.getScene().getWindow());
+				dialog.setX(100);
+				dialog.setY(100);
+				Optional<SciomeChartBase> customChart = dialog.showAndWait();
+				if (customChart.isPresent())
+				{
+					customChartsList.add(customChart.get());
+					// need to redraw charts to update the chart datapack
+					redrawCharts(defaultDPack);
+				}
+
+			}
+		});
+
+		// set this to be disabled until data is present
+		this.addYourOwnChartButton.setDisable(true);
+		h2.getChildren().addAll(new Label("Select Chart View"), cBox);
 		h.getChildren().addAll(h1, h2);
 
 		HBox.setHgrow(h2, Priority.ALWAYS);
 		h.setAlignment(Pos.CENTER_LEFT);
 		VBox.setVgrow(graphViewAnchorPane, Priority.ALWAYS);
-		addDataSet.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				handle_addDataSet(e);
-			}
-		});
 
-		removeDataSet.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e)
-			{
-				handle_removeDataSet(e);
-			}
-		});
 	}
 
 	public Node getNode()
@@ -161,9 +176,42 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 
 	}
 
-	protected void showCharts()
+	public void setMarkedData(Set<String> d)
 	{
-		VBox vBox = generateGridOfNodes(chartsList, 3);
+		markedData = d;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void showCharts(List<ChartDataPack> dpack)
+	{
+		// update the current chartDataPacks
+		chartDataPacks = dpack;
+		for (Node node : getAllCharts())
+			if (node instanceof SciomeChartBase)
+			{
+				((SciomeChartBase) node).redrawCharts(dpack);
+				((SciomeChartBase) node).markData(markedData);
+				((SciomeChartBase) node).reactToChattingCharts();
+			}
+		layoutCharts();
+
+	}
+
+	private void layoutCharts()
+	{
+
+		graphViewAnchorPane.getChildren().clear();
+		List<Node> chartsToShow = getAllCharts();
+		VBox vBox = generateGridOfNodes(chartsToShow, 3);
+		if (chartsToShow.size() == 1)
+		{
+			vBox = new VBox();
+			HBox hbox = new HBox();
+			hbox.getChildren().add(chartsToShow.get(0));
+			HBox.setHgrow(chartsToShow.get(0), Priority.ALWAYS);
+			hbox.setMinWidth(500);
+			vBox.getChildren().add(hbox);
+		}
 
 		ScrollPane sp = new ScrollPane();
 		sp.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -190,7 +238,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 				hBox = new HBox();
 				hBox.setMaxWidth(1000);
 			}
-			chart.setStyle("-fx-border-color: black;");
+			chart.setStyle("-fx-border-color: black;" + "-fx-padding: 0 20 30 0;");
 			hBox.getChildren().add(chart);
 			hBox.setSpacing(10.0);
 			i++;
@@ -239,53 +287,24 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void close()
 	{
 
+		if (chartCache != null)
+			chartCache.clear();
+		if (chartsList != null)
+			this.chartsList.clear();
+		if (results != null)
+			this.results.clear();
 		if (presenter != null)
 			presenter.destroy();
 
 	}
 
-	public abstract void redrawCharts(DataFilterPack dataFilterPack, List<String> selectedIds);
+	public abstract void redrawCharts(DataFilterPack dataFilterPack);
 
 	public abstract List<String> getCannedCharts();
 
 	public void initData(DataFilterPack dPack)
 	{
 		defaultDPack = dPack;
-
-	}
-
-	private void handle_addDataSet(ActionEvent event)
-	{
-		List<BMDExpressAnalysisDataSet> dataSet = null;
-		if (results != null && results.size() > 0)
-		{
-			dataSet = presenter.getResultsFromProject(results);
-			List<BMDExpressAnalysisDataSet> ds = customChoiceDialogForDataSet(dataSet,
-					"Add Data Set(s) To Visualization");
-			// BMDExpressAnalysisDataSet d = choiceDialogForDataSet(dataSet, "Add Data Set To Visualization");
-			if (ds != null)
-			{
-				results.addAll(ds);
-				redrawCharts(defaultDPack, selectedIds);
-			}
-		}
-
-	}
-
-	private void handle_removeDataSet(ActionEvent event)
-	{
-		if (results != null && results.size() > 1)
-		{
-			List<BMDExpressAnalysisDataSet> ds = customChoiceDialogForDataSet(results,
-					"Remove Data Set From Visualization");
-			if (ds != null)
-			{
-				results.removeAll(ds);
-				if (results.isEmpty())
-					results.addAll(originatingResults);
-				redrawCharts(defaultDPack, selectedIds);
-			}
-		}
 
 	}
 
@@ -357,9 +376,8 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void drawResults(List<BMDExpressAnalysisDataSet> results)
 	{
 		this.results = results;
-		this.originatingResults = new ArrayList<>();
-		this.originatingResults.addAll(results);
-		redrawCharts(defaultDPack, selectedIds);
+		redrawCharts(defaultDPack);
+		this.addYourOwnChartButton.setDisable(false);
 
 	}
 
@@ -367,16 +385,93 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 	public void expand(SciomeChartBase chart)
 	{
 		chart.setOnMouseClicked(null);
-		if (chart instanceof ScrollableSciomeChart)
-			((ScrollableSciomeChart) chart).setShowShowAll(true);
 		Dialog dialog = createChartDialog(chart);
 		dialog.getDialogPane().setPrefWidth(cBox.getScene().getWidth());
 		dialog.getDialogPane().setPrefHeight(cBox.getScene().getHeight());
 		dialog.showAndWait();
 		chart.chartMinimized();
-		if (chart instanceof ScrollableSciomeChart)
-			((ScrollableSciomeChart) chart).setShowShowAll(false);
-		showCharts();
+		layoutCharts();
+	}
+
+	protected List<Node> getAllCharts()
+	{
+		List<Node> nodes = new ArrayList<>();
+		if (!ignoreCustomCharts)
+			nodes.addAll(customChartsList);
+		for (Node node : chartsList)
+			if (!removedCharts.contains(node))
+				nodes.add(node);
+		return nodes;
+	}
+
+	protected Set<ChartKey> getUsedChartKeys()
+	{
+		Set<ChartKey> chartKeySet = new HashSet<>();
+
+		List<Node> allCharts = new ArrayList<>(chartsList);
+		allCharts.addAll(customChartsList);
+		for (Node node : allCharts)
+			if (node instanceof SciomeChartBase)
+			{
+				SciomeChartBase chart = (SciomeChartBase) node;
+				for (ChartKey chartKey : (List<ChartKey>) chart.getChartableKeys())
+				{
+					chartKeySet.add(new ChartKey(chartKey.getKey(), null));
+				}
+			}
+
+		return chartKeySet;
+	}
+
+	protected Set<ChartKey> getMathedChartKeys()
+	{
+		Set<ChartKey> chartKeySet = new HashSet<>();
+
+		List<Node> allCharts = new ArrayList<>(chartsList);
+		allCharts.addAll(customChartsList);
+		for (Node node : allCharts)
+			if (node instanceof SciomeChartBase)
+			{
+				SciomeChartBase chart = (SciomeChartBase) node;
+				for (ChartKey chartKey : (List<ChartKey>) chart.getChartableKeys())
+				{
+					if (chartKey != null && chartKey.getMath() != null)
+						chartKeySet.add(new ChartKey(chartKey.getKey(), chartKey.getMath()));
+				}
+			}
+
+		return chartKeySet;
+	}
+
+	@Override
+	public void close(SciomeChartBase chart)
+	{
+		chartsList.remove(chart);
+		customChartsList.remove(chart);
+
+		removedCharts.add(chart);
+		layoutCharts();
+
+	}
+
+	/*
+	 * This method will be called from a chart (aka theChatter) It will pass the objects that it collected
+	 * (based on user interaction or something) and send it to the other charts. The idea is that the other
+	 * charts will look at the objects and update themselves appropriately, like highlight nodes and what not.
+	 */
+	@Override
+	public void chatWithOtherCharts(Object theChatter, List<Object> objects)
+	{
+		// loop through all the charts, if they are sciomebasecharts, then
+		// allow pass the message along.
+		for (Node node : getAllCharts())
+		{
+			// if (node.equals(theChatter))
+			// continue;
+			if (node instanceof SciomeChartBase)
+				((SciomeChartBase) node).recieveChatFromOtherChart(objects);
+		}
+
 	}
 
 }

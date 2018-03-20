@@ -7,12 +7,12 @@ import java.util.List;
 public class HillResult extends StatResult
 {
 
-	private static final long serialVersionUID = -527776055122273597L;
+	private static final long	serialVersionUID	= -527776055122273597L;
 	/**
 	 * GeneId
 	 */
 
-	private short kFlag;
+	private short				kFlag;
 
 	public HillResult()
 	{
@@ -35,7 +35,8 @@ public class HillResult extends StatResult
 
 		return new ArrayList<String>(Arrays.asList("Hill BMD", "Hill BMDL", "Hill BMDU", "Hill fitPValue",
 				"Hill fitLogLikelihood", "Hill AIC", "Hill adverseDirection", "Hill BMD/BMDL", "Flagged Hill",
-				"Hill Parameter Intercept", "Hill Parameter v", "Hill Parameter n", "Hill Parameter k"));
+				"Hill Parameter Intercept", "Hill Parameter v", "Hill Parameter n", "Hill Parameter k",
+				"Hill Execution Complete"));
 
 	}
 
@@ -43,23 +44,22 @@ public class HillResult extends StatResult
 	public List<Object> getRow()
 	{
 		Double param1 = null;
-		Double param2= null;
+		Double param2 = null;
 		Double param3 = null;
 		Double param4 = null;
-		if(curveParameters !=null)
+		if (curveParameters != null)
 		{
 			param1 = curveParameters[0];
 			param2 = curveParameters[1];
 			param3 = curveParameters[2];
 			param4 = curveParameters[3];
 		}
-		
-		return new ArrayList<Object>(
-				Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()), (this.getFitPValue()),
-						(this.getFitLogLikelihood()), (this.getAIC()), (this.getAdverseDirection()),
-						(this.getBMD() / this.getBMDL()), (this.getkFlag()), param1,
-						param2, param3, param4));
-	
+
+		return new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()),
+				(this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
+				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), (this.getkFlag()), param1,
+				param2, param3, param4, this.getSuccess()));
+
 	}
 
 	@Override

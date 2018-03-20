@@ -8,7 +8,8 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.PathwayFilterResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.MainDataPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
@@ -17,7 +18,8 @@ import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.BMDExpressDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.CategoryAnalysisDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.ExpressionDataSetDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.OneWayANOVADataView;
-import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.PathwayFilterDataView;
+import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.OriogenDataView;
+import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.WilliamsTrendDataView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMainDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -36,7 +38,6 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 
 	@FXML
 	private AnchorPane			tableAnchorPane;
-	// table for showing matrix data in a paginator
 	private BMDExpressDataView	spreadSheetTableView;
 
 	MainDataPresenter			presenter;
@@ -62,7 +63,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadDoseResponseExperiment(DoseResponseExperiment doseResponseExperiement)
+	public void loadDoseResponseExperiment(BMDExpressAnalysisDataSet doseResponseExperiement)
 	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
@@ -75,7 +76,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadOneWayANOVAAnalysis(OneWayANOVAResults oneWayANOVAResults)
+	public void loadOneWayANOVAAnalysis(BMDExpressAnalysisDataSet oneWayANOVAResults)
 	{
 		// clear data in tableview if it is not null
 		if (spreadSheetTableView != null)
@@ -90,7 +91,36 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadBMDResultAnalysis(BMDResult bMDAnalsyisResults)
+	public void loadWilliamsTrendAnalysis(BMDExpressAnalysisDataSet williamsTrendResults)
+	{
+		// clear data in tableview if it is not null
+		if (spreadSheetTableView != null)
+		{
+			spreadSheetTableView.close();
+		}
+
+		spreadSheetTableView = new WilliamsTrendDataView(williamsTrendResults, "main");
+
+		updateSpreadSheet();
+
+	}
+
+	@Override
+	public void loadOriogenAnalysis(BMDExpressAnalysisDataSet oriogenResults)
+	{
+		// clear data in tableview if it is not null
+		if (spreadSheetTableView != null)
+		{
+			spreadSheetTableView.close();
+		}
+
+		spreadSheetTableView = new OriogenDataView(oriogenResults, "main");
+
+		updateSpreadSheet();
+	}
+
+	@Override
+	public void loadBMDResultAnalysis(BMDExpressAnalysisDataSet bMDAnalsyisResults)
 	{
 
 		// clear data in tableview if it is not null
@@ -104,7 +134,7 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	}
 
 	@Override
-	public void loadCategoryAnalysis(CategoryAnalysisResults categoryAnalysisResults)
+	public void loadCategoryAnalysis(BMDExpressAnalysisDataSet categoryAnalysisResults)
 	{
 
 		// clear data in tableview if it is not null
@@ -113,20 +143,6 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 			spreadSheetTableView.close();
 		}
 		spreadSheetTableView = new CategoryAnalysisDataView(categoryAnalysisResults, "main");
-
-		updateSpreadSheet();
-
-	}
-
-	@Override
-	public void loadPathwayFilterAnalysis(PathwayFilterResults pathwayFilterResults)
-	{
-		// clear data in tableview if it is not null
-		if (spreadSheetTableView != null)
-		{
-			spreadSheetTableView.close();
-		}
-		spreadSheetTableView = new PathwayFilterDataView(pathwayFilterResults, "main");
 
 		updateSpreadSheet();
 
@@ -149,7 +165,6 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void showBMDExpressAnalysisInSeparateWindow(BMDExpressAnalysisDataSet dataSet)
 	{
-
 		BMDExpressDataView tableView = null;
 		String resultDesc = "BMD Analysis Results: ";
 		if (dataSet instanceof BMDResult)
@@ -159,10 +174,15 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 			tableView = new OneWayANOVADataView((OneWayANOVAResults) dataSet, "spreadsheet");
 			resultDesc = "One Way ANOVA Results: ";
 		}
-		else if (dataSet instanceof PathwayFilterResults)
+		else if (dataSet instanceof WilliamsTrendResults)
 		{
-			tableView = new PathwayFilterDataView((PathwayFilterResults) dataSet, "spreadsheet");
-			resultDesc = "Pathway Filter Results: ";
+			tableView = new WilliamsTrendDataView((WilliamsTrendResults) dataSet, "spreadsheet");
+			resultDesc = "Williams Trend Test Results: ";
+		}
+		else if (dataSet instanceof OriogenResults)
+		{
+			tableView = new OriogenDataView((OriogenResults) dataSet, "spreadsheet");
+			resultDesc = "Oriogen Results: ";
 		}
 		else if (dataSet instanceof CategoryAnalysisResults)
 		{
@@ -219,11 +239,9 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 	@Override
 	public void clearTableView()
 	{
+		this.tableAnchorPane.getChildren().remove(spreadSheetTableView);
 		if (spreadSheetTableView != null)
-		{
 			spreadSheetTableView.close();
-		}
-		updateSpreadSheet();
 		spreadSheetTableView = null;
 
 	}
@@ -235,5 +253,4 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 			presenter.destroy();
 
 	}
-
 }

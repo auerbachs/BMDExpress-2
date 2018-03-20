@@ -1,15 +1,23 @@
 package com.sciome.bmdexpress2.mvp.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
 
+@JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		implements Serializable, IStatModelProcessable
 {
@@ -17,16 +25,37 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6106646178862193241L;
-	private String name;
-	private List<Treatment> treatments;
-	private List<ProbeResponse> probeResponses;
-	private List<ReferenceGeneAnnotation> referenceGeneAnnotations;
-	private ChipInfo chip;
-	private AnalysisInfo analysisInfo;
+	private static final long				serialVersionUID	= 6106646178862193241L;
+	private String							name;
 
-	private transient List<String> columnHeader;
-	private transient List<Object> columnHeader2;
+	// this will contain doses.
+	private List<Treatment>					treatments;
+
+	// this is your dose response matrix
+	private List<ProbeResponse>				probeResponses;
+	private List<ReferenceGeneAnnotation>	referenceGeneAnnotations;
+	private ChipInfo						chip;
+	private AnalysisInfo					analysisInfo;
+
+	// default to logTransformation of base2
+	// this defines how the data was log transformed before being input into bmdexpress
+	// this information is important to know for correctly calculating the fold change
+	private LogTransformationEnum			logTransformation	= LogTransformationEnum.BASE2;
+
+	private transient List<String>			columnHeader;
+	private transient List<Object>			columnHeader2;
+	private Long							id;
+
+	@JsonIgnore
+	public Long getID()
+	{
+		return id;
+	}
+
+	public void setID(Long id)
+	{
+		this.id = id;
+	}
 
 	@Override
 	public String getName()
@@ -91,24 +120,37 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		this.analysisInfo = analysisInfo;
 	}
 
+	public LogTransformationEnum getLogTransformation()
+	{
+		return logTransformation;
+	}
+
+	public void setLogTransformation(LogTransformationEnum logTransformation)
+	{
+		this.logTransformation = logTransformation;
+	}
+
 	@Override
 	public String toString()
 	{
 		return name;
 	}
 
+	@JsonIgnore
 	@Override
 	public DoseResponseExperiment getProcessableDoseResponseExperiment()
 	{
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public List<ProbeResponse> getProcessableProbeResponses()
 	{
 		return this.probeResponses;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getParentDataSetName()
 	{
@@ -118,6 +160,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	/*
 	 * treatments are known to be sorted low to high when stored
 	 */
+	@JsonIgnore
 	public Double getMinDose()
 	{
 		if (treatments != null && treatments.size() > 0)
@@ -126,6 +169,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		return null;
 	}
 
+	@JsonIgnore
 	public Double getMaxDose()
 	{
 		if (treatments != null && treatments.size() > 0)
@@ -135,6 +179,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List<String> getColumnHeader()
 	{
 		if (columnHeader == null)
@@ -152,6 +197,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	}
 
 	@Override
+	@JsonIgnore
 	public List getAnalysisRows()
 	{
 		return probeResponses;
@@ -171,6 +217,30 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 			}
 		}
 		return columnHeader2;
+	}
+
+	/*
+	 * perform post deserialization logic
+	 */
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+	{
+		in.defaultReadObject();
+
+		// logTransformation is a later addition. So if we deserialize this object
+		// and it is null, default it to BASE2.
+		if (this.logTransformation == null)
+		{
+			logTransformation = LogTransformationEnum.BASE2;
+			analysisInfo.getNotes()
+					.add("Logtransformation set to default of: " + LogTransformationEnum.BASE2);
+		}
+
+	}
+
+	@Override
+	public Object getObject()
+	{
+		return this;
 	}
 
 }

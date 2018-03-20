@@ -1,5 +1,9 @@
 package com.sciome.charts.data;
 
+/*
+ * chart configuration class.  This stores data that the user sets to view the chart.
+ * currently it is only concerned with the ranges of the axes.
+ */
 public class ChartConfiguration
 {
 

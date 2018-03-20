@@ -23,20 +23,21 @@ import com.sciome.bmdexpress2.util.NumberManager;
  */
 public class FilePowerFit extends FileFitBase
 {
-	private String powerEXE, dPath;
-	private int[] intParams;
+	private String			powerEXE, dPath;
+	private int[]			intParams;
 
-	private final int maxParams = 9;
-	private final int SIX = 6;
-	private final double minDouble = -9999;
-	private final String newline = "\n";
-	private final String space1 = " ";
+	private final int		maxParams	= 9;
+	private final int		SIX			= 6;
+	private final double	minDouble	= -9999;
+	private final String	newline		= "\n";
+	private final String	space1		= " ";
 
-	private final String[] FLAGS = { "Parameter Estimates", "Likelihoods of Interest", "Tests of Interest",
-			"control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
+	private final String[]	FLAGS		= { "Parameter Estimates", "Likelihoods of Interest",
+			"Tests of Interest", "control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
 
-	public FilePowerFit()
+	public FilePowerFit(int killTime)
 	{
+		super(killTime);
 		this.powerEXE = BMDExpressProperties.getInstance().getPowerEXE();
 		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 	}
@@ -59,25 +60,31 @@ public class FilePowerFit extends FileFitBase
 		File infile = createDataFile(fileName, inputParameters, inputX, inputY);
 		double[] outputs = NumberManager.initDoubles(maxParams, minDouble);
 
-		while (!infile.canRead())
-		{
-			System.out.println(".");
-			/*
-			 * try { Thread.currentThread().sleep(10); } catch (InterruptedException e) { e.printStackTrace();
-			 * }
-			 */
-		}
-
 		if (infile != null)
 		{
-			// System.out.println("Pathf = " + infile.getPath());
 			executeModel(powerEXE, infile.getPath());// infile.getAbsolutePath());
 			File outFile = readOutputs(fileName, outputs);
 			infile.delete();
-			outFile.delete();
-			(new File(dPath, fileName + ".002")).delete();
-			(new File(dPath, fileName + "-power.log")).delete();
-			(new File(dPath, fileName + "-pow.log")).delete();
+			if (outFile != null && outFile.exists())
+				outFile.delete();
+			try
+			{
+				(new File(dPath, fileName + ".002")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, fileName + "-power.log")).delete();
+			}
+			catch (Exception e)
+			{}
+			try
+			{
+				(new File(dPath, fileName + "-pow.log")).delete();
+			}
+			catch (Exception e)
+			{}
 		}
 
 		return outputs;
@@ -153,6 +160,8 @@ public class FilePowerFit extends FileFitBase
 
 	private File readOutputs(String fileName, double[] outputs)
 	{
+		if (!success)
+			return new File(dPath, fileName + ".out");
 		try
 		{
 			File file = new File(dPath, fileName + ".out");
@@ -281,7 +290,6 @@ public class FilePowerFit extends FileFitBase
 
 					}
 				}
-
 				fr.close();
 			}
 			catch (IOException e)

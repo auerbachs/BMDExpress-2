@@ -47,6 +47,11 @@ public class ExperimentFileUtil
 	/*
 	 * read an dose response experiement file and return an instance.
 	 */
+	public DoseResponseExperiment readFile(File infile)
+	{
+		return readFile(infile, null);
+	}
+
 	public DoseResponseExperiment readFile(File infile, Window owner)
 	{
 		try
@@ -96,10 +101,12 @@ public class ExperimentFileUtil
 					String[] experiementHeaders = vecData.get(0);
 
 					int starti = 0;
-					if (isFirstVecHeader(experiementHeaders, owner))
+					if (owner != null && isFirstVecHeader(experiementHeaders, owner))
 					{
 						starti = 1;
 					}
+					else if (owner == null)
+						starti = 1;
 					List<Treatment> treatments = new ArrayList<>();
 					for (int i = 1; i < experiementHeaders.length; i++)
 					{
@@ -215,7 +222,7 @@ public class ExperimentFileUtil
 			}
 			catch (IOException e)
 			{
-				// System.out.println("Read file problem: " + e);
+				e.printStackTrace();
 			}
 			finally
 			{
@@ -225,7 +232,7 @@ public class ExperimentFileUtil
 		}
 		catch (FileNotFoundException e)
 		{
-			// System.out.println("Input file problem: " + e);
+			e.printStackTrace();
 		}
 		catch (Exception e)
 		{

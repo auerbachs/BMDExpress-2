@@ -79,7 +79,7 @@
                            <children>
                               <GridPane prefHeight="114.0" prefWidth="598.0">
                                  <children>
-                                    <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="100.0" />
                                        </GridPane.margin>
@@ -96,22 +96,7 @@
                                           <Insets left="100.0" />
                                        </padding>
                                     </HBox>
-                                    <HBox alignment="CENTER_LEFT" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
-                                       <children>
-                                          <CheckBox fx:id="isLogTransformationData" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handle_LogTransformationClick" prefHeight="18.0" prefWidth="187.0" selected="true" text="Log Transformation" />
-                                          <RadioButton fx:id="baseTwo" mnemonicParsing="false" selected="true" text="2">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="logBase" />
-                                             </toggleGroup>
-                                          </RadioButton>
-                                          <RadioButton fx:id="baseTen" mnemonicParsing="false" text="10" toggleGroup="$logBase" />
-                                          <RadioButton fx:id="baseNatural" mnemonicParsing="false" text="Natural" toggleGroup="$logBase" />
-                                       </children>
-                                       <GridPane.margin>
-                                          <Insets left="100.0" />
-                                       </GridPane.margin>
-                                    </HBox>
-                                    <Label prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="2">
+                                    <Label prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="100.0" />
                                        </GridPane.margin>
@@ -123,7 +108,6 @@
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="36.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
@@ -138,8 +122,8 @@
                   <HBox fx:id="adjustedPValueComboBox" alignment="CENTER" prefHeight="66.0" prefWidth="600.0" spacing="50.0">
                      <children>
                         <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#handle_startButtonPressed" text="Start" />
+                        <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
                         <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handle_cancelButtonPressed" text="Cancel" />
-                        <Button fx:id="doneButton" mnemonicParsing="false" onAction="#handle_doneButtonPressed" text="Done" />
                      </children>
                   </HBox>
                </children>
