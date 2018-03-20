@@ -1,12 +1,18 @@
-BMDExpress-2.0
-==============
-Software uses the US EPA dose-response models from the BMDS software to analyze high dimensional dose-response data, in particular gene expression data. The outputs of the software are gene and gene set level benchmark dose values. 
-Jason Phillips (jason.phillips@sciome.com) was the software engineer on BMDExpress 2.0 and Dan Svoboda (daniel.svoboda@sciome.com) was the primary design engineer. Scott Auerbach (auerbachs@niehs.nih.gov) led the project team.
-The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) that was originally released in 2007. (https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-8-387).
-BMDExpress 1.0 is available here: https://sourceforge.net/projects/bmdexpress/ .
-Details on the US EPA BMDS software can be found here: https://www.epa.gov/bmds .
+<p align="center">
+  <a href="https://github.com/auerbachs/BMDExpress-2/releases">
+    <img src="https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/download-button.png">
+  </a>
+</p>
 
-Updates in BMDExpress-2.0
+BMDExpress-2
+==============
+Software uses the US EPA dose-response models from the BMDS software to analyze high dimensional dose-response data, in particular gene expression data. The outputs of the software are gene and gene set level benchmark dose values.
+Jason Phillips (jason.phillips@sciome.com) was the software engineer on BMDExpress 2 and Dan Svoboda (daniel.svoboda@sciome.com) was the primary design engineer. Scott Auerbach (auerbachs@niehs.nih.gov) led the project team.
+The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) that was originally released in 2007. (https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-8-387).
+[BMDExpress 1.0 is available here.](https://sourceforge.net/projects/bmdexpress/)
+[Details on the US EPA BMDS software can be found here.](https://www.epa.gov/bmds)
+
+Updates in BMDExpress-2
 =========================
 
 **Modeling**
