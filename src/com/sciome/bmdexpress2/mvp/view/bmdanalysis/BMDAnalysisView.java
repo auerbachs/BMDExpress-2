@@ -275,13 +275,13 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		}
 
 		int availableProcessors = Runtime.getRuntime().availableProcessors();
-		if (inputParameters.getNumThreads() > availableProcessors * 2)
+		if (inputParameters.getNumThreads() > availableProcessors * 4)
 		{
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Number Of Threads Exceeds Number of Available.");
 			alert.setContentText(
-					"The number of threads that you chose is more than twice the number of available processors you have on your machine.  The number avaiable processors detected by this application is: "
+					"The number of threads that you chose is more than 4 times the number of available processors you have on your machine.  The number avaiable processors detected by this application is: "
 							+ availableProcessors);
 
 			alert.showAndWait();
@@ -514,9 +514,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		killTimeComboBox.getItems().add("330");
 		killTimeComboBox.getItems().add("360");
 		killTimeComboBox.getItems().add("390");
-		killTimeComboBox.getItems().add("600");
+		killTimeComboBox.getItems().add("600 (default)");
 		killTimeComboBox.getItems().add("none");
-		killTimeComboBox.setValue(input.getKillTime());
+		killTimeComboBox.setValue("600 (default)");
 
 		// remove most of the panes.
 		if (selectModelsOnly)
@@ -554,7 +554,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			if (killTimeComboBox.getEditor().getText().equals("none"))
 				inputParameters.setKillTime(-1);
 			else
-				inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
+				inputParameters.setKillTime(Integer.valueOf(
+						killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim())
+						* 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);
