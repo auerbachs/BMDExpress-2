@@ -18,7 +18,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 
@@ -125,7 +127,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("Data Source: " + processableData.getParentDataSetName());
 		notes.add("Work Source: " + processableData.toString());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
+		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		notes.add("Operating System: " + System.getProperty("os.name"));
 		String modelsToFit = "";
 		if (modelsToRun != null)
@@ -154,6 +156,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			notes.add("Restrict Power: " + inputParameters.getRestirctPower());
 		notes.add("Highest Dose: " + maxDose);
 		notes.add("Lowest Positive Dose: " + lowPDose);
+
 		if (modelSelectionParameters.getBestPolyModelTest() == BestPolyModelTestEnum.NESTED_CHI_SQUARED)
 		{
 			notes.add(
@@ -166,8 +169,13 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 
 		notes.add("Fit Selected Models with Multiple Threads: " + inputParameters.getNumThreads());
-		notes.add("Destory Model Processes If Run More Than: " + inputParameters.getKillTime()
-				+ " milliseconds.");
+		notes.add("Number of Available Processors On Machine: " + Runtime.getRuntime().availableProcessors());
+		if (inputParameters.getKillTime() > 0)
+			notes.add("Destory Model Processes If Run More Than: " + inputParameters.getKillTime()
+					+ " milliseconds.");
+		else
+			notes.add("Destory Model Processes If Run More Than: none");
+
 		analysisInfo.setNotes(notes);
 
 	}
@@ -187,6 +195,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	 */
 	public BMDResult bmdAnalyses()
 	{
+
+		long startTime = System.currentTimeMillis();
 
 		bmdResults.setAnalysisInfo(analysisInfo);
 
@@ -213,6 +223,31 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 				fixBestModel(bmdResults);
 			}
+
+			Map<String, Integer> modelFailCount = new HashMap<>();
+			for (ProbeStatResult result : bmdResults.getProbeStatResults())
+			{
+				for (StatResult sr : result.getStatResults())
+				{
+					if (sr.getSuccess().equals("false"))
+					{
+						if (modelFailCount.containsKey(sr.getModel()))
+							modelFailCount.put(sr.getModel(), modelFailCount.get(sr.getModel()) + 1);
+						else
+							modelFailCount.put(sr.getModel(), 1);
+
+					}
+				}
+			}
+
+			long endTime = System.currentTimeMillis();
+
+			long runTime = endTime - startTime;
+			bmdResults.getAnalysisInfo().getNotes().add("Total Run Time: " + runTime / 1000 + " seconds");
+
+			for (String key : modelFailCount.keySet())
+				bmdResults.getAnalysisInfo().getNotes()
+						.add(key + " # of model timeouts: " + modelFailCount.get(key));
 
 		}
 		else

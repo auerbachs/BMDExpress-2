@@ -199,7 +199,8 @@ public class CategoryMapTool
 		analysisInfo.getNotes().add("Work Source: " + bmdResults.getName());
 		analysisInfo.getNotes()
 				.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-		analysisInfo.getNotes().add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
+		analysisInfo.getNotes()
+				.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		DecimalFormat df1 = new DecimalFormat("#.####");
 		DecimalFormat df2 = new DecimalFormat("#.#");
@@ -354,6 +355,7 @@ public class CategoryMapTool
 		analysisInfo.getNotes()
 				.add("Category Count: " + categoryAnalysisResults.getCategoryAnalsyisResults().size());
 		return categoryAnalysisResults;
+
 	}
 
 	/*

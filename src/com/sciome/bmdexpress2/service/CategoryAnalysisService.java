@@ -12,12 +12,14 @@ import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryMapTool;
 import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
 
-public class CategoryAnalysisService implements ICategoryAnalysisService {
+public class CategoryAnalysisService implements ICategoryAnalysisService
+{
 
 	@Override
 	public CategoryAnalysisResults categoryAnalysis(CategoryAnalysisParameters params, BMDResult bmdResult,
-			CategoryAnalysisEnum catAnalysisEnum, ICategoryMapToolProgress me) {
-
+			CategoryAnalysisEnum catAnalysisEnum, ICategoryMapToolProgress me)
+	{
+		long startTime = System.currentTimeMillis();
 		AnalysisInfo analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
@@ -28,7 +30,13 @@ public class CategoryAnalysisService implements ICategoryAnalysisService {
 		CategoryAnalysisResults categoryAnalysisResults = catMapTool.startAnalyses();
 		categoryAnalysisResults.setBmdResult(bmdResult);
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
+
+		long endTime = System.currentTimeMillis();
+
+		long runTime = endTime - startTime;
+		categoryAnalysisResults.getAnalysisInfo().getNotes()
+				.add("Total Run Time: " + runTime / 1000 + " seconds");
 		return categoryAnalysisResults;
 	}
-	
+
 }

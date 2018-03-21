@@ -273,6 +273,19 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			exponentialModel.setOption(5);
 			modelsToRun.add(exponentialModel);
 		}
+
+		int availableProcessors = Runtime.getRuntime().availableProcessors();
+		if (inputParameters.getNumThreads() > availableProcessors * 2)
+		{
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Number Of Threads Exceeds Number of Available.");
+			alert.setContentText(
+					"The number of threads that you chose is more than twice the number of available processors you have on your machine.  The number avaiable processors detected by this application is: "
+							+ availableProcessors);
+
+			alert.showAndWait();
+		}
 		// start the BMD Analysis
 		if (selectModelsOnly)
 			presenter.performReselectParameters(inputParameters, modelSectionParameters);
@@ -494,6 +507,15 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		killTimeComboBox.getItems().add("120");
 		killTimeComboBox.getItems().add("150");
 		killTimeComboBox.getItems().add("180");
+		killTimeComboBox.getItems().add("210");
+		killTimeComboBox.getItems().add("240");
+		killTimeComboBox.getItems().add("270");
+		killTimeComboBox.getItems().add("300");
+		killTimeComboBox.getItems().add("330");
+		killTimeComboBox.getItems().add("360");
+		killTimeComboBox.getItems().add("390");
+		killTimeComboBox.getItems().add("600");
+		killTimeComboBox.getItems().add("none");
 		killTimeComboBox.setValue(input.getKillTime());
 
 		// remove most of the panes.
@@ -529,7 +551,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
 			// Multiply by 1000 to convert seconds to milliseconds
-			inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
+			if (killTimeComboBox.getEditor().getText().equals("none"))
+				inputParameters.setKillTime(-1);
+			else
+				inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);

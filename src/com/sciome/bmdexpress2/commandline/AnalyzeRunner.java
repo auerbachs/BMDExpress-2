@@ -353,7 +353,7 @@ public class AnalyzeRunner
 		if (bmdsConfig.getKillTime() != null)
 			inputParameters.setKillTime(bmdsConfig.getKillTime().intValue());
 		else
-			inputParameters.setKillTime(30000);
+			inputParameters.setKillTime(600000); // default to 10 minute timeout
 
 		inputParameters.setBmdlCalculation(1);
 		inputParameters.setBmdCalculation(1);
