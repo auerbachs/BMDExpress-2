@@ -16,6 +16,8 @@ The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) t
 
 [Details on the US EPA BMDS software can be found here.](https://www.epa.gov/bmds)
 
+[BMDExpress 2 installation packages are generated with a multi-platform installer builder from install4j.](https://www.ej-technologies.com/products/install4j/overview.html)
+
 Updates in BMDExpress-2
 =========================
 
