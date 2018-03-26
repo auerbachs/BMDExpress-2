@@ -58,6 +58,7 @@ Contributors
 -   Scott S Auerbach, National Toxicology Program (Project Lead)
 -   Jason Phillips, Sciome (Lead Software Engineer)
 -   Dan Svoboda, Sciome (Lead Designer)
+-   Shyam Patel, Sciome (Software Developer)
 -   Louis Olszyk, CSRA via USEPA (Updated BMD models)
 -   Arpit Tandon, Sciome (Platform Annotations)
 -   Fred Parham, National Toxicology Program (Statistical and Modeling Consultant)
