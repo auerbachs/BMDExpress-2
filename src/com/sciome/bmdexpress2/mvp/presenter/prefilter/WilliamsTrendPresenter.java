@@ -1,7 +1,12 @@
 package com.sciome.bmdexpress2.mvp.presenter.prefilter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
@@ -20,6 +25,9 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendView, IPrefilterService> implements SimpleProgressUpdater {
+	/** Time interval to update the UI for multiple datasets (milliseconds)*/
+	private static final int UPDATE_TIME = 100;
+	
 	private volatile boolean running = false;
 	
 	public WilliamsTrendPresenter(IWilliamsTrendView view, IPrefilterService service, BMDExpressEventBus eventBus)
@@ -29,64 +37,100 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	}
 
 	/*
-	 * do williams trend filter for multiple data sets
+	 * do williams trend filter for multiple data sets (threaded)
 	 */
 	public void performWilliamsTrend(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations)
 	{
-		SimpleProgressUpdater me = this;
-		Task<Integer> task = new Task<Integer>() {
-			@Override
-			protected Integer call() throws Exception
-			{
-				running = true;
-				try
+		List<WilliamsTrendResults> resultList = new ArrayList<WilliamsTrendResults>();
+		List<WilliamsUpdater> updaters = Collections.synchronizedList(new ArrayList<WilliamsUpdater>());
+		CountDownLatch latch = new CountDownLatch(processableData.size());
+
+		for (IStatModelProcessable pData : processableData) {
+			Task<Integer> task = new Task<Integer>() {
+				@Override
+				protected Integer call() throws Exception
 				{
-					List<WilliamsTrendResults> resultList = new ArrayList<WilliamsTrendResults>();
-					int count = 1;
-					for (IStatModelProcessable pData : processableData)
+					running = true;
+					try
 					{
+						//Create a new updater to keep track of the progress for each data set
+						WilliamsUpdater updater = new WilliamsUpdater();
+						synchronized(updaters) {
+							updaters.add(updater);
+						}
 						if(running) {
-							setMessage(count + "/" + processableData.size());
 							resultList.add(getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
-									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, me));
+									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, updater));
 							
-							me.setProgress(0);
-							count++;
+							//Once the method is finished, set progress to 1
+							updater.setProgress(1);
 						}
 					}
-					
-					// post the new williams object to the event bus so folks can do the right thing.
-					if(resultList != null && resultList.size() > 0 && running) {
+					catch (Exception exception)
+					{
 						Platform.runLater(() ->
 						{
-							for(int i = 0; i < resultList.size(); i++) {
-								getEventBus().post(new WilliamsTrendDataLoadedEvent(resultList.get(i)));
-							}
+							getEventBus().post(new ShowErrorEvent(exception.toString()));
+	
 						});
+						exception.printStackTrace();
 					}
+					latch.countDown();
+					return 0;
 				}
-				catch (Exception exception)
-				{
-					Platform.runLater(() ->
-					{
-						getEventBus().post(new ShowErrorEvent(exception.toString()));
-
-					});
-					exception.printStackTrace();
-				}
-				//Only close the view if the process was running
+			};
+			new Thread(task).start();
+		}
+		
+		//A progress updater that updates the view every 100 milliseconds and posts the results when they are finished
+		ScheduledExecutorService updateProgress = Executors.newSingleThreadScheduledExecutor();
+		updateProgress.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				//Only update the progress if the threads are actually running
 				if(running) {
-					Platform.runLater(() ->
-					{
-						getView().closeWindow();
-					});
+					double totalProgress = 0;
+					synchronized(updaters) {
+						for(WilliamsUpdater updater : updaters)
+						{
+							totalProgress += updater.getProgress();
+						}
+						final double progress = totalProgress / updaters.size();
+						
+						//If the threads are all finished running william's we need to send the results to the event bus,
+						//close the window, and shut down the updater
+						if(progress == 1) {
+							//Post the list of williams trend result objects to event bus
+							if(resultList != null && resultList.size() > 0) {
+								Platform.runLater(() ->
+								{
+									for(int i = 0; i < resultList.size(); i++) {
+										getEventBus().post(new WilliamsTrendDataLoadedEvent(resultList.get(i)));
+									}
+								});
+							}
+							
+							Platform.runLater(() ->
+							{
+								getView().closeWindow();
+							});
+							updateProgress.shutdown();
+						} else {
+							//Otherwise we just set the progress bar
+							setProgress(progress);
+						}
+					}
+				} else {
+					//If the threads aren't running we need to reset the progress bar and shutdown the updater
+					setProgress(0);
+					updateProgress.shutdown();
 				}
-				return 0;
 			}
-		};
-		new Thread(task).start();
+			
+		}, 0, UPDATE_TIME, TimeUnit.MILLISECONDS);
+		
 	}
 
 	/*
@@ -186,5 +230,23 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	 * private methods
 	 */
 	private void init() {
+	}
+	
+	/**
+	 * Updater for multi threaded williams trend test
+	 *
+	 */
+	private class WilliamsUpdater implements SimpleProgressUpdater {
+		private double progress;
+		
+		@Override
+		public void setProgress(double progress) {
+			this.progress = progress;
+		}
+		
+		public double getProgress()
+		{
+			return this.progress;
+		}
 	}
 }
