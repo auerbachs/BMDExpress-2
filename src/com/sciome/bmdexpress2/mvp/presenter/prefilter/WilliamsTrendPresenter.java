@@ -43,11 +43,12 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations)
 	{
-		List<WilliamsTrendResults> resultList = new ArrayList<WilliamsTrendResults>();
+		WilliamsTrendResults[] resultList = new WilliamsTrendResults[processableData.size()];
 		List<WilliamsUpdater> updaters = Collections.synchronizedList(new ArrayList<WilliamsUpdater>());
-		CountDownLatch latch = new CountDownLatch(processableData.size());
 
+		int count = 0;
 		for (IStatModelProcessable pData : processableData) {
+			final int threadCount = count;
 			Task<Integer> task = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception
@@ -61,9 +62,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 							updaters.add(updater);
 						}
 						if(running) {
-							resultList.add(getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
-									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, updater));
-							
+							resultList[threadCount] = getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
+									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, updater);
 							//Once the method is finished, set progress to 1
 							updater.setProgress(1);
 						}
@@ -77,14 +77,14 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 						});
 						exception.printStackTrace();
 					}
-					latch.countDown();
 					return 0;
 				}
 			};
 			new Thread(task).start();
+			count++;
 		}
 		
-		//A progress updater that updates the view every 100 milliseconds and posts the results when they are finished
+		//A progress updater that updates the view every 100 milliseconds and posts the results when all threads are finished
 		ScheduledExecutorService updateProgress = Executors.newSingleThreadScheduledExecutor();
 		updateProgress.scheduleAtFixedRate(new Runnable() {
 			@Override
@@ -103,11 +103,11 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 						//close the window, and shut down the updater
 						if(progress == 1) {
 							//Post the list of williams trend result objects to event bus
-							if(resultList != null && resultList.size() > 0) {
+							if(resultList != null && resultList.length > 0) {
 								Platform.runLater(() ->
 								{
-									for(int i = 0; i < resultList.size(); i++) {
-										getEventBus().post(new WilliamsTrendDataLoadedEvent(resultList.get(i)));
+									for(int i = 0; i < resultList.length; i++) {
+										getEventBus().post(new WilliamsTrendDataLoadedEvent(resultList[i]));
 									}
 								});
 							}
