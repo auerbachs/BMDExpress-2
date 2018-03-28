@@ -110,6 +110,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 	{
 		ChartKey minKey = keys[0];
 		ChartKey maxKey = keys[1];
+		ChartKey midKey = keys[2];
 
 		RangePlotDataset dataset = new RangePlotDataset();
 		for (SciomeSeries<String, Number> series : getSeriesData())
@@ -130,12 +131,13 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		}
 		slidingDataset = new SlidingCategoryDataset(dataset, 0, MAX_NODES_SHOWN);
 
-		chart = ChartFactory.createBarChart("Range Plot", "BMDL Median, BMD Median, BMDU Median ", "Category",
+		String rangeAxisLabel = minKey.toString() + ", " + midKey.toString() + ", " + maxKey.toString();
+		chart = ChartFactory.createBarChart("Range Plot", rangeAxisLabel, "Category",
 				slidingDataset, PlotOrientation.HORIZONTAL, true, true, false);
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setRangePannable(true);
 		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
-				"BMDL Median, BMD Median, BMDU Median"));
+				rangeAxisLabel));
 
 		if (getLockYAxis().isSelected() || getLogYAxis().isSelected())
 		{
