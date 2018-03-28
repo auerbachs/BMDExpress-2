@@ -8,6 +8,7 @@ import java.util.Map;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.visualization.BMDAnalysisResultsDataVisualizationPresenter;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
@@ -19,6 +20,7 @@ import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomePieChartJFree;
+import com.sciome.charts.jfree.SciomeRangePlotJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -33,6 +35,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	private final static String	BMDU_HISTOGRAM					= "BMDU Histogram";
 	private final static String	FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
 	private final static String	FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
+	private final static String RANGE_PLOT						= "Range Plot";
 
 	public BMDAnalysisResultsDataVisualizationView()
 	{
@@ -59,6 +62,13 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		chartCache.put(FIT_LOG_LIKELIHOOD_HISTOGRAM + "-" + BMDResult.BEST_LOGLIKLIHOOD,
 				new SciomeHistogramJFree("", new ArrayList<>(),
 						new ChartKey(BMDResult.BEST_LOGLIKLIHOOD, null), 20.0,
+						BMDAnalysisResultsDataVisualizationView.this));
+		
+		chartCache.put(RANGE_PLOT, 
+				new SciomeRangePlotJFree("Range Plot", new ArrayList<>(),
+						new ChartKey(BMDResult.BMDL, null),
+						new ChartKey(BMDResult.BMD, null),
+						new ChartKey(BMDResult.BMDU, null),
 						BMDAnalysisResultsDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
@@ -121,6 +131,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 			chartsList.add(chart2);
 			SciomeChartBase chart3 = chartCache.get(ACCUMULATION_CHARTS + "-" + BMDResult.BMDU);
 			chartsList.add(chart3);
+		}
+		else if(chartKey.equals(RANGE_PLOT))
+		{
+			SciomeChartBase chart1 = chartCache.get(RANGE_PLOT);
+			chartsList.add(chart1);
 		}
 		else
 		{
@@ -197,6 +212,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		returnList.add(BMDU_HISTOGRAM);
 		returnList.add(FIT_PVALUE_HISTOGRAM);
 		returnList.add(FIT_LOG_LIKELIHOOD_HISTOGRAM);
+		returnList.add(RANGE_PLOT);
 		return returnList;
 	}
 
