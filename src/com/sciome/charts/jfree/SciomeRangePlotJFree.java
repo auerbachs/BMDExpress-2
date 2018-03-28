@@ -65,7 +65,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 	private SlidingCategoryDataset	slidingDataset;
 
 	public SciomeRangePlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey minKey,
-			ChartKey maxKey, ChartKey midKey, SciomeChartListener chartListener)
+			ChartKey midKey, ChartKey maxKey, SciomeChartListener chartListener)
 	{
 		super(title, chartDataPacks, new ChartKey[] { minKey, maxKey, midKey }, true,
 				false, chartListener);
