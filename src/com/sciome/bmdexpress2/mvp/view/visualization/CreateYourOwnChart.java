@@ -13,6 +13,7 @@ import com.sciome.charts.jfree.SciomeAccumulationPlotJFree;
 import com.sciome.charts.jfree.SciomeBarChartJFree;
 import com.sciome.charts.jfree.SciomeBubbleChartJFree;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
+import com.sciome.charts.jfree.SciomeRangePlotJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
 
 import javafx.beans.value.ChangeListener;
@@ -33,6 +34,7 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 	private final String				HISTOGRAM		= "Histogram";
 	private final String				BAR				= "Bar";
 	private final String				ACCUMULATION	= "Accumulation Chart";
+	private final String				RANGE			= "Range Plot";
 
 	private ComboBox<String>			chartType		= new ComboBox<>();
 
@@ -54,6 +56,7 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		chartType.getItems().add(HISTOGRAM);
 		chartType.getItems().add(BAR);
 		chartType.getItems().add(ACCUMULATION);
+		chartType.getItems().add(RANGE);
 
 		chartType.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -136,6 +139,14 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 			return new SciomeAccumulationPlotJFree("Accumulation: " + chartKeys.get(0).toString(),
 					chartDataPacks, chartKeys.get(0), 20.0, chartChangeListener);
 		}
+		else if (chartType.getValue().equals(RANGE))
+		{
+			if (chartKeys.size() != 3)
+				return null;
+			return new SciomeRangePlotJFree("Range: " + chartKeys.get(0).toString(),
+					chartDataPacks, chartKeys.get(0), chartKeys.get(1),
+					chartKeys.get(2), chartChangeListener);
+		}
 		return null;
 	}
 
@@ -203,6 +214,12 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		else if (chartType.getValue().equals(ACCUMULATION))
 		{
 			chartKeyLayouts.add(new ChartKeyLayout("Value", getKeys()));
+		}
+		else if (chartType.getValue().equals(RANGE))
+		{
+			chartKeyLayouts.add(new ChartKeyLayout("Min", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Max", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Middle", getKeys()));
 		}
 		contents.getChildren().addAll(chartKeyLayouts);
 	}
