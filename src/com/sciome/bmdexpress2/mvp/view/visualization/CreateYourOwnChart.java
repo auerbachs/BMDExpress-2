@@ -218,8 +218,8 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		else if (chartType.getValue().equals(RANGE))
 		{
 			chartKeyLayouts.add(new ChartKeyLayout("Min", getKeys()));
-			chartKeyLayouts.add(new ChartKeyLayout("Max", getKeys()));
 			chartKeyLayouts.add(new ChartKeyLayout("Middle", getKeys()));
+			chartKeyLayouts.add(new ChartKeyLayout("Max", getKeys()));
 		}
 		contents.getChildren().addAll(chartKeyLayouts);
 	}
