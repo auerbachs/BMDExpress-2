@@ -64,8 +64,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		chartCache.put(RANGEPLOT,
 				new SciomeRangePlotJFree("Range Plot", new ArrayList<>(),
 						new ChartKey(CategoryAnalysisResults.BMDL_MEDIAN, null),
-						new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null), null,
-						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), null,
+						new ChartKey(CategoryAnalysisResults.BMDU_MEDIAN, null),
+						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
 						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put(ACCUMULATION_CHARTS + "-" + CategoryAnalysisResults.BMD_MEDIAN,
