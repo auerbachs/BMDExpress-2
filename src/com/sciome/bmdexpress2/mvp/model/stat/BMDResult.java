@@ -39,6 +39,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	private AnalysisInfo			analysisInfo;
 
 	private PrefilterResults		prefilterResults;
+	
+	private List<Float>				wAUCList;
 
 	private transient List<String>	columnHeader;
 
@@ -69,8 +71,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BEST_BMD_BMDL_RATIO			= "Best BMD/BMDL";
 	public static final String		BEST_BMDU_BMDL_RATIO		= "Best BMDU/BMDL";
 	public static final String		BEST_BMDU_BMD_RATIO			= "Best BMDU/BMD";
-
 	public static final String		BEST_POLY					= "Best Poly";
+	public static final String		WAUC						= "wAUC";
 
 	@JsonIgnore
 	public Long getID()
@@ -124,7 +126,15 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	{
 		this.prefilterResults = prefilterResults;
 	}
+	
+	public List<Float> getwAUC() {
+		return wAUCList;
+	}
 
+	public void setwAUC(List<Float> wAUC) {
+		this.wAUCList = wAUC;
+	}
+	
 	/*
 	 * fill the column header for table display or file export purposes.
 	 */
@@ -139,6 +149,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 		columnHeader = probStatResult.generateColumnHeader();
 
+		//Add Curve P Header
+		columnHeader.add(WAUC);
 		columnHeader.add(PREFILTER_PVALUE);
 		columnHeader.add(PREFILTER_ADJUSTEDPVALUE);
 		columnHeader.add(BEST_FOLDCHANGE);
@@ -157,6 +169,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				i++;
 			}
 		}
+		
 	}
 
 	@Override
@@ -245,10 +258,14 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 					}
 				}
 			}
+			Float wAUC = null;
+			if(wAUCList != null) {
+				wAUC = wAUCList.get(index);
+			}
+			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
+					foldChanges, wAUC);
 			index++;
 
-			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
-					foldChanges);
 		}
 
 	}

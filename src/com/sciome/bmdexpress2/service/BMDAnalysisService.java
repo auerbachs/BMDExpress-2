@@ -1,9 +1,13 @@
 package com.sciome.bmdexpress2.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
+import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
+import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
@@ -11,6 +15,7 @@ import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
+import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
 
 public class BMDAnalysisService implements IBMDAnalysisService
 {
@@ -30,9 +35,32 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 		if (bMDResults == null)
 			return null;
-		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
+		
+		DoseResponseExperiment doseResponseExperiment = processableData.getProcessableDoseResponseExperiment();
+		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
+		
+		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
+		List<Treatment> treatments = doseResponseExperiment.getTreatments();
+		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
+		List<Float> doseVector = new ArrayList<Float>();
+		// Fill numeric matrix
+		for (int i = 0; i < responses.size(); i++)
+		{
+			numericMatrix.add((ArrayList<Float>) responses.get(i).getResponses());
+		}
+
+		// Fill doseVector
+		for (int i = 0; i < treatments.size(); i++)
+		{
+			doseVector.add(treatments.get(i).getDose());
+		}
+		List<Float> wAUCList = new ArrayList<Float>();
+		for(int i = 0; i < responses.size(); i++) {
+			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i)));
+		}
+		bMDResults.setwAUC(wAUCList);
 		return bMDResults;
 	}
 
