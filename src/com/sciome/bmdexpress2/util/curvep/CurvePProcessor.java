@@ -564,6 +564,28 @@ public class CurvePProcessor
 		return 0.0f;
 	} // end of intg_AUC()
 
+	public static Float curveP(List<Float> allD, List<Float> allR) {
+		List<Float> avR = calc_WgtAvResponses(allD, allR);
+		List<Float> unqD = CollapseDoses(allD);
+		List<Float> luD;
+		try
+		{
+			luD = logBaseDoses(unqD, -24);
+			Float myAUC = calc_AUC(luD, avR);
+			Float myPOD = calc_POD(allD, allR, 1.34f, true);
+
+			// main call:
+			Float res = calc_wAUC(myAUC, myPOD, luD);
+			System.out.printf("wAUC = %f%n", res);
+			return res;
+		}
+		catch (Exception e)
+		{
+			System.out.println("problems with calculations");
+			return null;
+		}
+	}
+	
 	public static void main(String args[])
 	{
 		System.out.println("Hi Dudes");
