@@ -1,31 +1,3 @@
-.. BMDExpress-2 documentation master file, created by
-   sphinx-quickstart on Mon Apr 02 13:55:35 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to $project 's documentation!
-========================================
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-Introduction
-============
-[Download $project Software](https://github.com/auerbachs/BMDExpress-2/releases)
-
-BMDExpress 2 is a desktop application for Windows, Mac or Linux ([See IMPORTANT warning](https://github.com/auerbachs/BMDExpress-2/wiki/Benchmark-Dose-Analysis#important)) that enables analysis of dose-response data produced in differential gene expression experiments. It provides stepwise workflows that combine benchmark dose (BMD) calculations with functional classification analysis based on Gene Ontology ([GO](http://www.geneontology.org/)), Signaling Pathways ([Reactome](http://reactome.org/)), or custom categories provided by the user. The end results are estimates of doses at which cellular processes are altered, based on an increase or decrease in response in expression levels compared to untreated controls. All of the dose-response curve fit models utilized by BMDExpress 2 are those contained within [USEPA BMDS software](https://www.epa.gov/bmds). For a detailed description of the models, the user is referred to the [BMDS User Manual](https://www.epa.gov/bmds/benchmark-dose-software-bmds-user-manual).
-
-[Example BMDExpress 2 expression data files](https://github.com/auerbachs/BMDExpress-2/blob/master/example%20data%20files.zip)
-
-**Note:** Compressed zip file that contains 3 expression data files. User will need to unzip before using.
-
-
-[Example BMDExpress 2 project file (.bm2)](https://github.com/auerbachs/BMDExpress-2/blob/master/Example%20Data%20version%202.2.zip)
-
-
-**Note:** Compressed zip file that contains the .bm2 file used in the [tutorial videos](https://www.youtube.com/playlist?list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc). User will need to unzip the file before loading into BMDExpress 2.
-
 Basic Workflow
 --------------
 [Quickstart Video](https://www.youtube.com/watch?v=yWWG0bojLdc&index=1&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc)
@@ -57,15 +29,3 @@ Batchwise processing of multiple data sets is available at every step of the wor
 Project files from BMDExpress 2 are saved in `.bm2` format or alternatively in `.json` format (much larger than `.bm2`). However, `.bmd` project files from the original BMDExpress can be imported in to the software and transformed into the `.bm2` format. **Note:** `.bmd` files loaded into BMDExpress retain all annotations and results contained in the original file, hence, it will appear that there is missing data in the results files and probe annotations may not match updated annotations that would be applied if the expression data was re-analyzed in BMDExpress 2.
 
 BMDExpress 2 can analyze any continuous dose-response data. An example video on how to perform analysis on nongenomic data in BMDExpress 2 can be found [here](https://youtu.be/AhZHLbkLAuA).
-
-Tutorial Videos
----------------
-
-A [playlist of video tutorials](https://www.youtube.com/playlist?list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc) created by Scott Auerbach is available. Videos will also be linked in each section for their relevant functions.
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
