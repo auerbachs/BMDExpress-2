@@ -7,12 +7,12 @@ Benchmark dose analysis consists of fitting dose-response data to a collection o
 
 [Document describing model inputs and outputs, and of the best model selection work flow](https://github.com/auerbachs/BMDExpress-2.0/blob/master/BMDExpress2-%20running%20BMDS%20models.pdf)
 
-### **IMPORTANT:**
+### **IMPORTANT**
 BMDExpress 2 is available for Windows, Mac and Linux operating systems, however BMD results may be slightly different across these operating systems due the floating point calculations employed by the BMDS model executables that are used in BMDExpress. The model executables were originally intended to run on Windows operating systems and are therefore only validated in Windows. Empirical evaluation of the differences across platforms indicate there are minimal changes to the results, however the results from a limited number of probes may change significantly.
 
 ### Benchmark Dose Data Options
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-bmd.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-bmd.png?raw=true)
 
 #### Continuous Models
 
@@ -91,7 +91,7 @@ After selecting and checking the appropriate data, models, parameters and other 
 
 [Video describing Benchmark Dose Analysis results](https://www.youtube.com/watch?v=22pHEniAbKo&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc&index=9)
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-bmd-results.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-bmd-results.png?raw=true)
 
 Results are displayed in the bottom half of the window in tabular format.
 
@@ -118,27 +118,27 @@ For each model that is selected in the [options](#benchmark-dose-data-options), 
 
 Each probeset ID is a hyperlink to a separate window that displays a plot of the corresponding dose response behavior and model fit curves.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve.png?raw=true)
 
 The curve that is shown initially is the one  with the best fit [as described in the introduction](wiki#basic-workflow), but you can view the fit of other models by using the *Model Name* dropdown menu.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-model.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-model.png?raw=true)
 
 The *Mean & Standard Deviation* checkbox changes the points in the curve to reflect the mean and standard deviation of each dose.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-mean-sd.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-mean-sd.png?raw=true)
 
 You can also change the scale of the axis using the *Logarithmic Dose Axis* checkbox.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-log.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-log.png?raw=true)
 
 You can switch between different probes/probe sets inside of the individual curve viewer using the *ID* dropdown, however it is usually faster to close the popup and double-click on a different probe/probe set in the results table.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-id.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-id.png?raw=true)
 
 All properties of the curve can be altered in the *Properties Menu*.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-properties.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-properties.png?raw=true)
 
 Inside the properties menu for the plot, there are a variety of parameters that can be changed to alter the appearance of the plot.
 
@@ -184,13 +184,13 @@ The default visualizations are:
 
 -   **BMDS Model Counts**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/bmds-model-counts.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/bmds-model-counts.png?raw=true)
 -   **Best BMD Vs. Best BMDL**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-best-bmdl.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-best-bmdl.png?raw=true)
 -   **Best BMD Histogram**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-histogram.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-histogram.png?raw=true)
 
 Additional visualizations are available by making a selection in the `Select Graph View` dropdown list.
 
@@ -210,4 +210,4 @@ There is a filter available for every column in the BMD results table. Some part
 -   **Gene ID:** Filter by gene IDs.
 -   **Gene Symbols:** Filter by gene symbols.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-bmd-results-filters-added.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-bmd-results-filters-added.png?raw=true)

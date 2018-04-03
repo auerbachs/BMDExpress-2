@@ -1,4 +1,4 @@
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-view-complete.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-view-complete.png?raw=true)
 
 Once data has been analyzed either via [Prefilter](https://github.com/auerbachs/BMDExpress-2/wiki/Prefilter%3A-Statistical-and-Fold-Change-Filtering), [Benchmark Dose Analysis](Benchmark-Dose-Analysis), or [Functional Classification](Functional-Classifications), the contents of the charts and results table areas will reflect the type of analysis selected in the *Data Selection Area*.
 
@@ -7,7 +7,7 @@ Main Toolbar
 
 ### File
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-file-menu.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-file-menu.png?raw=true)
 
 -   **Open Project:** Opens a dialog for selecting an existing `.bm2` file.
     -   The project file format for BMDExpress 2 is `.bm2` which is different than the original version of BMDExpress which used `.bmd` files. `.bmd` files can be loaded into BMDExpress 2 by using the “*Import > BMD file function*” described below.
@@ -25,7 +25,7 @@ Main Toolbar
 
 ### Tools
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-tool-menu.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-tool-menu.png?raw=true)
 
 -   **Prefilter:** [Reduce the number of data items for BMD computation, based on statistical significance of a response to increasing dose.](Statistical-Prefiltering)
 -   **Benchmark Dose Analysis:** [Configure and execute benchmark dose computation.](Benchmark-Dose-Analysis)
@@ -35,7 +35,7 @@ Main Toolbar
 
 ### Help
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-help-menu.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-help-menu.png?raw=true)
 
 -   **Tutorial:** A link to this documentation.
 -   **Credits:** A popup containing all contributors to the software.
@@ -49,7 +49,7 @@ The *Data Selection Area* is used to navigate among the various analyses that ha
 
 ### Data Selection Area Additional Functions
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-export.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-export.png?raw=true)
 
 By right-clicking on an individual analysis, you can choose to `Rename`, `Remove`, or `export` the analysis.
 
@@ -63,7 +63,7 @@ Right-click on an individual data set in either [One-way ANOVA](One-way-ANOVA), 
 
 A new window will appear with the selected data and the Toggle, Visualization, Filter, Chart and Table panels displayed for that data. This is useful when you want to dig down into a subset of data from your analysis and/or compare different datasets. Any filters, selected rows, and charts viewed will not be affected by any other actions in the main window.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-spreadsheet-view.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-spreadsheet-view.png?raw=true)
 
 Metadata Panel
 --------------
@@ -140,4 +140,4 @@ When evaluating a Defined Category Analysis (i.e., you have provided your own ge
 
 Labeling features in a plot is also possible by holding the shift key and selecting the data point in the visualization. Only one data point at a time can be labeled using this approach.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-individual-chart.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-individual-chart.png?raw=true)

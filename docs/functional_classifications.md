@@ -23,25 +23,25 @@ Choose the desired BMD result set(s) in the Data Selection Area, and select eith
 -   `Tools > Signaling Pathway Analysis`
 -   `Tools > Defined Category Analysis`
 
-![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/select-fc.png)
+![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/select-fc.png?raw=true)
 
 ### Functional Classification Options
 
-![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/popup-fc-go.png)
+![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/popup-fc-go.png?raw=true)
 
 > **Note:** Gene Ontology is shown here, but Signaling Pathway and Defined Category Analysis use the same options below. The only difference is selecting which categories to use.
 
 -   **Categories**
     -   **GO Categories:** Select the class of GO categories for the analysis.
 
-        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-go-options.png)
+        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-go-options.png?raw=true)
     -   **Signaling Pathways:** Select the signaling pathway categories for the analysis.
 
-        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-signaling.png)
+        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-signaling.png?raw=true)
 
     -   **Defined Categories:** [User defined categories](#defined-category-analysis).
 
-        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-defined-category.png)
+        ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-fc-defined-category.png?raw=true)
 
 -   **Remove BMD &gt; Highest Dose for Category Descriptive Statistics:** Remove probesets/features where the BMD is greater than the highest dose. Removing these probesets/features removes BMDS that are based on extrapolation beyond the measured dose range.
 -   **Remove BMD with p-Value &lt; Cutoff *(default 0.1)*:** Remove probesets/features where the best model’s goodness-of-fit *p*-value &lt; the defined cutoff. A likelihood ratio test is used to test whether the dose-related changes in mean response are significantly different from the fitted model values. If the p-value is low, there is a significant difference and therefore the model does not adequately describe the data. On the other hand, a high p value (> 0.1) indicates that the model appears to be adequate to describe the data. 
@@ -210,25 +210,25 @@ Default visualizations are:
 
 -   **BMD Median Accumulation Plot:** A data point represents the number of probes that have BMD &lt;= the corresponding value on the horizontal axis.
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-accumulation-plot.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-accumulation-plot.png?raw=true)
 
 -   **BMD Median Vs. BMDL Median:** 
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-vs-bmdl-median.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-vs-bmdl-median.png?raw=true)
 
 Additional visualizations are available by clicking on `Select Chart View` dropdown list:
 
 -   **Range Plot**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/box-and-whisker.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/box-and-whisker.png?raw=true)
 
 -   **Bubble Chart:** BMD Median Vs. Negative Log of Fisher’s Two-Tailed p-value. The bubble size represents percentage of genes in a gene set that pass all filters. 
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-vs--log-fishers-two-tail.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-median-vs--log-fishers-two-tail.png?raw=true)
 
 -   **BMD and BMDL Bar Charts**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-bar-charts.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-bar-charts.png?raw=true)
     -   BMD Median
     -   BMDL Median
     -   BMDU Median
@@ -238,17 +238,17 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 
 -   **Accumulation Charts**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/accumulation-charts.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/accumulation-charts.png?raw=true)
     -   BMD, BMDL, BMDU | Mean and Median
 
 -   **Best Models Pie Chart**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/best-models-pie-chart.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/best-models-pie-chart.png?raw=true)
     -   BMDS Model Counts (unique)
 
 -   **Mean Histograms**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/mean-histograms.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/mean-histograms.png?raw=true)
     -   BMD Mean Histogram
     -   BMDL Mean Histogram
     -   BMDU Mean Histogram
@@ -257,14 +257,14 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 
 -   **Median Histograms**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/median-histograms.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/median-histograms.png?raw=true)
     -   BMD Median Histogram
     -   BMDL Median Histogram
     -   BMDU Median Histogram
 
 -   **BMD vs BMDL Scatter Plots**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-scatter-plots.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-scatter-plots.png?raw=true)
     -   BMD Median Vs. BMDL Median
     -   BMD Mean Vs. BMDL Mean
     -   BMDU Mean Vs. BMD Mean

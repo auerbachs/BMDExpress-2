@@ -2,7 +2,7 @@ Basic Workflow
 --------------
 [Quickstart Video](https://www.youtube.com/watch?v=yWWG0bojLdc&index=1&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc)
 
-![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/workflow.png)
+![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/workflow.png?raw=true)
 
 [Before working with data, verify that necessary gene annotations are present, and up to date.](How-to-Use-the-Application#update-annotation-file) Annotations for the various genomic platforms are stored and maintained on the BMD Express 2 GitHub site. Before importing data, annotations must be present locally.
 

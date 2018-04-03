@@ -5,11 +5,11 @@ Update Annotations
 
 Before beginning an analysis, it is recommended to update any annotation files needed for the analysis. (Click `File > Update Annotations`)
 
-![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/select-update-annotations.png)
+![](https://github.com/auerbachs/BMDExpress-2/blob/master/media/select-update-annotations.png?raw=true?raw=true)
 
 Use the checkboxes on the left side of the popup to choose which annotation(s) to update. When finished, click `Update`.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-update-annotations.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-update-annotations.png?raw=true)
 
 Import Dose-Response Data
 -------------------------
@@ -22,24 +22,24 @@ The first step in the workflow is to import gene expression data from a tab-deli
 
 Click `File > Import Expression Data`.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-import-data.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-import-data.png?raw=true)
 
 Navigate to the folder containing your file(s), and select your data. You may import multiple files at once on this screen. Then click `Open`.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-import-data.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-import-data.png?raw=true)
 
 After the file is read by the program, an array platform will be suggested. If the default platform is incorrect, select the correct platform from the dropdown list or alternatively if you platform is not contained in our [annotation set](https://github.com/auerbachs/BMDExpress-2/wiki/How-to-Use-the-Application#update-annotations) you can select "generic" from the drop down. Then click `OK`. If "generic" platform is selected probe annotations will be empty in the subsequent results tables and in order to perform [Functional Classifications](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications) a [Defined Category Analysis](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications#defined-category-analysis) will need to be carried out.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-platform-selection.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-platform-selection.png?raw=true)
 
 Next, select the type of log transformation your data was prepared with.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-log-transform.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-log-transform.png?raw=true)
 
 Once the file(s) are loaded into the program, they will be displayed in the lower section of the main window. In the chart area, scatter plots of 6 pairs of principal components are shown. To identify data points in the PCA plot hold shift and click on the point of interest.
 
 Switch between expression data files using the data selection panel to the left. In this section only one data set at time can be loaded. In other sections of the application multiple data sets can selected and evaluated simultaneously.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-expression-data-loaded.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-expression-data-loaded.png?raw=true)
 
 Once you have loaded your data you should proceed sequentially through [Prefiltering](https://github.com/auerbachs/BMDExpress-2/wiki/Prefilter%3A-Statistical-and-Fold-Change-Filtering), [Benchmark Dose Analysis](https://github.com/auerbachs/BMDExpress-2/wiki/Benchmark-Dose-Analysis), and [Functional Classification](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications).

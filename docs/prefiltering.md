@@ -10,7 +10,7 @@ ORIOGEN utilizes non-parametric to simultaneously identify significant genes and
 
 After choosing a data set(s) from the Data Tree, select 'One-way ANOVA', 'Williams Trend', or 'ORIOGEN' from the 'Tools' menu.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-anova.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-anova.png?raw=true)
 
 [Video tutorial describing data filtering setup in detail](https://www.youtube.com/watch?v=YmzF4rXagzo&index=6&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc)
 
@@ -22,7 +22,7 @@ After choosing a data set(s) from the Data Tree, select 'One-way ANOVA', 'Willia
 
 Configure ANOVA/Williams and Fold Change options. Click 'Start'.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-anova-parameters.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-anova-parameters.png?raw=true)
 
 ### ORIOGEN Options
 
@@ -35,7 +35,7 @@ Configure ANOVA/Williams and Fold Change options. Click 'Start'.
 
 Configure ORIOGEN and Fold Change options. Click 'Start'.
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-oriogen-parameters.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-oriogen-parameters.png?raw=true)
 #### Fold Change Parameters
 
 -   **Use Fold Change Filter:** If this option is unchecked, all other options in this section will be disabled.
@@ -61,7 +61,7 @@ Results are tabulated in the results table. Output consists of:
 -   **Fold Change Dose Level 1, 2, etc…:** Fold change for each dose level from control.
 -   **Profile:** Pattern of response observed in the data over the different dose groups. "U" indicates up-regulation, and "D" indicates down-regulation. Each dose is compared to the previous dose. For example if you run a 4 dose study including "0" dose the profile of UUD indicates that the probe trend increased for the first 2 positive dose levels and decreased at the 3rd (ORIOGEN only)
 
-![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-anova-complete.png)
+![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-anova-complete.png?raw=true)
 
 At the top of the main panel, there is a set of [toggles](Overview-of-the-Main-View#toggles-panel) that control various aspects of the ANOVA analysis results view.
 
@@ -71,25 +71,25 @@ The default visualizations are:
 
 -   Max Fold Change Vs. *-log<sub>10</sub> Adjusted *P*-value*
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/mfc--log10-adjusted-p-value.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/mfc--log10-adjusted-p-value.png?raw=true)
 -   Max Fold Change Vs. *-log<sub>10</sub> Unadjusted *P*-value*
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/mfc--log10-unadjusted-p-value.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/mfc--log10-unadjusted-p-value.png?raw=true)
 
 There are more visualizations available after clicking on `Select Graph View` dropdown list:
 
 -   **Unadjusted P-Value Histogram**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/unadjusted-p-value-histogram.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/unadjusted-p-value-histogram.png?raw=true)
 -   **Adjusted P-Value Histogram**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/adjusted-p-value-histogram.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/adjusted-p-value-histogram.png?raw=true)
 -   **Best Fold Change Histogram**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/max-fold-change-histogram.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/max-fold-change-histogram.png?raw=true)
 -   **Best Fold Change (Unsigned) Histogram**
 
-    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/max-fold-change-unsigned-histogram.png)
+    ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/anova-charts/max-fold-change-unsigned-histogram.png?raw=true)
 
 ### Statistical Filter Visualization Filters
 

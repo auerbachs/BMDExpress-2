@@ -15,15 +15,13 @@ The BMDExpress 2 Command Line gives access to the full workflow of the BMDExpres
 
 
 ### Example Configuration Files
--   [Example config file that reads expression data from a directory. ](https://github.com/auerbachs/BMDExpress-2/blob/master/analyze-config1.json)
+-   [Example config file that reads expression data from a directory. ](https://github.com/auerbachs/BMDExpress-2/blob/master/example/command-line/analyze_config_directory.json)
 
--   [Example config file that reads expression data from specified files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/analyze-config2.json)
+-   [Example config file that reads expression data from specified files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/example/command-line/analyze_config_files.json)
 
--   [Defined category analysis files to use with example analyze config files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/defined-category-for-example-cli-analyze.zip)
+-   [Defined category analysis files to use with example analyze config files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/example/command-line/example_defined_category_cli.zip)
 
--   [Expression data files to use with example analyze config files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/expression-data-for-example-cli-analyze.zip)
-
-
+-   [Expression data files to use with example analyze config files. ](https://github.com/auerbachs/BMDExpress-2/blob/master/example/command-line/example_data_cli.zip)
 
 ``bmdexpress2-cmd analyze --config-file``
 
@@ -42,6 +40,7 @@ The last section is the ``categoryAnalysisConfigs`` which is used to define any 
  The full list of fields for each section can be found below:
 
 (* indicate required fields)
+
 * ``bm2FileName`` - The file name of the bm2 file that will be outputted
 * ``jsonExportFileName`` - The file name of the json export file
 * ``overwrite`` - Choice between (``true`` | ``false``)
