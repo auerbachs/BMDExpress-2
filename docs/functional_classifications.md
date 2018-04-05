@@ -71,12 +71,12 @@ Defined category analyses require two tab-delimited input files from the user:
 -   **Probe Map File**: *(Must include at least two columns)*
     -   Probe set or probe identifiers
     -   Component identifiers (usually gene identifiers)
-    -   Example [Probe Map File](https://github.com/auerbachs/BMDExpress-2/blob/master/Probe%20Map%20File_Human_S1500%2B%20Probe%20to%20Entrez%20Gene.txt)
+    -   Example [Probe Map File](https://github.com/auerbachs/BMDExpress-2/blob/master/example/Probe%20Map%20File_Human_S1500%2B%20Probe%20to%20Entrez%20Gene.txt)
 -   **Category Map File**: *(Must include at least three columns)*
     -   Category identifier: Unique Identifier of a pathway.
     -   Category name: Descriptive name of a pathway.
     -   Category component: Individual gene, only one per row.
-    -   Example [Category Map File](https://github.com/auerbachs/BMDExpress-2/blob/master/Category%20Map%20File_%20MsigDB%20Hallmark%20Gene%20Sets.txt)
+    -   Example [Category Map File](https://github.com/auerbachs/BMDExpress-2/blob/master/example/Category%20Map%20File_%20MsigDB%20Hallmark%20Gene%20Sets.txt)
 
 ### Functional Classification Results
 
@@ -98,7 +98,7 @@ The tabular output from functional classification analysis consists of an identi
 -   **Genes with BMDU/BMDL &lt;=:** Number of genes with BMDU/BMDL ratios &lt; than the designated value in the set up.
 -   **Genes with BMD &lt;= N-Fold Lowest Positive Dose:** Number of genes with BMD values &gt; N-fold below the lowest positive dose.
 
--   **Genes that Passed All Filters:** Total number of genes that passed all [filters](Overview-of-the-Main-View#filters-panel) if they are are applied.
+-   **Genes that Passed All Filters:** Total number of genes that passed all [filters](main_view#filters-panel) if they are are applied.
 -   **Fisher’s Exact Left-tailed P-Value:** P-value of the enrichment analysis of the gene sets that indicates significant under representation of responsive genes in a gene set
 -   **Fisher’s Exact Right-tailed P-Value:** P-value of the enrichment analysis of the gene sets that indicates significant over representation of responsive genes in a gene set.
 -   **Fisher’s Exact Two-Tailed P-Value:** P-value of the enrichment analysis of the gene sets based on Fischer's Exact Two-Tailed test. A low p-value here could indicate either significant over or under representation based on what would be expected by random chance. 
@@ -229,6 +229,7 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 -   **BMD and BMDL Bar Charts**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-bar-charts.png?raw=true)
+		
     -   BMD Median
     -   BMDL Median
     -   BMDU Median
@@ -239,16 +240,19 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 -   **Accumulation Charts**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/accumulation-charts.png?raw=true)
+		
     -   BMD, BMDL, BMDU | Mean and Median
 
 -   **Best Models Pie Chart**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/best-models-pie-chart.png?raw=true)
+		
     -   BMDS Model Counts (unique)
 
 -   **Mean Histograms**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/mean-histograms.png?raw=true)
+		
     -   BMD Mean Histogram
     -   BMDL Mean Histogram
     -   BMDU Mean Histogram
@@ -258,6 +262,7 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 -   **Median Histograms**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/median-histograms.png?raw=true)
+		
     -   BMD Median Histogram
     -   BMDL Median Histogram
     -   BMDU Median Histogram
@@ -265,10 +270,11 @@ Additional visualizations are available by clicking on `Select Chart View` dropd
 -   **BMD vs BMDL Scatter Plots**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/fc-charts/bmd-bmdl-scatter-plots.png?raw=true)
+		
     -   BMD Median Vs. BMDL Median
     -   BMD Mean Vs. BMDL Mean
     -   BMDU Mean Vs. BMD Mean
 
 ### Functional Classification Filters
 
-These parameters are changed via the [filter panel](Overview-of-the-Main-View#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](Overview-of-the-Main-View#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox. The filters correspond to the columns in the Functional Classification data table that is selected and filtering corresponds to values in these columns when values are entered into the boxes. Some of the commons ones that are used include Percentage (percentage that a gene set is populated by genes that pass all filters), Genes that pass all filters (number of genes that pass all filters in gene set) and Fischer Exact Two Tail (measure of statistical enrichment of the gene set).
+These parameters are changed via the [filter panel](main_view#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](main_view#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox. The filters correspond to the columns in the Functional Classification data table that is selected and filtering corresponds to values in these columns when values are entered into the boxes. Some of the commons ones that are used include Percentage (percentage that a gene set is populated by genes that pass all filters), Genes that pass all filters (number of genes that pass all filters in gene set) and Fischer Exact Two Tail (measure of statistical enrichment of the gene set).

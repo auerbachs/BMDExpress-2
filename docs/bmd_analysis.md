@@ -120,7 +120,7 @@ Each probeset ID is a hyperlink to a separate window that displays a plot of the
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve.png?raw=true)
 
-The curve that is shown initially is the one  with the best fit [as described in the introduction](wiki#basic-workflow), but you can view the fit of other models by using the *Model Name* dropdown menu.
+The curve that is shown initially is the one  with the best fit [as described in the introduction](basic_workflow), but you can view the fit of other models by using the *Model Name* dropdown menu.
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-curve-model.png?raw=true)
 
@@ -185,9 +185,11 @@ The default visualizations are:
 -   **BMDS Model Counts**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/bmds-model-counts.png?raw=true)
+		
 -   **Best BMD Vs. Best BMDL**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-best-bmdl.png?raw=true)
+		
 -   **Best BMD Histogram**
 
     ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/bmd-charts/best-bmd-histogram.png?raw=true)
@@ -196,9 +198,10 @@ Additional visualizations are available by making a selection in the `Select Gra
 
 ### Benchmark Dose Analysis Filters
 
-These parameters are changed via the [filter panel](Overview-of-the-Main-View#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](Overview-of-the-Main-View#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox.
+These parameters are changed via the [filter panel](main_view#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](main_view#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox.
 
 There is a filter available for every column in the BMD results table. Some particularly useful ones are:
+
 -   **Best BMD:** Filter by best BMD
 -   **Best BMD/BMDL:** Filter by BMD/BMDL ratio
 -   **Best BMDL:** Filter by best BMDL

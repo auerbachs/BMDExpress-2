@@ -63,7 +63,7 @@ Results are tabulated in the results table. Output consists of:
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-anova-complete.png?raw=true)
 
-At the top of the main panel, there is a set of [toggles](Overview-of-the-Main-View#toggles-panel) that control various aspects of the ANOVA analysis results view.
+At the top of the main panel, there is a set of [toggles](main_view#toggles-panel) that control various aspects of the ANOVA analysis results view.
 
 ### Prefilter Visualizations
 
@@ -93,7 +93,7 @@ There are more visualizations available after clicking on `Select Graph View` dr
 
 ### Statistical Filter Visualization Filters
 
-These parameters are changed via the [filter panel](Overview-of-the-Main-View#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](Overview-of-the-Main-View#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox.
+These parameters are changed via the [filter panel](main_view#filters-panel). You must also make sure that the `Apply Filter` box is checked in the [toggles panel](main_view#toggles-panel) for these filters to be applied. The filters will be applied as soon as they are entered; there is no need to click any *apply* button other than the checkbox.
 
 -   **Adjusted P-Value**
 -   **Df1** (ANOVA only)

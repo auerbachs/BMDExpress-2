@@ -1,9 +1,9 @@
 Example Data Sets
 ===================================
 
--   [Example `.bm2` file](https://github.com/auerbachs/BMDExpress-2/blob/master/Example%20Data%20version%202.2.zip)
+-   [Example `.bm2` file](https://github.com/auerbachs/BMDExpress-2/blob/master/example/example_project_2.2.zip)
 
--   [Example Expression Data File](https://github.com/auerbachs/BMDExpress-2/blob/master/example%20data%20files.zip)
+-   [Example Expression Data File](https://github.com/auerbachs/BMDExpress-2/blob/master/example/example_data.zip)
 
 Supported Microarrays and Next Generation Sequencing Platforms
 ===================================

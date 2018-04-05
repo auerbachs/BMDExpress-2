@@ -47,7 +47,7 @@ The last section is the ``categoryAnalysisConfigs`` which is used to define any 
 * ``expressionDataConfigs``
   * ``inputFileName``* - The file or directory with files to import
   * ``outputName`` - If not specified, the imported filename will be used
-  * ``platform``* - The name of the platform ([Use ID column from annotations table](https://github.com/auerbachs/BMDExpress-2/wiki/Additional-Information#supported-microarrays))
+  * ``platform``* - The name of the platform ([Use ID column from annotations table](additional_information))
   * ``logTransformation``* - Choice between (``NONE`` | ``BASE2`` | ``BASE10`` | ``NATURAL``)
 * ``preFilterConfigs``
   * ``@type``* - Choice between (``anova`` | ``williams`` | ``oriogen``)

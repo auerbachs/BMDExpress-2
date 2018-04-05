@@ -28,7 +28,7 @@ Navigate to the folder containing your file(s), and select your data. You may im
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-import-data.png?raw=true)
 
-After the file is read by the program, an array platform will be suggested. If the default platform is incorrect, select the correct platform from the dropdown list or alternatively if you platform is not contained in our [annotation set](https://github.com/auerbachs/BMDExpress-2/wiki/How-to-Use-the-Application#update-annotations) you can select "generic" from the drop down. Then click `OK`. If "generic" platform is selected probe annotations will be empty in the subsequent results tables and in order to perform [Functional Classifications](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications) a [Defined Category Analysis](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications#defined-category-analysis) will need to be carried out.
+After the file is read by the program, an array platform will be suggested. If the default platform is incorrect, select the correct platform from the dropdown list or alternatively if you platform is not contained in our [annotation set](how_to_use#update-annotations) you can select "generic" from the drop down. Then click `OK`. If "generic" platform is selected probe annotations will be empty in the subsequent results tables and in order to perform [Functional Classifications](functional_classifications) a [Defined Category Analysis](functional_classifications#defined-category-analysis) will need to be carried out.
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/popup-platform-selection.png?raw=true)
 
@@ -42,4 +42,4 @@ Switch between expression data files using the data selection panel to the left.
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-expression-data-loaded.png?raw=true)
 
-Once you have loaded your data you should proceed sequentially through [Prefiltering](https://github.com/auerbachs/BMDExpress-2/wiki/Prefilter%3A-Statistical-and-Fold-Change-Filtering), [Benchmark Dose Analysis](https://github.com/auerbachs/BMDExpress-2/wiki/Benchmark-Dose-Analysis), and [Functional Classification](https://github.com/auerbachs/BMDExpress-2/wiki/Functional-Classifications).
+Once you have loaded your data you should proceed sequentially through [Prefiltering](prefiltering), [Benchmark Dose Analysis](bmd_analysis), and [Functional Classification](functional_classifications).

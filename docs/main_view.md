@@ -1,6 +1,6 @@
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-view-complete.png?raw=true)
 
-Once data has been analyzed either via [Prefilter](https://github.com/auerbachs/BMDExpress-2/wiki/Prefilter%3A-Statistical-and-Fold-Change-Filtering), [Benchmark Dose Analysis](Benchmark-Dose-Analysis), or [Functional Classification](Functional-Classifications), the contents of the charts and results table areas will reflect the type of analysis selected in the *Data Selection Area*.
+Once data has been analyzed either via [Prefilter](prefiltering), [Benchmark Dose Analysis](bmd_analysis), or [Functional Classification](functional_classifications), the contents of the charts and results table areas will reflect the type of analysis selected in the *Data Selection Area*.
 
 Main Toolbar
 ------------
@@ -13,25 +13,25 @@ Main Toolbar
     -   The project file format for BMDExpress 2 is `.bm2` which is different than the original version of BMDExpress which used `.bmd` files. `.bmd` files can be loaded into BMDExpress 2 by using the “*Import > BMD file function*” described below.
 -   **Add Project:** Opens a dialog for selecting an existing `.bm2` file and adding it to the currently opened project.
     - You can load multiple projects in the same space using this feature.  This can be helpful if you have multiple `.bm2` files that contain comparable data analyses.
--   **Import Expression Data:** Opens a [dialog box](https://github.com/auerbachs/BMDExpress-2/wiki/How-to-Use-the-Application#import-dose-response-data) for choosing data to be imported into the current project.
+-   **Import Expression Data:** Opens a [dialog box](how_to_use#import-dose-response-data) for choosing data to be imported into the current project.
 -   **Import > JSON file:** Imports a `.json` project file 
 -   **Import > Expression Data:** Opens a dialog for choosing data to be imported into the current project.
 -   **Import > BMD file:** Imports a `.bmd` project file (project file format from the previous version of BMDExpress). **Note:** When importing the file, probe set-to-gene, GO and KEGG annotations from the original analysis are retained. If it is desired to update the genomic analysis, the Expression Data should re-imported, associated with the updated annotations, and re-analysis from start to finish performed.
--   **Save Project:** Saves the current project in `.bm2` format. If you wish to export data to be viewed in other software, [please see the section on exporting data.](https://github.com/auerbachs/BMDExpress-2/wiki/Overview-of-the-Main-View#exporting-analyses)
+-   **Save Project:** Saves the current project in `.bm2` format. If you wish to export data to be viewed in other software, [please see the section on exporting data.](main_view#exporting-analyses)
 -   **Save Project As:** Saves the current project under a different name.
 -   **Export as JSON:** Saves the current project in `.json` format.
 -   **Close Project:** Closes the current project without exiting the program.
--   **Update Annotations:** Opens a dialog for [updating the annotation files](How-to-Use-the-Application#update-annotations) used to parse imported data into Entrez Gene IDs.
+-   **Update Annotations:** Opens a dialog for [updating the annotation files](how_to_use#update-annotations) used to parse imported data into Entrez Gene IDs.
 
 ### Tools
 
 ![](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/select-tool-menu.png?raw=true)
 
--   **Prefilter:** [Reduce the number of data items for BMD computation, based on statistical significance of a response to increasing dose.](Statistical-Prefiltering)
--   **Benchmark Dose Analysis:** [Configure and execute benchmark dose computation.](Benchmark-Dose-Analysis)
--   **Gene Ontology Analysis:** [Configure and execute functional classification based on GO terms.](Functional-Classifications)
--   **Signaling Pathway Analysis:** [Configure and execute functional classification based on Reactome categories.](Functional-Classifications)
--   **Defined Category Analysis:** [Configure and execute functional classification based on user-defined gene categories.](Functional-Classifications#defined-category-analysis)
+-   **Prefilter:** [Reduce the number of data items for BMD computation, based on statistical significance of a response to increasing dose.](prefiltering)
+-   **Benchmark Dose Analysis:** [Configure and execute benchmark dose computation.](bmd_analysis)
+-   **Gene Ontology Analysis:** [Configure and execute functional classification based on GO terms.](functional_classifications#)
+-   **Signaling Pathway Analysis:** [Configure and execute functional classification based on Reactome categories.](functional_classifications)
+-   **Defined Category Analysis:** [Configure and execute functional classification based on user-defined gene categories.](functional_classifications#defined-category-analysis)
 
 ### Help
 
@@ -43,7 +43,7 @@ Main Toolbar
 -   **License:** A popup containing all license information regarding this software.
 
 Data Selection Area
----------
+-------------------
 
 The *Data Selection Area* is used to navigate among the various analyses that have been performed in the current project. The dropdown is for choosing a data view; imported data, filtered data, benchmark analyses, and categorical analyses. Within a data view, ticking boxes next to the experiment name causes the charts and results table to update, displaying the selected data set(s). Metadata for the highlighted row in the experiment list is displayed in the metadata panel at the bottom left.
 
@@ -59,7 +59,7 @@ Right-click on an individual data set, then click `Export` to export the analysi
 
 ### Spreadsheet View
 
-Right-click on an individual data set in either [One-way ANOVA](One-way-ANOVA), [Williams Trend](Williams-Trend), [Oriogen](Oriogen), [Benchmark Dose Analysis](Benchmark-Dose-Analysis), or [Functional Classification](Functional-Classifications) sections, and select `Spreadsheet View`.
+Right-click on an individual data set in either [One-way ANOVA](prefiltering#one-way-anova-williams-trend-test-options), [Williams Trend](prefiltering#one-way-anova-williams-trend-test-options), [Oriogen](prefiltering#oriogen-options), [Benchmark Dose Analysis](bmd_analysis), or [Functional Classification](functional_classifications) sections, and select `Spreadsheet View`.
 
 A new window will appear with the selected data and the Toggle, Visualization, Filter, Chart and Table panels displayed for that data. This is useful when you want to dig down into a subset of data from your analysis and/or compare different datasets. Any filters, selected rows, and charts viewed will not be affected by any other actions in the main window.
 
@@ -83,14 +83,14 @@ Toggles Panel
 Visualizations Panel
 --------------------
 
--   **Create Your Own Chart:** Brings up a workflow that enables creation of a user-defined chart. 5 chart types are available, with the user choosing axes from available columns in the table view, as appropriate. After completion of the workflow, the user-defined chart appears in the [charts panel](#charts). A tutorial on how to create your own chart can be found [here](https://youtu.be/qUb_GDpZl6g)
+-   **Create Your Own Chart:** Brings up a workflow that enables creation of a user-defined chart. 5 chart types are available, with the user choosing axes from available columns in the table view, as appropriate. After completion of the workflow, the user-defined chart appears in the [charts panel](#charts). [A tutorial on how to create your own chart can be found here.](https://youtu.be/qUb_GDpZl6g)
 
 -   **Select Chart View:** Shows [additional visualizations](#charts) based on analysis type.
 
 Filters Panel
 -------------
 
-Allows the user to select and apply specific data filters. The options available in the filters panel differ based on the selected analysis type/result (i.e. [One-way ANOVA](One-way-ANOVA), [Williams](Williams-Trend-Test), [Oriogen](Oriogen), [Benchmark Dose Analysis](Benchmark-Dose-Analysis), and [Functional Classification](Functional-Classifications)).
+Allows the user to select and apply specific data filters. The options available in the filters panel differ based on the selected analysis type/result (i.e. [One-way ANOVA](prefiltering), [Williams](prefiltering), [Oriogen](prefiltering#oriogen-options), [Benchmark Dose Analysis](bmd_analysis), and [Functional Classification](functional_classifications)).
 
 Filters update the data viewed in the charts and results table section as soon as they are entered. There is no need to click an *apply* button to render any changes to the filters. You do need to make sure that the `Apply Filter` checkbox is ticked in the [toggles](#toggles-panel) section though.
 
@@ -101,11 +101,9 @@ Results Table
 
 The columns of the results table differ based on the current analysis.
 
--   [One-way ANOVA Results](One-way-ANOVA#one-way-anova-results)
--   [Williams Results](Williams-Trend-Test#williams-results)
--   [Oriogen Results](Oriogen#oriogen-results)
--   [Benchmark Dose Results](Benchmark-Dose-Analysis#benchmark-dose-results)
--   [Functional Classification Results](Functional-Classifications#functional-classification-results)
+-   [Prefiltering Results](prefiltering#prefilter-results)
+-   [Benchmark Dose Results](bmd_analysis#benchmark-dose-results)
+-   [Functional Classification Results](functional_classifications#functional-classification-results)
 
 Columns can be sorted by left-clicking on headers. Column widths may be resized, and column order, left to right, may be rearranged.
 
@@ -116,11 +114,9 @@ The central panel containing all visualizations for selected analyses.
 
 The available visualizations differ for each analysis type:
 
--   [One-way ANOVA Visualizations](One-way-ANOVA#one-way-anova-visualizations)
--   [Williams Trend Test Visualizations](Williams-Trend-Test#williams-trend-test-visualizations)
--   [Oriogen Visualizations](Oriogen#oriogen-visualizations)
--   [Benchmark Dose Visualizations](Benchmark-Dose-Analysis#benchmark-dose-visualizations)
--   [Functional Classification Visualizations](Functional-Classifications#functional-classification-visualizations)
+-   [Prefiltering Visualizations](prefiltering#prefiltering-visualizations)
+-   [Benchmark Dose Visualizations](bmd_analysis#benchmark-dose-visualizations)
+-   [Functional Classification Visualizations](functional_classifications#functional-classification-visualizations)
 
 Depending on screen size, you may need to adjust some of the panels and/or use the vertical and horizontal scrollbars in the charts panel in order to see all of the available charts.
 
@@ -134,9 +130,9 @@ Charts characteristics (e.g., font type and size, colors) are adjustable by by r
 
 Charts can be exported in PNG or JPG format by right clicking on the chart and selecting "Export As" and then selecting the format of the image file.
 
-It is possible to label the features in select plots where the plotted data points represent probes, genes or pathways (e.g., Accumulation, Bubble and Scatter Plots). To do this select `Mark Data` and the "Select Gene Sets to Highlight" box will open. Then select whether your want to use GO terms or Reactome from the drop down, select how you would like to search your term and beginning typing in the search box. Gene set names will begin to populate the list, at which point you can select the one you want and the genes annotate to the selected set  (Prefilter or Benchmark Dose Analysis Section) or the selected gene set name (Functional Classification) will populate the lower box. Finally, click `Okay` and your plots will be labeled. Labels can be moved by clicking and dragging them in the visualization. A tutorial on how to mark your data can be found [here](https://youtu.be/dU3TjSbAZ6A).
+It is possible to label the features in select plots where the plotted data points represent probes, genes or pathways (e.g., Accumulation, Bubble and Scatter Plots). To do this select `Mark Data` and the "Select Gene Sets to Highlight" box will open. Then select whether your want to use GO terms or Reactome from the drop down, select how you would like to search your term and beginning typing in the search box. Gene set names will begin to populate the list, at which point you can select the one you want and the genes annotate to the selected set  (Prefilter or Benchmark Dose Analysis Section) or the selected gene set name (Functional Classification) will populate the lower box. Finally, click `Okay` and your plots will be labeled. Labels can be moved by clicking and dragging them in the visualization. [A tutorial on how to mark your data can be found here](https://youtu.be/dU3TjSbAZ6A).
 
-When evaluating a Defined Category Analysis (i.e., you have provided your own gene set annotations) results in the Functional Classifications section it is possible to label plots by entering the gene set names contained in "GO/Pathway/Gene Set Name" column in the results table directly into the "Select Gene Sets To Highlight" lower box and then clicking `Okay`.  
+When evaluating a Defined Category Analysis (i.e., you have provided your own gene set annotations), results in the Functional Classifications section it is possible to label plots by entering the gene set names contained in "GO/Pathway/Gene Set Name" column in the results table directly into the "Select Gene Sets To Highlight" lower box and then clicking `Okay`.  
 
 Labeling features in a plot is also possible by holding the shift key and selecting the data point in the visualization. Only one data point at a time can be labeled using this approach.
 
