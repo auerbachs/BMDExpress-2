@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang3.RandomUtils;
+
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -97,6 +99,8 @@ public class PolyFitThread extends Thread implements IFitThread
 			{
 				double direction = 0;
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(Math.abs(id.hashCode()))
+						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				inputParameters.setAdversDirection(adversDirections[0]);
 

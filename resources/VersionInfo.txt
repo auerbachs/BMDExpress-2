@@ -4,11 +4,29 @@
  BMDExpress 2.2
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on March 22, 2018</h2>
-
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 9, 2018</h2>
 
 <h3>
 New Features
+</h3>
+<ul>
+<li>Automatically clean up hidden temporary files when starting the application.  </li>
+
+</ul>
+
+<h3>
+Bug Fixes
+</h3>
+<ul>
+<li>Fixed issue related to not being able to save BMD Analysis configuration to auto-populate fields. </li>
+<li>Fixed issue that was causing prefilter values to not be recognized in the BMD Analysis result during functional analysis. </li>
+<li>We have stopped using the probe names to name temp files for bmds models because they can be unpredictable.  We switched to using a random string to name these files to help avoid OS related file name problems. </li>
+
+</ul>
+
+
+<h3>
+New Features released on March 22, 2018
 </h3>
 <ul>
 <li>Added better capabilties to control model timeouts when performing BMD Analysis. </li>

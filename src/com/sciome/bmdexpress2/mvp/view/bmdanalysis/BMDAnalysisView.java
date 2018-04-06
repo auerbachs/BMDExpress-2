@@ -313,7 +313,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		// Set numerical values
 		input.setMaxIterations(Integer.parseInt(this.maximumIterationsTextField.getText()));
 		input.setNumThreads(Integer.parseInt(this.numberOfThreadsComboBox.getEditor().getText()));
-		input.setKillTime(Integer.parseInt(this.killTimeComboBox.getEditor().getText()));
+		input.setKillTime(Integer.parseInt(
+				this.killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim()));
 		input.setConfidenceLevel(Double.parseDouble(this.confidenceLevelComboBox.getEditor().getText()));
 		input.setpValueCutoff(Double.parseDouble(this.pValueCutoffComboBox.getEditor().getText()));
 		input.setModifyBMDFlaggedHill(Double.parseDouble(this.modifyFlaggedHillBMDTextField.getText()));
@@ -517,7 +518,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		killTimeComboBox.getItems().add("600 (default)");
 		killTimeComboBox.getItems().add("none");
 		killTimeComboBox.setValue("600 (default)");
-
+		if (input.getKillTime() == 600)
+			killTimeComboBox.setValue(String.valueOf(input.getKillTime()) + " (default)");
+		else
+			killTimeComboBox.setValue(String.valueOf(input.getKillTime()));
 		// remove most of the panes.
 		if (selectModelsOnly)
 		{

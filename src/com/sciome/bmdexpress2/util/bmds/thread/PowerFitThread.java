@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang3.RandomUtils;
+
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.PowerResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -19,21 +21,21 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class PowerFitThread extends Thread implements IFitThread
 {
-	private CountDownLatch cdLatch;
-	private FilePowerFit fPowerFit = null;
+	private CountDownLatch			cdLatch;
+	private FilePowerFit			fPowerFit			= null;
 
-	private ModelInputParameters inputParameters;
+	private ModelInputParameters	inputParameters;
 
-	private float[] doses;
+	private float[]					doses;
 
-	private final int[] adversDirections = { 0, 1, -1 };
-	private List<ProbeResponse> probeResponses;
-	private List<StatResult> powerResults;
-	private int numThread;
-	private int instanceIndex;
-	private IModelProgressUpdater progressUpdater;
-	private IProbeIndexGetter probeIndexGetter;
-	private boolean cancel = false;
+	private final int[]				adversDirections	= { 0, 1, -1 };
+	private List<ProbeResponse>		probeResponses;
+	private List<StatResult>		powerResults;
+	private int						numThread;
+	private int						instanceIndex;
+	private IModelProgressUpdater	progressUpdater;
+	private IProbeIndexGetter		probeIndexGetter;
+	private boolean					cancel				= false;
 
 	public PowerFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime,
@@ -105,6 +107,8 @@ public class PowerFitThread extends Thread implements IFitThread
 			try
 			{
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(Math.abs(id.hashCode()))
+						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fPowerFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
 						doses, responses);
