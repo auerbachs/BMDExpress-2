@@ -1,0 +1,143 @@
+{ 
+  "bm2FileName" : "/analysis/myfile.bm2",
+  "jsonExportFileName" : "/analysis/myfile.json",
+  "overwrite" : true,
+  "expressionDataConfigs" : [ {
+    "inputFileName" : "/analysis/data/",
+    "hasHeaders" : false,
+    "logTransformation" : "BASE2",
+    "platform" : "GPL1355"
+  }
+  ],
+  "preFilterConfigs" : [ {
+    "@type" : "anova",
+    "pValueCutoff" : 0.05,
+    "useMultipleTestingCorrection" : false,
+    "filterOutControlGenes" : true,
+    "useFoldChange" : true,
+    "foldChange" : 2.0
+  }, {
+    "@type" : "williams",
+    "pValueCutoff" : 0.05,
+    "useMultipleTestingCorrection" : false,
+    "filterOutControlGenes" : true,
+    "useFoldChange" : true,
+    "numberOfPermutations": 50,
+    "foldChange" : 2.0
+  } ],
+  "bmdsConfigs" : [ {
+    "modelConfigs" : [ {
+      "@type" : "hill"
+    }, {
+      "@type" : "power"
+    }, {
+      "@type" : "poly",
+      "degree" : 1
+    }, {
+      "@type" : "poly",
+      "degree" : 2
+    }, {
+      "@type" : "exp",
+      "expModel" : 3
+    }],
+    "bmdsBestModelSelection" : {
+      "bestPolyTest" : 1,
+      "pValueCutoff" : 0.05,
+      "flagHillWithKParameter" : true,
+      "kParameterValue" : 1,
+      "bestModelSelectionWithFlaggedHill" : 1,
+      "modifyFlaggedHillWithFractionMinBMD" : 0.05
+    },
+    "bmdsInputConfig" : {
+      "maxIterations" : 250,
+      "confidenceLevel" : 0.95,
+      "constantVariance" : true,
+      "restrictPower" : true,
+      "bmrFactor" : 1.349
+    },
+    "inputCategory" : "williams",
+    "numberOfThreads" : 100
+  }, {
+    "modelConfigs" : [ {
+      "@type" : "hill"
+    }, {
+      "@type" : "power"
+    }, {
+      "@type" : "poly",
+      "degree" : 1
+    }, {
+      "@type" : "poly",
+      "degree" : 2
+    }, {
+      "@type" : "poly",
+      "degree" : 3
+    }, {
+      "@type" : "exp",
+      "expModel" : 2
+    }, {
+      "@type" : "exp",
+      "expModel" : 3
+    }, {
+      "@type" : "exp",
+      "expModel" : 4
+    }, {
+      "@type" : "exp",
+      "expModel" : 5
+    } ],
+    "bmdsBestModelSelection" : {
+      "bestPolyTest" : 1,
+      "pValueCutoff" : 0.05,
+      "flagHillWithKParameter" : true,
+      "kParameterValue" : 1,
+      "bestModelSelectionWithFlaggedHill" : 1,
+      "modifyFlaggedHillWithFractionMinBMD" : 0.05
+    },
+    "bmdsInputConfig" : {
+      "maxIterations" : 250,
+      "confidenceLevel" : 0.95,
+      "constantVariance" : true,
+      "restrictPower" : true,
+      "bmrFactor" : 1.349
+    },
+    "inputCategory" : "anova",
+    "numberOfThreads" : 100
+  } ],
+  "categoryAnalysisConfigs" : [ {
+    "@type" : "go",
+    "removePromiscuousProbes" : true,
+    "removeBMDGreaterHighDose" : true,
+    "bmdPValueCutoff" : 0.1,
+    "bmdBMDLRatioMin" : null,
+    "bmduBMDRatioMin" : null,
+    "bmduBMDLRatioMin" : 20.0,
+    "nFoldBelowLowestDose" : 10.0,
+    "identifyConflictingProbeSets" : null,
+    "correlationCutoffForConflictingProbeSets" : null,
+    "goCategory" : "universal"
+  }, {
+    "@type" : "pathway",
+    "removePromiscuousProbes" : true,
+    "removeBMDGreaterHighDose" : true,
+    "bmdPValueCutoff" : 0.1,
+    "bmdBMDLRatioMin" : null,
+    "bmduBMDRatioMin" : null,
+    "bmduBMDLRatioMin" : 20.0,
+    "nFoldBelowLowestDose" : 10.0,
+    "identifyConflictingProbeSets" : null,
+    "correlationCutoffForConflictingProbeSets" : null,
+    "signalingPathway" : "REACTOME"
+  }, {
+    "@type" : "defined",
+    "removePromiscuousProbes" : true,
+    "removeBMDGreaterHighDose" : true,
+    "bmdPValueCutoff" : 0.1,
+    "bmdBMDLRatioMin" : null,
+    "bmduBMDRatioMin" : null,
+    "bmduBMDLRatioMin" : 20.0,
+    "nFoldBelowLowestDose" : 10.0,
+    "identifyConflictingProbeSets" : null,
+    "correlationCutoffForConflictingProbeSets" : null,
+    "probeFilePath" : "/analysis/defined/probes.txt",
+    "categoryFilePath" : "/analysis/defined/categories.txt"
+  }]
+}
