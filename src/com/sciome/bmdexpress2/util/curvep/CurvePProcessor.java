@@ -43,6 +43,7 @@ public class CurvePProcessor
 			else
 				v[i] = mm - v[i];
 		
+		Arrays.sort(v); //needed for proper median estimate right below. 
 		float x = smedian(v);
 		if (x < perturb)
 			x = perturb;
