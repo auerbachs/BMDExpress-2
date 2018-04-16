@@ -40,6 +40,8 @@ public class PolyFitThread extends Thread implements IFitThread
 
 	private boolean					cancel				= false;
 
+	private final double			DEFAULTDOUBLE		= -9999;
+
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
 			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
@@ -102,13 +104,26 @@ public class PolyFitThread extends Thread implements IFitThread
 				id = String.valueOf(Math.abs(id.hashCode()))
 						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
+
 				inputParameters.setAdversDirection(adversDirections[0]);
 
 				if (cancel)
 					break;
+				if (degree > 1)
+					inputParameters.setAdversDirection(adversDirections[1]);
 
 				double[] results = fPolyFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
 						doses, responses);
+
+				if (degree > 1)
+				{
+					inputParameters.setAdversDirection(adversDirections[2]);
+					double[] pResults1 = fPolyFit.fitModel(id, inputParameters, doses, responses);
+
+					if ((results[0] > pResults1[0] && pResults1[0] != DEFAULTDOUBLE)
+							|| results[0] == DEFAULTDOUBLE)
+						results = pResults1;
+				}
 
 				if (results[6] > 0)
 					direction = 1;
