@@ -1,58 +1,21 @@
 <html>
 <body>
 <h1>
- BMDExpress 2.2
+ BMDExpress Preview 2.3
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 9, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 17, 2018</h2>
 
 <h3>
 New Features
 </h3>
 <ul>
-<li>Automatically clean up hidden temporary files when starting the application.  </li>
+<li> wAUC  </li>
+<li> build your own range plot  </li>
+<li> range plots by default for bmd analysis  </li>
 
 </ul>
 
-<h3>
-Bug Fixes
-</h3>
-<ul>
-<li>Fixed issue related to not being able to save BMD Analysis configuration to auto-populate fields. </li>
-<li>Fixed issue that was causing prefilter values to not be recognized in the BMD Analysis result during functional analysis. </li>
-<li>We have stopped using the probe names to name temp files for bmds models because they can be unpredictable.  We switched to using a random string to name these files to help avoid OS related file name problems. </li>
-
-</ul>
-
-
-<h3>
-New Features released on March 22, 2018
-</h3>
-<ul>
-<li>Added better capabilties to control model timeouts when performing BMD Analysis. </li>
-<li>Added run times to the analysis notes for all analyses. </li>
-
-</ul>
-
-
-<h3>
-New Major Release 2.2
-</h3>
-<ul>
-<li>Williams Trend Test and Oriogen Prefilters were added as alternatives to One-Way ANOVA </li>
-<li>Mark and label data points in charts </li>
-<li>Create your own charts</li>
-<li>Edit chart properties</li>
-<li>View multiple curves on same plot</li>
-<li>PCA Plots for viewing expression data</li>
-<li>Enhanced filtering capabilities</li>
-<li>Command line version </li>
-<li>Combine multiple anlayses for easier visualization and export</li>
-<li>Export and import project files as JSON</li>
-<li>You can now add projects to an existing project</li>
-<li>Many new metrics in grids</li>
-<li>Many new pre-analyis filters </li>
-</ul>
 
 
 </body>
