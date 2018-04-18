@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang3.RandomUtils;
+
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -19,28 +21,28 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class HillFitThread extends Thread implements IFitThread
 {
-	private CountDownLatch cdLatch;
-	private FileHillFit fHillFit = null;
+	private CountDownLatch			cdLatch;
+	private FileHillFit				fHillFit			= null;
 
-	private ModelInputParameters inputParameters;
-	private boolean flagHill = false;
+	private ModelInputParameters	inputParameters;
+	private boolean					flagHill			= false;
 
-	private double flagDose;
-	private float[] doses;
+	private double					flagDose;
+	private float[]					doses;
 
-	private final int[] adversDirections = { 0, 1, -1 };
-	private List<ProbeResponse> probeResponses;
-	private List<StatResult> hillResults;
+	private final int[]				adversDirections	= { 0, 1, -1 };
+	private List<ProbeResponse>		probeResponses;
+	private List<StatResult>		hillResults;
 
-	private int numThreads;
-	private int instanceIndex;
+	private int						numThreads;
+	private int						instanceIndex;
 
-	private boolean cancel = false;
+	private boolean					cancel				= false;
 
-	private IModelProgressUpdater progressUpdater;
-	private IProbeIndexGetter probeIndexGetter;
+	private IModelProgressUpdater	progressUpdater;
+	private IProbeIndexGetter		probeIndexGetter;
 
-	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses, 
+	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
@@ -106,6 +108,8 @@ public class HillFitThread extends Thread implements IFitThread
 				// get the probe id and responses
 
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(Math.abs(id.hashCode()))
+						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fHillFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
 						doses, responses);

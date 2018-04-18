@@ -1,5 +1,9 @@
 package com.sciome.bmdexpress2;
 
+import java.io.File;
+import java.util.Date;
+
+import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressInformation;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -14,7 +18,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -27,9 +30,9 @@ public class BMDExpress2Main extends Application
 	@Override
 	public void start(Stage primaryStage)
 	{
-		System.out.println(BMDExpressProperties.getInstance().getTimeStamp());
 		try
 		{
+			cleanTmpFiles();
 			AnchorPane root = (AnchorPane) FXMLLoader.load(getClass().getResource("/fxml/mainstage.fxml"));
 			scene = new Scene(root, 800, 800);
 
@@ -124,6 +127,44 @@ public class BMDExpress2Main extends Application
 		Float myflot = Float.MIN_VALUE;
 		Double mydoub = Double.MIN_VALUE;
 		launch(args);
+	}
+
+	private void cleanTmpFiles()
+	{
+		String tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		if (!tmpFolder.contains("tmp"))
+			return;
+
+		File folder = null;
+		try
+		{
+			folder = new File(tmpFolder);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return;
+		}
+
+		for (File file : folder.listFiles())
+		{
+			long diff = new Date().getTime() - file.lastModified();
+			if (file.isDirectory())
+				continue;
+
+			if (diff > 1 * 24 * 60 * 60 * 1000)
+			{
+				try
+				{
+					file.delete();
+				}
+				catch (Exception e)
+				{
+
+				}
+			}
+		}
+
 	}
 
 	private void showInitDialog()

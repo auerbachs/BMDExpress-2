@@ -273,6 +273,19 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			exponentialModel.setOption(5);
 			modelsToRun.add(exponentialModel);
 		}
+
+		int availableProcessors = Runtime.getRuntime().availableProcessors();
+		if (inputParameters.getNumThreads() > availableProcessors * 4)
+		{
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Number Of Threads Exceeds Number of Available.");
+			alert.setContentText(
+					"The number of threads that you chose is more than 4 times the number of available processors you have on your machine.  The number avaiable processors detected by this application is: "
+							+ availableProcessors);
+
+			alert.showAndWait();
+		}
 		// start the BMD Analysis
 		if (selectModelsOnly)
 			presenter.performReselectParameters(inputParameters, modelSectionParameters);
@@ -300,7 +313,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		// Set numerical values
 		input.setMaxIterations(Integer.parseInt(this.maximumIterationsTextField.getText()));
 		input.setNumThreads(Integer.parseInt(this.numberOfThreadsComboBox.getEditor().getText()));
-		input.setKillTime(Integer.parseInt(this.killTimeComboBox.getEditor().getText()));
+		input.setKillTime(Integer.parseInt(
+				this.killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim()));
 		input.setConfidenceLevel(Double.parseDouble(this.confidenceLevelComboBox.getEditor().getText()));
 		input.setpValueCutoff(Double.parseDouble(this.pValueCutoffComboBox.getEditor().getText()));
 		input.setModifyBMDFlaggedHill(Double.parseDouble(this.modifyFlaggedHillBMDTextField.getText()));
@@ -494,8 +508,20 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		killTimeComboBox.getItems().add("120");
 		killTimeComboBox.getItems().add("150");
 		killTimeComboBox.getItems().add("180");
-		killTimeComboBox.setValue(input.getKillTime());
-
+		killTimeComboBox.getItems().add("210");
+		killTimeComboBox.getItems().add("240");
+		killTimeComboBox.getItems().add("270");
+		killTimeComboBox.getItems().add("300");
+		killTimeComboBox.getItems().add("330");
+		killTimeComboBox.getItems().add("360");
+		killTimeComboBox.getItems().add("390");
+		killTimeComboBox.getItems().add("600 (default)");
+		killTimeComboBox.getItems().add("none");
+		killTimeComboBox.setValue("600 (default)");
+		if (input.getKillTime() == 600)
+			killTimeComboBox.setValue(String.valueOf(input.getKillTime()) + " (default)");
+		else
+			killTimeComboBox.setValue(String.valueOf(input.getKillTime()));
 		// remove most of the panes.
 		if (selectModelsOnly)
 		{
@@ -529,7 +555,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
 			// Multiply by 1000 to convert seconds to milliseconds
-			inputParameters.setKillTime(Integer.valueOf(killTimeComboBox.getEditor().getText()) * 1000);
+			if (killTimeComboBox.getEditor().getText().equals("none"))
+				inputParameters.setKillTime(-1);
+			else
+				inputParameters.setKillTime(Integer.valueOf(
+						killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim())
+						* 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);

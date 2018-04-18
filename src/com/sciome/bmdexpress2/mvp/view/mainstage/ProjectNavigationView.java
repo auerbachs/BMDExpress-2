@@ -592,7 +592,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		{
 			if (selectedItem instanceof BMDResult)
 			{
+				// this will fill out all the rows. not a good solution,
+				// but needed to ensure fold change values and other prefilter values.
 				BMDResult processableData = (BMDResult) selectedItem;
+				processableData.getColumnHeader();
 				selectedItems.add(processableData);
 			}
 		}

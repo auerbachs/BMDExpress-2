@@ -294,9 +294,9 @@
                                           <HBox alignment="CENTER_LEFT" layoutX="29.0" layoutY="51.4" prefHeight="49.0" prefWidth="740.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="157.0" text="Number of Threads: " />
-                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="90.0" />
+                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="161.0" />
                                                 <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="282.0" text="Model Execution Timeout (secs):" />
-                                                <ComboBox fx:id="killTimeComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="90.0" />
+                                                <ComboBox fx:id="killTimeComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="153.0" />
                                              </children>
                                           </HBox>
                                        </children>

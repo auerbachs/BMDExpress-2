@@ -918,7 +918,10 @@ public class BMDExpressProperties
 
 	public String getVersion()
 	{
-		return "BMDExpress " + versionProperties.getProperty("bmdexpress2.version") + " BETA";
+		if (BMDExpressConstants.getInstance().BASEDIR.equals("bmdexpress2"))
+			return "BMDExpress " + versionProperties.getProperty("bmdexpress2.version") + " BETA";
+		else
+			return "BMDExpress Preview " + versionProperties.getProperty("bmdexpress2.version");
 	}
 
 	public void putDataFilterPackMap(String key, DataFilterPack pack)

@@ -47,19 +47,27 @@ public abstract class FileFitBase
 				// process is executing, but only give it a certain amount of time to execute.
 				// give it 30 seconds to complete otherwise kill it.
 				boolean processSurvived = false;
-				while (System.currentTimeMillis() - startTime < killTime)
+				if (killTime > 0)
 				{
-
-					if (!process.isAlive())
+					while (System.currentTimeMillis() - startTime < killTime)
 					{
-						processSurvived = true;
-						break;
+
+						if (!process.isAlive())
+						{
+							processSurvived = true;
+							break;
+						}
+						Thread.sleep(1000);
 					}
-					Thread.sleep(1000);
+					if (!processSurvived && process.isAlive())
+					{
+						process.destroyForcibly();
+						success = false;
+					}
 				}
-				if (!processSurvived && process.isAlive())
+				else
 				{
-					process.destroyForcibly();
+					process.waitFor();
 					success = false;
 				}
 

@@ -45,8 +45,21 @@ public class PrefilterService implements IPrefilterService
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater)
 	{
+
+		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
+
+		AnalysisInfo analysisInfo = new AnalysisInfo();
+		List<String> notes = new ArrayList<>();
+
+		notes.add("Williams Trend Test");
+		notes.add("Data Source: " + processableData);
+		notes.add("Work Source: " + processableData.getParentDataSetName());
+		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
+
+		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
 
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
@@ -154,17 +167,6 @@ public class PrefilterService implements IPrefilterService
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
 
-		AnalysisInfo analysisInfo = new AnalysisInfo();
-		List<String> notes = new ArrayList<>();
-
-		notes.add("Williams Trend Test");
-		notes.add("Data Source: " + processableData);
-		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-
-		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
-
 		if (multipleTestingCorrection)
 			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
 		else
@@ -194,6 +196,10 @@ public class PrefilterService implements IPrefilterService
 		williamsTrendResults.setName(name);
 		analysisInfo.setNotes(notes);
 		williamsTrendResults.setAnalysisInfo(analysisInfo);
+
+		long endTime = System.currentTimeMillis();
+		long runTime = endTime - startTime;
+		analysisInfo.getNotes().add("Total Run Time: " + runTime / 1000 + " seconds");
 		return williamsTrendResults;
 	}
 
@@ -206,8 +212,32 @@ public class PrefilterService implements IPrefilterService
 			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue,
 			SimpleProgressUpdater updater)
 	{
+		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
+
+		DecimalFormat df = new DecimalFormat("#.####");
+		String name = doseResponseExperiment.getName() + "_oriogen_" + df.format(pCutOff);
+
+		AnalysisInfo analysisInfo = new AnalysisInfo();
+		List<String> notes = new ArrayList<>();
+
+		notes.add("Oriogen");
+		notes.add("Data Source: " + processableData);
+		notes.add("Work Source: " + processableData.getParentDataSetName());
+		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
+
+		if (multipleTestingCorrection)
+			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		else
+			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
+
+		notes.add("Number of Initial Bootstraps: " + String.valueOf(initialBootstraps));
+		notes.add("Number of Maximum Bootstraps: " + String.valueOf(maxBootstraps));
+		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
+		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
+		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
 		Origen_Data data = new Origen_Data();
 
@@ -367,29 +397,6 @@ public class PrefilterService implements IPrefilterService
 		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
 
-		DecimalFormat df = new DecimalFormat("#.####");
-		String name = doseResponseExperiment.getName() + "_oriogen_" + df.format(pCutOff);
-
-		AnalysisInfo analysisInfo = new AnalysisInfo();
-		List<String> notes = new ArrayList<>();
-
-		notes.add("Oriogen");
-		notes.add("Data Source: " + processableData);
-		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-
-		if (multipleTestingCorrection)
-			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
-		else
-			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
-
-		notes.add("Number of Initial Bootstraps: " + String.valueOf(initialBootstraps));
-		notes.add("Number of Maximum Bootstraps: " + String.valueOf(maxBootstraps));
-		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
-		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
-		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-
 		if (multipleTestingCorrection)
 		{
 			name += "_MTC";
@@ -411,6 +418,11 @@ public class PrefilterService implements IPrefilterService
 		oriogenResults.setName(name);
 		analysisInfo.setNotes(notes);
 		oriogenResults.setAnalysisInfo(analysisInfo);
+
+		long endTime = System.currentTimeMillis();
+		long runTime = endTime - startTime;
+		analysisInfo.getNotes().add("Total Run Time: " + runTime / 1000 + " seconds");
+
 		return oriogenResults;
 	}
 
@@ -422,6 +434,26 @@ public class PrefilterService implements IPrefilterService
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue)
 	{
+
+		DecimalFormat df = new DecimalFormat("#.####");
+
+		long startTime = System.currentTimeMillis();
+		AnalysisInfo analysisInfo = new AnalysisInfo();
+		List<String> notes = new ArrayList<>();
+
+		notes.add("One-way ANOVA");
+		notes.add("Data Source: " + processableData);
+		notes.add("Work Source: " + processableData.getParentDataSetName());
+		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
+
+		if (multipleTestingCorrection)
+			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
+		else
+			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
+
+		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
+		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		// This class should eventually be moved to sciome commons
@@ -478,25 +510,7 @@ public class PrefilterService implements IPrefilterService
 		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
 				baseValue, useFoldFilter);
 
-		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
-
-		AnalysisInfo analysisInfo = new AnalysisInfo();
-		List<String> notes = new ArrayList<>();
-
-		notes.add("One-way ANOVA");
-		notes.add("Data Source: " + processableData);
-		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-		notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
-
-		if (multipleTestingCorrection)
-			notes.add("Adjusted P-Value Cutoff: " + df.format(pCutOff));
-		else
-			notes.add("Unadjusted P-Value Cutoff: " + df.format(pCutOff));
-
-		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
-		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
 
 		if (multipleTestingCorrection)
 		{
@@ -519,6 +533,10 @@ public class PrefilterService implements IPrefilterService
 		oneWayResults.setName(name);
 		analysisInfo.setNotes(notes);
 		oneWayResults.setAnalysisInfo(analysisInfo);
+
+		long endTime = System.currentTimeMillis();
+		long runTime = endTime - startTime;
+		analysisInfo.getNotes().add("Total Run Time: " + runTime / 1000 + " seconds");
 
 		return oneWayResults;
 	}

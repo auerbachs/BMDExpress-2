@@ -332,15 +332,16 @@ public class FileExponentialFit extends FileFitBase
 					{
 						int idx1 = 1;
 						int idx2 = line.indexOf(" ", idx1);
+
+						line = line.trim();
+						String tokens[] = line.split("\\s+");
+
 						line = line.substring(idx2).trim();
 						idx1 = line.indexOf(" ");
 						idx2 = line.lastIndexOf(" ");
 
-						String llh = line.substring(0, idx1).trim();
-						String aic = line.substring(idx2).trim();
-
-						outputs[4] = NumberManager.parseDouble(llh, minDouble);
-						outputs[5] = NumberManager.parseDouble(aic, minDouble);
+						outputs[4] = NumberManager.parseDouble(tokens[1], minDouble);
+						outputs[5] = NumberManager.parseDouble(tokens[3], minDouble);
 						status = 10;
 
 					}
