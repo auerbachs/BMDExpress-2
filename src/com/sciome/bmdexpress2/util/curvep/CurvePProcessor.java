@@ -53,7 +53,7 @@ public class CurvePProcessor
 	private static float MAD(Float[] m, float perturb)
 	{
 		// SD-like metric, median absolute difference = MAD;
-		// perturb is usually small number, such as 0.000001f to avoid exact zero
+		// perturb should be a small number, such as 0.000001f to avoid exact zero
 		Float[] v = m.clone();
 		Arrays.sort(v);
 		float x = smedian(v);
@@ -333,6 +333,8 @@ public class CurvePProcessor
 				// e.printStackTrace();
 			}
 
+		if (sdr.get(0) == 0.0) return ulD.get(0);
+		
 		float L1 = avr.get(0) - Z_thr * sdr.get(0);
 		float L2 = avr.get(0) + Z_thr * sdr.get(0);
 
@@ -375,7 +377,7 @@ public class CurvePProcessor
 		if (POD > HiDose)
 			return 0.0f;
 		
-		if (POD < UnDose)
+		if (POD < LoDose)
 			return 0.0f;
 
 		Float wAUC = AUC; // signed area-under-curve, such as from calc_AUC()
@@ -385,7 +387,7 @@ public class CurvePProcessor
 	}
 
 	public static float parametric_val(float D0, List<Float>P, int type)
-	/* calculates  response at D0 dose based on paramteric curve model, 
+	/* calculates  response at D0 dose based on parametric curve model, 
 	 * P contains curve coefficients, 
 	 * type defines math.equation:  
 	 * 		0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill 
@@ -429,7 +431,7 @@ public class CurvePProcessor
 		return rBase;
 	} //end of parametric_val()
 	
-	public static float intg_log_AUC(List<Float> D, List<Float> P, int type, int log0fix)
+	public static float intg_log_AUC(List<Float> D, List<Float> P, int type, int log0fix, int npoints)
 	/* log10-integrates several curve types to calculate AUC, P contains curve coefficients, 
 	 * type defines math.equation:  0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
 	 * 
@@ -443,38 +445,28 @@ public class CurvePProcessor
 		} catch (Exception e) {			
 			return 0.0f;
 		}
+		
+		List<Float> estR = new ArrayList<Float>(); //estimated responses
+		List<Float> estD = new ArrayList<Float>(); //sampled log-doses
+		
+		//since we cannot analytically integrate all the cases, switch to trapezoid estimate instead with arbitrary precision (npoints)
+		int nscan = npoints - 3;
+		float hiD = luD.get( luD.size() - 1), loD = luD.get(1);
+		
+		estD.add( luD.get(0) );
+		estR.add( parametric_val(0.0f, P, type) );
+		
+		float stepD = (hiD - loD) / nscan;
 				
-		//TODO
-		if (type == 0)
-		{//poly
-			// y(z) = P[0] + P[1]*exp(az) + ... + P[n]*exp(azn)
-			// F(y)dz = C + P[0]*z + (P[1]*exp(az)/1 + ... P[n]*exp(azn)/n )/ a
-		}	
-	
-		if (type == 1)
-		{//power
-			// y(z) = P[0] + P[1]*exp(azP[2])
-			// F(y)dz = C + P[0]*z + P[1]*exp(azP[2])/(aP[2])
-		}
-		
-		if (type == 2)
-		{//exp
-			// y(z) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * exp(azP[3]) ) }
-			// F(y)dz = C + P[0] * { P[2]*z - (P[2]-1)* exp( P[1] * exp(azP[3]) )/(aP[1]P[3]exp(azP[3])) }
-		}
-		
-		if (type == 3)
-		{//log
-			// y(z) = P[0] + P[1]*az
-			// F(y)dz = C + P[0]*z + P[1]*az^2/2
-		}
-		
-		if (type == 4)
-		{//Hill
+		for (int p = -1; p <= nscan; p++)
+		{
+			float startD  = loD + p*stepD;
 			
+			estD.add(startD);
+			estR.add( parametric_val((float)Math.pow(10, startD), P, type) );			
 		}
 		
-		return 0.0f;
+		return calc_AUC(estD, estR);
 	} //end of intg_log_AUC()
 	
 	
