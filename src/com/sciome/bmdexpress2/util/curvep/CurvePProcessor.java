@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
+import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
+import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
+
 public class CurvePProcessor
 {
 
@@ -304,7 +308,7 @@ public class CurvePProcessor
 		return iD;
 	} // end of ImputeDose()
 
-	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog)
+	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog, float AUC)
 	{
 		/*
 		 * returns lowest of the two POD estimates for decreasing and increasing direction (large number
@@ -341,7 +345,11 @@ public class CurvePProcessor
 		float P1 = ImputeDose(ulD, avr, L1);
 		float P2 = ImputeDose(ulD, avr, L2);
 
-		return Math.min(P1, P2);
+		//picks appropriate POD depending on the overall direction (judged by AUC)
+		if (AUC < 0) return P1;
+		if (AUC > 0) return P2;
+		
+		return Math.min(P1, P2); //only for AUC == 0 cases
 	}
 
 	public static float calc_AUC(List<Float> D, List<Float> R)
@@ -377,12 +385,15 @@ public class CurvePProcessor
 		if (POD > HiDose)
 			return 0.0f;
 		
-		if (POD < LoDose)
+		if (POD < UnDose)
 			return 0.0f;
 
 		Float wAUC = AUC; // signed area-under-curve, such as from calc_AUC()
-		wAUC /= HiDose - LoDose;
+		
+		wAUC /= HiDose - UnDose;
+		wAUC *= LoDose - UnDose; //norm by POD relative to the LoDose (this + next op act as a scaling coefficient)
 		wAUC /= POD - UnDose;
+		
 		return wAUC;
 	}
 
@@ -565,7 +576,7 @@ public class CurvePProcessor
 		{
 			luD = logBaseDoses(unqD, -24);
 			Float myAUC = calc_AUC(luD, avR);
-			Float myPOD = calc_POD(allD, allR, 1.34f, true);
+			Float myPOD = calc_POD(allD, allR, 1.34f, true, myAUC);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
@@ -620,7 +631,7 @@ public class CurvePProcessor
 		{
 			luD = logBaseDoses(unqD, -24);
 			Float myAUC = calc_AUC(luD, avR);
-			Float myPOD = calc_POD(allD, allR, 1.34f, true);
+			Float myPOD = calc_POD(allD, allR, 1.34f, true, myAUC);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
@@ -636,4 +647,35 @@ public class CurvePProcessor
 
 	}
 
+	static public void debug_curvep(DoseResponseExperiment doseResponseExperiment)
+	{
+		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
+		List<Treatment> treatments = doseResponseExperiment.getTreatments();
+		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
+		List<Float> doseVector = new ArrayList<Float>();
+		// Fill numeric matrix
+		for (int i = 0; i < responses.size(); i++)
+		{
+			numericMatrix.add((ArrayList<Float>) responses.get(i).getResponses());
+		}
+
+		// Fill doseVector
+		for (int i = 0; i < treatments.size(); i++)
+		{
+			doseVector.add(treatments.get(i).getDose());
+		}
+		List<Float> wAUCList = new ArrayList<Float>();
+		
+		
+		
+		for(int i = 0; i < responses.size(); i++) {
+			if ( responses.get(i).getProbe().getId().equals("1387874_at") )
+				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i)));
+			
+			if ( responses.get(i).getProbe().getId().equals("1371076_at") ) //i == 3681
+			    wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i)));
+		}
+	}
+	
+	
 }
