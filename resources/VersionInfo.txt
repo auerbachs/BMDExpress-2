@@ -4,10 +4,17 @@
  BMDExpress Preview 2.3
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 17, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 25, 2018</h2>
+<ul>
+<li> Fixed bugs with wAUC, but it needs to be improved </li>
+<li> Fixed bugs with create your own range plot </li>
+<li> Added "None" and label for math transformation of values for custom plots </li>
+
+</ul>
+
 
 <h3>
-New Features
+New Features released on April 17, 2018
 </h3>
 <ul>
 <li> wAUC  </li>

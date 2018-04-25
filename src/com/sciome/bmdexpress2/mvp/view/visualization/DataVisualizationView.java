@@ -138,6 +138,7 @@ public abstract class DataVisualizationView extends BMDExpressViewBase
 				dialog.initOwner(graphViewAnchorPane.getScene().getWindow());
 				dialog.setX(100);
 				dialog.setY(100);
+				dialog.getDialogPane().setMinWidth(600);
 				Optional<SciomeChartBase> customChart = dialog.showAndWait();
 				if (customChart.isPresent())
 				{
