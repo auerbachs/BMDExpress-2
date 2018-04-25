@@ -296,11 +296,11 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 	{
 		ChartKey minKey = keys[0];
 		ChartKey maxKey = keys[1];
-		ChartKey key = keys[2];
+		ChartKey midKey = keys[2];
 		Double axisMin = getMinMin(minKey);
 		Double axisMax = getMaxMax(maxKey);
 		if (axisMax == 0.0)
-			axisMax = getMaxMax(key);
+			axisMax = getMaxMax(midKey);
 
 		if (axisMax < axisMin)
 		{
@@ -314,14 +314,6 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 		// shared data labels
 		Map<String, Integer> countMap = getCountMap();
 
-		for (ChartDataPack chartDataPack : getChartDataPacks())
-		{
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-			}
-		}
-
 		List<SciomeSeries<String, Number>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
@@ -331,21 +323,20 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				Double dataPointValue = (Double) chartData.getDataPoints().get(key);
-
-				if (dataPointValue == null)
-					continue;
-
 				Double dataPointValueMinKey = (Double) chartData.getDataPoints().get(minKey);
+				Double dataPointValueMiddleKey = (Double) chartData.getDataPoints().get(midKey);
 				Double dataPointValueMaxKey = (Double) chartData.getDataPoints().get(maxKey);
-				Double dataPointValueMiddleKey = (Double) chartData.getDataPoints().get(key);
+
+				if (dataPointValueMinKey == null || dataPointValueMiddleKey == null || dataPointValueMaxKey == null) {
+					continue;
+				}
 				
 				//Check to ensure the values are actually in order of min < mid < max
 				SciomeData<String, Number> xyData;
 				if(dataPointValueMinKey < dataPointValueMiddleKey &&
 					dataPointValueMiddleKey < dataPointValueMaxKey) {
 					xyData = new SciomeData<>(chartData.getDataPointLabel(),
-							chartData.getDataPointLabel(), dataPointValue,
+							chartData.getDataPointLabel(), dataPointValueMiddleKey,
 							new RangePlotExtraValue(chartData.getDataPointLabel(),
 									countMap.get(chartData.getDataPointLabel()), dataPointValueMinKey,
 									dataPointValueMaxKey, dataPointValueMiddleKey,
@@ -354,7 +345,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 				} else {
 					//If not then don't show the point
 					xyData = new SciomeData<>(chartData.getDataPointLabel(),
-							chartData.getDataPointLabel(), dataPointValue,
+							chartData.getDataPointLabel(), dataPointValueMiddleKey,
 							new RangePlotExtraValue(chartData.getDataPointLabel(),
 									countMap.get(chartData.getDataPointLabel()), 
 									new Double(0), new Double(0), new Double(0),

@@ -55,7 +55,7 @@ public class ChartKey
 			return NumberManager.negLog10(value);
 		else if (math.equals(LOG) && value > 0)
 			return NumberManager.log10(value);
-		else if (math.equals(ABS) && value > 0)
+		else if (math.equals(ABS))
 			return Math.abs(value);
 		else if (math.equals(SQRT) && value > 0)
 			return Math.sqrt(value);
