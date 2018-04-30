@@ -41,7 +41,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
 		
-		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
+		List<ProbeResponse> responses = processableData.getProcessableProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
 		List<Float> doseVector = new ArrayList<Float>();
