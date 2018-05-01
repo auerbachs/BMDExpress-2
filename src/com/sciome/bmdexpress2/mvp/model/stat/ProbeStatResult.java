@@ -116,7 +116,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	// so the data can be viewed by a table.
 	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations,
 			Double adjustedPValue, Double pValue, Double bestFoldChange, List<Float> foldChanges,
-			Float wAUC)
+			Float wAUC, Float logwAUC)
 	{
 		row = new ArrayList<Object>();
 		row.add(probeResponse.getProbe().getId());
@@ -206,6 +206,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 
 		row.add(wAUC);
+		row.add(logwAUC);
 
 		row.add(pValue);
 		this.prefilterPvalue = pValue;

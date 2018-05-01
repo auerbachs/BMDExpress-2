@@ -580,7 +580,7 @@ public class CurvePProcessor
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
-			System.out.printf("wAUC = %f%n", res);
+//			System.out.printf("wAUC = %f%n", res);
 			return res;
 		}
 		catch (Exception e)
@@ -647,7 +647,7 @@ public class CurvePProcessor
 
 	}
 
-	static public void debug_curvep(DoseResponseExperiment doseResponseExperiment)
+	public static void debug_curvep(DoseResponseExperiment doseResponseExperiment)
 	{
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
@@ -677,5 +677,35 @@ public class CurvePProcessor
 		}
 	}
 	
+	public static List<Float> logwAUC(List<Float> wauc)
+	{
+		List<Float> logwAUC = new ArrayList<Float>();
+		
+		for(int i = 0; i < wauc.size(); i++)
+		{
+			logwAUC.add(directionallyAdjustedLog(wauc.get(i), 2));
+		}
+		
+		return logwAUC;
+	}
 	
+	public static Float directionallyAdjustedLog(Float val, int base)
+	{
+		if(val == 0) {
+			return new Float(0);
+		}
+		
+		boolean sign = false;
+		if(val < 0)
+			sign = true;
+		
+		Float ret = Math.abs(val);
+		ret = (float) (Math.log(ret)/Math.log(base));
+		if(sign)
+			ret = Math.abs(ret) * -1;
+		else
+			ret = Math.abs(ret);
+		
+		return ret;
+	}
 }

@@ -41,6 +41,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	private PrefilterResults		prefilterResults;
 	
 	private List<Float>				wAUCList;
+	private List<Float>				logwAUCList;
 
 	private transient List<String>	columnHeader;
 
@@ -73,6 +74,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BEST_BMDU_BMD_RATIO			= "Best BMDU/BMD";
 	public static final String		BEST_POLY					= "Best Poly";
 	public static final String		WAUC						= "wAUC";
+	public static final String 		LOG_WAUC					= "Log 2 wAUC";
 
 	@JsonIgnore
 	public Long getID()
@@ -135,6 +137,14 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		this.wAUCList = wAUC;
 	}
 	
+	public List<Float> getLogwAUC() {
+		return logwAUCList;
+	}
+
+	public void setLogwAUC(List<Float> logwAUCList) {
+		this.logwAUCList = logwAUCList;
+	}
+
 	/*
 	 * fill the column header for table display or file export purposes.
 	 */
@@ -151,6 +161,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 		//Add Curve P Header
 		columnHeader.add(WAUC);
+		columnHeader.add(LOG_WAUC);
 		columnHeader.add(PREFILTER_PVALUE);
 		columnHeader.add(PREFILTER_ADJUSTEDPVALUE);
 		columnHeader.add(BEST_FOLDCHANGE);
@@ -259,11 +270,15 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				}
 			}
 			Float wAUC = null;
-			if(wAUCList != null) {
+			if(wAUCList != null) 
 				wAUC = wAUCList.get(index);
-			}
+			
+			Float logwAUC = null;
+			if(logwAUCList != null)
+				logwAUC = logwAUCList.get(index);
+				
 			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
-					foldChanges, wAUC);
+					foldChanges, wAUC, logwAUC);
 			index++;
 
 		}
