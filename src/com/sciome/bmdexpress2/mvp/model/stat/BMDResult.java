@@ -161,7 +161,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 		//Add Curve P Header
 		columnHeader.add(WAUC);
-		columnHeader.add(LOG_WAUC);
+		//Commenting out for now
+//		columnHeader.add(LOG_WAUC);
 		columnHeader.add(PREFILTER_PVALUE);
 		columnHeader.add(PREFILTER_ADJUSTEDPVALUE);
 		columnHeader.add(BEST_FOLDCHANGE);
@@ -273,12 +274,13 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			if(wAUCList != null) 
 				wAUC = wAUCList.get(index);
 			
-			Float logwAUC = null;
-			if(logwAUCList != null)
-				logwAUC = logwAUCList.get(index);
+			//Comment out for now
+//			Float logwAUC = null;
+//			if(logwAUCList != null)
+//				logwAUC = logwAUCList.get(index);
 				
 			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
-					foldChanges, wAUC, logwAUC);
+					foldChanges, wAUC);
 			index++;
 
 		}
