@@ -58,9 +58,10 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		}
 		
 		//Calculate and set wAUC values
+		float currBMR = (float)inputParameters.getBmrLevel();
 		List<Float> wAUCList = new ArrayList<Float>();
 		for(int i = 0; i < responses.size(); i++) {
-			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i)));
+			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), currBMR));
 		}
 		bMDResults.setwAUC(wAUCList);
 		
