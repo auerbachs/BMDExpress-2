@@ -767,7 +767,19 @@ public class CurvePProcessor
 	    }
 	    return tbSize;
 	}
-	
+
+	public static List<Float> r_sample(Float avr, Float sdr, int n)
+	{//samples n responses from normal distribution with the mean = avr and st.dev = sdr
+		List<Float> bootr = new ArrayList<Float>();	 
+		java.util.Random xx = new java.util.Random();
+		for (int nn = 0; nn < n; nn++)
+		{
+			double v = avr + sdr*xx.nextGaussian();
+			bootr.add((float)v);
+		}
+		return (bootr);
+	}
+
 	public static Float curveP(List<Float> allD, List<Float> allR) {
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
 		List<Float> unqD = CollapseDoses(allD);
@@ -845,13 +857,8 @@ public class CurvePProcessor
 		System.out.println("Happy Christmas, you dirty animal... And Hapy New Year!");
 
 	}
-
-<<<<<<< HEAD
-	public static void debug_curvep(DoseResponseExperiment doseResponseExperiment)	{
-=======
 	public static void debug_curvep(DoseResponseExperiment doseResponseExperiment)
 	{
->>>>>>> branch '2.30' of https://github.com/auerbachs/BMDExpress-2
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
@@ -892,23 +899,24 @@ public class CurvePProcessor
 		
 		for(int i = 0; i < wauc.size(); i++)
 		{
-			logwAUC.add(directionallyAdjustedLog(wauc.get(i), 2));
+			logwAUC.add(directionallyAdjustedLog(wauc.get(i), 2, 1.0f));
 		}
 		
 		return logwAUC;
 	}
 	
-	public static Float directionallyAdjustedLog(Float val, int base)
-	{
-		if(val == 0) {
-			return new Float(0);
-		}
+	public static Float directionallyAdjustedLog(Float val, int base, Float K)
+	{		
 		
 		boolean sign = false;
 		if(val < 0)
 			sign = true;
+	
+		if (Math.abs(val) < K) {
+			return new Float(0);
+		}
 		
-		Float ret = Math.abs(val);
+		Float ret = Math.abs(val / K);
 		ret = (float) (Math.log(ret)/Math.log(base));
 		if(sign)
 			ret = Math.abs(ret) * -1;
@@ -917,4 +925,6 @@ public class CurvePProcessor
 		
 		return ret;
 	}
+	
+	
 }
