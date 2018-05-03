@@ -16,6 +16,7 @@ public class ChartKey
 	public final static String	LOG		= "Log";
 	public final static String	SQRT	= "Square Root";
 	public final static String	ABS		= "Absolute Value";
+	public final static String	NONE	= "None";
 
 	String						key;
 	String						math;
@@ -51,11 +52,13 @@ public class ChartKey
 	{
 		if (math == null || math.equals(""))
 			return value;
+		else if (math.equalsIgnoreCase(NONE))
+			return value;
 		else if (math.equals(NEGLOG))
 			return NumberManager.negLog10(value);
 		else if (math.equals(LOG) && value > 0)
 			return NumberManager.log10(value);
-		else if (math.equals(ABS) && value > 0)
+		else if (math.equals(ABS))
 			return Math.abs(value);
 		else if (math.equals(SQRT) && value > 0)
 			return Math.sqrt(value);

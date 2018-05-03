@@ -206,6 +206,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 
 		row.add(wAUC);
+//		row.add(logwAUC);
 
 		row.add(pValue);
 		this.prefilterPvalue = pValue;

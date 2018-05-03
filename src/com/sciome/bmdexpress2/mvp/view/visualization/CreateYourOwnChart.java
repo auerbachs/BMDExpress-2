@@ -143,9 +143,8 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 		{
 			if (chartKeys.size() != 3)
 				return null;
-			return new SciomeRangePlotJFree("Range: " + chartKeys.get(0).toString(),
-					chartDataPacks, chartKeys.get(0), chartKeys.get(1),
-					chartKeys.get(2), chartChangeListener);
+			return new SciomeRangePlotJFree("Range: " + chartKeys.get(0).toString(), chartDataPacks,
+					chartKeys.get(0), chartKeys.get(1), chartKeys.get(2), chartChangeListener);
 		}
 		return null;
 	}
@@ -240,9 +239,11 @@ public class CreateYourOwnChart extends Dialog<SciomeChartBase>
 			keyCombo.setMinWidth(200);
 			keyCombo.setMaxWidth(200);
 
-			mathCombo.getItems().addAll(ChartKey.ABS, ChartKey.LOG, ChartKey.NEGLOG, ChartKey.SQRT);
+			mathCombo.getItems().addAll(ChartKey.NONE, ChartKey.ABS, ChartKey.LOG, ChartKey.NEGLOG,
+					ChartKey.SQRT);
 			keyCombo.getItems().addAll(keys);
-			getChildren().addAll(label, keyCombo, mathCombo);
+			mathCombo.getSelectionModel().select(ChartKey.NONE);
+			getChildren().addAll(label, keyCombo, new Label("Math Transform:"), mathCombo);
 		}
 
 		public ChartKey getChartKey()

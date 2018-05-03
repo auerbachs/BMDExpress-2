@@ -41,7 +41,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
 		
-		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
+		List<ProbeResponse> responses = processableData.getProcessableProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
 		List<Float> doseVector = new ArrayList<Float>();
@@ -56,11 +56,18 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		{
 			doseVector.add(treatments.get(i).getDose());
 		}
+		
+		//Calculate and set wAUC values
 		List<Float> wAUCList = new ArrayList<Float>();
 		for(int i = 0; i < responses.size(); i++) {
 			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i)));
 		}
 		bMDResults.setwAUC(wAUCList);
+		
+		//Calculate and set log 2 wAUC values
+		List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
+		bMDResults.setLogwAUC(logwAUCList);
+		
 		return bMDResults;
 	}
 
