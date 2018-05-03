@@ -21,6 +21,7 @@ import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.bmdexpress2.util.prefilter.OneWayANOVAAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
@@ -459,6 +460,11 @@ public class PrefilterService implements IPrefilterService
 		// This class should eventually be moved to sciome commons
 		OneWayANOVAAnalysis aNOVAAnalysis = new OneWayANOVAAnalysis();
 
+		
+		//debug entry, 04.24.2018
+		//CurvePProcessor.debug_curvep(doseResponseExperiment);
+		//
+		
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
 		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
