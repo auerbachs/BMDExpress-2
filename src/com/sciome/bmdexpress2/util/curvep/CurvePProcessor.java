@@ -317,13 +317,67 @@ public class CurvePProcessor
 			if (Vsz < Math.abs(V.get(s) - L))
 				continue;
 
-			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));
+			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));			
+			
 			break;
 		}
 
 		return iD;
 	} // end of ImputeDose()
 
+	public static float SafeImputeDose(List<Float> D, List<Float> V, float L)
+	/*
+	 * Interpolates the dose at which the L threshold of response is reached D - unique doses (can be
+	 * log-transformed) V - responses corresponding to D[] L - threshold response
+	 * NB: puts additional restrictions on imputation near 0th (untreated) dose, where degenerate cases can happen (i.e. __-------)
+	 */
+	{
+		int e = D.size() - 1;
+		Float[] sv = V.toArray(new Float[0]);
+		Arrays.sort(sv);
+
+		float iD = D.get(e) + 1000.0f; // default invalid value (out of dose range)
+
+		if ((sv[e] < L) || (L < sv[0]))
+			return iD;
+
+		for (int s = 0; s < e; s++)
+		{
+			int z = s + 1;
+			if (L == V.get(s).floatValue())
+				return D.get(s); // to handle exact hit
+
+			float Vsz = Math.abs(V.get(z) - V.get(s));
+			if (Vsz < Math.abs(V.get(z) - L))
+				continue;
+			
+			if (Vsz < Math.abs(V.get(s) - L))
+				continue;
+
+			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));
+			
+			if (s == 0)
+			{//safe impute for cases when log-transformed doses have untreated Dose as arbitrary small number
+				int s2 = z + 1;
+				
+				//impute from the next spline (s+1; s+2) backwards
+				float iD2 = D.get(s2) + (D.get(z) - D.get(s2)) * (L - V.get(s2)) / (V.get(z) - V.get(s2));
+
+				//if this spline has a good slope, then apply its extrapolation
+				if (Float.isFinite(iD2)) 
+					iD2 = Math.min(iD2,  D.get(z)); 
+				else 
+					iD2 = D.get(z);
+				
+				//pick most conservative imputation, considering this could be a degenerate dose-response
+				iD = Math.max(iD, iD2);
+			}
+			break;
+		}
+
+		return iD;
+	} // end of SafeImputeDose()
+	
 	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog, float AUC)
 	{
 		/* autonomous version that does all auxiliary calculations internally
@@ -357,8 +411,8 @@ public class CurvePProcessor
 		float L1 = avr.get(0) - Z_thr * sdr.get(0);
 		float L2 = avr.get(0) + Z_thr * sdr.get(0);
 
-		float P1 = ImputeDose(ulD, avr, L1);
-		float P2 = ImputeDose(ulD, avr, L2);
+		float P1 = SafeImputeDose(ulD, avr, L1);
+		float P2 = SafeImputeDose(ulD, avr, L2);
 
 		//picks appropriate POD depending on the overall direction (judged by AUC)
 		if (AUC < 0) return P1;
@@ -379,8 +433,8 @@ public class CurvePProcessor
 		float L1 = avr.get(0) - Z_thr * sdr.get(0);
 		float L2 = avr.get(0) + Z_thr * sdr.get(0);
 
-		float P1 = ImputeDose(ud, avr, L1);
-		float P2 = ImputeDose(ud, avr, L2);
+		float P1 = SafeImputeDose(ud, avr, L1);
+		float P2 = SafeImputeDose(ud, avr, L2);
 
 		//picks appropriate POD depending on the overall direction (judged by AUC)
 		if (dir < 0) return P1;
@@ -717,7 +771,7 @@ public class CurvePProcessor
 	    for (int u = n-1; u >0; u--)
 	    {
 	    	Float cr = avr.get(u), csd = sdr.get(u);
-	    	Float cru = cr - csd, crl = cr + csd;
+	    	Float crl = cr - csd, cru = cr + csd;
 	    	if ( (extr < crl) || (extr > cru) ) Baddies[u] = 1; else break;
 	    }
 	    
@@ -738,9 +792,8 @@ public class CurvePProcessor
 	    	int f = v, ci = v;
 	    	
 	    	//first, check forward from v
-	    	while (ci < n)
+	    	while (++ci < n)
 	    	{
-	    		ci ++;
 	    		if (Baddies[ci] == 1) continue;
 	    		Float ci_a = avr.get(ci), f_a = avr.get(f), ci_s = sdr.get(ci), f_s = sdr.get(f);
 	    		if (dr_OOR(f_a, f_s, ci_a, ci_s))
@@ -834,7 +887,11 @@ public class CurvePProcessor
 	/*	corrects curves monotonically based on supplied direction in mono (0 - flat, 1 - rising, -1 - falling)
 		bootstraps to estimate POD and AUC (only if nboot*p > 1), 
 		p is pvalue for confidence interval boundaries on returned metrics
-		returns list of triplets for POD, AUC, wAUC 
+		returns list of 10 values: 
+			1st = #points corrected,
+			2nd - 4th POD triplet (lower confidence, POD, upper confidence)
+			5th - 7th AUC triplet
+			8th - 10th wAUC triplet 
 	*/				
 		
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
@@ -865,12 +922,15 @@ public class CurvePProcessor
 		List<Float> metrics = new ArrayList<Float>(); //results
 		if (p*(float)nboot < 1.0f) //skip bootstrap
 		{
+			metrics.add((float)nfixed);
 			metrics.add(myAUC);
 			metrics.add(myAUC);
 			metrics.add(myAUC);
+			
 			metrics.add(myPOD);
 			metrics.add(myPOD);
 			metrics.add(myPOD);
+			
 			metrics.add(mywAUC);
 			metrics.add(mywAUC);
 			metrics.add(mywAUC);
@@ -885,32 +945,38 @@ public class CurvePProcessor
 		for (int s = 0; s < nboot; s++)
 		{
 			List<Float> curr_dr = get_dr_sample(ngroups, avR, sdR);
-			nfixed = monotonize(allD, curr_dr, dr1, mono);
+			monotonize(allD, curr_dr, dr1, mono);
 			xx_avR = calc_WgtAvResponses(allD, dr1);
 			
-			bAUC.add( calc_AUC(luD, xx_avR) );
-			bPOD.add( calc_POD(luD, xx_avR, sdR, BMR, mono) );
-			bwAUC.add( calc_wAUC(myAUC, myPOD, luD) );
+			float cbAUC = calc_AUC(luD, xx_avR);
+			float cbPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+			bAUC.add( cbAUC );
+			bPOD.add( cbPOD );
+			bwAUC.add( calc_wAUC(cbAUC, cbPOD, luD) );
 		}
 
 		//ascending sort
 		Collections.sort(bAUC);
 		Collections.sort(bPOD);
 		Collections.sort(bwAUC);
-		int rank = (int)p*nboot;
+		
+		int rank = (int)Math.round(p*nboot);
+		int lrank = nboot - rank;
 		rank--;
+		
+		metrics.add((float)nfixed);
 		
 		metrics.add(bAUC.get(rank));
 		metrics.add(myAUC);
-		metrics.add(bAUC.get(nboot - rank));
+		metrics.add(bAUC.get(lrank));
 		
 		metrics.add(bPOD.get(rank));
 		metrics.add(myPOD);
-		metrics.add(bPOD.get(nboot - rank));
+		metrics.add(bPOD.get(lrank));
 		
 		metrics.add(bwAUC.get(rank));
 		metrics.add(mywAUC);
-		metrics.add(bwAUC.get(nboot - rank));
+		metrics.add(bwAUC.get(lrank));
 		return metrics;		
 	}
 	
@@ -1018,8 +1084,11 @@ public class CurvePProcessor
 		
 		for(int i = 0; i < responses.size(); i++) {
 			if ( responses.get(i).getProbe().getId().equals("1379483_at") )
-				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			
+			{
+				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), 1.34f, 1, 1000, 0.05f);
+				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9) );				
+				//wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+			}			
 			if ( responses.get(i).getProbe().getId().equals("1390430_at") )
 				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			
