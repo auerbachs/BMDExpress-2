@@ -430,8 +430,13 @@ public class CurvePProcessor
 		
 		if (sdr.get(0) == 0.0) return ud.get(0);
 		
-		float L1 = avr.get(0) - Z_thr * sdr.get(0);
-		float L2 = avr.get(0) + Z_thr * sdr.get(0);
+		//05.15.2018 add-on; This is needed when quantile normalizations leads to a degeneracy of the median for untreated control
+		
+		float maxsd = sdr.get(0);
+		for (int x = 1; x < sdr.size(); x++) if (sdr.get(x) > maxsd) maxsd = sdr.get(x); 
+		
+		float L1 = avr.get(0) - Z_thr * maxsd;
+		float L2 = avr.get(0) + Z_thr * maxsd;
 
 		float P1 = SafeImputeDose(ud, avr, L1);
 		float P2 = SafeImputeDose(ud, avr, L2);
@@ -673,8 +678,8 @@ public class CurvePProcessor
 	public static boolean dr_OOR(Float base_av, Float base_sd, Float x_av, Float x_sd)
 	{//out-of-range check for two intervals, ci and f, defined by average and sd
 		Float davx = Math.abs(base_av - x_av);
-		if (davx < Math.max(base_sd, x_sd)) return false;
-		return true;
+		if (davx > Math.max(base_sd, x_sd)) return true;
+		return false;
 	}
 	
 	public static float[] scan_dr_4mono(List<Float> avR, List<Float> sdR, int mode)
@@ -1083,14 +1088,21 @@ public class CurvePProcessor
 		
 		
 		for(int i = 0; i < responses.size(); i++) {
-			if ( responses.get(i).getProbe().getId().equals("1379483_at") )
+			
+			if ( responses.get(i).getProbe().getId().equals("FIS1_2429") )
+				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+			
+			if ( responses.get(i).getProbe().getId().equals("FIS1_2429") )
 			{
-				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), 1.34f, 1, 1000, 0.05f);
+				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), 1.34f, -1, 1000, 0.05f);
 				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9) );				
 				//wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			}			
-			if ( responses.get(i).getProbe().getId().equals("1390430_at") )
+			if ( responses.get(i).getProbe().getId().equals("ATAD5_21054") )
 				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+			
+			//if ( responses.get(i).getProbe().getId().equals("1390430_at") )
+			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			
 			//if ( responses.get(i).getProbe().getId().equals("1387874_at") )
 			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
