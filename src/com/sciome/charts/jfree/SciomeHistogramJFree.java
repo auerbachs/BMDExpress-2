@@ -40,7 +40,6 @@ import javafx.scene.input.MouseButton;
 
 public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataExporter
 {
-
 	private JFreeChart	chart;
 	private double		lowX;
 	private double		highX;

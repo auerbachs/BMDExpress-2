@@ -10,7 +10,7 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.ExpressionDataSetDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
-import com.sciome.bmdexpress2.mvp.view.visualization.PCADataVisualizationView;
+import com.sciome.bmdexpress2.mvp.view.visualization.ExpressionDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
@@ -48,7 +48,7 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
-		return new PCADataVisualizationView();
+		return new ExpressionDataVisualizationView();
 	}
 
 	@Override
