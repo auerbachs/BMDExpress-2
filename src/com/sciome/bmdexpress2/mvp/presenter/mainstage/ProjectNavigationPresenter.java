@@ -701,6 +701,11 @@ public class ProjectNavigationPresenter
 	{
 		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
+	
+	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
+	{
+		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
+	}
 
 	/*
 	 * write the best model for each probestat result to text file
@@ -852,6 +857,11 @@ public class ProjectNavigationPresenter
 
 		// BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
 
+	}
+	
+	public void exportMultipleResultsFiltered(List<BMDExpressAnalysisDataSet> selectedItems, File selectedFile)
+	{
+		//TODO: do this
 	}
 
 	/*

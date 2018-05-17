@@ -88,7 +88,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	private final String										SHOW_FILTER		= "Show Filter";
 	private final String										HIDE_CHART		= "Hide Charts";
 	private final String										SHOW_CHART		= "Show Charts";
-	private final String										APPPLY_FILTER	= "Apply Filter";
+	private final String										APPLY_FILTER	= "Apply Filter";
 
 	private FilteredList<BMDExpressAnalysisRow>					filteredData;
 	private BMDExpressAnalysisDataSet							analysisDataSet;
@@ -172,7 +172,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			}
 
 			totalItemsLabel = new Label("");
-			enableFilterCheckBox = new CheckBox(APPPLY_FILTER);
+			enableFilterCheckBox = new CheckBox(APPLY_FILTER);
 			enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
 
 			topHBox.getChildren().add(totalItemsLabel);

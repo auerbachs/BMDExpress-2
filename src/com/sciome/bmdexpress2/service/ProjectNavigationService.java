@@ -222,6 +222,25 @@ public class ProjectNavigationService implements IProjectNavigationService{
 
 	}
 	
+	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
+	{
+		//Change this
+//		try
+//		{
+//			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+//			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
+//			writer.write("\n");
+//			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
+//			writer.write(exportBMDExpressAnalysisDataSet(bmdResults, false));
+//			writer.close();
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
+
+	}
+	
 	private String exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, boolean prepend)
 	{
 		StringBuffer sb = new StringBuffer();

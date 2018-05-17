@@ -83,6 +83,13 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String									ORIOGEN_DATA				= "Oriogen";
 	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
 	private final String									CATEGORY_DATA				= "Functional Classifications";
+	
+	private final String									RENAME						= "Rename";
+	private final String									REMOVE						= "Remove";
+	private final String									EXPORT						= "Export";
+	private final String									EXPORT_FILTERED				= "Export Filtered Data";
+	private final String									SPREADSHEET_VIEW			= "Spreedsheet View";
+	private final String									REMOVE_ALL					= "Remove All Selected Items";
 
 	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
 	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
@@ -820,16 +827,19 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			{
 				switch (((MenuItem) event.getTarget()).getText())
 				{
-					case "Rename":
+					case RENAME:
 						handle_BMDExpressAnalysisDataSetRename(analysisDataSet, "Rename " + theThing);
 						break;
-					case "Remove":
+					case REMOVE:
 						handle_BMDExpressAnalysisDataSetRemove(analysisDataSet);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_BMDExpressAnalysisDataSetExport(analysisDataSet, "Export " + theThing);
 						break;
-					case "Spreadsheet View":
+					case EXPORT_FILTERED:
+						handle_BMDExpressAnalysisDataSetExportFiltered(analysisDataSet, "Export Filtered " + theThing);
+						break;
+					case SPREADSHEET_VIEW:
 						handle_DataAnalysisResultsSpreadSheetView(analysisDataSet);
 						break;
 				}
@@ -852,11 +862,14 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				switch (((MenuItem) event.getTarget()).getText())
 				{
 
-					case "Remove All Selected Items":
+					case REMOVE_ALL:
 						handle_MultiSelectRemove(selectedItems);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_MultiSelectExport(selectedItems);
+						break;
+					case EXPORT_FILTERED:
+						handle_MultiSelectExportFiltered(selectedItems);
 						break;
 				}
 
@@ -885,16 +898,16 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			{
 				switch (((MenuItem) event.getTarget()).getText())
 				{
-					case "Rename":
+					case RENAME:
 						handle_DoseResponseExperimentRename(doseResponseExperiment);
 						break;
-					case "Remove":
+					case REMOVE:
 						handle_DoseResponseExperimentRemove(doseResponseExperiment);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_DoseResponseExperimentExport(doseResponseExperiment);
 						break;
-					case "Spreadsheet View":
+					case SPREADSHEET_VIEW:
 						handle_DoseResponseExperimentSpreadSheetView(doseResponseExperiment);
 						break;
 				}
@@ -927,10 +940,12 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private List<MenuItem> getCommonMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Rename"));
-		menuItems.add(new MenuItem("Remove"));
-		menuItems.add(new MenuItem("Export"));
-		menuItems.add(new MenuItem("Spreadsheet View"));
+		menuItems.add(new MenuItem(RENAME));
+		menuItems.add(new MenuItem(REMOVE));
+		menuItems.add(new MenuItem(EXPORT));
+		if(BMDExpressProperties.getInstance().isApplyFilter())
+			menuItems.add(new MenuItem(EXPORT_FILTERED));
+		menuItems.add(new MenuItem(SPREADSHEET_VIEW));
 
 		return menuItems;
 	}
@@ -938,8 +953,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private List<MenuItem> getCommonMultiSelectMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Remove All Selected Items"));
-		menuItems.add(new MenuItem("Export"));
+		menuItems.add(new MenuItem(REMOVE_ALL));
+		menuItems.add(new MenuItem(EXPORT));
+		if(BMDExpressProperties.getInstance().isApplyFilter())
+			menuItems.add(new MenuItem(EXPORT_FILTERED));
 
 		return menuItems;
 	}
@@ -1044,10 +1061,19 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 		presenter.exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
+	
+	private void handle_BMDExpressAnalysisDataSetExportFiltered(BMDExpressAnalysisDataSet bmdResults, String saveAsTitle)
+	{
+		File selectedFile = getFileToSave(saveAsTitle + " " + bmdResults.toString(),
+				bmdResults.toString() + ".txt");
+		if (selectedFile == null)
+			return;
+
+		presenter.exportFilteredBMDExpressAnalysisDataSet(bmdResults, selectedFile);
+	}
 
 	private void handle_BMDResultReselectBestModels(BMDResult bmdResults)
 	{
-
 		// need to run this on the main ui thread. this is being called from event bus thread..hence the
 		// runlater.
 		Platform.runLater(new Runnable() {
@@ -1160,6 +1186,15 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			return;
 
 		presenter.exportMultipleResults(selectedItems, selectedFile);
+	}
+	
+	private void handle_MultiSelectExportFiltered(List<BMDExpressAnalysisDataSet> selectedItems)
+	{
+		File selectedFile = getFileToSave("Export Multi Selected Results", "multiselect_results.txt");
+		if (selectedFile == null)
+			return;
+
+		presenter.exportMultipleResultsFiltered(selectedItems, selectedFile);
 	}
 
 	/*
@@ -1362,8 +1397,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
 				{
-					System.out.println(mouseEvent.getSource());
-
 					List<BMDExpressAnalysisDataSet> selecteDataSets = getSelectedItems();
 
 					if (selecteDataSets.size() == 1)
