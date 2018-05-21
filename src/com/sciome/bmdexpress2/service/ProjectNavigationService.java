@@ -34,6 +34,8 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
+import javafx.collections.transformation.FilteredList;
+
 public class ProjectNavigationService implements IProjectNavigationService{
 
 	private final int	MAX_FILES_FOR_MULTI_EXPORT	= 10;
@@ -222,22 +224,21 @@ public class ProjectNavigationService implements IProjectNavigationService{
 
 	}
 	
-	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
+	@Override
+	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile)
 	{
-		//Change this
-//		try
-//		{
-//			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-//			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
-//			writer.write("\n");
-//			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
-//			writer.write(exportBMDExpressAnalysisDataSet(bmdResults, false));
-//			writer.close();
-//		}
-//		catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n");
+			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
+			writer.write(exportFilteredBMDExpressAnalysisDataSet(filteredResults));
+			writer.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 
 	}
 	
@@ -249,6 +250,17 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		{
 			if (prepend)
 				sb.append(bmdResults.getName() + "\t");
+			sb.append(joinRowData(result.getRow(), "\t") + "\n");
+		}
+		return sb.toString();
+	}
+	
+	private String exportFilteredBMDExpressAnalysisDataSet(FilteredList<BMDExpressAnalysisRow> filteredResults)
+	{
+		StringBuffer sb = new StringBuffer();
+
+		for (BMDExpressAnalysisRow result : filteredResults)
+		{
 			sb.append(joinRowData(result.getRow(), "\t") + "\n");
 		}
 		return sb.toString();

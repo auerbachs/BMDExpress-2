@@ -14,6 +14,8 @@ import java.util.Optional;
 import org.controlsfx.control.CheckListView;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
@@ -32,6 +34,7 @@ import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.service.DataCombinerService;
 import com.sciome.bmdexpress2.service.ProjectNavigationService;
 import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
@@ -46,6 +49,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -94,10 +98,13 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
 	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
 	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
+	
+	private FilteredList<BMDExpressAnalysisRow>				filteredList;
 
 	ProjectNavigationPresenter								presenter;
 	private boolean											fireSelection				= false;
 	private boolean											selectionChangeInProgress	= false;
+	private boolean											visualizationSelected		= false;
 
 	public ProjectNavigationView()
 	{
@@ -943,7 +950,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		menuItems.add(new MenuItem(RENAME));
 		menuItems.add(new MenuItem(REMOVE));
 		menuItems.add(new MenuItem(EXPORT));
-		if(BMDExpressProperties.getInstance().isApplyFilter())
+		if(BMDExpressProperties.getInstance().isApplyFilter() && visualizationSelected)
 			menuItems.add(new MenuItem(EXPORT_FILTERED));
 		menuItems.add(new MenuItem(SPREADSHEET_VIEW));
 
@@ -955,7 +962,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		List<MenuItem> menuItems = new ArrayList<>();
 		menuItems.add(new MenuItem(REMOVE_ALL));
 		menuItems.add(new MenuItem(EXPORT));
-		if(BMDExpressProperties.getInstance().isApplyFilter())
+		if(BMDExpressProperties.getInstance().isApplyFilter() && visualizationSelected)
 			menuItems.add(new MenuItem(EXPORT_FILTERED));
 
 		return menuItems;
@@ -1065,11 +1072,11 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private void handle_BMDExpressAnalysisDataSetExportFiltered(BMDExpressAnalysisDataSet bmdResults, String saveAsTitle)
 	{
 		File selectedFile = getFileToSave(saveAsTitle + " " + bmdResults.toString(),
-				bmdResults.toString() + ".txt");
+				bmdResults.toString() + "_filtered.txt");
 		if (selectedFile == null)
 			return;
 
-		presenter.exportFilteredBMDExpressAnalysisDataSet(bmdResults, selectedFile);
+		presenter.exportFilteredResults(bmdResults, filteredList, selectedFile);
 	}
 
 	private void handle_BMDResultReselectBestModels(BMDResult bmdResults)
@@ -1190,11 +1197,15 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	
 	private void handle_MultiSelectExportFiltered(List<BMDExpressAnalysisDataSet> selectedItems)
 	{
-		File selectedFile = getFileToSave("Export Multi Selected Results", "multiselect_results.txt");
+		File selectedFile = getFileToSave("Export Multi Selected Results", "multiselect_results_filtered.txt");
 		if (selectedFile == null)
 			return;
-
-		presenter.exportMultipleResultsFiltered(selectedItems, selectedFile);
+		
+		//This combining is only needed for the notes that will be displayed
+		DataCombinerService combinerService = new DataCombinerService();
+		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(selectedItems);
+		
+		presenter.exportFilteredResults(combined, filteredList, selectedFile);
 	}
 
 	/*
@@ -1341,6 +1352,15 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		return analysisCheckList.getScene().getWindow();
 	}
 
+	public FilteredList<BMDExpressAnalysisRow> getFilteredList() {
+		return filteredList;
+	}
+
+	@Override
+	public void setFilteredList(FilteredList<BMDExpressAnalysisRow> filteredList) {
+		this.filteredList = filteredList;
+	}
+
 	private void initializeDataSetMap()
 	{
 		clearChecks(null);
@@ -1397,12 +1417,18 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
 				{
-					List<BMDExpressAnalysisDataSet> selecteDataSets = getSelectedItems();
+					List<BMDExpressAnalysisDataSet> selectedDataSets = getSelectedItems();
 
-					if (selecteDataSets.size() == 1)
-						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
-					else if (selecteDataSets.size() > 1)
-						dealWithRightClickOnTreeMultiSelected(selecteDataSets, mouseEvent);
+					//Decide whether or not we should display the export filtered option
+					if(getCheckedItems().size() == 0)
+						visualizationSelected = false;
+					else 
+						visualizationSelected = true;
+					
+					if (selectedDataSets.size() == 1)
+						dealWithRightClickOnTree(selectedDataSets.get(0), mouseEvent);
+					else if (selectedDataSets.size() > 1)
+						dealWithRightClickOnTreeMultiSelected(selectedDataSets, mouseEvent);
 
 				}
 

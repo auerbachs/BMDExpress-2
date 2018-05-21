@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
@@ -39,6 +40,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoade
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.DataFilteredEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
@@ -83,6 +85,8 @@ import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowDataVisualizati
 import com.sciome.bmdexpress2.util.DialogWithThreadProcess;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
+
+import javafx.collections.transformation.FilteredList;
 
 public class ProjectNavigationPresenter
 		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
@@ -702,9 +706,10 @@ public class ProjectNavigationPresenter
 		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
 	
-	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
+	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile)
 	{
-		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
+		//TODO: do this
+		getService().exportFilteredBMDExpressAnalysisDataSet(bmdResults, filteredResults, selectedFile);
 	}
 
 	/*
@@ -789,6 +794,12 @@ public class ProjectNavigationPresenter
 		}
 
 	}
+	
+	@Subscribe
+	public void onDataFilteredRequest(DataFilteredEvent filteredEvent)
+	{
+		getView().setFilteredList(filteredEvent.GetPayload());
+	}
 
 	private int saveProjectFirstMaybe()
 	{
@@ -855,13 +866,6 @@ public class ProjectNavigationPresenter
 
 		getService().exportBMDExpressAnalysisDataSet(combined, selectedFile);
 
-		// BMDExpressEventBus.getInstance().post(new ShowMessageEvent(filesCreateString));
-
-	}
-	
-	public void exportMultipleResultsFiltered(List<BMDExpressAnalysisDataSet> selectedItems, File selectedFile)
-	{
-		//TODO: do this
 	}
 
 	/*

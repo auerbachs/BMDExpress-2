@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.mvp.viewinterface.mainstage;
 import java.io.File;
 import java.util.List;
 
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
@@ -13,6 +14,8 @@ import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
+
+import javafx.collections.transformation.FilteredList;
 
 
 public interface IProjectNavigationView
@@ -55,6 +58,8 @@ public interface IProjectNavigationView
 
 	public void getAChip(List<ChipInfo> choices, List<DoseResponseExperiment> doseResponseExperiment,
 			FileAnnotation fileAnnotation);
+	
+	public void setFilteredList(FilteredList<BMDExpressAnalysisRow> filteredList);
 
 	File askForABMDFileToImport();
 

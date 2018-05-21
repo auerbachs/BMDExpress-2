@@ -416,6 +416,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 			return true;
 		});
 
+		presenter.postFilterEvent(filteredData);
+		
 	}
 
 	protected abstract DataVisualizationView getDataVisualizationView();

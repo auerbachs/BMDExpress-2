@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.DataFilteredEvent;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
+
+import javafx.collections.transformation.FilteredList;
 
 public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDExpressDataView>
 {
@@ -30,4 +34,8 @@ public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDE
 
 	}
 
+	public void postFilterEvent(FilteredList<BMDExpressAnalysisRow> filteredData)
+	{
+		getEventBus().post(new DataFilteredEvent(filteredData));
+	}
 }
