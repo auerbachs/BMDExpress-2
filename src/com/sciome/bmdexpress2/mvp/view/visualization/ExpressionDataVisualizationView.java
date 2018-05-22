@@ -15,7 +15,7 @@ import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.jfree.SciomeHistogramJFree;
+import com.sciome.charts.jfree.SciomeHistogramLineChartJFree;
 import com.sciome.charts.jfree.SciomePCAJFree;
 import com.sciome.filter.DataFilterPack;
 
@@ -48,8 +48,8 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 		chartCache.put(DEFAULT + "-" + "PC3 V PC4", new SciomePCAJFree("", new ArrayList<>(),
 				new ChartKey(PCAResults.PC3, null), new ChartKey(PCAResults.PC4, null), this));
 		
-		chartCache.put(INTENSITY, new SciomeHistogramJFree("", new ArrayList<>(),
-				new ChartKey(IntensityResults.RESPONSE, null), 50.0, this));
+		chartCache.put(INTENSITY, new SciomeHistogramLineChartJFree("", new ArrayList<>(),
+				new ChartKey(IntensityResults.RESPONSE, null), 100.0, this));
 	}
 
 	@Override
@@ -63,9 +63,10 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 		chartsList = new ArrayList<>();
 
 		if(chartKey.equals(INTENSITY)) {
-			List<BMDExpressAnalysisDataSet> intensityResults = new ArrayList<BMDExpressAnalysisDataSet>();
-			intensityResults.add(((ExpressionDataVisualizationPresenter) presenter)
-					.calculateIntensity((DoseResponseExperiment) results.get(0)));
+			List<BMDExpressAnalysisDataSet> intensityResults = ((ExpressionDataVisualizationPresenter) presenter)
+					.calculateIntensity((DoseResponseExperiment) results.get(0));
+//			intensityResults.add((DoseResponseExperiment)results.get(0));
+//			intensityResults.add();
 			
 			
 			SciomeChartBase chart1 = chartCache.get(INTENSITY);

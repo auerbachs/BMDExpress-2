@@ -7,8 +7,8 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.pca.IntensityResult;
 import com.sciome.bmdexpress2.mvp.model.pca.IntensityResults;
-import com.sciome.bmdexpress2.mvp.model.pca.PCAResult;
 import com.sciome.bmdexpress2.mvp.model.pca.PCAResults;
+import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.viewinterface.visualization.IDataVisualizationView;
 import com.sciome.bmdexpress2.service.PCAService;
 import com.sciome.bmdexpress2.serviceInterface.IVisualizationService;
@@ -26,20 +26,23 @@ public class ExpressionDataVisualizationPresenter extends DataVisualizationPrese
 		return pcaService.calculatePCA(doseResponseExperiment);
 	}
 	
-	public IntensityResults calculateIntensity(DoseResponseExperiment doseResponseExperiment) {
-		IntensityResults intensityResults = new IntensityResults();
-		List<IntensityResult> intensityResultList = new ArrayList<IntensityResult>();
-		for(int i = 0; i < doseResponseExperiment.getProbeResponses().size(); i++)
+	public List<BMDExpressAnalysisDataSet> calculateIntensity(DoseResponseExperiment doseResponseExperiment) {
+		List<BMDExpressAnalysisDataSet> intensityResults = new ArrayList<BMDExpressAnalysisDataSet>();
+		for(int i = 0; i < doseResponseExperiment.getTreatments().size(); i++)
 		{
-			for(int j = 0; j < doseResponseExperiment.getTreatments().size(); j++) {
+			IntensityResults singleResult = new IntensityResults();
+			List<IntensityResult> intensityResultList = new ArrayList<IntensityResult>();
+			for(int j = 0; j < doseResponseExperiment.getProbeResponses().size(); j++) {
+				ProbeResponse response = doseResponseExperiment.getProbeResponses().get(j);
 				IntensityResult row = new IntensityResult();
-				row.setName(doseResponseExperiment.getProbeResponses().get(i).getProbe().getId());
-				row.setResponse((float)(Math.log10(doseResponseExperiment.getProbeResponses().get(i).getResponses().get(j))/Math.log10(2)));
+				row.setName(response.getProbe().getId());
+				row.setResponse((float)((response.getResponses().get(i))/Math.log10(2)));
 				intensityResultList.add(row);
 			}
+			singleResult.setName(doseResponseExperiment.getTreatments().get(i).getName());
+			singleResult.setIntensityResults(intensityResultList);
+			intensityResults.add(singleResult);
 		}
-		intensityResults.setName(doseResponseExperiment.getName());
-		intensityResults.setIntensityResults(intensityResultList);
 		return intensityResults;
 	}
 	

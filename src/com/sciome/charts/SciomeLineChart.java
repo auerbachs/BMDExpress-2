@@ -24,7 +24,6 @@ public abstract class SciomeLineChart extends SciomeChartBase<Number, Number>
 	@Override
 	protected Chart generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
