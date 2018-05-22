@@ -32,11 +32,20 @@ public class ExpressionDataVisualizationPresenter extends DataVisualizationPrese
 		{
 			IntensityResults singleResult = new IntensityResults();
 			List<IntensityResult> intensityResultList = new ArrayList<IntensityResult>();
+			int windowSize = 1;
 			for(int j = 0; j < doseResponseExperiment.getProbeResponses().size(); j++) {
 				ProbeResponse response = doseResponseExperiment.getProbeResponses().get(j);
 				IntensityResult row = new IntensityResult();
+				if(j < doseResponseExperiment.getProbeResponses().size() - windowSize) {
+					float sum = 0;
+					for(int k = 0; k < windowSize; k++) {
+						sum += (doseResponseExperiment.getProbeResponses().get(j + k).getResponses().get(i))/Math.log10(2);
+					}
+					row.setResponse(sum / windowSize);
+				} else {
+					row.setResponse((float)((response.getResponses().get(i))/Math.log10(2)));
+				}
 				row.setName(response.getProbe().getId());
-				row.setResponse((float)((response.getResponses().get(i))/Math.log10(2)));
 				intensityResultList.add(row);
 			}
 			singleResult.setName(doseResponseExperiment.getTreatments().get(i).getName());
