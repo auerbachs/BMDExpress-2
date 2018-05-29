@@ -303,7 +303,7 @@ public class Euler2 extends VennDiagram{
 				break;
 		}
 	}
-
+	
 	@Override
 	protected void setVennType() {
 		int[] overlap = vCalc.getOverlap();

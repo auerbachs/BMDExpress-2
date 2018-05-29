@@ -238,15 +238,15 @@ public class Euler3 extends VennDiagram{
 	}
 
 	public void setFontA() {
-		if (vennTP.fontWeightA.isSelected() && vennTP.fontPostureA.isSelected()) {
-			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeA.getValue()));
-		} else if ((vennTP.fontWeightA.isSelected()) && !(vennTP.fontPostureA.isSelected())) {
-			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeA.getValue()));
-		} else if (!(vennTP.fontWeightA.isSelected()) && (vennTP.fontPostureA.isSelected())) {
-			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeA.getValue()));
-		} else {
-			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeA.getValue()));
-		}
+//		if (vennTP.fontWeightA.isSelected() && vennTP.fontPostureA.isSelected()) {
+//			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeA.getValue()));
+//		} else if ((vennTP.fontWeightA.isSelected()) && !(vennTP.fontPostureA.isSelected())) {
+//			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeA.getValue()));
+//		} else if (!(vennTP.fontWeightA.isSelected()) && (vennTP.fontPostureA.isSelected())) {
+//			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeA.getValue()));
+//		} else {
+//			headerA.setFont(Font.font(vennTP.fontFamilyA.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeA.getValue()));
+//		}
 	}
 
 	public void setFontUnderlineA() {
@@ -281,15 +281,15 @@ public class Euler3 extends VennDiagram{
 	}
 
 	public void setFontB() {
-		if (vennTP.fontWeightB.isSelected() && vennTP.fontPostureB.isSelected()) {
-			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeB.getValue()));
-		} else if ((vennTP.fontWeightB.isSelected()) && !(vennTP.fontPostureA.isSelected())) {
-			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeB.getValue()));
-		} else if (!(vennTP.fontWeightB.isSelected()) && (vennTP.fontPostureA.isSelected())) {
-			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeB.getValue()));
-		} else {
-			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeB.getValue()));
-		}
+//		if (vennTP.fontWeightB.isSelected() && vennTP.fontPostureB.isSelected()) {
+//			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeB.getValue()));
+//		} else if ((vennTP.fontWeightB.isSelected()) && !(vennTP.fontPostureA.isSelected())) {
+//			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeB.getValue()));
+//		} else if (!(vennTP.fontWeightB.isSelected()) && (vennTP.fontPostureA.isSelected())) {
+//			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeB.getValue()));
+//		} else {
+//			headerB.setFont(Font.font(vennTP.fontFamilyB.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeB.getValue()));
+//		}
 	}
 
 	public void setFontUnderlineB() {
@@ -324,15 +324,15 @@ public class Euler3 extends VennDiagram{
 	}
 
 	public void setFontC() {
-		if (vennTP.fontWeightC.isSelected() && vennTP.fontPostureC.isSelected()) {
-			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeC.getValue()));
-		} else if ((vennTP.fontWeightC.isSelected()) && !(vennTP.fontPostureC.isSelected())) {
-			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeC.getValue()));
-		} else if (!(vennTP.fontWeightC.isSelected()) && (vennTP.fontPostureC.isSelected())) {
-			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeC.getValue()));
-		} else {
-			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeC.getValue()));
-		}
+//		if (vennTP.fontWeightC.isSelected() && vennTP.fontPostureC.isSelected()) {
+//			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.BOLD, FontPosture.ITALIC, vennTP.fontSizeC.getValue()));
+//		} else if ((vennTP.fontWeightC.isSelected()) && !(vennTP.fontPostureC.isSelected())) {
+//			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.BOLD, FontPosture.REGULAR, vennTP.fontSizeC.getValue()));
+//		} else if (!(vennTP.fontWeightC.isSelected()) && (vennTP.fontPostureC.isSelected())) {
+//			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.NORMAL, FontPosture.ITALIC, vennTP.fontSizeC.getValue()));
+//		} else {
+//			headerC.setFont(Font.font(vennTP.fontFamilyC.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, vennTP.fontSizeC.getValue()));
+//		}
 	}
 
 	public void setFontUnderlineC() {

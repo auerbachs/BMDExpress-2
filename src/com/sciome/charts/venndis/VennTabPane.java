@@ -72,10 +72,10 @@ public class VennTabPane {
 	private String defaultFont = "System";
 
 	public VennTabPane(BorderPane borderPane) {
-		imB = new Image("https://i.imgur.com/E4DxZpw.png", 30, 30, false, false);
-		imI = new Image("https://i.imgur.com/E4DxZpw.png", 30, 30, false, false);
-		imU = new Image("https://i.imgur.com/E4DxZpw.png", 30, 30, false, false);
-		imS = new Image("https://i.imgur.com/E4DxZpw.png", 30, 30, false, false);
+		imB = new Image(getClass().getResourceAsStream("/icons/B.png"));
+		imI = new Image(getClass().getResourceAsStream("/icons/I.png"));
+		imU = new Image(getClass().getResourceAsStream("/icons/U.png"));
+		imS = new Image(getClass().getResourceAsStream("/icons/S.png"));
 		makeTabPane();
 		borderPane.setLeft(tabPane);
 	}

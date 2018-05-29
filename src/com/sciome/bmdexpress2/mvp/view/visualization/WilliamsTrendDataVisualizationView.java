@@ -60,7 +60,7 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG), false, true,
 						this));
 		chartCache.put(PREFILTER_VENN_DIAGRAM,  new SciomeVennDiagram("", new ArrayList<>(), 
-				new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
+				new ChartKey(PrefilterResults.PROBE_ID, null),
 				this));
 
 	}
@@ -116,7 +116,6 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(results, pack,
 				getUsedChartKeys(), getMathedChartKeys(), new ChartKey(PrefilterResults.PROBE_ID, null));
 		showCharts(chartDataPacks);
-
 	}
 
 	@Override

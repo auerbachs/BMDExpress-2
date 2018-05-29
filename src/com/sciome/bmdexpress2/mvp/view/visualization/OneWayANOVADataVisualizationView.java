@@ -14,6 +14,7 @@ import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
+import com.sciome.charts.venndis.SciomeVennDiagram;
 import com.sciome.filter.DataFilterPack;
 
 public class OneWayANOVADataVisualizationView extends DataVisualizationView implements IDataVisualizationView
@@ -23,6 +24,7 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
 	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Max Fold Change Histogram";
 	private static final String	BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM	= "Max Fold Change (Unsigned) Histogram";
+	private static final String PREFILTER_VENN_DIAGRAM				= "Venn Diagaram";
 
 	public OneWayANOVADataVisualizationView()
 	{
@@ -56,7 +58,9 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
 						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG), false, true,
 						this));
-
+		chartCache.put(PREFILTER_VENN_DIAGRAM,  new SciomeVennDiagram("", new ArrayList<>(), 
+				new ChartKey(PrefilterResults.PROBE_ID, null),
+				this));
 	}
 
 	@Override
@@ -94,6 +98,12 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 					.get(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE_ABS);
 			chartsList.add(chart);
 		}
+		else if (chartKey.equals(PREFILTER_VENN_DIAGRAM)) 
+		{
+			SciomeChartBase chart = chartCache
+					.get(PREFILTER_VENN_DIAGRAM);
+			chartsList.add(chart);
+		}
 		else
 		{
 			SciomeChartBase chart = chartCache
@@ -121,6 +131,7 @@ public class OneWayANOVADataVisualizationView extends DataVisualizationView impl
 		resultList.add(ADJUSTED_PVALUE_HISTOGRAM);
 		resultList.add(BEST_FOLD_CHANGE_HISTOGRAM);
 		resultList.add(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM);
+		resultList.add(PREFILTER_VENN_DIAGRAM);
 
 		return resultList;
 
