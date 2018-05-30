@@ -91,15 +91,12 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String									RENAME						= "Rename";
 	private final String									REMOVE						= "Remove";
 	private final String									EXPORT						= "Export";
-	private final String									EXPORT_FILTERED				= "Export Filtered Data";
 	private final String									SPREADSHEET_VIEW			= "Spreedsheet View";
 	private final String									REMOVE_ALL					= "Remove All Selected Items";
 
 	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
 	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
 	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
-	
-	private FilteredList<BMDExpressAnalysisRow>				filteredList;
 
 	ProjectNavigationPresenter								presenter;
 	private boolean											fireSelection				= false;
@@ -843,9 +840,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 					case EXPORT:
 						handle_BMDExpressAnalysisDataSetExport(analysisDataSet, "Export " + theThing);
 						break;
-					case EXPORT_FILTERED:
-						handle_BMDExpressAnalysisDataSetExportFiltered(analysisDataSet, "Export Filtered " + theThing);
-						break;
 					case SPREADSHEET_VIEW:
 						handle_DataAnalysisResultsSpreadSheetView(analysisDataSet);
 						break;
@@ -874,9 +868,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						break;
 					case EXPORT:
 						handle_MultiSelectExport(selectedItems);
-						break;
-					case EXPORT_FILTERED:
-						handle_MultiSelectExportFiltered(selectedItems);
 						break;
 				}
 
@@ -950,8 +941,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		menuItems.add(new MenuItem(RENAME));
 		menuItems.add(new MenuItem(REMOVE));
 		menuItems.add(new MenuItem(EXPORT));
-		if(BMDExpressProperties.getInstance().isApplyFilter() && visualizationSelected)
-			menuItems.add(new MenuItem(EXPORT_FILTERED));
 		menuItems.add(new MenuItem(SPREADSHEET_VIEW));
 
 		return menuItems;
@@ -962,8 +951,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		List<MenuItem> menuItems = new ArrayList<>();
 		menuItems.add(new MenuItem(REMOVE_ALL));
 		menuItems.add(new MenuItem(EXPORT));
-		if(BMDExpressProperties.getInstance().isApplyFilter() && visualizationSelected)
-			menuItems.add(new MenuItem(EXPORT_FILTERED));
 
 		return menuItems;
 	}
@@ -1067,16 +1054,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			return;
 
 		presenter.exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
-	}
-	
-	private void handle_BMDExpressAnalysisDataSetExportFiltered(BMDExpressAnalysisDataSet bmdResults, String saveAsTitle)
-	{
-		File selectedFile = getFileToSave(saveAsTitle + " " + bmdResults.toString(),
-				bmdResults.toString() + "_filtered.txt");
-		if (selectedFile == null)
-			return;
-
-		presenter.exportFilteredResults(bmdResults, filteredList, selectedFile);
 	}
 
 	private void handle_BMDResultReselectBestModels(BMDResult bmdResults)
@@ -1193,19 +1170,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			return;
 
 		presenter.exportMultipleResults(selectedItems, selectedFile);
-	}
-	
-	private void handle_MultiSelectExportFiltered(List<BMDExpressAnalysisDataSet> selectedItems)
-	{
-		File selectedFile = getFileToSave("Export Multi Selected Results", "multiselect_results_filtered.txt");
-		if (selectedFile == null)
-			return;
-		
-		//This combining is only needed for the notes that will be displayed
-		DataCombinerService combinerService = new DataCombinerService();
-		CombinedDataSet combined = combinerService.combineBMDExpressAnalysisDataSets(selectedItems);
-		
-		presenter.exportFilteredResults(combined, filteredList, selectedFile);
 	}
 
 	/*
@@ -1350,15 +1314,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	public Window getWindow()
 	{
 		return analysisCheckList.getScene().getWindow();
-	}
-
-	public FilteredList<BMDExpressAnalysisRow> getFilteredList() {
-		return filteredList;
-	}
-
-	@Override
-	public void setFilteredList(FilteredList<BMDExpressAnalysisRow> filteredList) {
-		this.filteredList = filteredList;
 	}
 
 	private void initializeDataSetMap()

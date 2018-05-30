@@ -20,7 +20,6 @@ public interface IProjectNavigationService {
 			FileAnnotation fileAnnotation);
 	public String exportMultipleFiles(Map<String, Set<BMDExpressAnalysisDataSet>> header2rows, File selectedFile);
 	public void exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile);
-	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile);
 	public void exportDoseResponseExperiment(DoseResponseExperiment doseResponseExperiment, File selectedFile);
 	public void exportBMDResultBestModel(BMDResult bmdResults, File selectedFile);
 	public Object[][] showGenesToProbeMatrix(DoseResponseExperiment doseResponseExperiment);

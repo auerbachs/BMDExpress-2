@@ -58,8 +58,6 @@ public interface IProjectNavigationView
 
 	public void getAChip(List<ChipInfo> choices, List<DoseResponseExperiment> doseResponseExperiment,
 			FileAnnotation fileAnnotation);
-	
-	public void setFilteredList(FilteredList<BMDExpressAnalysisRow> filteredList);
 
 	File askForABMDFileToImport();
 

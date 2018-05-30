@@ -221,25 +221,6 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		{
 			e.printStackTrace();
 		}
-
-	}
-	
-	@Override
-	public void exportFilteredBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile)
-	{
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n");
-			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
-			writer.write(exportFilteredBMDExpressAnalysisDataSet(filteredResults));
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
 	}
 	
 	private String exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, boolean prepend)
@@ -250,17 +231,6 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		{
 			if (prepend)
 				sb.append(bmdResults.getName() + "\t");
-			sb.append(joinRowData(result.getRow(), "\t") + "\n");
-		}
-		return sb.toString();
-	}
-	
-	private String exportFilteredBMDExpressAnalysisDataSet(FilteredList<BMDExpressAnalysisRow> filteredResults)
-	{
-		StringBuffer sb = new StringBuffer();
-
-		for (BMDExpressAnalysisRow result : filteredResults)
-		{
 			sb.append(joinRowData(result.getRow(), "\t") + "\n");
 		}
 		return sb.toString();

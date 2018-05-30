@@ -706,11 +706,6 @@ public class ProjectNavigationPresenter
 		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
 	
-	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile)
-	{
-		//TODO: do this
-		getService().exportFilteredBMDExpressAnalysisDataSet(bmdResults, filteredResults, selectedFile);
-	}
 
 	/*
 	 * write the best model for each probestat result to text file
@@ -793,12 +788,6 @@ public class ProjectNavigationPresenter
 			this.getEventBus().post(new CloseProjectRequestEvent(""));
 		}
 
-	}
-	
-	@Subscribe
-	public void onDataFilteredRequest(DataFilteredEvent filteredEvent)
-	{
-		getView().setFilteredList(filteredEvent.GetPayload());
 	}
 
 	private int saveProjectFirstMaybe()
@@ -975,7 +964,6 @@ public class ProjectNavigationPresenter
 	public void changeAnalysisName(BMDExpressAnalysisDataSet bmdAnalysisDataSet, String newName)
 	{
 		currentProject.giveBMDAnalysisUniqueName(bmdAnalysisDataSet, newName);
-
 	}
 
 }

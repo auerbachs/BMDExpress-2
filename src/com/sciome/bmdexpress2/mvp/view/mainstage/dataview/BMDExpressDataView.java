@@ -1,5 +1,6 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,6 +60,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
@@ -76,12 +78,15 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected SplitPane											splitPaneMain;
 	protected SplitPane											splitPane;
 	protected FilterComponentsNode								filtrationNode;
+	protected Button											exportData;
 	protected Button											markData;
 	protected Button											hideFilter;
 	protected Button											hideTable;
 	protected Button											hideCharts;
 	protected Node												dataVisualizationNode;
 
+	private final String										EXPORT_DATA		= "Export";
+	private final String										MARK_DATA	 	= "Mark Data";
 	private final String										HIDE_TABLE		= "Hide Table";
 	private final String										SHOW_TABLE		= "Show Table";
 	private final String										HIDE_FILTER		= "Hide Filter";
@@ -137,7 +142,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			splitPane.getItems().add(splitPaneMain);
 			hideFilter = new Button(SHOW_FILTER);
-			markData = new Button("Mark Data");
+			markData = new Button(MARK_DATA);
+			exportData = new Button(EXPORT_DATA);
 
 			defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.getName());
 			// initialize the data filters in this data filter pack. If they were deserialized from disk
@@ -177,6 +183,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			topHBox.getChildren().add(totalItemsLabel);
 			topHBox.getChildren().add(enableFilterCheckBox);
+			topHBox.getChildren().add(exportData);
 			topHBox.getChildren().add(markData);
 			topHBox.getChildren().add(hideFilter);
 			topHBox.getChildren().add(hideTable);
@@ -190,6 +197,13 @@ public abstract class BMDExpressDataView<T> extends VBox
 			SplitPane.setResizableWithParent(filtrationNode, true);
 			splitPane.setDividerPosition(0, .7);
 
+			exportData.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					exportFilteredData();
+				}
+			});
+			
 			markData.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent e)
@@ -415,9 +429,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 			}
 			return true;
 		});
-
-		presenter.postFilterEvent(filteredData);
-		
 	}
 
 	protected abstract DataVisualizationView getDataVisualizationView();
@@ -728,6 +739,39 @@ public abstract class BMDExpressDataView<T> extends VBox
 			dataFilterChanged();
 		}
 
+	}
+
+	private void exportFilteredData()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(bmdAnalysisDataSet.getName());
+		if(enableFilterCheckBox.isSelected())
+			builder.append("_filtered");
+		
+		File selectedFile = getFileToSave(bmdAnalysisDataSet.getName(),
+				builder.toString());
+		if (selectedFile == null)
+			return;
+		
+		presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile);
+	}
+	
+	//This is copied from ProjectNavigationView (might be a better way)
+	private File getFileToSave(String title, String initName)
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle(title);
+		File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
+		if (initialDirectory.exists())
+			fileChooser.setInitialDirectory(initialDirectory);
+		fileChooser.setInitialFileName(initName);
+		File selectedFile = fileChooser.showSaveDialog(topHBox.getScene().getWindow());
+
+		if (selectedFile != null)
+		{
+			BMDExpressProperties.getInstance().setExportPath(selectedFile.getParent());
+		}
+		return selectedFile;
 	}
 }
 
