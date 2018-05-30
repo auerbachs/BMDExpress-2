@@ -57,6 +57,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -144,6 +145,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			hideFilter = new Button(SHOW_FILTER);
 			markData = new Button(MARK_DATA);
 			exportData = new Button(EXPORT_DATA);
+			exportData.setTooltip(new Tooltip("Exports all selected datasets with filters applied"));
 
 			defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.getName());
 			// initialize the data filters in this data filter pack. If they were deserialized from disk
@@ -200,7 +202,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			exportData.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					exportFilteredData();
+					exportVisualizedData();
 				}
 			});
 			
@@ -741,7 +743,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 	}
 
-	private void exportFilteredData()
+	private void exportVisualizedData()
 	{
 		StringBuilder builder = new StringBuilder();
 		builder.append(bmdAnalysisDataSet.getName());
@@ -753,7 +755,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 		if (selectedFile == null)
 			return;
 		
-		presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile);
+		presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile, filtrationNode.getFilterDataPack());
 	}
 	
 	//This is copied from ProjectNavigationView (might be a better way)

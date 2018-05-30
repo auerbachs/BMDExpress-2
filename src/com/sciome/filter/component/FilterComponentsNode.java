@@ -34,6 +34,7 @@ import javafx.scene.layout.VBox;
 public class FilterComponentsNode extends VBox implements FilterComponentContainer
 {
 	private static final String			ADD_FILTER				= "--ADD FILTER--";
+	
 	private List<FilterComponent>		filterComponents;
 	private FilterDataExtractor			filterAnnotationExtractor;
 	private BMDExpressAnalysisDataSet	filterableDataSet;

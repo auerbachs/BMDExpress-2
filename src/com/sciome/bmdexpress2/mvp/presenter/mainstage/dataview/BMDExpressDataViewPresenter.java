@@ -13,6 +13,8 @@ import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
+import com.sciome.filter.DataFilter;
+import com.sciome.filter.DataFilterPack;
 
 import javafx.collections.transformation.FilteredList;
 
@@ -35,11 +37,19 @@ public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDE
 		getEventBus().post(new ShowBMDAnalysisDataSetVisualizationsEvent(results));
 	}
 	
-	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile)
+	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
 	{
+		StringBuilder filterInformation = new StringBuilder();
+		filterInformation.append("Filter information: \n");
+		for(DataFilter filter : pack.getDataFilters())
+		{
+			filterInformation.append(filter.toString() + "\n");
+		}
+		
 		try
 		{
 			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+			writer.write(filterInformation.toString());
 			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n");
 			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
 			writer.write(exportFilteredBMDExpressAnalysisDataSet(filteredResults));
