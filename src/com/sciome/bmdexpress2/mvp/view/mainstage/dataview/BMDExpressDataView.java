@@ -749,6 +749,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 		builder.append(bmdAnalysisDataSet.getName());
 		if(enableFilterCheckBox.isSelected())
 			builder.append("_filtered");
+		builder.append(".txt");
 		
 		File selectedFile = getFileToSave(bmdAnalysisDataSet.getName(),
 				builder.toString());
