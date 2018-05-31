@@ -51,18 +51,23 @@ public class SciomeVennDiagram extends SciomeChartBase<String, Number> {
 			{
 				case 1:
 					vennCalc.setA(dataBuilder.toString());
+					vennCalc.setHeaderA(series.getName());
 					break;
 				case 2:
 					vennCalc.setB(dataBuilder.toString());
+					vennCalc.setHeaderB(series.getName());
 					break;
 				case 3:
 					vennCalc.setC(dataBuilder.toString());
+					vennCalc.setHeaderC(series.getName());
 					break;
 				case 4:
 					vennCalc.setD(dataBuilder.toString());
+					vennCalc.setHeaderD(series.getName());
 					break;
 				case 5:
 					vennCalc.setE(dataBuilder.toString());
+					vennCalc.setHeaderE(series.getName());
 					break;
 			}
 			count++;
