@@ -34,7 +34,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	public void performOriogen(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, 
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
-			boolean useFoldFilter, String foldFilterValue)
+			boolean useFoldFilter, String foldFilterValue, String loelPValue, String loelFoldChange)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -51,7 +51,8 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 							setMessage(count + "/" + processableData.size());
 							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
 									initialBootstraps, maxBootstraps, s0Adjustment,
-									filterOutControlGenes, useFoldFilter, foldFilterValue, me));
+									filterOutControlGenes, useFoldFilter, foldFilterValue, 
+									loelPValue, loelFoldChange, me));
 							me.setProgress(0);
 							count++;
 						}
@@ -94,7 +95,8 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	public void performOriogen(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, 
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, 
-			boolean useFoldFilter, String foldFilterValue)
+			boolean useFoldFilter, String foldFilterValue, String loelPValue, 
+			String loelFoldChange)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -106,7 +108,8 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 				{
 					OriogenResults oriogenResults = getService().oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							initialBootstraps, maxBootstraps, s0Adjustment,
-							filterOutControlGenes, useFoldFilter, foldFilterValue, me);
+							filterOutControlGenes, useFoldFilter, foldFilterValue, 
+							loelPValue, loelFoldChange, me);
 					
 					// post the new oriogen object to the event bus so folks can do the right thing.
 					if(oriogenResults != null && running) {

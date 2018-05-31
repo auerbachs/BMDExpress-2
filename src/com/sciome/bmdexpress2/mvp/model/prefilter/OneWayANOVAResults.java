@@ -182,6 +182,9 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 				i++;
 			}
 		}
+		
+		columnHeader.add("NOEL");
+		columnHeader.add("LOEL");
 
 	}
 

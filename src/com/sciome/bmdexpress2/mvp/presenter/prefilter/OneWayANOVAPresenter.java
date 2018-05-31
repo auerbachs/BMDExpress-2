@@ -27,11 +27,11 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 	 */
 	public void performOneWayANOVA(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue)
+			String loelPValue, String loelFoldChange, String foldFilterValue)
 	{
 		for (IStatModelProcessable pData : processableData)
 			performOneWayANOVA(pData, pCutOff, multipleTestingCorrection, filterOutControlGenes,
-					useFoldFilter, foldFilterValue);
+					useFoldFilter, foldFilterValue, loelPValue, loelFoldChange);
 	}
 
 	/*
@@ -39,10 +39,11 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 	 */
 	public void performOneWayANOVA(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue)
+			String foldFilterValue, String loelPValue, String loelFoldChange)
 	{
 		OneWayANOVAResults oneWayResults = getService().oneWayANOVAAnalysis(processableData, pCutOff, multipleTestingCorrection, 
-																		filterOutControlGenes, useFoldFilter, foldFilterValue);
+																		filterOutControlGenes, useFoldFilter, foldFilterValue,
+																		loelPValue, loelFoldChange);
 		
 		// post the new oneway object to the event bus so folks can do the right thing.
 		getEventBus().post(new OneWayANOVADataLoadedEvent(oneWayResults));

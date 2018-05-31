@@ -40,6 +40,11 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 
 	@FXML
 	private TextField					foldChangeValueTextField;
+	
+	@FXML
+	private TextField					pValueLoelTextField;
+	@FXML
+	private TextField					foldChangeLoelTextField;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -113,14 +118,16 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		{
 			presenter.performOneWayANOVA(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 					filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
-					foldChangeValueTextField.getText());
+					foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
+					foldChangeLoelTextField.getText());
 		}
 		else
 		{
 			presenter.performOneWayANOVA(
 					(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 					pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
-					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText());
+					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
+					pValueLoelTextField.getText(), foldChangeLoelTextField.getText());
 		}
 
 		closeWindow();

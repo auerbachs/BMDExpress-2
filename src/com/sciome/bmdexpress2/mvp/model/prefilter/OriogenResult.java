@@ -27,6 +27,8 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	private double						pValue;
 	private double						adjustedPValue;
 	private Float						bestFoldChange;
+	private Float						loelDose;
+	private Float						noelDose;
 
 	private List<Float>					foldChanges;
 
@@ -186,6 +188,8 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 			}
 		}
 		row.add(profile);
+		row.add(noelDose);
+		row.add(loelDose);
 	}
 
 	// @Filterable(key = OriogenResults.FOLD_CHANGE)
@@ -251,5 +255,21 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	public Color getMarkableColor()
 	{
 		return Color.YELLOW;
+	}
+
+	public Float getLoelDose() {
+		return loelDose;
+	}
+
+	public void setLoelDose(Float loelDose) {
+		this.loelDose = loelDose;
+	}
+
+	public Float getNoelDose() {
+		return noelDose;
+	}
+
+	public void setNoelDose(Float noelDose) {
+		this.noelDose = noelDose;
 	}
 }

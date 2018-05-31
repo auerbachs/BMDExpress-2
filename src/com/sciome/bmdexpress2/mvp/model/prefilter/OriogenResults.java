@@ -171,6 +171,9 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 		}
 
 		columnHeader.add("Profile");
+		
+		columnHeader.add("NOEL");
+		columnHeader.add("LOEL");
 	}
 
 	@Override

@@ -39,11 +39,11 @@ public class ExpressionDataVisualizationPresenter extends DataVisualizationPrese
 				if(j < doseResponseExperiment.getProbeResponses().size() - windowSize) {
 					float sum = 0;
 					for(int k = 0; k < windowSize; k++) {
-						sum += (doseResponseExperiment.getProbeResponses().get(j + k).getResponses().get(i))/Math.log10(2);
+						sum += (doseResponseExperiment.getProbeResponses().get(j + k).getResponses().get(i));
 					}
 					row.setResponse(sum / windowSize);
 				} else {
-					row.setResponse((float)((response.getResponses().get(i))/Math.log10(2)));
+					row.setResponse((float)((response.getResponses().get(i))));
 				}
 				row.setName(response.getProbe().getId());
 				intensityResultList.add(row);

@@ -56,6 +56,10 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	private Button						saveSettingsButton;
 	@FXML
 	private Button						stopButton;
+	@FXML
+	private TextField					pValueLoelTextField;
+	@FXML
+	private TextField					foldChangeLoelTextField;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -148,7 +152,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 				presenter.performOriogen(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 						initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
-						foldChangeValueTextField.getText());
+						foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
+						foldChangeLoelTextField.getText());
 			}
 			else
 			{
@@ -156,7 +161,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 						(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 						pCutOff, benAndHochCheckBox.isSelected(), initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(), 
-						foldChangeValueTextField.getText());
+						foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
+						foldChangeLoelTextField.getText());
 			}
 			startButton.setDisable(true);
 		}

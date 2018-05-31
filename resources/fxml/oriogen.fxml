@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="550.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="550.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView">
+<BorderPane maxHeight="800.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="750.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView">
    <center>
       <VBox prefHeight="370.0" prefWidth="600.0">
          <children>
@@ -92,7 +92,7 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+            <AnchorPane prefHeight="150.0" prefWidth="600.0">
                <children>
                   <TitledPane collapsible="false" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <content>
@@ -122,12 +122,6 @@
                                           <Insets left="100.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <ProgressBar fx:id="oriogenProgressBar" prefWidth="160.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label fx:id="oriogenProgressMessage" alignment="CENTER" maxWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                       <GridPane.margin>
-                                          <Insets />
-                                       </GridPane.margin>
-                                    </Label>
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
@@ -136,13 +130,57 @@
                                  <rowConstraints>
                                     <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
                            </children>
                         </AnchorPane>
                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" text="NOTEL/LOTEL Determination" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
+                           <children>
+                              <GridPane prefHeight="150.0" prefWidth="598.0">
+                                 <children>
+                                    <TextField fx:id="pValueLoelTextField" prefHeight="39.0" prefWidth="267.0" text="2" GridPane.columnIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="100.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label prefHeight="16.0" prefWidth="253.0" text="P-Value">
+                                       <GridPane.margin>
+                                          <Insets left="100.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <TextField fx:id="foldChangeLoelTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="100.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="100.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <ProgressBar fx:id="oriogenProgressBar" prefWidth="160.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="395.0" minWidth="10.0" prefWidth="378.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
                   </TitledPane>
                </children>
             </AnchorPane>

@@ -52,6 +52,10 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	private Button						saveSettingsButton;
 	@FXML
 	private Button						stopButton;
+	@FXML
+	private TextField					pValueLoelTextField;
+	@FXML
+	private TextField					foldChangeLoelTextField;
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -131,7 +135,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 			{
 				presenter.performWilliamsTrend(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
-						foldChangeValueTextField.getText(), numberOfPermutationsComboBox.getEditor().getText());
+						foldChangeValueTextField.getText(), numberOfPermutationsComboBox.getEditor().getText(),
+						pValueLoelTextField.getText(), foldChangeLoelTextField.getText());
 			}
 			else
 			{
@@ -139,7 +144,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 						(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 						pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
 						useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
-						numberOfPermutationsComboBox.getEditor().getText());
+						numberOfPermutationsComboBox.getEditor().getText(), pValueLoelTextField.getText(),
+						foldChangeLoelTextField.getText());
 			}
 			startButton.setDisable(true);
 		}

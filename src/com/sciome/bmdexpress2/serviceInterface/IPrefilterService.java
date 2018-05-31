@@ -9,16 +9,17 @@ import com.sciome.commons.interfaces.SimpleProgressUpdater;
 public interface IPrefilterService {
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater);
+			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
+			SimpleProgressUpdater updater);
 	
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 
 			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, SimpleProgressUpdater updater);
+			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater);
 	
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue);
+			String foldFilterValue, String loelPValue, String loelFoldChange);
 	
 	public void cancel();
 }

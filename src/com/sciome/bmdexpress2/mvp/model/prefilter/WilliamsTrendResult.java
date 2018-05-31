@@ -35,6 +35,8 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow
 	private double						pValue;
 	private double						adjustedPValue;
 	private Float						bestFoldChange;
+	private Float						loelDose;
+	private Float						noelDose;
 
 	private List<Float>					foldChanges;
 
@@ -192,6 +194,8 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow
 			}
 		}
 
+		row.add(noelDose);
+		row.add(loelDose);
 	}
 
 	// @Filterable(key = WilliamsTrendResults.FOLD_CHANGE)
@@ -247,6 +251,22 @@ public class WilliamsTrendResult extends BMDExpressAnalysisRow
 	public Color getMarkableColor()
 	{
 		return Color.YELLOW;
+	}
+
+	public Float getLoelDose() {
+		return loelDose;
+	}
+
+	public void setLoelDose(Float loelDose) {
+		this.loelDose = loelDose;
+	}
+
+	public Float getNoelDose() {
+		return noelDose;
+	}
+
+	public void setNoelDose(Float noelDose) {
+		this.noelDose = noelDose;
 	}
 
 }

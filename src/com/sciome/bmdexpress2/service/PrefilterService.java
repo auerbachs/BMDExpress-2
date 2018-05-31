@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.stat.inference.TTest;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
@@ -21,7 +22,6 @@ import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
-import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.bmdexpress2.util.prefilter.OneWayANOVAAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
@@ -44,7 +44,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, SimpleProgressUpdater updater)
+			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
+			SimpleProgressUpdater updater)
 	{
 
 		long startTime = System.currentTimeMillis();
@@ -164,6 +165,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(williamsTrendResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
+		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
 
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
@@ -210,8 +212,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, float s0Adjustment,
-			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue,
-			SimpleProgressUpdater updater)
+			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue, 
+			String loelFoldChange, SimpleProgressUpdater updater)
 	{
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -397,6 +399,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
+		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
 
 		if (multipleTestingCorrection)
 		{
@@ -433,7 +436,7 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue)
+			String foldFilterValue, String loelPValue, String loelFoldChange)
 	{
 
 		DecimalFormat df = new DecimalFormat("#.####");
@@ -515,6 +518,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
 				baseValue, useFoldFilter);
+		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
 
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
 
@@ -576,6 +580,22 @@ public class PrefilterService implements IPrefilterService
 				resultSize--;
 			}
 
+		}
+	}
+	
+	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue)
+	{
+		TTest test = new TTest();
+		//Loop through the probes
+		for(int i = 0; i < prefilterResults.getPrefilterResults().size(); i++) {
+			//Loop through the doses (excluding lowest)
+			for(int j = 1; j < prefilterResults.getDoseResponseExperiement().getTreatments().size(); j++) {
+				//If t test and fold change are above threshold then set noel and loel values (TODO: add t test here)
+				if(prefilterResults.getPrefilterResults().get(i).getBestFoldChange() > foldFilterValue) {
+					prefilterResults.getPrefilterResults().get(i).setNoelDose(prefilterResults.getDoseResponseExperiement().getTreatments().get(j - 1).getDose());
+					prefilterResults.getPrefilterResults().get(i).setLoelDose(prefilterResults.getDoseResponseExperiement().getTreatments().get(j).getDose());
+				}
+			}
 		}
 	}
 }

@@ -6,6 +6,8 @@ public abstract class PrefilterInput {
 	private boolean		useBenAndHoch;
 	private double		pValueCutOff;
 	private double		foldChangeValue;
+	private double		loelFoldChangeValue;
+	private double		loelPValue;
 	
 	public PrefilterInput() {
 		this.useFoldChange = true;
@@ -13,6 +15,8 @@ public abstract class PrefilterInput {
 		this.useBenAndHoch = false;
 		this.pValueCutOff = .05;
 		this.foldChangeValue = 2;
+		this.loelFoldChangeValue = 2;
+		this.loelPValue = .05;
 	}
 	
 	public boolean isUseFoldChange() {
@@ -52,5 +56,21 @@ public abstract class PrefilterInput {
 	
 	public void setFoldChangeValue(double foldChangeValue) {
 		this.foldChangeValue = foldChangeValue;
+	}
+
+	public double getLoelFoldChangeValue() {
+		return loelFoldChangeValue;
+	}
+
+	public void setLoelFoldChangeValue(double loelFoldChangeValue) {
+		this.loelFoldChangeValue = loelFoldChangeValue;
+	}
+
+	public double getLoelPValue() {
+		return loelPValue;
+	}
+
+	public void setLoelPValue(double loelPValue) {
+		this.loelPValue = loelPValue;
 	}
 }
