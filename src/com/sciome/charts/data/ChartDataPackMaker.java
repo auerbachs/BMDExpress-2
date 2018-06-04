@@ -76,7 +76,6 @@ public class ChartDataPackMaker
 	public ChartDataPack generateDataPack(BMDExpressAnalysisDataSet object, Set<ChartKey> useTheseKeysOnly,
 			Set<ChartKey> mathedChartKeys, ChartKey labelKey)
 	{
-
 		Set<ChartKey> chartKeys = new HashSet<>();
 		if (useTheseKeysOnly == null || useTheseKeysOnly.size() == 0)
 			for (String header : object.getColumnHeader())

@@ -7,18 +7,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.controlsfx.control.RangeSlider;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.fx.interaction.ChartMouseEventFX;
 import org.jfree.chart.fx.interaction.ChartMouseListenerFX;
 import org.jfree.chart.labels.XYToolTipGenerator;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYBarPainter;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
@@ -38,23 +37,21 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 
-public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataExporter
-{
+public class SciomeHistogramLineChartJFree extends SciomeHistogram implements ChartDataExporter {
 	private JFreeChart	chart;
 	private double		lowX;
 	private double		highX;
-
-	public SciomeHistogramJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
-			Double bucketsize, SciomeChartListener chartListener)
-	{
+	
+	public SciomeHistogramLineChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
+			Double bucketsize, SciomeChartListener chartListener) {
 		super(title, chartDataPacks, key, bucketsize, true, false, chartListener);
 	}
-
+	
 	@Override
 	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
 		ChartKey key = keys[0];
-
+		
 		// Create dataset
 		HistogramDataset dataset = new HistogramDataset();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
@@ -72,19 +69,12 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 				dataset.addSeries(chartDataPack.getName(), ranges, (int) bucketsize.doubleValue());
 		}
 
-		// Create chart
-		chart = ChartFactory.createHistogram(key.toString() + " Histogram", key.toString(), "Count", dataset,
-				PlotOrientation.VERTICAL, true, true, false);
-
-		// Set plot parameters
-		XYPlot plot = chart.getXYPlot();
-		plot.setDomainPannable(true);
-		plot.setRangePannable(true);
-		plot.setRangeAxis(SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "Count"));
-		setSliders(getMinMin(key), getMaxMax(key));
+		//Set axis
+		ValueAxis xAxis = new NumberAxis();
+		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "Count");
 
 		// Set renderer parameters
-		XYBarRenderer renderer = ((XYBarRenderer) plot.getRenderer());
+		XYSplineRenderer renderer = new XYSplineRenderer();
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
 			@Override
@@ -98,10 +88,22 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		renderer.setSeriesFillPaint(0, Color.white);
 		renderer.setDefaultOutlinePaint(Color.black);
-		renderer.setBarPainter(new StandardXYBarPainter());
-		renderer.setShadowVisible(false);
+		for(int i = 0; i < getSeriesData().size(); i++)
+		{
+			renderer.setSeriesShapesVisible(i, false);
+		}
+		
+		// Set plot parameters
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+		plot.setDomainPannable(true);
+		plot.setRangePannable(true);
 		plot.setBackgroundPaint(Color.white);
+		setSliders(getMinMin(key), getMaxMax(key));
 
+
+		// Create chart
+		chart = new JFreeChart(key.toString() + " Histogram", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+		
 		chart.addChangeListener(new ChartChangeListener() {
 			@Override
 			public void chartChanged(ChartChangeEvent event)
@@ -266,4 +268,11 @@ public class SciomeHistogramJFree extends SciomeHistogram implements ChartDataEx
 
 		sethSlider(hSlider);
 	}
+
+	@Override
+	public List<String> getLinesToExport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

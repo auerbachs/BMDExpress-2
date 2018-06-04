@@ -6,11 +6,14 @@ import java.util.Map;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
+
+import javafx.collections.transformation.FilteredList;
 
 public interface IProjectNavigationService {
 	public void assignArrayAnnotations(ChipInfo chipInfo, List<DoseResponseExperiment> experiments,

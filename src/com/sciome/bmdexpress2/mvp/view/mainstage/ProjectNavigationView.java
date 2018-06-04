@@ -14,6 +14,8 @@ import java.util.Optional;
 import org.controlsfx.control.CheckListView;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
+import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
+import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
@@ -32,6 +34,7 @@ import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
+import com.sciome.bmdexpress2.service.DataCombinerService;
 import com.sciome.bmdexpress2.service.ProjectNavigationService;
 import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
@@ -46,6 +49,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -83,6 +87,12 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String									ORIOGEN_DATA				= "Oriogen";
 	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
 	private final String									CATEGORY_DATA				= "Functional Classifications";
+	
+	private final String									RENAME						= "Rename";
+	private final String									REMOVE						= "Remove";
+	private final String									EXPORT						= "Export";
+	private final String									SPREADSHEET_VIEW			= "Spreedsheet View";
+	private final String									REMOVE_ALL					= "Remove All Selected Items";
 
 	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
 	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
@@ -91,6 +101,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	ProjectNavigationPresenter								presenter;
 	private boolean											fireSelection				= false;
 	private boolean											selectionChangeInProgress	= false;
+	private boolean											visualizationSelected		= false;
 
 	public ProjectNavigationView()
 	{
@@ -820,16 +831,16 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			{
 				switch (((MenuItem) event.getTarget()).getText())
 				{
-					case "Rename":
+					case RENAME:
 						handle_BMDExpressAnalysisDataSetRename(analysisDataSet, "Rename " + theThing);
 						break;
-					case "Remove":
+					case REMOVE:
 						handle_BMDExpressAnalysisDataSetRemove(analysisDataSet);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_BMDExpressAnalysisDataSetExport(analysisDataSet, "Export " + theThing);
 						break;
-					case "Spreadsheet View":
+					case SPREADSHEET_VIEW:
 						handle_DataAnalysisResultsSpreadSheetView(analysisDataSet);
 						break;
 				}
@@ -852,10 +863,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				switch (((MenuItem) event.getTarget()).getText())
 				{
 
-					case "Remove All Selected Items":
+					case REMOVE_ALL:
 						handle_MultiSelectRemove(selectedItems);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_MultiSelectExport(selectedItems);
 						break;
 				}
@@ -885,16 +896,16 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			{
 				switch (((MenuItem) event.getTarget()).getText())
 				{
-					case "Rename":
+					case RENAME:
 						handle_DoseResponseExperimentRename(doseResponseExperiment);
 						break;
-					case "Remove":
+					case REMOVE:
 						handle_DoseResponseExperimentRemove(doseResponseExperiment);
 						break;
-					case "Export":
+					case EXPORT:
 						handle_DoseResponseExperimentExport(doseResponseExperiment);
 						break;
-					case "Spreadsheet View":
+					case SPREADSHEET_VIEW:
 						handle_DoseResponseExperimentSpreadSheetView(doseResponseExperiment);
 						break;
 				}
@@ -927,10 +938,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private List<MenuItem> getCommonMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Rename"));
-		menuItems.add(new MenuItem("Remove"));
-		menuItems.add(new MenuItem("Export"));
-		menuItems.add(new MenuItem("Spreadsheet View"));
+		menuItems.add(new MenuItem(RENAME));
+		menuItems.add(new MenuItem(REMOVE));
+		menuItems.add(new MenuItem(EXPORT));
+		menuItems.add(new MenuItem(SPREADSHEET_VIEW));
 
 		return menuItems;
 	}
@@ -938,8 +949,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private List<MenuItem> getCommonMultiSelectMenuItems()
 	{
 		List<MenuItem> menuItems = new ArrayList<>();
-		menuItems.add(new MenuItem("Remove All Selected Items"));
-		menuItems.add(new MenuItem("Export"));
+		menuItems.add(new MenuItem(REMOVE_ALL));
+		menuItems.add(new MenuItem(EXPORT));
 
 		return menuItems;
 	}
@@ -1047,7 +1058,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	private void handle_BMDResultReselectBestModels(BMDResult bmdResults)
 	{
-
 		// need to run this on the main ui thread. this is being called from event bus thread..hence the
 		// runlater.
 		Platform.runLater(new Runnable() {
@@ -1362,14 +1372,18 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 				if (mouseEvent.getClickCount() == 1 && mouseEvent.getButton() == MouseButton.SECONDARY)
 				{
-					System.out.println(mouseEvent.getSource());
+					List<BMDExpressAnalysisDataSet> selectedDataSets = getSelectedItems();
 
-					List<BMDExpressAnalysisDataSet> selecteDataSets = getSelectedItems();
-
-					if (selecteDataSets.size() == 1)
-						dealWithRightClickOnTree(selecteDataSets.get(0), mouseEvent);
-					else if (selecteDataSets.size() > 1)
-						dealWithRightClickOnTreeMultiSelected(selecteDataSets, mouseEvent);
+					//Decide whether or not we should display the export filtered option
+					if(getCheckedItems().size() == 0)
+						visualizationSelected = false;
+					else 
+						visualizationSelected = true;
+					
+					if (selectedDataSets.size() == 1)
+						dealWithRightClickOnTree(selectedDataSets.get(0), mouseEvent);
+					else if (selectedDataSets.size() > 1)
+						dealWithRightClickOnTreeMultiSelected(selectedDataSets, mouseEvent);
 
 				}
 

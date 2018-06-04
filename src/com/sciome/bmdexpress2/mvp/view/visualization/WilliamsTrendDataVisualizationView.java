@@ -14,6 +14,7 @@ import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.data.ChartDataPack;
 import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
+import com.sciome.charts.venndis.SciomeVennDiagram;
 import com.sciome.filter.DataFilterPack;
 
 public class WilliamsTrendDataVisualizationView extends DataVisualizationView
@@ -23,6 +24,7 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 	private static final String	ADJUSTED_PVALUE_HISTOGRAM			= "Adjusted P-Value Histogram";
 	private static final String	BEST_FOLD_CHANGE_HISTOGRAM			= "Max Fold Change Histogram";
 	private static final String	BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM	= "Max Fold Change (Unsigned) Histogram";
+	private static final String PREFILTER_VENN_DIAGRAM				= "Venn Diagaram";
 
 	public WilliamsTrendDataVisualizationView()
 	{
@@ -57,6 +59,9 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 						new ChartKey(PrefilterResults.BEST_FOLD_CHANGE, null),
 						new ChartKey(PrefilterResults.UNADJUSTED_PVALUE, ChartKey.NEGLOG), false, true,
 						this));
+		chartCache.put(PREFILTER_VENN_DIAGRAM,  new SciomeVennDiagram("", new ArrayList<>(), 
+				new ChartKey(PrefilterResults.PROBE_ID, null),
+				this));
 
 	}
 
@@ -93,6 +98,11 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 			SciomeChartBase chart = chartCache
 					.get(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM + "-" + PrefilterResults.BEST_FOLD_CHANGE_ABS);
 			chartsList.add(chart);
+		} else if (chartKey.equals(PREFILTER_VENN_DIAGRAM)) 
+		{
+			SciomeChartBase chart = chartCache
+					.get(PREFILTER_VENN_DIAGRAM);
+			chartsList.add(chart);
 		}
 		else
 		{
@@ -106,7 +116,6 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 		List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(results, pack,
 				getUsedChartKeys(), getMathedChartKeys(), new ChartKey(PrefilterResults.PROBE_ID, null));
 		showCharts(chartDataPacks);
-
 	}
 
 	@Override
@@ -118,6 +127,7 @@ public class WilliamsTrendDataVisualizationView extends DataVisualizationView
 		resultList.add(ADJUSTED_PVALUE_HISTOGRAM);
 		resultList.add(BEST_FOLD_CHANGE_HISTOGRAM);
 		resultList.add(BEST_FOLD_CHANGE_UNSIGNED_HISTOGRAM);
+		resultList.add(PREFILTER_VENN_DIAGRAM);
 
 		return resultList;
 

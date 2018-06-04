@@ -113,5 +113,11 @@ public abstract class DataFilter<T>
 	}
 
 	public abstract DataFilter copy();
+	
+	@Override
+	public String toString()
+	{
+		return key + " " + dataFilterType.name() + " " + values.toString();
+	}
 
 }

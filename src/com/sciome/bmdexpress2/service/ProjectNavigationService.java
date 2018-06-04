@@ -34,6 +34,8 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
+import javafx.collections.transformation.FilteredList;
+
 public class ProjectNavigationService implements IProjectNavigationService{
 
 	private final int	MAX_FILES_FOR_MULTI_EXPORT	= 10;
@@ -219,7 +221,6 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		{
 			e.printStackTrace();
 		}
-
 	}
 	
 	private String exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, boolean prepend)
