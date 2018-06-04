@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -876,8 +877,32 @@ public class CurvePProcessor
 		return (bootr);
 	}
 
+	public static float get_dr_signal(List<Float> r)
+	{//r is array of single-value responses (one per dose, such as averaged curve, etc.)
+		int n = r.size();
+		float base = r.get(0), sig = 0.0f;
+		for (int i=1; i < n; i++) sig += r.get(i) - base;
+		
+		return sig / n; //returns averaged signal relative to control (0-element)
+	}
+	
+	public static List<Float> get_combi_dr(int[] ndoses, List<Float> r)
+	{//generates one random combination of responses picked from each dose group of replicates (ndoses)
+		List<Float> c_dr = new ArrayList<Float>();
+		java.util.Random cc = new java.util.Random();
+		
+		for (int i=0, shift = 0; i < ndoses.length; i++)
+		{
+			int picked = cc.nextInt(ndoses[i]) + shift;
+			c_dr.add( r.get(picked) );
+			shift += ndoses[i]; 
+		}
+		
+		return c_dr;
+	}
+	
 	public static List<Float> get_dr_sample(int[] ndoses, List<Float> avr, List<Float> sdr)
-	{//gets one bootstrap sample of a curve, based on mean and sd responses provided
+	{//gets one bootstrap sample of a curve, based on mean and sd responses provided (ndoses specify #replicates for each dose)
 		List<Float> rand_dr = new ArrayList<Float>();
 		for (int i=0; i < ndoses.length; i++)
 		{
@@ -888,12 +913,12 @@ public class CurvePProcessor
 		return rand_dr;
 	}
 	
-	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, float BMR, int mono, int nboot, float p) {
+	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, List<Float> dr0, float BMR, int mono, int nboot, float p) {
 	/*	corrects curves monotonically based on supplied direction in mono (0 - flat, 1 - rising, -1 - falling)
 		bootstraps to estimate POD and AUC (only if nboot*p > 1), 
 		p is pvalue for confidence interval boundaries on returned metrics
 		returns list of 10 values: 
-			1st = #points corrected,
+			1st = #fit-score, 0..1, (the higher the fewer are the corrections) 
 			2nd - 4th POD triplet (lower confidence, POD, upper confidence)
 			5th - 7th AUC triplet
 			8th - 10th wAUC triplet 
@@ -915,7 +940,8 @@ public class CurvePProcessor
 			return null;
 		}
 		
-		List<Float> dr0  = new ArrayList<Float>(), dr1 = new ArrayList<Float>();		
+		//List<Float> dr0  = new ArrayList<Float>(), dr1 = new ArrayList<Float>();		
+		List<Float> dr1 = new ArrayList<Float>();
 		int nfixed = monotonize(allD, allR, dr0, mono);
 		
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);		
@@ -923,11 +949,18 @@ public class CurvePProcessor
 		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
 		Float mywAUC = calc_wAUC(myAUC, myPOD, luD);
 
-		
+		//normally, this very function is called only when significant response is detected, 
+		//so the below signal-estimates should not be near-0
+		float asis_sgnl = get_dr_signal(avR), corr_sgnl = get_dr_signal(xx_avR); 
+		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);		
+		if (!Float.isFinite(fit_score)) fit_score = -1.0f;
+			
 		List<Float> metrics = new ArrayList<Float>(); //results
 		if (p*(float)nboot < 1.0f) //skip bootstrap
 		{
-			metrics.add((float)nfixed);
+			//metrics.add((float)nfixed); //replaced with more quantitative measure
+			metrics.add(fit_score);
+			
 			metrics.add(myAUC);
 			metrics.add(myAUC);
 			metrics.add(myAUC);
@@ -946,9 +979,14 @@ public class CurvePProcessor
 		
 		List<Float> bAUC = new ArrayList<Float>();
 		List<Float> bPOD = new ArrayList<Float>();
-		List<Float> bwAUC = new ArrayList<Float>();		
+		List<Float> bwAUC = new ArrayList<Float>();
+		
+		List<Double> bFit = new ArrayList<Double>();
 		for (int s = 0; s < nboot; s++)
 		{
+			List<Float> curr_cdr = get_combi_dr(ngroups, allR);
+			bFit.add( (double)get_dr_signal(curr_cdr) );
+			
 			List<Float> curr_dr = get_dr_sample(ngroups, avR, sdR);
 			monotonize(allD, curr_dr, dr1, mono);
 			xx_avR = calc_WgtAvResponses(allD, dr1);
@@ -960,6 +998,25 @@ public class CurvePProcessor
 			bwAUC.add( calc_wAUC(cbAUC, cbPOD, luD) );
 		}
 
+		//NB: t-test is not a good choice here, oversensitive, maybe due to too many combi-samples
+		/*--------------------------
+		   //t-test based calculations based on unique combinatorial samples of the asis-curve
+		org.apache.commons.math3.stat.inference.TTest ff = new org.apache.commons.math3.stat.inference.TTest();		
+		double [] fits = org.apache.commons.lang3.ArrayUtils.toPrimitive(bFit.toArray(new Double[bFit.size()]));
+		
+		   //gets two-sided p value from t-test (if corr_sgnl is different from the mean of asis-samples)
+		   //the higher the p, the fewer corrections were applied
+		fit_score = (float)ff.tTest((double)corr_sgnl, DoubleStream.of(fits).distinct().toArray());
+		//-------------------------- */
+		
+		//non-parametric calculations, faster and more realistic
+		fit_score = 1.0f;
+		Collections.sort(bFit);
+		int ii = 0, nn = bFit.size();
+		for (;ii < nn; ii++) if (bFit.get(ii) > corr_sgnl) break;
+		fit_score -= 2*Math.abs(0.5f - (float)ii/nn);		
+		//--------------------------
+		
 		//ascending sort
 		Collections.sort(bAUC);
 		Collections.sort(bPOD);
@@ -969,7 +1026,8 @@ public class CurvePProcessor
 		int lrank = nboot - rank;
 		rank--;
 		
-		metrics.add((float)nfixed);
+		//metrics.add((float)nfixed);
+		metrics.add((float)fit_score);
 		
 		metrics.add(bAUC.get(rank));
 		metrics.add(myAUC);
@@ -1094,7 +1152,8 @@ public class CurvePProcessor
 			
 			if ( responses.get(i).getProbe().getId().equals("FIS1_2429") )
 			{
-				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), 1.34f, -1, 1000, 0.05f);
+				List<Float> corr_r = new ArrayList<Float>();
+				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), corr_r, 1.34f, -1, 100, 0.05f);
 				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9) );				
 				//wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			}			
