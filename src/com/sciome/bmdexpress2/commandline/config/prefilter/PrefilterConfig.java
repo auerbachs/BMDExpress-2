@@ -25,6 +25,8 @@ public abstract class PrefilterConfig
 	private Boolean	useFoldChange					= false;
 
 	private Double	foldChange;
+	private Double	foldChangeLoel;
+	private Double	pValueLoel;
 
 	public String getInputName()
 	{
@@ -96,4 +98,23 @@ public abstract class PrefilterConfig
 		this.foldChange = foldChange;
 	}
 
+	public Double getFoldChangeLoel() 
+	{
+		return foldChangeLoel;
+	}
+
+	public void setFoldChangeLoel(Double foldChangeLoel) 
+	{
+		this.foldChangeLoel = foldChangeLoel;
+	}
+
+	public Double getpValueLoel() 
+	{
+		return pValueLoel;
+	}
+
+	public void setpValueLoel(Double pValueLoel) 
+	{
+		this.pValueLoel = pValueLoel;
+	}
 }

@@ -130,6 +130,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
 		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
+		pValueLoelTextField.setText("" + input.getLoelPValue());
+		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
 		
 	}
 
@@ -184,6 +186,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
 		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
+		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));
+		input.setLoelPValue(Double.parseDouble(this.pValueLoelTextField.getText()));
 		
 		input.setNumInitialBootstraps(Integer.parseInt(this.initialBootstrapComboBox.getEditor().getText()));
 		input.setNumMaximumBootstraps(Integer.parseInt(this.maxBootstrapComboBox.getEditor().getText()));

@@ -53,4 +53,10 @@ public class IntensityResult extends BMDExpressAnalysisRow {
 		row.add(name);
 		row.add(response);
 	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 }

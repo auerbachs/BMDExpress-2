@@ -45,6 +45,17 @@ public class SciomeHistogramLineChartJFree extends SciomeHistogram implements Ch
 	public SciomeHistogramLineChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			Double bucketsize, SciomeChartListener chartListener) {
 		super(title, chartDataPacks, key, bucketsize, true, false, chartListener);
+		
+		showLogAxes(false, true, false, false);
+		showChart();
+
+		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
+			{
+				showChart();
+			}
+		});
 	}
 	
 	@Override

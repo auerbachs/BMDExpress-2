@@ -523,7 +523,8 @@ public class AnalyzeRunner
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName(),
+						String.valueOf(preFilterConfig.getFoldChange()), String.valueOf(preFilterConfig.getpValueLoel()), 
+						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
 						project));
 			}
 		}
@@ -542,6 +543,8 @@ public class AnalyzeRunner
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
 						String.valueOf(preFilterConfig.getFoldChange()),
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
+						String.valueOf(preFilterConfig.getpValueLoel()), 
+						String.valueOf(preFilterConfig.getFoldChangeLoel()),
 						preFilterConfig.getOutputName(), project));
 			}
 		}
@@ -562,7 +565,8 @@ public class AnalyzeRunner
 						((OriogenConfig) preFilterConfig).getMaxBootstraps(),
 						((OriogenConfig) preFilterConfig).getS0Adjustment(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), preFilterConfig.getOutputName(),
+						String.valueOf(preFilterConfig.getFoldChange()), String.valueOf(preFilterConfig.getpValueLoel()), 
+						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
 						project));
 			}
 		}

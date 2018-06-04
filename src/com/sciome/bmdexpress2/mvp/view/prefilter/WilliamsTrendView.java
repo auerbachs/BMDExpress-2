@@ -118,6 +118,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
 		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
+		pValueLoelTextField.setText("" + input.getLoelPValue());
+		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -167,6 +169,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
 		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
+		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));
+		input.setLoelPValue(Double.parseDouble(this.pValueLoelTextField.getText()));
 		
 		input.setNumPermutations(Double.parseDouble(this.numberOfPermutationsComboBox.getEditor().getText()));
 		
