@@ -36,6 +36,8 @@ public class SciomeVennDiagram extends SciomeChartBase<String, Number> {
 	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration) {
 		BorderPane borderPane = new BorderPane();
 
+		boolean hasData = false;
+		
 		//Make venn calc and set data
 		VennCalc vennCalc = new VennCalc();
 
@@ -45,6 +47,7 @@ public class SciomeVennDiagram extends SciomeChartBase<String, Number> {
 			StringBuilder dataBuilder = new StringBuilder();
 			for(SciomeData<String, Number> data : series.getData()) 
 			{
+				hasData = true;
 				dataBuilder.append(data.getXValue() + "\n");
 			}
 			switch(count)
@@ -77,34 +80,36 @@ public class SciomeVennDiagram extends SciomeChartBase<String, Number> {
 		
 		//Make appropriate euler or venn diagram
 		VennDiagram diagram;
-		switch(getSeriesData().size()) {
-			case 1:
-				diagram = new Euler1(borderPane, vennCalc);
-				break;
-			case 2:
-				//This means all intersections have data (2 circles)
-				if(vennCalc.getVennType() == 7) {
-					diagram = new Venn2(borderPane, vennCalc);
-				} else {
-					diagram = new Euler2(borderPane, vennCalc);
-				}
-				break;
-			case 3:
-				//This means all intersections have data (3 circles)
-				if(vennCalc.getVennType() == 127) {
-					diagram = new Venn3(borderPane, vennCalc);
-				} else {
-					diagram = new Euler3(borderPane, vennCalc);
-				}
-				break;
-			case 4:
-				diagram = new Venn4(borderPane, vennCalc);
-				break;
-			case 5:
-				diagram = new Venn5(borderPane, vennCalc);
-				break;
-			default:
-				break;
+		if(hasData) {
+			switch(getSeriesData().size()) {
+				case 1:
+					diagram = new Euler1(borderPane, vennCalc);
+					break;
+				case 2:
+					//This means all intersections have data (2 circles)
+					if(vennCalc.getVennType() == 7) {
+						diagram = new Venn2(borderPane, vennCalc);
+					} else {
+						diagram = new Euler2(borderPane, vennCalc);
+					}
+					break;
+				case 3:
+					//This means all intersections have data (3 circles)
+					if(vennCalc.getVennType() == 127) {
+						diagram = new Venn3(borderPane, vennCalc);
+					} else {
+						diagram = new Euler3(borderPane, vennCalc);
+					}
+					break;
+				case 4:
+					diagram = new Venn4(borderPane, vennCalc);
+					break;
+				case 5:
+					diagram = new Venn5(borderPane, vennCalc);
+					break;
+				default:
+					break;
+			}
 		}
 		
 		return borderPane;
