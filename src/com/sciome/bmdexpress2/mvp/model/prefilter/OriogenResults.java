@@ -171,7 +171,17 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 		}
 
 		columnHeader.add("Profile");
-		
+
+		if (oriogenResults.get(0).getNoelLoelPValues() != null)
+		{
+			int i = 1;
+			for (Float pv : oriogenResults.get(0).getNoelLoelPValues())
+			{
+				columnHeader.add("NOEL/LOEL T-Test p-Value Level " + i);
+				i++;
+			}
+		}
+
 		columnHeader.add("NOEL");
 		columnHeader.add("LOEL");
 	}

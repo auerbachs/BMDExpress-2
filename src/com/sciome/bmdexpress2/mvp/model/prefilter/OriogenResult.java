@@ -31,6 +31,7 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 	private Float						noelDose;
 
 	private List<Float>					foldChanges;
+	private List<Float>					noelLoelPValues;
 
 	@JsonIgnore
 	private transient String			genes;
@@ -188,8 +189,26 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 			}
 		}
 		row.add(profile);
+
+		if (noelLoelPValues != null)
+		{
+			for (Float pv : noelLoelPValues)
+			{
+				row.add(pv);
+			}
+		}
 		row.add(noelDose);
 		row.add(loelDose);
+	}
+
+	public List<Float> getNoelLoelPValues()
+	{
+		return this.noelLoelPValues;
+	}
+
+	public void setNoelLoelPValues(List<Float> fcs)
+	{
+		this.noelLoelPValues = fcs;
 	}
 
 	// @Filterable(key = OriogenResults.FOLD_CHANGE)
@@ -257,19 +276,23 @@ public class OriogenResult extends BMDExpressAnalysisRow implements Serializable
 		return Color.YELLOW;
 	}
 
-	public Float getLoelDose() {
+	public Float getLoelDose()
+	{
 		return loelDose;
 	}
 
-	public void setLoelDose(Float loelDose) {
+	public void setLoelDose(Float loelDose)
+	{
 		this.loelDose = loelDose;
 	}
 
-	public Float getNoelDose() {
+	public Float getNoelDose()
+	{
 		return noelDose;
 	}
 
-	public void setNoelDose(Float noelDose) {
+	public void setNoelDose(Float noelDose)
+	{
 		this.noelDose = noelDose;
 	}
 }

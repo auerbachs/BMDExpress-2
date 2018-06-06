@@ -182,7 +182,17 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 				i++;
 			}
 		}
-		
+
+		if (oneWayANOVAResults.get(0).getNoelLoelPValues() != null)
+		{
+			int i = 1;
+			for (Float pv : oneWayANOVAResults.get(0).getNoelLoelPValues())
+			{
+				columnHeader.add("NOEL/LOEL T-Test p-Value Level " + i);
+				i++;
+			}
+		}
+
 		columnHeader.add("NOEL");
 		columnHeader.add("LOEL");
 

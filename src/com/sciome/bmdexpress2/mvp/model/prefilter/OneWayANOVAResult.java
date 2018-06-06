@@ -43,6 +43,8 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow
 
 	private List<Float>					foldChanges;
 
+	private List<Float>					noelLoelPValues;
+
 	@JsonIgnore
 	private transient String			genes;
 	@JsonIgnore
@@ -231,12 +233,28 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow
 			}
 		}
 
+		if (noelLoelPValues != null)
+		{
+			for (Float pv : noelLoelPValues)
+			{
+				row.add(pv);
+			}
+		}
+
 		row.add(noelDose);
 		row.add(loelDose);
 	}
 
-	// @Filterable(key = OneWayANOVAResults.FOLD_CHANGE)
-	// @ChartableDataPoint(key = OneWayANOVAResults.FOLD_CHANGE)
+	public List<Float> getNoelLoelPValues()
+	{
+		return this.noelLoelPValues;
+	}
+
+	public void setNoelLoelPValues(List<Float> fcs)
+	{
+		this.noelLoelPValues = fcs;
+	}
+
 	public List<Float> getFoldChanges()
 	{
 		return this.foldChanges;
@@ -290,20 +308,23 @@ public class OneWayANOVAResult extends BMDExpressAnalysisRow
 		return Color.YELLOW;
 	}
 
-
-	public Float getLoelDose() {
+	public Float getLoelDose()
+	{
 		return loelDose;
 	}
 
-	public void setLoelDose(Float loelDose) {
+	public void setLoelDose(Float loelDose)
+	{
 		this.loelDose = loelDose;
 	}
 
-	public Float getNoelDose() {
+	public Float getNoelDose()
+	{
 		return noelDose;
 	}
 
-	public void setNoelDose(Float noelDose) {
+	public void setNoelDose(Float noelDose)
+	{
 		this.noelDose = noelDose;
 	}
 }

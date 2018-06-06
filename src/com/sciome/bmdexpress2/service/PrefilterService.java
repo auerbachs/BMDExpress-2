@@ -2,9 +2,7 @@ package com.sciome.bmdexpress2.service;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.inference.TTest;
@@ -46,7 +44,7 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
+			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
 			SimpleProgressUpdater updater)
 	{
 
@@ -179,6 +177,8 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
+		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
 
 		if (multipleTestingCorrection)
 		{
@@ -214,7 +214,7 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, float s0Adjustment,
-			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue, 
+			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue,
 			String loelFoldChange, SimpleProgressUpdater updater)
 	{
 		long startTime = System.currentTimeMillis();
@@ -243,6 +243,8 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
+		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
 
 		Origen_Data data = new Origen_Data();
 
@@ -460,16 +462,17 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
+		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		// This class should eventually be moved to sciome commons
 		OneWayANOVAAnalysis aNOVAAnalysis = new OneWayANOVAAnalysis();
 
-		
-		//debug entry, 04.24.2018
-		//CurvePProcessor.debug_curvep(doseResponseExperiment);
+		// debug entry, 04.24.2018
+		// CurvePProcessor.debug_curvep(doseResponseExperiment);
 		//
-		
+
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
 		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
@@ -584,20 +587,26 @@ public class PrefilterService implements IPrefilterService
 
 		}
 	}
-	
+
 	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue)
 	{
-		
-		//Remove duplicates from treatments
+
+		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
 		List<Integer> doseGroups = new ArrayList<Integer>();
 		Float current = prefilterResults.getDoseResponseExperiement().getTreatments().get(0).getDose();
 		int count = 0;
 		boolean found = false;
-		for(int i = 0; i < prefilterResults.getDoseResponseExperiement().getTreatments().size(); i++) {
-			if(current.equals(prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose()) && !found) {
+		for (int i = 0; i < prefilterResults.getDoseResponseExperiement().getTreatments().size(); i++)
+		{
+			if (current.equals(prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose())
+					&& !found)
+			{
 				found = true;
-			} else if(!current.equals(prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose())){
+			}
+			else if (!current
+					.equals(prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose()))
+			{
 				treatments.add(current);
 				doseGroups.add(count);
 				current = prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose();
@@ -607,39 +616,49 @@ public class PrefilterService implements IPrefilterService
 			count++;
 		}
 		doseGroups.add(count);
-		
+
 		TTest test = new TTest();
-		//Loop through the probes
-		for(int i = 0; i < prefilterResults.getPrefilterResults().size(); i++) {
-			
-			//Calculate p vlaue 
+		// Loop through the probes
+		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
+		{
+
+			// Calculate p vlaue
 			List<Float> pValues = new ArrayList<Float>();
 			double[] sample0 = new double[doseGroups.get(0)];
 			count = 0;
-			for(int j = 0; j < doseGroups.get(0); j++) {
-				sample0[j] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i).getResponses().get(count);
+			for (int j = 0; j < doseGroups.get(0); j++)
+			{
+				sample0[j] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i)
+						.getResponses().get(count);
 				count++;
 			}
-				
-			for(int j = 1; j < doseGroups.size(); j++) {
+
+			for (int j = 1; j < doseGroups.size(); j++)
+			{
 				double[] sample1 = new double[doseGroups.get(j)];
-				for(int k = 0; k < doseGroups.get(j); k++) {
-					sample1[k] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i).getResponses().get(count);
+				for (int k = 0; k < doseGroups.get(j); k++)
+				{
+					sample1[k] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i)
+							.getResponses().get(count);
 					count++;
 				}
-				pValues.add((float)test.tTest(sample0, sample1));
+				pValues.add((float) test.tTest(sample0, sample1));
 			}
-			
-			//Loop through the doses (excluding lowest)
-			for(int j = 0; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size() - 1; j++) {
-				//If t test and fold change are above threshold then set noel and loel values
-				if(Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges().get(j + 1)) > foldFilterValue &&
-						pValues.get(j) < pValue) {
-					if(j == 0)
+			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
+
+			// Loop through the doses (excluding lowest)
+			for (int j = 0; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size()
+					- 1; j++)
+			{
+				// If t test and fold change are above threshold then set noel and loel values
+				if (Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges()
+						.get(j + 1)) > foldFilterValue && pValues.get(j) < pValue)
+				{
+					if (j == 0)
 						prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j));
 					else
 						prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j - 1));
-					
+
 					prefilterResults.getPrefilterResults().get(i).setLoelDose(treatments.get(j));
 					break;
 				}

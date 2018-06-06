@@ -12,7 +12,7 @@ import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = OneWayANOVAResult.class, name = "onewayanovaresult"),
-				@Type(value = WilliamsTrendResult.class, name = "williamstrendresult")})
+		@Type(value = WilliamsTrendResult.class, name = "williamstrendresult") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public interface PrefilterResult
 {
@@ -30,16 +30,17 @@ public interface PrefilterResult
 	public ProbeResponse getProbeResponse();
 
 	public Float getLoelDose();
-	
+
 	public Float getNoelDose();
 
 	public void setLoelDose(Float dose);
-	
+
 	public void setNoelDose(Float dose);
-	
+
 	public void setBestFoldChange(Float bestFoldChange);
-	
+
 	public void setFoldChanges(List<Float> foldChanges);
-	
-	
+
+	public void setNoelLoelPValues(List<Float> pvalues);
+
 }
