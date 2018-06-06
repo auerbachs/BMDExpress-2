@@ -627,14 +627,12 @@ public class PrefilterService implements IPrefilterService
 					sample1[k] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i).getResponses().get(count);
 					count++;
 				}
-				float v = (float)test.tTest(sample0, sample1);
-				pValues.add(v);
-				System.out.println(v);
+				pValues.add((float)test.tTest(sample0, sample1));
 			}
 			
 			//Loop through the doses (excluding lowest)
 			for(int j = 0; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size() - 1; j++) {
-				//If t test and fold change are above threshold then set noel and loel values (TODO: add t test here)
+				//If t test and fold change are above threshold then set noel and loel values
 				if(Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges().get(j + 1)) > foldFilterValue &&
 						pValues.get(j) < pValue) {
 					if(j == 0)

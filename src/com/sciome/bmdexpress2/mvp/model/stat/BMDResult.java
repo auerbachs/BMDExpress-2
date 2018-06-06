@@ -75,6 +75,9 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BEST_POLY					= "Best Poly";
 	public static final String		WAUC						= "wAUC";
 	public static final String 		LOG_WAUC					= "Log 2 wAUC";
+	public static final String		LOEL_VALUE					= "Loel";
+	public static final String		NOEL_VALUE					= "Noel";
+	
 
 	@JsonIgnore
 	public Long getID()
@@ -144,6 +147,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public void setLogwAUC(List<Float> logwAUCList) {
 		this.logwAUCList = logwAUCList;
 	}
+	
+	
 
 	/*
 	 * fill the column header for table display or file export purposes.
@@ -168,6 +173,9 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		columnHeader.add(BEST_FOLDCHANGE);
 		columnHeader.add(BEST_ABSFOLDCHANGE);
 
+		columnHeader.add(NOEL_VALUE);
+		columnHeader.add(LOEL_VALUE);
+		
 		// now we want to add the columns for all the
 		// individual fold change values.
 		if (this.prefilterResults != null && this.prefilterResults.getPrefilterResults() != null
@@ -235,6 +243,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			Double pValue = null;
 			Double bestFoldChange = null;
 			List<Float> foldChanges = new ArrayList<>();
+			Float loel = null;
+			Float noel = null;
 
 			PrefilterResult prefilter = probeToPrefilterMap
 					.get(probeStatResult.getProbeResponse().getProbe().getId());
@@ -247,6 +257,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				pValue = prefilter.getpValue();
 				bestFoldChange = prefilter.getBestFoldChange().doubleValue();
 				foldChanges = prefilter.getFoldChanges();
+				loel = prefilter.getLoelDose();
+				noel = prefilter.getNoelDose();
 			}
 
 			// if we are working of an earlier version of, let's go ahead and calcualte fold change data.
@@ -270,6 +282,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 					}
 				}
 			}
+			
 			Float wAUC = null;
 			if(wAUCList != null) 
 				wAUC = wAUCList.get(index);
@@ -280,7 +293,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 //				logwAUC = logwAUCList.get(index);
 				
 			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
-					foldChanges, wAUC);
+					foldChanges, loel, noel, wAUC);
 			index++;
 
 		}
