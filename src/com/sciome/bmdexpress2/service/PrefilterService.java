@@ -2,7 +2,9 @@ package com.sciome.bmdexpress2.service;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.inference.TTest;
@@ -608,14 +610,21 @@ public class PrefilterService implements IPrefilterService
 					.equals(prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose()))
 			{
 				treatments.add(current);
-				doseGroups.add(count);
+				doseGroups.add(new Integer(count));
 				current = prefilterResults.getDoseResponseExperiement().getTreatments().get(i).getDose();
 				found = false;
 				count = 0;
 			}
 			count++;
 		}
+		treatments.add(current);
 		doseGroups.add(count);
+
+		// create a map of probe ids to probe response
+		// so we can get the prefilter probe repsonses.
+		Map<String, List<Float>> probeResponseMap = new HashMap<>();
+		for (ProbeResponse pr : prefilterResults.getDoseResponseExperiement().getProbeResponses())
+			probeResponseMap.put(pr.getProbe().getId(), pr.getResponses());
 
 		TTest test = new TTest();
 		// Loop through the probes
@@ -628,8 +637,8 @@ public class PrefilterService implements IPrefilterService
 			count = 0;
 			for (int j = 0; j < doseGroups.get(0); j++)
 			{
-				sample0[j] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i)
-						.getResponses().get(count);
+				sample0[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(i).getProbeID())
+						.get(count).doubleValue();
 				count++;
 			}
 
@@ -638,29 +647,27 @@ public class PrefilterService implements IPrefilterService
 				double[] sample1 = new double[doseGroups.get(j)];
 				for (int k = 0; k < doseGroups.get(j); k++)
 				{
-					sample1[k] = prefilterResults.getDoseResponseExperiement().getProbeResponses().get(i)
-							.getResponses().get(count);
+					sample1[k] = probeResponseMap
+							.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
+							.doubleValue();
 					count++;
 				}
-				pValues.add((float) test.tTest(sample0, sample1));
+				pValues.add(new Float((float) test.tTest(sample0, sample1)));
 			}
 			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
 
 			// Loop through the doses (excluding lowest)
-			for (int j = 0; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size()
-					- 1; j++)
+			for (int j = 1; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size(); j++)
 			{
 				// If t test and fold change are above threshold then set noel and loel values
 				if (Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges()
-						.get(j + 1)) > foldFilterValue && pValues.get(j) < pValue)
+						.get(j)) > foldFilterValue && pValues.get(j - 1) < pValue)
 				{
-					if (j == 0)
-						prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j));
-					else
-						prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j - 1));
 
+					prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j - 1));
 					prefilterResults.getPrefilterResults().get(i).setLoelDose(treatments.get(j));
 					break;
+
 				}
 			}
 		}
