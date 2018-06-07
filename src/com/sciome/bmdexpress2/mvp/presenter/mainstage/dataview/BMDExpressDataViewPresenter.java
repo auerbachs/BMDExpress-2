@@ -15,6 +15,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
+import com.sciome.filter.DataFilterType;
 
 import javafx.collections.transformation.FilteredList;
 
@@ -43,7 +44,11 @@ public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDE
 		filterInformation.append("Filter information: \n");
 		for(DataFilter filter : pack.getDataFilters())
 		{
-			filterInformation.append(filter.toString() + "\n");
+			System.out.println(filter.getKey());
+			if(filter.getDataFilterType().equals(DataFilterType.CONTAINS) || filter.getDataFilterType().equals(DataFilterType.BETWEEN))
+				filterInformation.append(filter.toString() + "\n");
+			else
+				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " " + filter.getValues().get(0) + "\n");
 		}
 		
 		try
