@@ -179,8 +179,8 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
-		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
+		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 
 		if (multipleTestingCorrection)
 		{
@@ -245,8 +245,8 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
-		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
+		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 
 		Origen_Data data = new Origen_Data();
 
@@ -464,8 +464,8 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOEL/LOEL T-Test p-Value Threshold: " + loelPValue);
-		notes.add("NOEL/LOEL Fold Change Threshold: " + loelFoldChange);
+		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		// This class should eventually be moved to sciome commons

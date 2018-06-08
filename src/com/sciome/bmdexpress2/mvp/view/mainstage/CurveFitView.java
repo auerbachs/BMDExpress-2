@@ -173,8 +173,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
 		bmduSeries = new XYSeries("BMDU");
-		noelSeries = new XYSeries("NOEL");
-		loelSeries = new XYSeries("LOEL");
+		noelSeries = new XYSeries("NOTEL");
+		loelSeries = new XYSeries("LOTEL");
 
 		// set up the holder for all the series
 		seriesSet = new XYSeriesCollection(dataSeries);
@@ -652,8 +652,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
 		bmduSeries = new XYSeries("BMDU");
-		noelSeries = new XYSeries("NOEL");
-		loelSeries = new XYSeries("LOEL");
+		noelSeries = new XYSeries("NOTEL");
+		loelSeries = new XYSeries("LOTEL");
 
 		Set<Double> uniqueDosesSet = new HashSet<>();
 		for (int i = 0; i < doses.length; i++)

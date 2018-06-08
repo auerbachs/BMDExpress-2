@@ -39,7 +39,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	private AnalysisInfo			analysisInfo;
 
 	private PrefilterResults		prefilterResults;
-	
+
 	private List<Float>				wAUCList;
 	private List<Float>				logwAUCList;
 
@@ -74,10 +74,9 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		BEST_BMDU_BMD_RATIO			= "Best BMDU/BMD";
 	public static final String		BEST_POLY					= "Best Poly";
 	public static final String		WAUC						= "wAUC";
-	public static final String 		LOG_WAUC					= "Log 2 wAUC";
-	public static final String		LOEL_VALUE					= "Loel";
-	public static final String		NOEL_VALUE					= "Noel";
-	
+	public static final String		LOG_WAUC					= "Log 2 wAUC";
+	public static final String		LOEL_VALUE					= "LOTEL";
+	public static final String		NOEL_VALUE					= "NOTEL";
 
 	@JsonIgnore
 	public Long getID()
@@ -131,24 +130,26 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	{
 		this.prefilterResults = prefilterResults;
 	}
-	
-	public List<Float> getwAUC() {
+
+	public List<Float> getwAUC()
+	{
 		return wAUCList;
 	}
 
-	public void setwAUC(List<Float> wAUC) {
+	public void setwAUC(List<Float> wAUC)
+	{
 		this.wAUCList = wAUC;
 	}
-	
-	public List<Float> getLogwAUC() {
+
+	public List<Float> getLogwAUC()
+	{
 		return logwAUCList;
 	}
 
-	public void setLogwAUC(List<Float> logwAUCList) {
+	public void setLogwAUC(List<Float> logwAUCList)
+	{
 		this.logwAUCList = logwAUCList;
 	}
-	
-	
 
 	/*
 	 * fill the column header for table display or file export purposes.
@@ -164,10 +165,10 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 		columnHeader = probStatResult.generateColumnHeader();
 
-		//Add Curve P Header
+		// Add Curve P Header
 		columnHeader.add(WAUC);
-		//Commenting out for now
-//		columnHeader.add(LOG_WAUC);
+		// Commenting out for now
+		// columnHeader.add(LOG_WAUC);
 		columnHeader.add(PREFILTER_PVALUE);
 		columnHeader.add(PREFILTER_ADJUSTEDPVALUE);
 		columnHeader.add(BEST_FOLDCHANGE);
@@ -175,7 +176,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 
 		columnHeader.add(NOEL_VALUE);
 		columnHeader.add(LOEL_VALUE);
-		
+
 		// now we want to add the columns for all the
 		// individual fold change values.
 		if (this.prefilterResults != null && this.prefilterResults.getPrefilterResults() != null
@@ -189,7 +190,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 				i++;
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -282,18 +283,18 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 					}
 				}
 			}
-			
+
 			Float wAUC = null;
-			if(wAUCList != null) 
+			if (wAUCList != null)
 				wAUC = wAUCList.get(index);
-			
-			//Comment out for now
-//			Float logwAUC = null;
-//			if(logwAUCList != null)
-//				logwAUC = logwAUCList.get(index);
-				
-			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange,
-					foldChanges, loel, noel, wAUC);
+
+			// Comment out for now
+			// Float logwAUC = null;
+			// if(logwAUCList != null)
+			// logwAUC = logwAUCList.get(index);
+
+			probeStatResult.createRowData(probeToGeneMap, adjustedPValue, pValue, bestFoldChange, foldChanges,
+					loel, noel, wAUC);
 			index++;
 
 		}
