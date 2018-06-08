@@ -212,7 +212,7 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		{
 			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
 			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
-			writer.write("\n");
+			writer.write("\n\n");
 			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
 			writer.write(exportBMDExpressAnalysisDataSet(bmdResults, false));
 			writer.close();
