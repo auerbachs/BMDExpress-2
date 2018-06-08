@@ -2,8 +2,6 @@ package com.sciome.bmdexpress2.mvp.view.mainstage;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -32,6 +30,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -114,6 +113,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 	private XYSeries					bmdSeries;					// holds the BMD drawing setup
 	private XYSeries					bmdlSeries;					// holds the BMDL drawing setup
 	private XYSeries					bmduSeries;					// holds the BMDU drawing setup
+	private XYSeries					noelSeries;
+	private XYSeries					loelSeries;
 	private XYSeriesCollection			seriesSet;					// holds the set of series currently
 																	// displayed
 
@@ -172,6 +173,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
 		bmduSeries = new XYSeries("BMDU");
+		noelSeries = new XYSeries("NOEL");
+		loelSeries = new XYSeries("LOEL");
 
 		// set up the holder for all the series
 		seriesSet = new XYSeriesCollection(dataSeries);
@@ -180,11 +183,12 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// 0: data series color
 		// 1: model series color
 		// 2: bmd and bmdl series color
-		chartColors = new Color[4];
+		chartColors = new Color[5];
 		chartColors[0] = Color.RED;
 		chartColors[1] = Color.BLUE;
 		chartColors[2] = Color.BLACK;
 		chartColors[3] = Color.GREEN;
+		chartColors[4] = Color.orange;
 
 		chart = ChartFactory.createXYLineChart("Title", // chart title
 				"Dose", // domain axis label
@@ -529,23 +533,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			}
 			NUM_SERIES = 1;
 			seriesSet = new XYSeriesCollection(dataSeries);
-			plot.setRenderer(new XYLineAndShapeRenderer(true, false) {
 
-				@Override
-				public Shape getItemShape(int row, int col)
-				{
-					Shape rectangle = new Rectangle(-3, -3, 6, 6);
-					return rectangle;
-				}
-
-				@Override
-				public Shape getLegendShape(int series)
-				{
-
-					Shape rectangle = new Rectangle(-3, -3, 6, 6);
-					return rectangle;
-				}
-			});
 		}
 		else
 		{
@@ -632,37 +620,6 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				seriesSet.addSeries((XYSeries) e.nextElement());
 			}
 
-			plot.setRenderer(new XYLineAndShapeRenderer(true, false) {
-
-				@Override
-				public Shape getItemShape(int row, int col)
-				{
-					if (col == 1)
-					{
-						Shape rectangle = new Rectangle(-4, 0, 8, 1);
-						return rectangle;
-					}
-					else if (col == 2)
-					{
-						Shape rectangle = new Rectangle(-4, 0, 8, 1);
-						return rectangle;
-					}
-					else
-					{
-						Shape rectangle = new Rectangle(-4, -4, 8, 8);
-						return rectangle;
-					}
-				}
-
-				@Override
-				public Shape getLegendShape(int series)
-				{
-
-					Shape rectangle = new Rectangle(-4, -4, 8, 8);
-					return rectangle;
-				}
-
-			});
 		}
 	}
 
@@ -695,6 +652,9 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
 		bmduSeries = new XYSeries("BMDU");
+		noelSeries = new XYSeries("NOEL");
+		loelSeries = new XYSeries("LOEL");
+
 		Set<Double> uniqueDosesSet = new HashSet<>();
 		for (int i = 0; i < doses.length; i++)
 			uniqueDosesSet.add(doses[i]);
@@ -743,6 +703,17 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			bmduSeries.add(parameters[2], LOW - .01);
 		}
 		bmduSeries.add(parameters[0], bmdModel.response(parameters[0]));
+
+		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
+		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
+		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
+		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
+			noelSeries.add(probeStatResult.getPrefilterNoel().doubleValue(),
+					bmdModel.response(probeStatResult.getPrefilterNoel().doubleValue()));
+		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
+			loelSeries.add(probeStatResult.getPrefilterLoel().doubleValue(),
+					bmdModel.response(probeStatResult.getPrefilterLoel().doubleValue()));
+
 	}
 
 	/**
@@ -756,11 +727,11 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
 
 		// data series color
-		chartColors[0] = (Color) renderer.getSeriesPaint(0);
+		// chartColors[0] = (Color) renderer.getSeriesPaint(0);
 		// model series color
-		chartColors[1] = (Color) renderer.getSeriesPaint(count - 3);
+		// chartColors[1] = (Color) renderer.getSeriesPaint(1);
 		// bmd series color
-		chartColors[2] = (Color) renderer.getSeriesPaint(count - 2);
+		// chartColors[2] = (Color) renderer.getSeriesPaint(2);
 	}
 
 	/**
@@ -969,6 +940,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		seriesSet.addSeries(bmdSeries);
 		seriesSet.addSeries(bmdlSeries);
 		seriesSet.addSeries(bmduSeries);
+		seriesSet.addSeries(noelSeries);
+		seriesSet.addSeries(loelSeries);
 		createChart(modelName);
 	}
 
@@ -1017,6 +990,18 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			renderer.setSeriesPaint(4, chartColors[3]);
 			renderer.setSeriesShapesVisible(4, false);
 			renderer.setSeriesVisibleInLegend(4, false);
+
+			// options for the NOEL/LOEL set
+			renderer.setSeriesPaint(5, chartColors[4]);
+			renderer.setSeriesShapesVisible(5, true);
+			renderer.setSeriesVisibleInLegend(5, true);
+			renderer.setSeriesShape(5, ShapeUtils.createDownTriangle(8.0f));
+
+			renderer.setSeriesPaint(6, chartColors[4]);
+			renderer.setSeriesShapesVisible(6, true);
+			renderer.setSeriesVisibleInLegend(6, true);
+			renderer.setSeriesShape(6, ShapeUtils.createDiamond(8.0f));
+
 		}
 		else
 		{
@@ -1053,6 +1038,18 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			renderer.setSeriesPaint(NUM_SERIES + 3, chartColors[3]);
 			renderer.setSeriesVisibleInLegend(NUM_SERIES + 3, false);
 			renderer.setSeriesShapesVisible(NUM_SERIES + 3, false);
+			// options for the NOEL/LOEL set
+			renderer.setSeriesPaint(NUM_SERIES + 4, chartColors[4]);
+			renderer.setSeriesShapesVisible(NUM_SERIES + 4, true);
+			renderer.setSeriesVisibleInLegend(NUM_SERIES + 4, true);
+			renderer.setSeriesLinesVisible(NUM_SERIES + 4, false);
+			renderer.setSeriesShape(NUM_SERIES + 4, ShapeUtils.createDownTriangle(8.0f));
+
+			renderer.setSeriesPaint(NUM_SERIES + 5, chartColors[4]);
+			renderer.setSeriesShapesVisible(NUM_SERIES + 5, true);
+			renderer.setSeriesVisibleInLegend(NUM_SERIES + 5, true);
+			renderer.setSeriesLinesVisible(NUM_SERIES + 5, false);
+			renderer.setSeriesShape(NUM_SERIES + 5, ShapeUtils.createDiamond(8.0f));
 		}
 	}
 

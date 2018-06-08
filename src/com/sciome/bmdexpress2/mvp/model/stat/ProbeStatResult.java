@@ -49,6 +49,9 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	private transient Double		prefilterBestFoldChange;
 	private transient Double		prefilterBestABSFoldChange;
 
+	private transient Float			prefilterNoel;
+	private transient Float			prefilterLoel;
+
 	private Long					id;
 
 	@JsonIgnore
@@ -115,8 +118,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	// calculate columns and rows. The purpose of this is to agregate all the results
 	// so the data can be viewed by a table.
 	public void createRowData(Map<String, ReferenceGeneAnnotation> referenceGeneAnnotations,
-			Double adjustedPValue, Double pValue, Double bestFoldChange, List<Float> foldChanges,
-			Float loel, Float noel, Float wAUC)
+			Double adjustedPValue, Double pValue, Double bestFoldChange, List<Float> foldChanges, Float loel,
+			Float noel, Float wAUC)
 	{
 		row = new ArrayList<Object>();
 		row.add(probeResponse.getProbe().getId());
@@ -206,7 +209,7 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 
 		row.add(wAUC);
-//		row.add(logwAUC);
+		// row.add(logwAUC);
 
 		row.add(pValue);
 		this.prefilterPvalue = pValue;
@@ -226,11 +229,13 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		}
 
 		row.add(noel);
+		this.prefilterNoel = noel;
 		row.add(loel);
-		
+		this.prefilterLoel = loel;
+
 		for (Float fc : foldChanges)
 			row.add(fc);
-		
+
 	}
 
 	@Override
@@ -443,6 +448,18 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	public Double getBestABSFoldChange()
 	{
 		return prefilterBestABSFoldChange;
+	}
+
+	@JsonIgnore
+	public Float getPrefilterNoel()
+	{
+		return prefilterNoel;
+	}
+
+	@JsonIgnore
+	public Float getPrefilterLoel()
+	{
+		return prefilterLoel;
 	}
 
 	@JsonIgnore
