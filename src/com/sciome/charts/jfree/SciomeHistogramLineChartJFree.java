@@ -84,6 +84,7 @@ public class SciomeHistogramLineChartJFree extends SciomeHistogram implements Ch
 		ValueAxis xAxis = new NumberAxis();
 		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "Count");
 
+		
 		// Set renderer parameters
 		XYSplineRenderer renderer = new XYSplineRenderer();
 		// Set tooltip string
