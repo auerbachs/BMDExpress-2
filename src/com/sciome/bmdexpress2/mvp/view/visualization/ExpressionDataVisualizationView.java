@@ -21,8 +21,8 @@ import com.sciome.filter.DataFilterPack;
 
 public class ExpressionDataVisualizationView extends DataVisualizationView implements IDataVisualizationView
 {
-	private static final String INTENSITY = "Intensity Histogram";
-	private static final String DEFAULT = "DEFAULT";
+	private static final String	INTENSITY	= "Density Chart";
+	private static final String	DEFAULT		= "DEFAULT";
 
 	public ExpressionDataVisualizationView()
 	{
@@ -47,7 +47,7 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 
 		chartCache.put(DEFAULT + "-" + "PC3 V PC4", new SciomePCAJFree("", new ArrayList<>(),
 				new ChartKey(PCAResults.PC3, null), new ChartKey(PCAResults.PC4, null), this));
-		
+
 		chartCache.put(INTENSITY, new SciomeDensityChartJFree("", new ArrayList<>(),
 				new ChartKey(IntensityResults.RESPONSE, null), this));
 	}
@@ -62,22 +62,25 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 
 		chartsList = new ArrayList<>();
 
-		if(chartKey.equals(INTENSITY)) {
+		if (chartKey.equals(INTENSITY))
+		{
 			List<BMDExpressAnalysisDataSet> intensityResults = ((ExpressionDataVisualizationPresenter) presenter)
 					.calculateIntensity((DoseResponseExperiment) results.get(0));
-			
-			
+
 			SciomeChartBase chart1 = chartCache.get(INTENSITY);
 			chartsList.add(chart1);
-			
-			List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(intensityResults,
-					dataFilterPack, getUsedChartKeys(), getMathedChartKeys(), new ChartKey(IntensityResults.RESPONSE, null));
+
+			List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(
+					intensityResults, dataFilterPack, getUsedChartKeys(), getMathedChartKeys(),
+					new ChartKey(IntensityResults.RESPONSE, null));
 			showCharts(chartDataPacks);
-		} else {
+		}
+		else
+		{
 			List<BMDExpressAnalysisDataSet> pcaResults = new ArrayList<BMDExpressAnalysisDataSet>();
 			pcaResults.add(((ExpressionDataVisualizationPresenter) presenter)
 					.calculatePCA((DoseResponseExperiment) results.get(0)));
-			
+
 			SciomeChartBase chart1 = chartCache.get(DEFAULT + "-" + "PC1 V PC2");
 			chartsList.add(chart1);
 			SciomeChartBase chart2 = chartCache.get(DEFAULT + "-" + "PC1 V PC3");
@@ -90,7 +93,7 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 			chartsList.add(chart5);
 			SciomeChartBase chart6 = chartCache.get(DEFAULT + "-" + "PC3 V PC4");
 			chartsList.add(chart6);
-			
+
 			List<ChartDataPack> chartDataPacks = presenter.getBMDAnalysisDataSetChartDataPack(pcaResults,
 					dataFilterPack, getUsedChartKeys(), getMathedChartKeys(),
 					new ChartKey(PCAResults.DOSAGE, null));
@@ -104,7 +107,6 @@ public class ExpressionDataVisualizationView extends DataVisualizationView imple
 		List<String> resultList = new ArrayList<>();
 		resultList.add(DEFAULT_CHARTS);
 		resultList.add(INTENSITY);
-		
 
 		return resultList;
 	}

@@ -29,13 +29,15 @@ import com.sciome.charts.model.SciomeSeries;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class SciomeDensityChartJFree extends SciomeDensityChart {
+public class SciomeDensityChartJFree extends SciomeDensityChart
+{
 	private JFreeChart	chart;
 	private double		lowX;
 	private double		highX;
-	
+
 	public SciomeDensityChartJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
-			SciomeChartListener chartListener) {
+			SciomeChartListener chartListener)
+	{
 		super(title, chartDataPacks, key, chartListener);
 		showLogAxes(false, true, false, false);
 
@@ -47,7 +49,7 @@ public class SciomeDensityChartJFree extends SciomeDensityChart {
 			}
 		});
 	}
-	
+
 	protected ChartViewer generateChart(ChartKey[] keys, ChartConfiguration chartConfig)
 	{
 		ChartKey key = keys[0];
@@ -70,12 +72,12 @@ public class SciomeDensityChartJFree extends SciomeDensityChart {
 			dataset.addSeries(series.getName(), new double[][] { domains, ranges });
 		}
 
-		//Set axis
+		// Set axis
 		ValueAxis xAxis = new NumberAxis();
 		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), "Density");
-		
+
 		XYSplineRenderer renderer = new XYSplineRenderer();
-		
+
 		// Set tooltip string
 		XYToolTipGenerator tooltipGenerator = new XYToolTipGenerator() {
 			@Override
@@ -86,24 +88,25 @@ public class SciomeDensityChartJFree extends SciomeDensityChart {
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		renderer.setSeriesFillPaint(0, Color.white);
+
 		renderer.setDefaultOutlinePaint(Color.black);
-		for(int i = 0; i < getSeriesData().size(); i++)
+		for (int i = 0; i < getSeriesData().size(); i++)
 		{
-			renderer.setSeriesShapesVisible(i, false);
+			renderer.setSeriesShapesVisible(i, true);
 		}
-		
+
 		// Set plot parameters
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
 		plot.setForegroundAlpha(0.8f);
 		plot.setDomainPannable(false);
 		plot.setRangePannable(false);
 		plot.setBackgroundPaint(Color.white);
-		
+
 		double min = getMinMin(key);
 		double max = getMaxMax(key);
 		plot.getDomainAxis().setRange(new Range(min, max));
 		setSliders(min, max);
-		
+
 		// Create chart
 		chart = new JFreeChart("Intensity Histogram", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		chart.getPlot().setForegroundAlpha(.8f);
@@ -128,20 +131,23 @@ public class SciomeDensityChartJFree extends SciomeDensityChart {
 	}
 
 	@Override
-	public List<String> getLinesToExport() {
+	public List<String> getLinesToExport()
+	{
 		return null;
 	}
 
 	@Override
-	public void reactToChattingCharts() {
-		
+	public void reactToChattingCharts()
+	{
+
 	}
 
 	@Override
-	public void markData(Set<String> markings) {
-		
+	public void markData(Set<String> markings)
+	{
+
 	}
-	
+
 	private void setSliders(double minX, double maxX)
 	{
 		lowX = minX;
