@@ -108,7 +108,7 @@ public class SciomeDensityChartJFree extends SciomeDensityChart
 		setSliders(min, max);
 
 		// Create chart
-		chart = new JFreeChart("Intensity Histogram", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+		chart = new JFreeChart("Density Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		chart.getPlot().setForegroundAlpha(.8f);
 
 		chart.addChangeListener(new ChartChangeListener() {
