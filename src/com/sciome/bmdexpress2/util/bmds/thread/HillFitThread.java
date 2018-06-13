@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.commons.lang3.RandomUtils;
-
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
+import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.bmds.FileHillFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
@@ -108,11 +108,13 @@ public class HillFitThread extends Thread implements IFitThread
 				// get the probe id and responses
 
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
-				id = String.valueOf(Math.abs(id.hashCode()))
-						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
+
+				id = String.valueOf(randInt) + "_"
+						+ BMDExpressProperties.getInstance().getNextTempFile(
+								BMDExpressConstants.getInstance().TEMP_FOLDER,
+								String.valueOf(Math.abs(id.hashCode())), "_hill.(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
-				double[] results = fHillFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
-						doses, responses);
+				double[] results = fHillFit.fitModel(id, inputParameters, doses, responses);
 
 				if (results != null)
 				{

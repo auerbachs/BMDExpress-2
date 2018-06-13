@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.commons.lang3.RandomUtils;
-
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
+import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.bmds.FilePolyFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
@@ -101,8 +101,11 @@ public class PolyFitThread extends Thread implements IFitThread
 			{
 				double direction = 0;
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
-				id = String.valueOf(Math.abs(id.hashCode()))
-						+ String.valueOf(Math.abs(RandomUtils.nextInt()));
+				id = String.valueOf(randInt) + "_"
+						+ BMDExpressProperties.getInstance().getNextTempFile(
+								BMDExpressConstants.getInstance().TEMP_FOLDER,
+								String.valueOf(Math.abs(id.hashCode())),
+								"_poly" + inputParameters.getPolyDegree() + ".(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 
 				inputParameters.setAdversDirection(adversDirections[0]);
@@ -112,8 +115,7 @@ public class PolyFitThread extends Thread implements IFitThread
 				if (degree > 1)
 					inputParameters.setAdversDirection(adversDirections[1]);
 
-				double[] results = fPolyFit.fitModel(String.valueOf(randInt) + "_" + id, inputParameters,
-						doses, responses);
+				double[] results = fPolyFit.fitModel(id, inputParameters, doses, responses);
 
 				if (degree > 1)
 				{

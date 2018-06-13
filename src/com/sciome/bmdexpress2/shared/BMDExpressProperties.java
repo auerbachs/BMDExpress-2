@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -68,6 +70,8 @@ public class BMDExpressProperties
 
 	private CategoryInput				categoryInput;
 
+	private String						processInformation;
+
 	protected BMDExpressProperties()
 	{
 
@@ -81,6 +85,8 @@ public class BMDExpressProperties
 		loadProperties();
 		readPreferences();
 		loadDefaultFilters();
+
+		processInformation = ManagementFactory.getRuntimeMXBean().getName().replaceAll("[^a-zA-Z0-9]", "");
 		try
 		{
 			loadInputs();
@@ -89,6 +95,25 @@ public class BMDExpressProperties
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public String getNiceFileAppendage()
+	{
+		return processInformation + System.currentTimeMillis();
+	}
+
+	public String getNextTempFile(String dir, String baseName, String ext)
+	{
+		String fname = processInformation + baseName + String.valueOf(Math.abs(RandomUtils.nextInt()));
+		File theFile = new File(dir + File.separator + fname + ext);
+		while (theFile.exists())
+		{
+			fname = processInformation + baseName + String.valueOf(Math.abs(RandomUtils.nextInt()));
+			theFile = new File(dir + File.separator + fname + ext);
+		}
+
+		return fname;
+
 	}
 
 	private void loadInputs() throws JsonGenerationException, JsonMappingException, IOException

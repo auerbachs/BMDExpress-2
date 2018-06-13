@@ -4,11 +4,19 @@
  BMDExpress 2.2
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on April 17, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on June 13, 2018</h2>
 
 
 <h3>
 New Features
+</h3>
+<ul>
+<li>Temp file names are now more complex and unique across multiple instances of the application running.</li>
+
+</ul>
+
+<h3>
+New Features on April 17, 2018
 </h3>
 <ul>
 <li>Polynomial models with degree >1 are now run in both adverse directions. The model with the lowest BMD is then chosen as the representative model. This change represents a return to the analysis protocol that was used in BMDExpress v1 and v2.0 and ensures the selection of the most sensitive BMD for each polynomial model with degree >1.   </li>
@@ -16,7 +24,7 @@ New Features
 </ul>
 
 <h3>
-Bug Fixes
+Bug Fixes on April 17, 2018
 </h3>
 <ul>
 <li>Fixed issue to allow exponential models to correctly parse the log likelihood values from bmds output file. </li>

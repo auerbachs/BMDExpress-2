@@ -46,6 +46,7 @@ public class FilePolyFit extends FileFitBase
 			float[] inputY)
 	{
 		String fileName = name + "_poly" + inputParameters.getPolyDegree();
+
 		File infile = createDataFile(fileName, inputParameters, inputX, inputY);
 		int OUTMAX = inputParameters.getPolyDegree() + 7;
 		double[] outputs = NumberManager.initDoubles(OUTMAX, minDouble);
