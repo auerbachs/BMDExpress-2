@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
@@ -119,6 +120,12 @@ public class ChartDataPackMaker
 					doubleValue = ((Integer) value).doubleValue();
 				else if (value instanceof Number)
 					doubleValue = ((Number) value).doubleValue();
+				else if (value instanceof String && ((String) value).contains(";"))
+				{
+					List<Double> doubleList = parseForList((String) value);
+					if (doubleList != null)
+						chartData.getDataPointLists().put(key, doubleList);
+				}
 				else
 					continue;
 
@@ -146,6 +153,26 @@ public class ChartDataPackMaker
 
 		return chartDataPack;
 
+	}
+
+	private List<Double> parseForList(String value)
+	{
+		Scanner sc = new Scanner(value);
+		sc.useDelimiter(";");
+		List<Double> returnList = new ArrayList<>();
+		while (sc.hasNext())
+		{
+			try
+			{
+				returnList.add(sc.nextDouble());
+			}
+			catch (Exception e)
+			{
+				return null;
+			}
+
+		}
+		return returnList;
 	}
 
 }

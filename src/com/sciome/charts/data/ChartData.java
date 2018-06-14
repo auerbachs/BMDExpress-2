@@ -1,5 +1,6 @@
 package com.sciome.charts.data;
 
+import java.util.List;
 import java.util.Map;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
@@ -10,9 +11,10 @@ import com.sciome.bmdexpress2.mvp.model.ChartKey;
  */
 public class ChartData
 {
-	private Object					charttableObject;
-	private String					dataPointLabel;
-	private Map<ChartKey, Double>	dataPoints;
+	private Object						charttableObject;
+	private String						dataPointLabel;
+	private Map<ChartKey, Double>		dataPoints;
+	private Map<ChartKey, List<Double>>	dataPointLists;
 
 	public Object getCharttableObject()
 	{
@@ -32,6 +34,16 @@ public class ChartData
 	public void setDataPoints(Map<ChartKey, Double> dataPoints)
 	{
 		this.dataPoints = dataPoints;
+	}
+
+	public Map<ChartKey, List<Double>> getDataPointLists()
+	{
+		return dataPointLists;
+	}
+
+	public void setDataPointLists(Map<ChartKey, List<Double>> dataPointList)
+	{
+		this.dataPointLists = dataPointList;
 	}
 
 	public String getDataPointLabel()
