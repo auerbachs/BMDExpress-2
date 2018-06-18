@@ -101,6 +101,7 @@ public class ChartDataPackMaker
 
 			chartData.setCharttableObject(row.getObject());
 			chartData.setDataPoints(new HashMap<>());
+			chartData.setDataPointLists(new HashMap<>());
 			String label = "";
 
 			Object labelObject = object.getValueForHeaderAt(labelKey, i);

@@ -75,6 +75,10 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				BMDUDOWN_MEAN							= "BMDU Down Mean";
 	public static final String				BMDUDOWN_MEDIAN							= "BMDU Down Median";
 	public static final String				BMDUDOWN_SD								= "BMDU Down Standard Deviation";
+	
+	public static final String				BMD_LIST								= "BMD List";
+	public static final String				BMDL_LIST								= "BMDL List";
+	public static final String				BMDU_LIST								= "BMDU List";
 
 	public static final String				FISHERS_TWO_TAIL						= "Fisher's Exact Two Tail";
 	public static final String				NUM_SIGNFICANT_GENES					= "Input Genes";

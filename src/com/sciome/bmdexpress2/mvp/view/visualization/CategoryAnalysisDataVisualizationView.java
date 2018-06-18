@@ -30,6 +30,7 @@ import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomePieChartJFree;
 import com.sciome.charts.jfree.SciomeRangePlotJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
+import com.sciome.charts.jfree.SciomeViolinPlotJFree;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -49,6 +50,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	private static final String	MEAN_HISTOGRAMS		= "Mean Histograms";
 	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
 	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
+	private static final String VIOLIN				= "Violin Plots";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
@@ -182,6 +184,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
 						new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG),
 						new ChartKey("Percentage", null), CategoryAnalysisDataVisualizationView.this));
+		
+		chartCache.put(VIOLIN, new SciomeViolinPlotJFree("", new ArrayList<>(),
+				new ChartKey(CategoryAnalysisResults.BMD_LIST, null),
+				CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotJFree("Accumulation",
 				new ArrayList<>(), new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), 0.0, this));
@@ -319,7 +325,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			ignoreCustomCharts = true;
 			chartsList.add(new PathwayCurveViewer(results, pack, CategoryAnalysisDataVisualizationView.this));
 
-		}
+		} else if (chartKey.equals(VIOLIN))
+		{
+			SciomeChartBase chart = chartCache.get(VIOLIN);
+			chartsList.add(chart);		}
 		else if (chartKey.equals(DEFAULT_CHARTS))
 		{
 			SciomeChartBase chart1 = chartCache.get("DEFAULT-Accumulation");
@@ -361,6 +370,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		resultList.add(MEAN_HISTOGRAMS);
 		resultList.add(MEDIAN_HISTOGRAMS);
 		resultList.add(BMD_BMDL_SCATTER);
+		resultList.add(VIOLIN);
 
 		return resultList;
 	}

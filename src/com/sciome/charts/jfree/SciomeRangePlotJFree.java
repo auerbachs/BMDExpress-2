@@ -147,7 +147,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 			if (minRange < 0)
 				minRange = 0;
 			if (maxRange > 0)
-				plot.getRangeAxis().setRange(new Range(minRange, getMaxMax(maxKey)));
+				plot.getRangeAxis().setRange(new Range(minRange, maxRange));
 			else
 				plot.getRangeAxis().setAutoRange(true);
 		}
@@ -457,7 +457,7 @@ public class SciomeRangePlotJFree extends SciomeChartBase<String, Number> implem
 
 	private void setSliders(double numValues)
 	{
-		Slider slider = new Slider(0, numValues - 10, 0);
+		Slider slider = new Slider(0, numValues - MAX_NODES_SHOWN, 0);
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
