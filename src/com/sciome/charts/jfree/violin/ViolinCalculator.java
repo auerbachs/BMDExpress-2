@@ -5,14 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.jfree.chart.util.Args;
 import org.jfree.data.statistics.BoxAndWhiskerItem;
 import org.jfree.data.statistics.Statistics;
-
-import com.sciome.charts.model.SciomeData;
 
 public class ViolinCalculator {
 	protected static final int NUM_MAX_VALUES = 100;
@@ -77,8 +74,9 @@ public class ViolinCalculator {
         else {
             vlist = values;
         }
+        
         Collections.sort(vlist);
-
+		
         double mean = Statistics.calculateMean(vlist, false);
         double median = Statistics.calculateMedian(vlist, false);
         double q1 = calculateQ1(vlist);
@@ -89,14 +87,11 @@ public class ViolinCalculator {
         double upperOutlierThreshold = q3 + (interQuartileRange * 1.5);
         double lowerOutlierThreshold = q1 - (interQuartileRange * 1.5);
 
-        double upperFaroutThreshold = q3 + (interQuartileRange * 2.0);
-        double lowerFaroutThreshold = q1 - (interQuartileRange * 2.0);
-
         double minRegularValue = Double.POSITIVE_INFINITY;
         double maxRegularValue = Double.NEGATIVE_INFINITY;
         double minOutlier = Double.POSITIVE_INFINITY;
         double maxOutlier = Double.NEGATIVE_INFINITY;
-        List outliers = new ArrayList();
+        List<Number> outliers = new ArrayList<Number>();
 
         Iterator iterator = vlist.iterator();
         while (iterator.hasNext()) {
@@ -104,13 +99,13 @@ public class ViolinCalculator {
             double value = number.doubleValue();
             if (value > upperOutlierThreshold) {
                 outliers.add(number);
-                if (value > maxOutlier && value <= upperFaroutThreshold) {
+                if (value > maxOutlier) {
                     maxOutlier = value;
                 }
             }
             else if (value < lowerOutlierThreshold) {
                 outliers.add(number);
-                if (value < minOutlier && value >= lowerFaroutThreshold) {
+                if (value < minOutlier) {
                     minOutlier = value;
                 }
             }
@@ -121,16 +116,19 @@ public class ViolinCalculator {
             minOutlier = Math.min(minOutlier, minRegularValue);
             maxOutlier = Math.max(maxOutlier, maxRegularValue);
         }
+		
 
-        Number onePercentile = (Number)vlist.get((int)Math.ceil(.01 * vlist.size()));
-        Number fivePercentile = (Number)vlist.get((int)Math.ceil(.05 * vlist.size()));
-        Number tenPercentile = (Number)vlist.get((int)Math.ceil(.10 * vlist.size()));
+        
+        int size = vlist.size();
+        Number onePercentile = (Number)vlist.get((int)(size - Math.ceil(.01 * size)));
+        Number fivePercentile = (Number)vlist.get((int)(size - Math.ceil(.05 * size)));
+        Number tenPercentile = (Number)vlist.get((int)(size - Math.ceil(.10 * size)));
         Number tenRank = null;
         Number twentyFiveRank = null;
-        if(vlist.size() > 10)
-        	tenRank = (Number)vlist.get(10);
-        if(vlist.size() > 25)
-        	twentyFiveRank = (Number)vlist.get(25);
+        if(size > 10)
+        	tenRank = (Number)vlist.get(size - 10);
+        if(size > 25)
+        	twentyFiveRank = (Number)vlist.get(size - 25);
         
         //Calculate kernel density estimation
         HashMap<Number, Number> dist = new HashMap<Number, Number>();
@@ -154,16 +152,9 @@ public class ViolinCalculator {
 				sum += gaussVal;
 			}
 			double y = (1/(data.length * bandwidth)) * sum;
-//			System.out.println(y);
 			dist.put(i, y);
 		}
         
-//     	double min = -3;
-//        for(int i = 1; i < 100; i++) {
-//        	dist.put(i, gaussian(min));
-//         	min += 6.0 / 100.0;
-//        }
-		
         return new ViolinItem(new Double(mean), new Double(median),
                 new Double(q1), new Double(q3), new Double(minRegularValue),
                 new Double(maxRegularValue), new Double(minOutlier),
@@ -245,6 +236,6 @@ public class ViolinCalculator {
     }
     
 	private static double gaussian(double u) {
-		return (Math.exp(((-u * u)/2.0)))/(Math.sqrt(2 * Math.PI));
+		return (Math.exp(((-u * u) / 2.0))) / (Math.sqrt(2 * Math.PI));
 	}
 }

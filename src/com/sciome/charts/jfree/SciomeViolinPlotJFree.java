@@ -1,20 +1,29 @@
 package com.sciome.charts.jfree;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.SlidingCategoryDataset;
 
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
+import com.sciome.bmdexpress2.util.ShapeCreator;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
@@ -83,8 +92,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		CategoryToolTipGenerator tooltipGenerator = new CategoryToolTipGenerator() {
 			@Override
 			public String generateToolTip(CategoryDataset dataset, int row, int column) {
-				return "";
-//				return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
+				return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
 			}
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
@@ -96,6 +104,21 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		plot.setForegroundAlpha(0.8f);
 		plot.setRangePannable(false);
 		plot.setBackgroundPaint(Color.white);
+		
+		//Set default legend items
+		LegendItemCollection chartLegend = new LegendItemCollection();
+		Shape shape = new Rectangle(10, 10);
+		DrawingSupplier supplier = new DefaultDrawingSupplier();
+		for(int i = 0; i < getSeriesData().size(); i++)
+			chartLegend.add(new LegendItem(getSeriesData().get(i).getName(), null, null, null, shape, supplier.getNextPaint()));
+		
+	
+		chartLegend.add(new LegendItem("10th Ranked Gene BMD", null, null, null, new Ellipse2D.Double(0, 0, 10, 10), Color.black));
+		chartLegend.add(new LegendItem("25th Ranked Gene BMD", null, null, null, new Rectangle(10, 2), Color.black));
+		chartLegend.add(new LegendItem("1th % Gene BMD", null, null, null, shape, Color.black));
+		chartLegend.add(new LegendItem("5th % Gene BMD", null, null, null, ShapeCreator.createDiamond(10 * Math.sqrt(2), 10 * Math.sqrt(2)), Color.black));
+		chartLegend.add(new LegendItem("10th % Gene BMD", null, null, null, ShapeCreator.createDiagonalCross(5, 2), Color.black));
+		plot.setFixedLegendItems(chartLegend);
 		
 		// Create chart
 		chart = new JFreeChart(key.getKey() + " Violins", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
@@ -180,10 +203,10 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 				} catch(Exception e) {
 					continue;
 				}
-				if(item.getMaxRegularValue().doubleValue() > max)
-					max = item.getMaxRegularValue().doubleValue();
-				if(item.getMinRegularValue().doubleValue() < min)
-					min = item.getMinRegularValue().doubleValue();
+				if(item.getMaxOutlier().doubleValue() > max)
+					max = item.getMaxOutlier().doubleValue();
+				if(item.getMinOutlier().doubleValue() < min)
+					min = item.getMinOutlier().doubleValue();
 			}
 		}
 		((CategoryPlot)chart.getPlot()).getRangeAxis().setRange(new Range(min, max));

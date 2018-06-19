@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jfree.chart.LegendItem;
@@ -37,6 +37,8 @@ import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.SlidingCategoryDataset;
 
+import com.sciome.bmdexpress2.util.ShapeCreator;
+
 /**
  * A box-and-whisker renderer.  This renderer requires a
  * {@link ViolinCategoryDataset} and is for use with the
@@ -53,6 +55,8 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
     /** For serialization. */
     private static final long serialVersionUID = 632027470694481177L;
 
+	private static final double SQRT2 = Math.sqrt(2);
+	
     /** The color used to paint the median line and average marker. */
     private transient Paint artifactPaint;
 
@@ -583,6 +587,7 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
             yy = yy + offset;
         }
 
+        double xxMean;
         double halfWidth = state.getBarWidth() / 2;
         double boxWidth = state.getBarWidth() / 10;
         double yyBox = 0;
@@ -595,8 +600,8 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
 
         Number xQ1 = value.getQ1();
         Number xQ3 = value.getQ3();
-        Number xMax = value.getMaxRegularValue();
-        Number xMin = value.getMinRegularValue();
+        Number xMax = value.getMaxOutlier();
+        Number xMin = value.getMinOutlier();
 
         Shape box = null;
         if (xQ1 != null && xQ3 != null && xMax != null && xMin != null) {
@@ -663,35 +668,89 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
             g2.draw(box);
         }
 
-        // draw mean - SPECIAL AIMS REQUIREMENT...
+        //set paint
         g2.setPaint(this.artifactPaint);
-        double aRadius;                 // average radius
-        if (this.meanVisible) {
-            Number xMean = value.getMean();
-            if (xMean != null) {
-                double xxMean = rangeAxis.valueToJava2D(xMean.doubleValue(),
-                        dataArea, location);
-                aRadius = boxWidth / 4;
-                // here we check that the average marker will in fact be
-                // visible before drawing it...
-                if ((xxMean > (dataArea.getMinX() - aRadius))
-                        && (xxMean < (dataArea.getMaxX() + aRadius))) {
-                    Ellipse2D.Double avgEllipse = new Ellipse2D.Double(xxMean
-                            - aRadius, yyBox + aRadius, aRadius * 2, aRadius * 2);
-                    g2.fill(avgEllipse);
-                    g2.draw(avgEllipse);
-                }
+        
+        //draw 10th rank
+        double aRadius = boxWidth / 2;
+        Number tenRank = value.getTenRank();
+        if (tenRank != null) {
+            xxMean = rangeAxis.valueToJava2D(tenRank.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((xxMean > (dataArea.getMinX() - aRadius))
+                    && (xxMean < (dataArea.getMaxX() + aRadius))) {
+                Ellipse2D.Double avgEllipse = new Ellipse2D.Double(xxMean
+                        - (aRadius / 2), yyBox + (aRadius / 2), aRadius * 2, aRadius * 2);
+                g2.fill(avgEllipse);
+                g2.draw(avgEllipse);
             }
         }
-
-        // draw median...
-        if (this.medianVisible) {
-            Number xMedian = value.getMedian();
-            if (xMedian != null) {
-                double xxMedian = rangeAxis.valueToJava2D(xMedian.doubleValue(),
-                        dataArea, location);
-                g2.draw(new Line2D.Double(xxMedian, yyBox + boxWidth, xxMedian,
-                        yyBox));
+        
+        //draw twentyFiveRank
+        Number twentyFiveRank = value.getTwentyFiveRank();
+        if (twentyFiveRank != null) {
+            double xxMedian = rangeAxis.valueToJava2D(twentyFiveRank.doubleValue(),
+                    dataArea, location);
+            g2.draw(new Line2D.Double(xxMedian, yyBox + boxWidth, xxMedian,
+                    yyBox));
+        }
+        
+        // draw one percent
+        Number onePercent = value.getOnePercentile();
+        if (onePercent != null) {
+            xxMean = rangeAxis.valueToJava2D(onePercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((xxMean > (dataArea.getMinX() - aRadius))
+                    && (xxMean < (dataArea.getMaxX() + aRadius))) {
+                Rectangle2D.Double avgRectangle = new Rectangle2D.Double(
+                		xxMean - (aRadius / 2), yyBox + (aRadius / 2), aRadius * 2,
+                        aRadius * 2);
+                g2.fill(avgRectangle);
+                g2.draw(avgRectangle);
+            }
+        }
+        
+        // draw five percent
+        Number fivePercent = value.getFivePercentile();
+        if (fivePercent != null) {
+            xxMean = rangeAxis.valueToJava2D(fivePercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((xxMean > (dataArea.getMinX() - aRadius))
+                    && (xxMean < (dataArea.getMaxX() + aRadius))) {
+            	double height = aRadius * 2 * SQRT2;
+            	double startX = xxMean - (aRadius / 2);
+            	double startY = yyBox + (aRadius / 2) - ((height / 2) - (aRadius / 2));
+            	Shape avgDiamond = ShapeCreator.createDiamond(height, height);
+                AffineTransform transform = new AffineTransform();
+                transform.translate(startX, startY);
+                avgDiamond = transform.createTransformedShape(avgDiamond);
+            	
+                g2.fill(avgDiamond);
+                g2.draw(avgDiamond);
+            }
+        }
+        
+        // draw ten percent
+        Number tenPercent = value.getTenPercentile();
+        if (tenPercent != null) {
+            xxMean = rangeAxis.valueToJava2D(tenPercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((xxMean > (dataArea.getMinX() - aRadius))
+                    && (xxMean < (dataArea.getMaxX() + aRadius))) {
+                Shape avgCross = ShapeCreator.createDiagonalCross(aRadius, aRadius / 4);
+                AffineTransform transform = new AffineTransform();
+                transform.translate(xxMean - (aRadius / 2), yyBox + aRadius);
+                avgCross = transform.createTransformedShape(avgCross);
+                g2.fill(avgCross);
+                g2.draw(avgCross);
             }
         }
 
@@ -776,14 +835,14 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
         Stroke s = getItemStroke(row, column);
         g2.setStroke(s);
 
-        double aRadius = 0;                 // average radius
+        double aRadius = boxWidth / 4;                 // average radius
 
         RectangleEdge location = plot.getRangeAxisEdge();
 
         Number yQ1 = value.getQ1();
         Number yQ3 = value.getQ3();
-        Number yMax = value.getMaxRegularValue();
-        Number yMin = value.getMinRegularValue();
+        Number yMax = value.getMaxOutlier();
+        Number yMin = value.getMinOutlier();
         
         
         Shape box = null;
@@ -852,37 +911,89 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
         }
 
         g2.setPaint(this.artifactPaint);
-
-        // draw mean - SPECIAL AIMS REQUIREMENT...
-        if (this.meanVisible) {
-            Number yMean = value.getMean();
-            if (yMean != null) {
-                yyAverage = rangeAxis.valueToJava2D(yMean.doubleValue(),
-                        dataArea, location);
-                aRadius = boxWidth / 4;
-                // here we check that the average marker will in fact be
-                // visible before drawing it...
-                if ((yyAverage > (dataArea.getMinY() - aRadius))
-                        && (yyAverage < (dataArea.getMaxY() + aRadius))) {
-                    Ellipse2D.Double avgEllipse = new Ellipse2D.Double(
-                    		xxBox + aRadius, yyAverage - aRadius, aRadius * 2,
-                            aRadius * 2);
-                    g2.fill(avgEllipse);
-                    g2.draw(avgEllipse);
-                }
+        // draw ten rank
+        Number tenRank = value.getTenRank();
+        if (tenRank != null) {
+            yyAverage = rangeAxis.valueToJava2D(tenRank.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((yyAverage > (dataArea.getMinY() - aRadius))
+                    && (yyAverage < (dataArea.getMaxY() + aRadius))) {
+                Ellipse2D.Double avgEllipse = new Ellipse2D.Double(
+                		xxBox + aRadius, yyAverage - aRadius, aRadius * 2,
+                        aRadius * 2);
+                g2.fill(avgEllipse);
+                g2.draw(avgEllipse);
             }
         }
 
-        // draw median...
-        if (this.medianVisible) {
-            Number yMedian = value.getMedian();
-            if (yMedian != null) {
-                double yyMedian = rangeAxis.valueToJava2D(
-                        yMedian.doubleValue(), dataArea, location);
-                g2.draw(new Line2D.Double(xxBox, yyMedian, 
-                        xxBox + boxWidth, yyMedian));
+        // draw twenty five rank
+        Number twentyFiveRank = value.getTwentyFiveRank();
+        if (twentyFiveRank != null) {
+            double yyMedian = rangeAxis.valueToJava2D(
+                    twentyFiveRank.doubleValue(), dataArea, location);
+            g2.draw(new Line2D.Double(xxBox, yyMedian, 
+                    xxBox + boxWidth, yyMedian));
+        }
+        
+        // draw one percent
+        Number onePercent = value.getOnePercentile();
+        if (onePercent != null) {
+            yyAverage = rangeAxis.valueToJava2D(onePercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((yyAverage > (dataArea.getMinY() - aRadius))
+                    && (yyAverage < (dataArea.getMaxY() + aRadius))) {
+                Rectangle2D.Double avgRectangle = new Rectangle2D.Double(
+                		xxBox + aRadius, yyAverage - aRadius, aRadius * 2,
+                        aRadius * 2);
+                g2.fill(avgRectangle);
+                g2.draw(avgRectangle);
             }
         }
+        
+        // draw five percent
+        Number fivePercent = value.getFivePercentile();
+        if (fivePercent != null) {
+            yyAverage = rangeAxis.valueToJava2D(fivePercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((yyAverage > (dataArea.getMinY() - aRadius))
+                    && (yyAverage < (dataArea.getMaxY() + aRadius))) {
+            	double height = aRadius * 2 * SQRT2;
+            	double startX = xxBox + aRadius - ((height / 2) - aRadius);
+            	double startY = yyAverage - aRadius;
+            	Shape avgDiamond = ShapeCreator.createDiamond(height, height);
+                AffineTransform transform = new AffineTransform();
+                transform.translate(startX, startY);
+                avgDiamond = transform.createTransformedShape(avgDiamond);
+            	
+                g2.fill(avgDiamond);
+                g2.draw(avgDiamond);
+            }
+        }
+        
+        // draw ten percent
+        Number tenPercent = value.getTenPercentile();
+        if (tenPercent != null) {
+            yyAverage = rangeAxis.valueToJava2D(tenPercent.doubleValue(),
+                    dataArea, location);
+            // here we check that the average marker will in fact be
+            // visible before drawing it...
+            if ((yyAverage > (dataArea.getMinY() - aRadius))
+                    && (yyAverage < (dataArea.getMaxY() + aRadius))) {
+                Shape avgCross = ShapeCreator.createDiagonalCross(aRadius, aRadius / 4);
+                AffineTransform transform = new AffineTransform();
+                transform.translate(xxBox + (aRadius * 2), yyAverage - aRadius);
+                avgCross = transform.createTransformedShape(avgCross);
+                g2.fill(avgCross);
+                g2.draw(avgCross);
+            }
+        }
+        
         
         // collect entity and tool tip information...
         if (state.getInfo() != null && box != null) {
@@ -1027,8 +1138,5 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
         stream.defaultReadObject();
         this.artifactPaint = SerialUtils.readPaint(stream);
     }
-
-    private double gaussian(double u) {
-		return (Math.exp(((-u * u)/2.0)))/(Math.sqrt(2 * Math.PI));
-	}
+	
 }
