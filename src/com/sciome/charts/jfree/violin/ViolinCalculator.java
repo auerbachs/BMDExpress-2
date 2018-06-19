@@ -32,8 +32,8 @@ public class ViolinCalculator {
      * @return A box-and-whisker item.
      */
     public static ViolinItem calculateViolinStatistics (
-                                        List values) {
-        return calculateViolinStatistics(values, true);
+                                        List values, Double bandwidth) {
+        return calculateViolinStatistics(values, bandwidth, true);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ViolinCalculator {
      * @since 1.0.3
      */
     public static ViolinItem calculateViolinStatistics(
-            List values, boolean stripNullAndNaNItems) {
+            List values, Double bandwidth, boolean stripNullAndNaNItems) {
 
         Args.nullNotPermitted(values, "values");
 
@@ -141,8 +141,10 @@ public class ViolinCalculator {
         	if(data[i] > max)
         		max = data[i];
         }
-        double bandwidth = 1.06 * std.evaluate(data) * Math.pow(data.length, (-1/5));
-		bandwidth /= 10;
+        if(bandwidth == null) {
+	        bandwidth = 1.06 * std.evaluate(data) * Math.pow(data.length, (-1/5));
+			bandwidth /= 10;
+        }
 		
 		for(int i = 1; i <= NUM_MAX_VALUES; i++) {
 			double x = i * (max/(double)NUM_MAX_VALUES);

@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.jfree.chart.JFreeChart;
@@ -37,18 +37,40 @@ import com.sciome.charts.model.SciomeSeries;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.util.Callback;
 
 public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>> {
 	private static final int		MAX_NODES_SHOWN	= 5;
 	
 	private JFreeChart chart;
 	private SlidingCategoryDataset	slidingDataset;
+	private Double bandwidth = null;
+	private ChartKey key;
 	
 	public SciomeViolinPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
 			SciomeChartListener chartListener) {
 		super(title, chartDataPacks, new ChartKey[] {key}, true, false, chartListener);
+		this.key = key;
+		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e)
+			{
+				showConfiguration();
+			}
+		});
 	}
 
 	@Override
@@ -63,9 +85,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 
 	@Override
 	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration) {
-		ChartKey key = keys[0];
-		
-		ViolinCategoryDataset dataset = new ViolinCategoryDataset();
+		ViolinCategoryDataset dataset = new ViolinCategoryDataset(bandwidth);
 
 		for (SciomeSeries<String, List<Double>> series : getSeriesData())
 		{
@@ -210,5 +230,63 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 			}
 		}
 		((CategoryPlot)chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
+	}
+	
+	private void showConfiguration()
+	{
+		Dialog<Boolean> dialog = new Dialog<>();
+		dialog.setTitle("Chart Configuration");
+		dialog.setResizable(true);
+		dialog.initOwner(this.getScene().getWindow());
+		dialog.initModality(Modality.WINDOW_MODAL);
+		dialog.setResizable(false);
+		TextField bandwidthTF = new TextField();
+		bandwidthTF.setMaxWidth(100.0);
+		if(bandwidth != null)
+			bandwidthTF.setText(bandwidth.toString());
+
+		VBox vb = new VBox();
+		vb.setSpacing(20.0);
+		HBox hb1 = new HBox();
+		hb1.setAlignment(Pos.CENTER_LEFT);
+		hb1.setSpacing(10.0);
+
+		HBox hb2 = new HBox();
+		hb2.setAlignment(Pos.CENTER_LEFT);
+		hb2.setSpacing(10.0);
+		hb1.getChildren().addAll(new Label("Bandwidth"), bandwidthTF);
+		vb.getChildren().addAll(hb1);
+
+		dialog.getDialogPane().setContent(vb);
+
+		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+		dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+		dialog.setResultConverter(new Callback<ButtonType, Boolean>() {
+			@Override
+			public Boolean call(ButtonType b)
+			{
+
+				if (b == buttonTypeOk)
+				{
+					bandwidth = Double.valueOf(bandwidthTF.getText());
+					convertChartDataPacksToSciomeSeries(new ChartKey[] {key}, getChartDataPacks());
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		dialog.getDialogPane().setPrefSize(400, 400);
+		dialog.getDialogPane().autosize();
+		Optional<Boolean> value = dialog.showAndWait();
+
+		if (value.isPresent())
+		{
+			redrawCharts(getChartDataPacks());
+		}
 	}
 }

@@ -39,11 +39,13 @@ implements BoxAndWhiskerCategoryDataset, RangeInfo, PublicCloneable {
      * The column index for the cell that the maximum range value comes from.
      */
     private int maximumRangeValueColumn;
+    
+    private Double bandwidth;
 
     /**
      * Creates a new dataset.
      */
-    public ViolinCategoryDataset() {
+    public ViolinCategoryDataset(Double bandwidth) {
         this.data = new KeyedObjects2D();
         this.minimumRangeValue = Double.NaN;
         this.minimumRangeValueRow = -1;
@@ -51,6 +53,7 @@ implements BoxAndWhiskerCategoryDataset, RangeInfo, PublicCloneable {
         this.maximumRangeValue = Double.NaN;
         this.maximumRangeValueRow = -1;
         this.maximumRangeValueColumn = -1;
+        this.bandwidth = bandwidth;
     }
 
     /**
@@ -66,7 +69,7 @@ implements BoxAndWhiskerCategoryDataset, RangeInfo, PublicCloneable {
      */
     public void add(List list, Comparable rowKey, Comparable columnKey) {
         ViolinItem item = ViolinCalculator
-                .calculateViolinStatistics(list);
+                .calculateViolinStatistics(list, bandwidth);
         add(item, rowKey, columnKey);
     }
 
