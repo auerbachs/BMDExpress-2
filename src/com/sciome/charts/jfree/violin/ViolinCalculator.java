@@ -120,15 +120,15 @@ public class ViolinCalculator {
 
         
         int size = vlist.size();
-        Number onePercentile = (Number)vlist.get((int)(size - Math.ceil(.01 * size)));
-        Number fivePercentile = (Number)vlist.get((int)(size - Math.ceil(.05 * size)));
-        Number tenPercentile = (Number)vlist.get((int)(size - Math.ceil(.10 * size)));
+        Number onePercentile = (Number)vlist.get((int)(Math.ceil(.01 * size)));
+        Number fivePercentile = (Number)vlist.get((int)(Math.ceil(.05 * size)));
+        Number tenPercentile = (Number)vlist.get((int)(Math.ceil(.10 * size)));
         Number tenRank = null;
         Number twentyFiveRank = null;
         if(size > 10)
-        	tenRank = (Number)vlist.get(size - 10);
+        	tenRank = (Number)vlist.get(9);
         if(size > 25)
-        	twentyFiveRank = (Number)vlist.get(size - 25);
+        	twentyFiveRank = (Number)vlist.get(24);
         
         //Calculate kernel density estimation
         HashMap<Number, Number> dist = new HashMap<Number, Number>();

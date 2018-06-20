@@ -217,12 +217,15 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		for(int i = 0; i < getSeriesData().size(); i++) {
 			int first = slidingDataset.getFirstCategoryIndex();
 			for(int j = 0; j < MAX_NODES_SHOWN; j++) {
-				ViolinItem item;
+				ViolinItem item = null;
 				try {
 					item = dataset.getItem(i, first + j);
 				} catch(Exception e) {
 					continue;
 				}
+				if(item == null)
+					continue;
+				
 				if(item.getMaxOutlier().doubleValue() > max)
 					max = item.getMaxOutlier().doubleValue();
 				if(item.getMinOutlier().doubleValue() < min)
