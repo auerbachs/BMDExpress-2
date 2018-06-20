@@ -57,6 +57,9 @@ public class HillFitThread extends Thread implements IFitThread
 		this.probeIndexGetter = probeIndexGetter;
 		this.tmpFolder = tmpFolder;
 
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
 		fHillFit = new FileHillFit(killTime, tmpFolder);
 	}
 
@@ -112,10 +115,8 @@ public class HillFitThread extends Thread implements IFitThread
 
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 
-				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
-								String.valueOf(Math.abs(id.hashCode())), "_hill.(d)");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance().getNextTempFile(
+						this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), "_hill.(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fHillFit.fitModel(id, inputParameters, doses, responses);
 

@@ -52,6 +52,9 @@ public class ExponentialFitThread extends Thread implements IFitThread
 		this.probeIndexGetter = probeIndexGetter;
 		this.expOption = option;
 		this.tmpFolder = tmpFolder;
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
 		fExponentialFit = new FileExponentialFit(option, killTime, tmpFolder);
 
 	}
@@ -110,10 +113,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 			try
 			{
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
-				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
-								String.valueOf(Math.abs(id.hashCode())), "_exponential.(d)");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance().getNextTempFile(
+						this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), "_exponential.(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fExponentialFit.fitModel(id, inputParameters, doses, responses);
 
