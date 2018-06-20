@@ -36,9 +36,10 @@ public class PowerFitThread extends Thread implements IFitThread
 	private IModelProgressUpdater	progressUpdater;
 	private IProbeIndexGetter		probeIndexGetter;
 	private boolean					cancel				= false;
+	private String					tmpFolder;
 
 	public PowerFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime,
+			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime, String tmpFolder,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -48,8 +49,12 @@ public class PowerFitThread extends Thread implements IFitThread
 		this.numThread = numThread;
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
+		this.tmpFolder = tmpFolder;
 
-		fPowerFit = new FilePowerFit(killTime);
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
+		fPowerFit = new FilePowerFit(killTime, tmpFolder);
 
 	}
 
@@ -107,10 +112,8 @@ public class PowerFitThread extends Thread implements IFitThread
 			try
 			{
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
-				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
-								String.valueOf(Math.abs(id.hashCode())), ".(d)");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
+						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fPowerFit.fitModel(id, inputParameters, doses, responses);
 

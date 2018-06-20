@@ -24,23 +24,24 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 	@Override
 	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
-			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, String tmpFolder,
 			IBMDSToolProgress progressUpdater)
 	{
 		inputParameters.setObservations(
 				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
 		bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
 				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
-				modelSelectionParameters, modelsToRun, progressUpdater, processableData);
+				modelSelectionParameters, modelsToRun, progressUpdater, processableData, tmpFolder);
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 		if (bMDResults == null)
 			return null;
-		
-		DoseResponseExperiment doseResponseExperiment = processableData.getProcessableDoseResponseExperiment();
+
+		DoseResponseExperiment doseResponseExperiment = processableData
+				.getProcessableDoseResponseExperiment();
 		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
-		
+
 		List<ProbeResponse> responses = processableData.getProcessableProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
@@ -56,19 +57,20 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		{
 			doseVector.add(treatments.get(i).getDose());
 		}
-		
-		//Calculate and set wAUC values
-		float currBMR = (float)inputParameters.getBmrLevel();
+
+		// Calculate and set wAUC values
+		float currBMR = (float) inputParameters.getBmrLevel();
 		List<Float> wAUCList = new ArrayList<Float>();
-		for(int i = 0; i < responses.size(); i++) {
+		for (int i = 0; i < responses.size(); i++)
+		{
 			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), currBMR));
 		}
 		bMDResults.setwAUC(wAUCList);
-		
-		//Calculate and set log 2 wAUC values
+
+		// Calculate and set log 2 wAUC values
 		List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
 		bMDResults.setLogwAUC(logwAUCList);
-		
+
 		return bMDResults;
 	}
 

@@ -42,8 +42,10 @@ public class PolyFitThread extends Thread implements IFitThread
 
 	private final double			DEFAULTDOUBLE		= -9999;
 
+	private String					tmpFolder;
+
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
-			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime,
+			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -54,8 +56,10 @@ public class PolyFitThread extends Thread implements IFitThread
 		this.numThreads = numThreads;
 		this.polyResults = polyResults;
 		this.probeIndexGetter = probeIndexGetter;
-
-		fPolyFit = new FilePolyFit(killTime);
+		this.tmpFolder = tmpFolder;
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		fPolyFit = new FilePolyFit(killTime, tmpFolder);
 
 	}
 
@@ -102,8 +106,7 @@ public class PolyFitThread extends Thread implements IFitThread
 				double direction = 0;
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
+						+ BMDExpressProperties.getInstance().getNextTempFile(this.tmpFolder,
 								String.valueOf(Math.abs(id.hashCode())),
 								"_poly" + inputParameters.getPolyDegree() + ".(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();

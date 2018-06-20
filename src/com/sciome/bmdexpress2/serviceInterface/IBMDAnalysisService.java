@@ -12,7 +12,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 public interface IBMDAnalysisService
 {
 	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
-			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, String tmpFolder,
 			IBMDSToolProgress progressUpdater);
 
 	public boolean cancel();

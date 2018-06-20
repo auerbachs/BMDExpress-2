@@ -40,11 +40,14 @@ public class FileExponentialFit extends FileFitBase
 			"Likelihoods of Interest", "Tests of Interest", " A1 ", " Test 1 ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
-	public FileExponentialFit(int option, int killTime)
+	public FileExponentialFit(int option, int killTime, String tmpFolder)
 	{
 		super(killTime);
 		this.exponentialEXE = BMDExpressProperties.getInstance().getExponentialEXE();
-		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		if (tmpFolder != null && !tmpFolder.equals(""))
+			this.dPath = tmpFolder;
+		else
+			this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 		this.expOption = option;
 	}
 

@@ -22,6 +22,8 @@ public class BMDSConfig
 
 	private Integer							numberOfThreads	= 1;
 
+	private String							tmpFolder;
+
 	public String getInputCategory()
 	{
 		return inputCategory;
@@ -100,6 +102,16 @@ public class BMDSConfig
 	public void setKillTime(Integer killTime)
 	{
 		this.killTime = killTime;
+	}
+
+	public String getTmpFolder()
+	{
+		return tmpFolder;
+	}
+
+	public void setTmpFolder(String f)
+	{
+		this.tmpFolder = f;
 	}
 
 }

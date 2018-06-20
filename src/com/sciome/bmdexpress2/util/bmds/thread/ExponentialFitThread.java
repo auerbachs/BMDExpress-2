@@ -37,10 +37,11 @@ public class ExponentialFitThread extends Thread implements IFitThread
 	private IProbeIndexGetter		probeIndexGetter;
 	private boolean					cancel				= false;
 	private int						expOption			= 0;
+	private String					tmpFolder;
 
 	public ExponentialFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> powerResults, int numThread, int instanceIndex, int option, int killTime,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
+			String tmpFolder, IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cdLatch;
@@ -50,7 +51,11 @@ public class ExponentialFitThread extends Thread implements IFitThread
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
 		this.expOption = option;
-		fExponentialFit = new FileExponentialFit(option, killTime);
+		this.tmpFolder = tmpFolder;
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
+		fExponentialFit = new FileExponentialFit(option, killTime, tmpFolder);
 
 	}
 
@@ -108,10 +113,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 			try
 			{
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
-				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
-								String.valueOf(Math.abs(id.hashCode())), "_exponential.(d)");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance().getNextTempFile(
+						this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), "_exponential.(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fExponentialFit.fitModel(id, inputParameters, doses, responses);
 

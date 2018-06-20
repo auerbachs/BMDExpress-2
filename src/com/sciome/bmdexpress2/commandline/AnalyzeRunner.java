@@ -485,7 +485,7 @@ public class AnalyzeRunner
 		for (IStatModelProcessable processableData : processables)
 		{
 			BMDResult result = new BMDAnalysisRunner().runBMDAnalysis(processableData,
-					modelSelectionParameters, modelsToRun, inputParameters);
+					modelSelectionParameters, modelsToRun, inputParameters, bmdsConfig.getTmpFolder());
 			if (bmdsConfig.getOutputName() != null)
 				result.setName(bmdsConfig.getOutputName());
 			else
@@ -523,7 +523,8 @@ public class AnalyzeRunner
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), String.valueOf(preFilterConfig.getpValueLoel()), 
+						String.valueOf(preFilterConfig.getFoldChange()),
+						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
 						project));
 			}
@@ -543,9 +544,9 @@ public class AnalyzeRunner
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
 						String.valueOf(preFilterConfig.getFoldChange()),
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
-						String.valueOf(preFilterConfig.getpValueLoel()), 
-						String.valueOf(preFilterConfig.getFoldChangeLoel()),
-						preFilterConfig.getOutputName(), project));
+						String.valueOf(preFilterConfig.getpValueLoel()),
+						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
+						project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)
@@ -565,7 +566,8 @@ public class AnalyzeRunner
 						((OriogenConfig) preFilterConfig).getMaxBootstraps(),
 						((OriogenConfig) preFilterConfig).getS0Adjustment(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()), String.valueOf(preFilterConfig.getpValueLoel()), 
+						String.valueOf(preFilterConfig.getFoldChange()),
+						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
 						project));
 			}

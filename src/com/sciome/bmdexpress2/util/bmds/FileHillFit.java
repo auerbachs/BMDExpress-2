@@ -37,11 +37,14 @@ public class FileHillFit extends FileFitBase
 			"Likelihoods of Interest", "Tests of Interest", "beta_", "fitted ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
-	public FileHillFit(int killTime)
+	public FileHillFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
 		this.hillEXE = BMDExpressProperties.getInstance().getHillEXE();
-		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		if (tmpFolder != null && !tmpFolder.equals(""))
+			this.dPath = tmpFolder;
+		else
+			this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 	}
 
 	public void setAdverseDirection(int i)

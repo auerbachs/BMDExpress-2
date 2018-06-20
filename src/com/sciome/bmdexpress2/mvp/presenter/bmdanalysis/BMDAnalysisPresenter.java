@@ -77,7 +77,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 					try
 					{
 						BMDResult bMDResults = getService().bmdAnalysis(processableData, inputParameters,
-								modelSelectionParameters, modelsToRun, me);
+								modelSelectionParameters, modelsToRun, null, me);
 
 						// post a the new result set to the event bus
 
@@ -129,7 +129,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 			modelsToRun.add(new HillModel());
 			bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
 					processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
-					modelSelectionParameters, modelsToRun, this, processableData);
+					modelSelectionParameters, modelsToRun, this, processableData, null);
 			((BMDResult) processableData).getAnalysisInfo().getNotes().add("Parameter Reselect");
 			bMDSTool.selectBestModels((BMDResult) processableData);
 

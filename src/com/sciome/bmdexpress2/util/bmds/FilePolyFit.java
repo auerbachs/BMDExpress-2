@@ -34,11 +34,14 @@ public class FilePolyFit extends FileFitBase
 			"Likelihoods of Interest", "Tests of Interest", "beta_", "fitted ", "BMD = ", "BMDL = ",
 			"BMDU = " };
 
-	public FilePolyFit(int killTime)
+	public FilePolyFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
 		this.polyEXE = BMDExpressProperties.getInstance().getPolyEXE();
-		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		if (tmpFolder != null && !tmpFolder.equals(""))
+			this.dPath = tmpFolder;
+		else
+			this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
 	}
 
 	@Override

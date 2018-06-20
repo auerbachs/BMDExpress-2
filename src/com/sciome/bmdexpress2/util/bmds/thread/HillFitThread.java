@@ -42,8 +42,10 @@ public class HillFitThread extends Thread implements IFitThread
 	private IModelProgressUpdater	progressUpdater;
 	private IProbeIndexGetter		probeIndexGetter;
 
+	private String					tmpFolder;
+
 	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime,
+			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -53,8 +55,12 @@ public class HillFitThread extends Thread implements IFitThread
 		this.numThreads = numThreads;
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
+		this.tmpFolder = tmpFolder;
 
-		fHillFit = new FileHillFit(killTime);
+		if (tmpFolder == null || tmpFolder.equals(""))
+			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
+		fHillFit = new FileHillFit(killTime, tmpFolder);
 	}
 
 	/*
@@ -109,10 +115,8 @@ public class HillFitThread extends Thread implements IFitThread
 
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 
-				id = String.valueOf(randInt) + "_"
-						+ BMDExpressProperties.getInstance().getNextTempFile(
-								BMDExpressConstants.getInstance().TEMP_FOLDER,
-								String.valueOf(Math.abs(id.hashCode())), "_hill.(d)");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance().getNextTempFile(
+						this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), "_hill.(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
 				double[] results = fHillFit.fitModel(id, inputParameters, doses, responses);
 
