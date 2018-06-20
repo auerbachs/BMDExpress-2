@@ -114,8 +114,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		if (tmpFolder != null && !tmpFolder.equals(""))
 		{
 			String processName = ManagementFactory.getRuntimeMXBean().getName();
-			processName.replace(' ', '_');
-			processName.replace('@', '-');
+			processName = processName.replace(' ', '_');
+			processName = processName.replace('@', '-');
 
 			String userName = System.getProperty("user.name");
 			if (userName != null)
