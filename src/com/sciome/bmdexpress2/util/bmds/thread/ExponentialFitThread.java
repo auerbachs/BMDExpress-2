@@ -37,10 +37,11 @@ public class ExponentialFitThread extends Thread implements IFitThread
 	private IProbeIndexGetter		probeIndexGetter;
 	private boolean					cancel				= false;
 	private int						expOption			= 0;
+	private String					tmpFolder;
 
 	public ExponentialFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> powerResults, int numThread, int instanceIndex, int option, int killTime,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
+			String tmpFolder, IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cdLatch;
@@ -50,7 +51,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
 		this.expOption = option;
-		fExponentialFit = new FileExponentialFit(option, killTime);
+		this.tmpFolder = tmpFolder;
+		fExponentialFit = new FileExponentialFit(option, killTime, tmpFolder);
 
 	}
 

@@ -18,11 +18,11 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 
 	public BMDResult runBMDAnalysis(IStatModelProcessable processableData,
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
-			ModelInputParameters inputParameters)
+			ModelInputParameters inputParameters, String tmpFolder)
 	{
 		BMDAnalysisService service = new BMDAnalysisService();
 		return service.bmdAnalysis(processableData, inputParameters, modelSelectionParameters, modelsToRun,
-				this);
+				tmpFolder, this);
 	}
 
 	@Override

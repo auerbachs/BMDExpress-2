@@ -42,8 +42,10 @@ public class PolyFitThread extends Thread implements IFitThread
 
 	private final double			DEFAULTDOUBLE		= -9999;
 
+	private String					tmpFolder;
+
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
-			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime,
+			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -54,8 +56,8 @@ public class PolyFitThread extends Thread implements IFitThread
 		this.numThreads = numThreads;
 		this.polyResults = polyResults;
 		this.probeIndexGetter = probeIndexGetter;
-
-		fPolyFit = new FilePolyFit(killTime);
+		this.tmpFolder = tmpFolder;
+		fPolyFit = new FilePolyFit(killTime, tmpFolder);
 
 	}
 

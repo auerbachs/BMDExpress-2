@@ -35,11 +35,15 @@ public class FilePowerFit extends FileFitBase
 	private final String[]	FLAGS		= { "Parameter Estimates", "Likelihoods of Interest",
 			"Tests of Interest", "control", "slope", "power", "fitted ", "BMD = ", "BMDL = ", "BMDU = " };
 
-	public FilePowerFit(int killTime)
+	public FilePowerFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
 		this.powerEXE = BMDExpressProperties.getInstance().getPowerEXE();
-		this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		if (tmpFolder != null && !tmpFolder.equals(""))
+			this.dPath = tmpFolder;
+		else
+			this.dPath = BMDExpressConstants.getInstance().TEMP_FOLDER;
+
 	}
 
 	public void setAdverseDirection(int i)

@@ -17,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +95,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private AnalysisInfo				analysisInfo;
 	private DosesStat					dosesStat;
 	private List<Integer>				doseResponseQueue	= new ArrayList<>();
+	private String						tmpFolder			= null;
 
 	/**
 	 * Class constructor
@@ -101,13 +103,33 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	public BMDSTool(List<ProbeResponse> probeResponses, List<Treatment> treatments,
 			ModelInputParameters inputParameters, ModelSelectionParameters modelSelectionParameters,
 			List<StatModel> modelsToRun, IBMDSToolProgress progressReciever,
-			IStatModelProcessable processableData)
+			IStatModelProcessable processableData, String tmpFolder)
 	{
 		this.progressReciever = progressReciever;
 		this.probeResponses = probeResponses;
 		this.inputParameters = inputParameters;
 		this.modelSelectionParameters = modelSelectionParameters;
 		this.modelsToRun = modelsToRun;
+
+		if (tmpFolder != null && !tmpFolder.equals(""))
+		{
+			String processName = ManagementFactory.getRuntimeMXBean().getName();
+			processName.replace(' ', '_');
+			processName.replace('@', '-');
+
+			String userName = System.getProperty("user.name");
+			if (userName != null)
+				processName = userName + "-" + processName;
+
+			// in the tmp folder, make a special folder based on process id/host name and user name
+			tmpFolder += File.separator + processName;
+			File tmpFolderFile = new File(tmpFolder);
+			if (!tmpFolderFile.exists())
+				tmpFolderFile.mkdirs();
+
+		}
+		this.tmpFolder = tmpFolder;
+
 		bmdResults.setName(processableData.toString() + "_BMD");
 		// create an array of doubles for the doses for the old code to user.
 		doses = new float[treatments.size()];
@@ -467,7 +489,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			HillFitThread hillThread = new HillFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this);
 			hillThread.setFlag(modelSelectionParameters.isFlagHillModel(), flagDose);
 			hillThread.setDoses(doses);
 			hillThread.setObjects(inputParameters);
@@ -511,7 +533,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 
 			PowerFitThread powerThread = new PowerFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this);
 
 			powerThread.setDoses(doses);
 			powerThread.setObjects(inputParameters);
@@ -558,7 +580,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			inputParameters.setPolyDegree(degree);
 			PolyFitThread polyThread = new PolyFitThread(cDownLatch, degree, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), this, this);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this);
 			polyThread.setDoses(doses);
 			polyThread.setObjects(degree, inputParameters);
 			polyThread.start();
@@ -603,7 +625,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			ExponentialFitThread expThread = new ExponentialFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, option, inputParameters.getKillTime(), this, this);
+					inputParameters.getNumThreads(), i, option, inputParameters.getKillTime(), tmpFolder,
+					this, this);
 			expThread.setDoses(doses);
 			expThread.setObjects(inputParameters);
 			expThread.start();

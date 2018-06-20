@@ -19,14 +19,14 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 	@Override
 	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
-			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun,
+			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, String tmpFolder,
 			IBMDSToolProgress progressUpdater)
 	{
 		inputParameters.setObservations(
 				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
 		bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
 				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
-				modelSelectionParameters, modelsToRun, progressUpdater, processableData);
+				modelSelectionParameters, modelsToRun, progressUpdater, processableData, tmpFolder);
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 		if (bMDResults == null)
 			return null;

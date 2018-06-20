@@ -36,9 +36,10 @@ public class PowerFitThread extends Thread implements IFitThread
 	private IModelProgressUpdater	progressUpdater;
 	private IProbeIndexGetter		probeIndexGetter;
 	private boolean					cancel				= false;
+	private String					tmpFolder;
 
 	public PowerFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime,
+			List<StatResult> powerResults, int numThread, int instanceIndex, int killTime, String tmpFolder,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
@@ -48,8 +49,9 @@ public class PowerFitThread extends Thread implements IFitThread
 		this.numThread = numThread;
 		this.instanceIndex = instanceIndex;
 		this.probeIndexGetter = probeIndexGetter;
+		this.tmpFolder = tmpFolder;
 
-		fPowerFit = new FilePowerFit(killTime);
+		fPowerFit = new FilePowerFit(killTime, tmpFolder);
 
 	}
 

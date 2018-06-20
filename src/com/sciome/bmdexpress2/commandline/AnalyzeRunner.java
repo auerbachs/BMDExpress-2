@@ -485,7 +485,7 @@ public class AnalyzeRunner
 		for (IStatModelProcessable processableData : processables)
 		{
 			BMDResult result = new BMDAnalysisRunner().runBMDAnalysis(processableData,
-					modelSelectionParameters, modelsToRun, inputParameters);
+					modelSelectionParameters, modelsToRun, inputParameters, bmdsConfig.getTmpFolder());
 			if (bmdsConfig.getOutputName() != null)
 				result.setName(bmdsConfig.getOutputName());
 			else
