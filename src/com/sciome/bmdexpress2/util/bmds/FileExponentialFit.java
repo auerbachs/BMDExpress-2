@@ -43,7 +43,7 @@ public class FileExponentialFit extends FileFitBase
 	public FileExponentialFit(int option, int killTime, String tmpFolder)
 	{
 		super(killTime);
-		this.exponentialEXE = BMDExpressProperties.getInstance().getExponentialEXE();
+		this.exponentialEXE = BMDExpressProperties.getInstance().getExponentialEXE(tmpFolder);
 		if (tmpFolder != null && !tmpFolder.equals(""))
 			this.dPath = tmpFolder;
 		else

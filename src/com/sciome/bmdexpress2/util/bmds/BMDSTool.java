@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.io.FileUtils;
+
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -96,6 +98,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private DosesStat					dosesStat;
 	private List<Integer>				doseResponseQueue	= new ArrayList<>();
 	private String						tmpFolder			= null;
+	private boolean						isCustomTmpFolder	= false;
 
 	/**
 	 * Class constructor
@@ -113,6 +116,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 		if (tmpFolder != null && !tmpFolder.equals(""))
 		{
+			isCustomTmpFolder = true;
 			String processName = ManagementFactory.getRuntimeMXBean().getName();
 			processName = processName.replace(' ', '_');
 			processName = processName.replace('@', '-');
@@ -126,6 +130,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			File tmpFolderFile = new File(tmpFolder);
 			if (!tmpFolderFile.exists())
 				tmpFolderFile.mkdirs();
+
+			// now copy over all the lib stuff to the tmp folder to
+			// run executables from local space.
+			BMDExpressProperties.getInstance().copyLibToTmpFoler(tmpFolderFile + File.separator + "lib/");
 
 		}
 		this.tmpFolder = tmpFolder;
@@ -1443,6 +1451,19 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 		fitThreads.clear();
 
+	}
+
+	public void cleanUp()
+	{
+		if (isCustomTmpFolder)
+			try
+			{
+				FileUtils.deleteDirectory(new File(this.tmpFolder));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 	}
 
 	@Override

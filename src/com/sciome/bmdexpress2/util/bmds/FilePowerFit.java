@@ -38,7 +38,7 @@ public class FilePowerFit extends FileFitBase
 	public FilePowerFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
-		this.powerEXE = BMDExpressProperties.getInstance().getPowerEXE();
+		this.powerEXE = BMDExpressProperties.getInstance().getPowerEXE(tmpFolder);
 		if (tmpFolder != null && !tmpFolder.equals(""))
 			this.dPath = tmpFolder;
 		else

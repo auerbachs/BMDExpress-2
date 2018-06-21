@@ -40,7 +40,7 @@ public class FileHillFit extends FileFitBase
 	public FileHillFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
-		this.hillEXE = BMDExpressProperties.getInstance().getHillEXE();
+		this.hillEXE = BMDExpressProperties.getInstance().getHillEXE(tmpFolder);
 		if (tmpFolder != null && !tmpFolder.equals(""))
 			this.dPath = tmpFolder;
 		else
