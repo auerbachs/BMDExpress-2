@@ -108,6 +108,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			List<StatModel> modelsToRun, IBMDSToolProgress progressReciever,
 			IStatModelProcessable processableData, String tmpFolder)
 	{
+
 		this.progressReciever = progressReciever;
 		this.probeResponses = probeResponses;
 		this.inputParameters = inputParameters;
