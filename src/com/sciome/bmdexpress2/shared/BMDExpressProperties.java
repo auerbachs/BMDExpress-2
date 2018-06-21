@@ -1255,6 +1255,12 @@ public class BMDExpressProperties
 			FileUtils.copyDirectory(
 					new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib"),
 					new File(destination));
+
+			File dir = new File(destination);
+			File[] directoryListing = dir.listFiles();
+			if (directoryListing != null)
+				for (File child : directoryListing)
+					child.setExecutable(true);
 		}
 		catch (IOException e)
 		{
