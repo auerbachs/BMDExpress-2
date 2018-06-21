@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -374,14 +375,10 @@ public class BMDExpressProperties
 		String hillEXEName = "hill.exe";
 		String expEXEName = "exponential.exe";
 
-		powerEXE = BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
-				+ powerEXEName;
-		polyEXE = BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
-				+ polyEXEName;
-		hillEXE = BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
-				+ hillEXEName;
-		exponentialEXE = BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib"
-				+ File.separator + expEXEName;
+		powerEXE = powerEXEName;
+		polyEXE = polyEXEName;
+		hillEXE = hillEXEName;
+		exponentialEXE = expEXEName;
 		checkOperatingSystem();
 
 		if (projectPath == null || projectPath.equals(""))
@@ -693,42 +690,54 @@ public class BMDExpressProperties
 
 	public String getPowerEXE()
 	{
-		return powerEXE;
-	}
-
-	public void setPowerEXE(String powerEXE)
-	{
-		this.powerEXE = powerEXE;
+		return BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
+				+ powerEXE;
 	}
 
 	public String getPolyEXE()
 	{
-		return polyEXE;
-	}
-
-	public void setPolyEXE(String polyEXE)
-	{
-		this.polyEXE = polyEXE;
+		return BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
+				+ polyEXE;
 	}
 
 	public String getHillEXE()
 	{
-		return hillEXE;
-	}
-
-	public void setHillEXE(String hillEXE)
-	{
-		this.hillEXE = hillEXE;
+		return BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
+				+ hillEXE;
 	}
 
 	public String getExponentialEXE()
 	{
-		return exponentialEXE;
+		return BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib" + File.separator
+				+ exponentialEXE;
 	}
 
-	public void setExponentialEXE(String exponentialEXE)
+	public String getPowerEXE(String basePath)
 	{
-		this.exponentialEXE = exponentialEXE;
+		if (basePath == null || basePath.equals(""))
+			basePath = BMDExpressConstants.getInstance().BMDBASEPATH;
+		return basePath + File.separator + "lib" + File.separator + powerEXE;
+	}
+
+	public String getPolyEXE(String basePath)
+	{
+		if (basePath == null || basePath.equals(""))
+			basePath = BMDExpressConstants.getInstance().BMDBASEPATH;
+		return basePath + File.separator + "lib" + File.separator + polyEXE;
+	}
+
+	public String getHillEXE(String basePath)
+	{
+		if (basePath == null || basePath.equals(""))
+			basePath = BMDExpressConstants.getInstance().BMDBASEPATH;
+		return basePath + File.separator + "lib" + File.separator + hillEXE;
+	}
+
+	public String getExponentialEXE(String basePath)
+	{
+		if (basePath == null || basePath.equals(""))
+			basePath = BMDExpressConstants.getInstance().BMDBASEPATH;
+		return basePath + File.separator + "lib" + File.separator + exponentialEXE;
 	}
 
 	public boolean isUseWS()
@@ -1237,6 +1246,21 @@ public class BMDExpressProperties
 	public void setIsConsole(boolean is)
 	{
 		isConsole = is;
+	}
+
+	public void copyLibToTmpFoler(String destination)
+	{
+		try
+		{
+			FileUtils.copyDirectory(
+					new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib"),
+					new File(destination));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
 	}
 
 }

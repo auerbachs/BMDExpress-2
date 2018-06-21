@@ -37,7 +37,7 @@ public class FilePolyFit extends FileFitBase
 	public FilePolyFit(int killTime, String tmpFolder)
 	{
 		super(killTime);
-		this.polyEXE = BMDExpressProperties.getInstance().getPolyEXE();
+		this.polyEXE = BMDExpressProperties.getInstance().getPolyEXE(tmpFolder);
 		if (tmpFolder != null && !tmpFolder.equals(""))
 			this.dPath = tmpFolder;
 		else

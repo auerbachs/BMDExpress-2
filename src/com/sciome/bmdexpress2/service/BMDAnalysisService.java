@@ -33,6 +33,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		bMDResults.setDoseResponseExperiment(processableData.getProcessableDoseResponseExperiment());
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
+
+		// clean up any leftovers from this process
+		bMDSTool.cleanUp();
 		return bMDResults;
 	}
 
