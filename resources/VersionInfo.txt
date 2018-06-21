@@ -10,7 +10,7 @@
 New Features on June 21, 2018
 </h3>
 <ul>
-<li>The command line now allows you to specify a folder where temporary files will be stored during the BMDS model execution process.  The same temporary folder will also be used to store a copy of the model executables.  This new feature enhances the ability for the software to perform very large scale analyses across multiple machines in a compute cluster environment.</li>
+<li>The command line version now allows you to specify a folder where temporary files will be stored during the BMDS model execution process.  The same temporary folder will also be used to store a copy of the model executables.  This new feature enhances the ability for the software to perform very large scale analyses across multiple machines in a compute cluster environment.</li>
 
 </ul>
 
