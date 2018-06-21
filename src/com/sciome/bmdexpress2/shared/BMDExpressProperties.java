@@ -478,10 +478,10 @@ public class BMDExpressProperties
 			this.isWindows = true;
 		}
 
-		polyVersion = getModelVersion(polyEXE);
-		powerVersion = getModelVersion(powerEXE);
-		hillVersion = getModelVersion(hillEXE);
-		exponentialVersion = getModelVersion(exponentialEXE);
+		polyVersion = getModelVersion(getPolyEXE());
+		powerVersion = getModelVersion(getPowerEXE());
+		hillVersion = getModelVersion(getHillEXE());
+		exponentialVersion = getModelVersion(getExponentialEXE());
 	}
 
 	public boolean isWindows()
