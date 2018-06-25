@@ -1,3 +1,4 @@
+
 package com.sciome.charts.jfree.violin;
 
 import java.awt.Color;
@@ -559,6 +560,9 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
 	         violinDataset = (ViolinCategoryDataset) dataset;
 	         value = violinDataset.getItem(row, column);
     	}
+    	
+    	if(value == null)
+    		return;
 
         double categoryEnd = domainAxis.getCategoryEnd(column,
                 getColumnCount(), dataArea, plot.getDomainAxisEdge());
