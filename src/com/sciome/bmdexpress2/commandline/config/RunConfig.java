@@ -18,6 +18,7 @@ public class RunConfig
 	private String						bm2FileName;
 
 	private String						jsonExportFileName;
+	private String						basePath;
 
 	private String						preprendToNames	= "";
 	private String						appendToNames	= "";
@@ -111,6 +112,16 @@ public class RunConfig
 	public void setOverwrite(Boolean overwrite)
 	{
 		this.overwrite = overwrite;
+	}
+
+	public String getBasePath()
+	{
+		return basePath;
+	}
+
+	public void setBasePath(String basePath)
+	{
+		this.basePath = basePath;
 	}
 
 }

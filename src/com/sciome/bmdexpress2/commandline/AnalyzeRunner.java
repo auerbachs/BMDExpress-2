@@ -38,6 +38,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.FileIO;
@@ -69,6 +70,15 @@ public class AnalyzeRunner
 
 		// deserialize the config file that was passed on commandline
 		RunConfig runConfig = getRunConfig(configFile);
+
+		// This little bit of code will set the base directory path.
+		// sometimes when running command line, you want to copy your base path
+		// to another node from home dir and use that so that many simultaneous
+		// running instances are not hitting the home dir at the same time.
+		if (runConfig.getBasePath() == null || runConfig.getBasePath().equals(""))
+			BMDExpressConstants.getInstance();
+		else
+			BMDExpressConstants.getInstance(runConfig.getBasePath());
 
 		// load the project if the file exists.
 		// if overwrite is set to true then don't open it, but rather start fresh
