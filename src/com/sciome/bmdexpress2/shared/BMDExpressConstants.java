@@ -1,9 +1,6 @@
 package com.sciome.bmdexpress2.shared;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class BMDExpressConstants
 {
@@ -72,7 +69,7 @@ public class BMDExpressConstants
 	protected BMDExpressConstants()
 	{
 
-		BMDBASEPATH = System.getProperty("user.home") + File.separator + getBaseDir();
+		BMDBASEPATH = System.getProperty("user.home") + File.separator + "bmdexpress2";
 		if (!new File(BMDBASEPATH).exists())
 		{
 			new File(BMDBASEPATH).mkdir();
@@ -109,24 +106,44 @@ public class BMDExpressConstants
 
 	}
 
-	private String getBaseDir()
+	protected BMDExpressConstants(String basePath)
 	{
-		Properties applicationProperties = new Properties();
-		InputStream in = this.getClass().getResourceAsStream("/application.properties");
-		try
-		{
-			applicationProperties.load(in);
-			String basedir = applicationProperties.getProperty("bmdexpress2.homedir");
-			if (basedir != null && basedir != "")
-				return basedir;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
 
+		BMDBASEPATH = basePath;
+		if (!new File(BMDBASEPATH).exists())
+		{
+			new File(BMDBASEPATH).mkdir();
+		}
+		TEMP_FOLDER = BMDBASEPATH + File.separator + "tmp" + File.separator;
+		if (!new File(TEMP_FOLDER).exists())
+		{
+			new File(TEMP_FOLDER).mkdir();
 		}
 
-		return "bmdexpress2";
+		BMDBASEPATH_LIB = BMDBASEPATH + File.separator + "lib";
+		if (!new File(BMDBASEPATH_LIB).exists())
+		{
+			new File(BMDBASEPATH_LIB).mkdir();
+		}
+
+		TITLE = "Automatic Annotation Update";
+		BASEDIR = "data";
+
+		ANNOTDIR = "annotations";
+		ARRAYDIR = "arrays";
+		GODIR = "go";
+		PATHWAYDIR = "pathway";
+
+		MICROARRAYGZ = "microarray.gz";
+		TAB = "\t";
+		NEWLINE = "\n";
+
+		// Gene Ontology update
+		GOFILENAME = "gotermlevel.gz";
+
+		// From ArrayInfo
+		ANNOTATION_BASE_PATH = BMDBASEPATH + File.separator + "data" + File.separator + "annotations";
+
 	}
 
 	public static BMDExpressConstants getInstance()
@@ -134,6 +151,15 @@ public class BMDExpressConstants
 		if (instance == null)
 		{
 			instance = new BMDExpressConstants();
+		}
+		return instance;
+	}
+
+	public static BMDExpressConstants getInstance(String basePath)
+	{
+		if (instance == null)
+		{
+			instance = new BMDExpressConstants(basePath);
 		}
 		return instance;
 	}

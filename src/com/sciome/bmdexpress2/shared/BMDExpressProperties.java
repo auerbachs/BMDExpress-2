@@ -1250,19 +1250,38 @@ public class BMDExpressProperties
 
 	public void copyLibToTmpFoler(String destination)
 	{
+
+		File dirInHome = new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib");
+		File[] homeDirListing = dirInHome.listFiles();
+
 		try
 		{
-			FileUtils.copyDirectory(
-					new File(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "lib"),
-					new File(destination));
-
-			File dir = new File(destination);
-			File[] directoryListing = dir.listFiles();
-			if (directoryListing != null)
-				for (File child : directoryListing)
-					child.setExecutable(true);
+			for (File child : homeDirListing)
+			{
+				int count = 10;
+				int tries = 0;
+				// try this 10 times before giving up
+				// when running many instances this can be a pain
+				while (tries < count)
+				{
+					try
+					{
+						File destFile = new File(destination + File.separator + child.getName());
+						FileUtils.copyFile(child, destFile);
+						destFile.setExecutable(true);
+						tries = count;
+					}
+					catch (Exception e)
+					{
+						tries++;
+						Thread.sleep(1000);
+					}
+				}
+			}
 		}
-		catch (IOException e)
+		catch (
+
+		Exception e)
 		{
 			e.printStackTrace();
 		}

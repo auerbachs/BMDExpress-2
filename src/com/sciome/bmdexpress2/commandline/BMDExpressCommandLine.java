@@ -48,7 +48,7 @@ public class BMDExpressCommandLine
 	public final static String	QUERY				= "query";
 	public final static String	EXPORT				= "export";
 	public final static String	DELETE				= "delete";
-	public final static String  VERSION				= "--version";
+	public final static String	VERSION				= "--version";
 
 	// Analysis Group names Current working directory
 	public final static String	EXPRESSION			= "expression";
@@ -75,7 +75,9 @@ public class BMDExpressCommandLine
 	private void run(String[] args)
 	{
 		CommandLineParser parser = new DefaultParser();
-		BMDExpressProperties.getInstance().setIsConsole(true);
+		// Do not invoke the BMDExpress Properties of BMDExpress Constants singlton in this block
+		// please do so in the individual commands. This is because analyze has the ability to override
+		// the base dir.
 		analyzeOptions
 				.addOption(Option.builder().longOpt(CONFIG_FILE).hasArg().argName("JSON").required().build());
 

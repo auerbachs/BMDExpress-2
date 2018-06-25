@@ -16,7 +16,7 @@ public class RunConfig
 	private List<CategoryConfig>		categoryAnalysisConfigs;
 
 	private String						bm2FileName;
-
+	private String						basePath;
 	private String						jsonExportFileName;
 
 	private String						preprendToNames	= "";
@@ -111,6 +111,16 @@ public class RunConfig
 	public void setOverwrite(Boolean overwrite)
 	{
 		this.overwrite = overwrite;
+	}
+
+	public String getBasePath()
+	{
+		return basePath;
+	}
+
+	public void setBasePath(String basePath)
+	{
+		this.basePath = basePath;
 	}
 
 }
