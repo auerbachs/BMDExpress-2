@@ -4,7 +4,16 @@
  BMDExpress 2.2
 </h1>
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on June 21, 2018</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on June 25, 2018</h2>
+
+<h3>
+New Features on June 25, 2018
+</h3>
+<ul>
+<li>The command line version now allows you to specify a folder for the base path.  The base path is by default stored in your home folder under "bmdexpress2."  By customizing the base path, the command line analysis can be distributed across multiple compute nodes while localizing disk access when running many instances in massive parallel.</li>
+
+</ul>
+
 
 <h3>
 New Features on June 21, 2018
