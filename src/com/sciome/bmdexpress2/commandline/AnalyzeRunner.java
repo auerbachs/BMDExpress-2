@@ -80,6 +80,8 @@ public class AnalyzeRunner
 		else
 			BMDExpressConstants.getInstance(runConfig.getBasePath());
 
+		BMDExpressProperties.getInstance().setIsConsole(true);
+
 		// load the project if the file exists.
 		// if overwrite is set to true then don't open it, but rather start fresh
 
