@@ -18,6 +18,7 @@ import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.DrawingSupplier;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.SlidingCategoryDataset;
@@ -52,17 +53,19 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
-public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>> {
+public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
+{
 	private static final int		MAX_NODES_SHOWN	= 5;
-	
-	private JFreeChart chart;
+
+	private JFreeChart				chart;
 	private SlidingCategoryDataset	slidingDataset;
-	private Double bandwidth = null;
-	private ChartKey key;
-	
+	private Double					bandwidth		= null;
+	private ChartKey				key;
+
 	public SciomeViolinPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
-			SciomeChartListener chartListener) {
-		super(title, chartDataPacks, new ChartKey[] {key}, true, false, chartListener);
+			SciomeChartListener chartListener)
+	{
+		super(title, chartDataPacks, new ChartKey[] { key }, true, false, chartListener);
 		this.key = key;
 		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -74,17 +77,20 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 	}
 
 	@Override
-	public void reactToChattingCharts() {
-		
+	public void reactToChattingCharts()
+	{
+
 	}
 
 	@Override
-	public void markData(Set<String> markings) {
-		
+	public void markData(Set<String> markings)
+	{
+
 	}
 
 	@Override
-	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration) {
+	protected Node generateChart(ChartKey[] keys, ChartConfiguration chartConfiguration)
+	{
 		ViolinCategoryDataset dataset = new ViolinCategoryDataset(bandwidth);
 
 		for (SciomeSeries<String, List<Double>> series : getSeriesData())
@@ -93,56 +99,64 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 			for (SciomeData<String, List<Double>> chartData : series.getData())
 			{
 				List value = chartData.getYValue();
-				if(value != null) {
+				if (value != null)
+				{
 					dataset.add(value, seriesName, chartData.getXValue());
 				}
 			}
 		}
-		
+
 		slidingDataset = new SlidingCategoryDataset(dataset, 0, MAX_NODES_SHOWN);
 		setSliders(dataset.getColumnCount());
-		
-		//Set axis
+
+		// Set axis
 		CategoryAxis xAxis = new CategoryAxis();
-		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(), key.toString());
+		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
+				key.toString());
 
 		ViolinRenderer renderer = new ViolinRenderer();
-		
+
 		// Set tooltip string
 		CategoryToolTipGenerator tooltipGenerator = new CategoryToolTipGenerator() {
 			@Override
-			public String generateToolTip(CategoryDataset dataset, int row, int column) {
+			public String generateToolTip(CategoryDataset dataset, int row, int column)
+			{
 				return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
 			}
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
 		renderer.setSeriesFillPaint(0, Color.white);
 		renderer.setDefaultOutlinePaint(Color.black);
-		
+
 		// Set plot parameters
 		CategoryPlot plot = new CategoryPlot(slidingDataset, xAxis, yAxis, renderer);
 		plot.setForegroundAlpha(0.8f);
 		plot.setRangePannable(false);
 		plot.setBackgroundPaint(Color.white);
-		
-		//Set default legend items
+
+		// Set default legend items
 		LegendItemCollection chartLegend = new LegendItemCollection();
 		Shape shape = new Rectangle(10, 10);
 		DrawingSupplier supplier = new DefaultDrawingSupplier();
-		for(int i = 0; i < getSeriesData().size(); i++)
-			chartLegend.add(new LegendItem(getSeriesData().get(i).getName(), null, null, null, shape, supplier.getNextPaint()));
-		
-	
-		chartLegend.add(new LegendItem("10th Ranked Gene BMD", null, null, null, new Ellipse2D.Double(0, 0, 10, 10), Color.black));
-		chartLegend.add(new LegendItem("25th Ranked Gene BMD", null, null, null, new Rectangle(10, 2), Color.black));
+		for (int i = 0; i < getSeriesData().size(); i++)
+			chartLegend.add(new LegendItem(getSeriesData().get(i).getName(), null, null, null, shape,
+					supplier.getNextPaint()));
+
+		chartLegend.add(new LegendItem("10th Ranked Gene BMD", null, null, null,
+				new Ellipse2D.Double(0, 0, 10, 10), Color.black));
+		chartLegend.add(
+				new LegendItem("25th Ranked Gene BMD", null, null, null, new Rectangle(10, 2), Color.black));
 		chartLegend.add(new LegendItem("1th % Gene BMD", null, null, null, shape, Color.black));
-		chartLegend.add(new LegendItem("5th % Gene BMD", null, null, null, ShapeCreator.createDiamond(10 * Math.sqrt(2), 10 * Math.sqrt(2)), Color.black));
-		chartLegend.add(new LegendItem("10th % Gene BMD", null, null, null, ShapeCreator.createDiagonalCross(5, 2), Color.black));
+		chartLegend.add(new LegendItem("5th % Gene BMD", null, null, null,
+				ShapeCreator.createDiamond(10 * Math.sqrt(2), 10 * Math.sqrt(2)), Color.black));
+		chartLegend.add(new LegendItem("10th % Gene BMD", null, null, null,
+				ShapeCreator.createDiagonalCross(5, 2), Color.black));
 		plot.setFixedLegendItems(chartLegend);
-		
+
 		// Create chart
 		chart = new JFreeChart(key.getKey() + " Violins", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 		chart.getPlot().setForegroundAlpha(.8f);
+		plot.setOrientation(PlotOrientation.HORIZONTAL);
 		setRange();
 
 		// Create Panel
@@ -152,24 +166,28 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 	}
 
 	@Override
-	protected boolean isXAxisDefineable() {
+	protected boolean isXAxisDefineable()
+	{
 		return false;
 	}
 
 	@Override
-	protected boolean isYAxisDefineable() {
+	protected boolean isYAxisDefineable()
+	{
 		return false;
 	}
 
 	@Override
-	protected void redrawChart() {
+	protected void redrawChart()
+	{
 		showChart();
 	}
 
 	@Override
-	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks) {
+	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
+	{
 		ChartKey key = keys[0];
-		
+
 		List<SciomeSeries<String, List<Double>>> seriesData = new ArrayList<>();
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
@@ -177,11 +195,11 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
-				List<Double> dataPoint =  chartData.getDataPointLists().get(key);
-				
-				if(dataPoint == null)
+				List<Double> dataPoint = chartData.getDataPointLists().get(key);
+
+				if (dataPoint == null)
 					continue;
-				
+
 				SciomeData<String, List<Double>> xyData = new SciomeData(chartData.getDataPointLabel(),
 						chartData.getDataPointLabel(), dataPoint, chartData.getCharttableObject());
 
@@ -190,10 +208,9 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 			seriesData.add(series);
 		}
 
-
 		setSeriesData(seriesData);
 	}
-	
+
 	private void setSliders(double numValues)
 	{
 		Slider slider = new Slider(0, numValues - MAX_NODES_SHOWN, 0);
@@ -208,33 +225,38 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 
 		sethSlider(slider);
 	}
-	
+
 	private void setRange()
 	{
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
-		ViolinCategoryDataset dataset = (ViolinCategoryDataset)slidingDataset.getUnderlyingDataset();
-		for(int i = 0; i < getSeriesData().size(); i++) {
+		ViolinCategoryDataset dataset = (ViolinCategoryDataset) slidingDataset.getUnderlyingDataset();
+		for (int i = 0; i < getSeriesData().size(); i++)
+		{
 			int first = slidingDataset.getFirstCategoryIndex();
-			for(int j = 0; j < MAX_NODES_SHOWN; j++) {
+			for (int j = 0; j < MAX_NODES_SHOWN; j++)
+			{
 				ViolinItem item = null;
-				try {
+				try
+				{
 					item = dataset.getItem(i, first + j);
-				} catch(Exception e) {
+				}
+				catch (Exception e)
+				{
 					continue;
 				}
-				if(item == null)
+				if (item == null)
 					continue;
-				
-				if(item.getMaxOutlier().doubleValue() > max)
+
+				if (item.getMaxOutlier().doubleValue() > max)
 					max = item.getMaxOutlier().doubleValue();
-				if(item.getMinOutlier().doubleValue() < min)
+				if (item.getMinOutlier().doubleValue() < min)
 					min = item.getMinOutlier().doubleValue();
 			}
 		}
-		((CategoryPlot)chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
+		((CategoryPlot) chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
 	}
-	
+
 	private void showConfiguration()
 	{
 		Dialog<Boolean> dialog = new Dialog<>();
@@ -245,7 +267,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		dialog.setResizable(false);
 		TextField bandwidthTF = new TextField();
 		bandwidthTF.setMaxWidth(100.0);
-		if(bandwidth != null)
+		if (bandwidth != null)
 			bandwidthTF.setText(bandwidth.toString());
 
 		VBox vb = new VBox();
@@ -275,7 +297,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 				if (b == buttonTypeOk)
 				{
 					bandwidth = Double.valueOf(bandwidthTF.getText());
-					convertChartDataPacksToSciomeSeries(new ChartKey[] {key}, getChartDataPacks());
+					convertChartDataPacksToSciomeSeries(new ChartKey[] { key }, getChartDataPacks());
 					return true;
 				}
 
