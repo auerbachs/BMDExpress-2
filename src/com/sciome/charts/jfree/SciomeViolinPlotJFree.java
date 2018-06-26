@@ -74,6 +74,23 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 				showConfiguration();
 			}
 		});
+		
+		showLogAxes(false, true, false, true);
+		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
+			{
+				showChart();
+			}
+		});
+
+		getLockYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
+			{
+				showChart();
+			}
+		});
 	}
 
 	@Override
@@ -93,12 +110,22 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 	{
 		ViolinCategoryDataset dataset = new ViolinCategoryDataset(bandwidth);
 
+		double minValue = Double.POSITIVE_INFINITY;
+		double maxValue = Double.NEGATIVE_INFINITY;
+		
 		for (SciomeSeries<String, List<Double>> series : getSeriesData())
 		{
 			String seriesName = series.getName();
 			for (SciomeData<String, List<Double>> chartData : series.getData())
 			{
 				List value = chartData.getYValue();
+				for(int i = 0; i < value.size(); i++) {
+					double val = (double)value.get(i);
+					if(val < minValue)
+						minValue = val;
+					if(val > maxValue)
+						maxValue = val;
+				}
 				if (value != null)
 				{
 					dataset.add(value, seriesName, chartData.getXValue());
@@ -114,6 +141,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
 				key.toString());
 
+		
 		ViolinRenderer renderer = new ViolinRenderer();
 
 		// Set tooltip string
@@ -134,6 +162,21 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		plot.setRangePannable(false);
 		plot.setBackgroundPaint(Color.white);
 
+		if (getLockYAxis().isSelected() || getLogYAxis().isSelected())
+		{
+			plot.getRangeAxis().setAutoRange(false);
+			if (minValue < 0)
+				minValue = 0;
+			if (maxValue > 0)
+				plot.getRangeAxis().setRange(new Range(minValue, maxValue));
+			else
+				plot.getRangeAxis().setAutoRange(true);
+		}
+		else
+		{
+			plot.getRangeAxis().setAutoRange(true);
+		}
+		
 		// Set default legend items
 		LegendItemCollection chartLegend = new LegendItemCollection();
 		Shape shape = new Rectangle(10, 10);
@@ -228,6 +271,9 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 
 	private void setRange()
 	{
+		if(getLockYAxis().isSelected())
+			return;
+		
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 		ViolinCategoryDataset dataset = (ViolinCategoryDataset) slidingDataset.getUnderlyingDataset();
