@@ -13,6 +13,7 @@ import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.OneWayANOVADataVi
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.view.visualization.OneWayANOVADataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 
@@ -26,7 +27,21 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 	{
 		super(OneWayANOVAResult.class, oneWayANOVAResults, viewTypeKey);
 		presenter = new OneWayANOVADataViewPresenter(this, BMDExpressEventBus.getInstance());
+		
+		//Add any new columns to the map and list
+		columnMap = BMDExpressProperties.getInstance().getTableInformation().getOneWayMap();
+		columnOrder = BMDExpressProperties.getInstance().getTableInformation().getOneWayOrder();
+		for(String header : oneWayANOVAResults.getColumnHeader()) {
+			if(!columnMap.containsKey(header)) {
+				columnMap.put(header, true);
+			}
+			if(!columnOrder.contains(header)) {
+				columnOrder.add(header);
+			}
+		}
+		
 		setUpTableView(oneWayANOVAResults);
+		setUpTableListeners();
 		presenter.showVisualizations(oneWayANOVAResults);
 
 	}

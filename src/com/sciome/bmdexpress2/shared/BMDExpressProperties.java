@@ -30,6 +30,7 @@ import org.apache.commons.lang3.RandomUtils;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sciome.bmdexpress2.mvp.model.TableInformation;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
@@ -59,6 +60,8 @@ public class BMDExpressProperties
 
 	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
 
+	private TableInformation			tableInformation;
+	
 	private Properties					versionProperties	= new Properties();
 
 	private WilliamsTrendInput			williamsInput;
@@ -83,6 +86,8 @@ public class BMDExpressProperties
 		checkLocalFiles(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "preferences",
 				"/preferences", false, false);
 
+	
+		loadTableInformation();
 		loadProperties();
 		readPreferences();
 		loadDefaultFilters();
@@ -293,6 +298,42 @@ public class BMDExpressProperties
 	private void loadProperties()
 	{
 		propertiesParser = new PropertiesParser(propertyFile);
+	}
+	
+	public void saveTableInformation() {
+		ObjectMapper mapper = new ObjectMapper();
+
+		File tableInformationFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "tableInformation.json");
+		
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(tableInformationFile, tableInformation);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadTableInformation() {
+		ObjectMapper mapper = new ObjectMapper();
+		
+		File tableInformationFile = new File(
+			BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "tableInformation.json");
+		try {
+			if (tableInformationFile.exists())
+			{
+				tableInformation = mapper.readValue(tableInformationFile, TableInformation.class);
+			}
+			else
+			{
+				tableInformation = new TableInformation();
+				mapper.writerWithDefaultPrettyPrinter().writeValue(tableInformationFile, tableInformation);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void readPreferences()
@@ -1057,6 +1098,10 @@ public class BMDExpressProperties
 	public CategoryInput getCategoryInput()
 	{
 		return categoryInput;
+	}
+
+	public TableInformation getTableInformation() {
+		return tableInformation;
 	}
 
 	public void updateFilter(String name, List<String> values)

@@ -46,6 +46,7 @@ public class BMDExpress2Main extends Application
 				public void handle(WindowEvent event)
 				{
 					event.consume();
+					BMDExpressProperties.getInstance().saveTableInformation();
 					BMDExpressEventBus.getInstance().post(new CloseApplicationRequestEvent("close it"));
 				}
 			});

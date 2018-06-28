@@ -20,6 +20,7 @@ import com.sciome.bmdexpress2.mvp.view.visualization.CategoryAnalysisDataVisuali
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 
@@ -40,10 +41,23 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	{
 		super(CategoryAnalysisResult.class, categoryAnalysisResults, viewTypeKey);
 		presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
+
+		//Add any new columns to the map and list
+		columnMap = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisMap();
+		columnOrder = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisOrder();
+		for(String header : categoryAnalysisResults.getColumnHeader()) {
+			if(!columnMap.containsKey(header)) {
+				columnMap.put(header, true);
+			}
+			if(!columnOrder.contains(header)) {
+				columnOrder.add(header);
+			}
+		}
 		// Create a CellFactory for the category id
 		categoryCellFactory = new CategoryTableCallBack();
 
 		setUpTableView(categoryAnalysisResults);
+		setUpTableListeners();
 		if (categoryAnalysisResults.getColumnHeader().size() == 0)
 			return;
 

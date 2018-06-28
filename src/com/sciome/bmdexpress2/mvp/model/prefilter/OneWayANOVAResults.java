@@ -155,9 +155,9 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		columnHeader.add(PrefilterResults.GENE_ID);
 
 		columnHeader.add(PrefilterResults.GENE_SYMBOL);
-		columnHeader.add("Df1");
+		columnHeader.add(PrefilterResults.DF1);
 
-		columnHeader.add("Df2");
+		columnHeader.add(PrefilterResults.DF2);
 
 		columnHeader.add(PrefilterResults.FVALUE);
 

@@ -25,6 +25,8 @@ public interface PrefilterResults
 	public static final String	GENE_ID					= "Gene ID";
 	public static final String	GENE_SYMBOL				= "Gene Symbol";
 	public static final String	PROBE_ID				= "Probe ID";
+	public static final String	DF1						= "Df1";
+	public static final String	DF2						= "Df2";
 
 	public List<PrefilterResult> getPrefilterResults();
 

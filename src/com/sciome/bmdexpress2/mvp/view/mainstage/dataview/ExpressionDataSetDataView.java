@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.view.mainstage.dataview;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,10 +16,6 @@ import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDa
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-
 /*
  * Show the Expression Data.  currently this implementation
  * deals with its own table view because DoseResponseExperiment
@@ -32,6 +29,14 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 		super(ProbeResponse.class, doseResponseExperiement, viewTypeKey);
 
 		presenter = new ExpressionDataSetDataViewPresenter(this, BMDExpressEventBus.getInstance());
+		columnMap = new HashMap<String, Boolean>();
+		columnOrder = new LinkedList<String>();
+		for(String header : bmdAnalysisDataSet.getColumnHeader())
+		{
+			columnMap.put(header, true);
+			columnOrder.add(header);
+		}
+		toggleColumns.setDisable(true);
 
 		if (doseResponseExperiement.getColumnHeader().size() == 0)
 			return;

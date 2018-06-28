@@ -50,12 +50,13 @@ public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDE
 			else
 				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " " + filter.getValues().get(0) + "\n");
 		}
+		filterInformation.append("\n");
 		
 		try
 		{
 			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
 			writer.write(filterInformation.toString());
-			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n");
+			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n\n");
 			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
 			writer.write(exportFilteredBMDExpressAnalysisDataSet(filteredResults));
 			writer.close();

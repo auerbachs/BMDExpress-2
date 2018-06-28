@@ -17,6 +17,7 @@ import com.sciome.bmdexpress2.mvp.view.visualization.BMDAnalysisResultsDataVisua
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
+import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.PathwayToGeneSymbolUtility;
 
@@ -45,11 +46,24 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		try
 		{
 			presenter = new BMDAnalysisResultsDataViewPresenter(this, BMDExpressEventBus.getInstance());
-
+			
 			if (bmdResult.getColumnHeader().size() == 0)
 				return;
 
+			//Add any new columns to the map and list
+			columnMap = BMDExpressProperties.getInstance().getTableInformation().getBmdMap();
+			columnOrder = BMDExpressProperties.getInstance().getTableInformation().getBmdOrder();
+			for(String header : bmdResult.getColumnHeader()) {
+				if(!columnMap.containsKey(header)) {
+					columnMap.put(header, true);
+				}
+				if(!columnOrder.contains(header)) {
+					columnOrder.add(header);
+				}
+			}
+			
 			setUpTableView(bmdResult);
+			setUpTableListeners();
 
 			int probeIDColumn = 0;
 			if (bmdResult instanceof CombinedDataSet)
