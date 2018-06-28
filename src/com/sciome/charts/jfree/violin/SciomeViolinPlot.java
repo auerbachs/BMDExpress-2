@@ -1,10 +1,9 @@
-package com.sciome.charts.jfree;
+package com.sciome.charts.jfree.violin;
 
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,8 +15,6 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.DefaultDrawingSupplier;
-import org.jfree.chart.plot.DrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
@@ -28,11 +25,9 @@ import com.sciome.bmdexpress2.util.ShapeCreator;
 import com.sciome.charts.SciomeChartBase;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartConfiguration;
-import com.sciome.charts.data.ChartData;
 import com.sciome.charts.data.ChartDataPack;
-import com.sciome.charts.jfree.violin.ViolinCategoryDataset;
-import com.sciome.charts.jfree.violin.ViolinItem;
-import com.sciome.charts.jfree.violin.ViolinRenderer;
+import com.sciome.charts.jfree.SciomeChartViewer;
+import com.sciome.charts.jfree.SciomeNumberAxisGeneratorJFree;
 import com.sciome.charts.model.SciomeData;
 import com.sciome.charts.model.SciomeSeries;
 
@@ -42,30 +37,29 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
-public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
-{
+public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Double>>{
+
 	private static final int		MAX_NODES_SHOWN	= 5;
 
 	private JFreeChart				chart;
 	private SlidingCategoryDataset	slidingDataset;
 	private Double					bandwidth		= null;
 	private ChartKey				key;
-
-	public SciomeViolinPlotJFree(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
-			SciomeChartListener chartListener)
-	{
-		super(title, chartDataPacks, new ChartKey[] { key }, true, false, chartListener);
+	
+	public SciomeViolinPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key, boolean allowXAxisSlider,
+			boolean allowYAxisSlider, SciomeChartListener chartListener) {
+		super(title, chartDataPacks, new ChartKey[]{key}, allowXAxisSlider, allowYAxisSlider, chartListener);
 		this.key = key;
 		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -91,18 +85,6 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 				showChart();
 			}
 		});
-	}
-
-	@Override
-	public void reactToChattingCharts()
-	{
-
-	}
-
-	@Override
-	public void markData(Set<String> markings)
-	{
-
 	}
 
 	@Override
@@ -180,10 +162,6 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		// Set default legend items
 		LegendItemCollection chartLegend = new LegendItemCollection();
 		Shape shape = new Rectangle(10, 10);
-		DrawingSupplier supplier = new DefaultDrawingSupplier();
-		for (int i = 0; i < getSeriesData().size(); i++)
-			chartLegend.add(new LegendItem(getSeriesData().get(i).getName(), null, null, null, shape,
-					supplier.getNextPaint()));
 
 		chartLegend.add(new LegendItem("10th Ranked Gene BMD", null, null, null,
 				new Ellipse2D.Double(0, 0, 10, 10), Color.black));
@@ -209,6 +187,18 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 	}
 
 	@Override
+	public void reactToChattingCharts()
+	{
+
+	}
+
+	@Override
+	public void markData(Set<String> markings)
+	{
+
+	}
+
+	@Override
 	protected boolean isXAxisDefineable()
 	{
 		return false;
@@ -226,35 +216,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		showChart();
 	}
 
-	@Override
-	protected void convertChartDataPacksToSciomeSeries(ChartKey[] keys, List<ChartDataPack> chartPacks)
-	{
-		ChartKey key = keys[0];
-
-		List<SciomeSeries<String, List<Double>>> seriesData = new ArrayList<>();
-		for (ChartDataPack chartDataPack : getChartDataPacks())
-		{
-			SciomeSeries<String, List<Double>> series = new SciomeSeries<>(chartDataPack.getName());
-
-			for (ChartData chartData : chartDataPack.getChartData())
-			{
-				List<Double> dataPoint = chartData.getDataPointLists().get(key);
-
-				if (dataPoint == null)
-					continue;
-
-				SciomeData<String, List<Double>> xyData = new SciomeData(chartData.getDataPointLabel(),
-						chartData.getDataPointLabel(), dataPoint, chartData.getCharttableObject());
-
-				series.getData().add(xyData);
-			}
-			seriesData.add(series);
-		}
-
-		setSeriesData(seriesData);
-	}
-
-	private void setSliders(double numValues)
+	protected void setSliders(double numValues)
 	{
 		Slider slider = new Slider(0, numValues - MAX_NODES_SHOWN, 0);
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -269,7 +231,7 @@ public class SciomeViolinPlotJFree extends SciomeChartBase<String, List<Double>>
 		sethSlider(slider);
 	}
 
-	private void setRange()
+	protected void setRange()
 	{
 		if(getLockYAxis().isSelected())
 			return;

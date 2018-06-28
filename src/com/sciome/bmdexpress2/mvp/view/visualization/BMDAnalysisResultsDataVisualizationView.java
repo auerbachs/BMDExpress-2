@@ -22,6 +22,7 @@ import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomePieChartJFree;
 import com.sciome.charts.jfree.SciomeRangePlotJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
+import com.sciome.charts.jfree.violin.SciomeViolinPlotDatasetJFree;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -36,6 +37,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 	private final static String	FIT_PVALUE_HISTOGRAM			= "Fit P-Value Histogram";
 	private final static String	FIT_LOG_LIKELIHOOD_HISTOGRAM	= "Log Likelihood Histogram";
 	private final static String RANGE_PLOT						= "Range Plot";
+	private final static String VIOLIN_PLOT_DATASET				= "Violin Plot";
 
 	public BMDAnalysisResultsDataVisualizationView()
 	{
@@ -71,6 +73,10 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 						new ChartKey(BMDResult.BMDU, null),
 						BMDAnalysisResultsDataVisualizationView.this));
 
+		chartCache.put(VIOLIN_PLOT_DATASET, new SciomeViolinPlotDatasetJFree("", new ArrayList<>(),
+				new ChartKey(BMDResult.BEST_BMD, null),
+				BMDAnalysisResultsDataVisualizationView.this));
+		
 		chartCache.put("DEFAULT-" + BMDResult.BMD + BMDResult.BMDL,
 				new SciomeScatterChartJFree("", new ArrayList<>(), new ChartKey(BMDResult.BMD, null),
 						new ChartKey(BMDResult.BMDL, null), BMDAnalysisResultsDataVisualizationView.this));
@@ -135,6 +141,11 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		else if(chartKey.equals(RANGE_PLOT))
 		{
 			SciomeChartBase chart1 = chartCache.get(RANGE_PLOT);
+			chartsList.add(chart1);
+		}
+		else if(chartKey.equals(VIOLIN_PLOT_DATASET))
+		{
+			SciomeChartBase chart1 = chartCache.get(VIOLIN_PLOT_DATASET);
 			chartsList.add(chart1);
 		}
 		else
@@ -213,6 +224,7 @@ public class BMDAnalysisResultsDataVisualizationView extends DataVisualizationVi
 		returnList.add(FIT_PVALUE_HISTOGRAM);
 		returnList.add(FIT_LOG_LIKELIHOOD_HISTOGRAM);
 		returnList.add(RANGE_PLOT);
+		returnList.add(VIOLIN_PLOT_DATASET);
 		return returnList;
 	}
 

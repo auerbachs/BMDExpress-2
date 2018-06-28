@@ -30,7 +30,8 @@ import com.sciome.charts.jfree.SciomeHistogramJFree;
 import com.sciome.charts.jfree.SciomePieChartJFree;
 import com.sciome.charts.jfree.SciomeRangePlotJFree;
 import com.sciome.charts.jfree.SciomeScatterChartJFree;
-import com.sciome.charts.jfree.SciomeViolinPlotJFree;
+import com.sciome.charts.jfree.violin.SciomeViolinPlotDatasetJFree;
+import com.sciome.charts.jfree.violin.SciomeViolinPlotJFree;
 import com.sciome.filter.DataFilterPack;
 
 /*
@@ -51,6 +52,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
 	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
 	private static final String VIOLIN				= "Violin Plots";
+	private final static String VIOLIN_PLOT_DATASET	= "New Violin Plot";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
@@ -187,6 +189,10 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		
 		chartCache.put(VIOLIN, new SciomeViolinPlotJFree("", new ArrayList<>(),
 				new ChartKey(CategoryAnalysisResults.BMD_LIST, null),
+				CategoryAnalysisDataVisualizationView.this));
+		
+		chartCache.put(VIOLIN_PLOT_DATASET, new SciomeViolinPlotDatasetJFree("", new ArrayList<>(),
+				new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
 				CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotJFree("Accumulation",
@@ -328,7 +334,13 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		} else if (chartKey.equals(VIOLIN))
 		{
 			SciomeChartBase chart = chartCache.get(VIOLIN);
-			chartsList.add(chart);		}
+			chartsList.add(chart);		
+		}
+		else if (chartKey.equals(VIOLIN_PLOT_DATASET)) 
+		{
+			SciomeChartBase chart = chartCache.get(VIOLIN_PLOT_DATASET);
+			chartsList.add(chart);
+		}
 		else if (chartKey.equals(DEFAULT_CHARTS))
 		{
 			SciomeChartBase chart1 = chartCache.get("DEFAULT-Accumulation");
@@ -371,6 +383,7 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 		resultList.add(MEDIAN_HISTOGRAMS);
 		resultList.add(BMD_BMDL_SCATTER);
 		resultList.add(VIOLIN);
+		resultList.add(VIOLIN_PLOT_DATASET);
 
 		return resultList;
 	}
