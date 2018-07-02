@@ -58,7 +58,7 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 					columnMap.put(header, true);
 				}
 				if(!columnOrder.contains(header)) {
-					columnOrder.add(header);
+					columnOrder.add(0, header);
 				}
 			}
 			

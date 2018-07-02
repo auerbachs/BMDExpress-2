@@ -330,10 +330,9 @@ public abstract class BMDExpressDataView<T> extends VBox
 							{
 								for(String header : columnMap.keySet())
 								{
-									if(!checkList.getItems().contains(header)) {
-										System.out.println(header);
+									if(!checkList.getItems().contains(header))
 										continue;
-									}
+									
 									
 									if(checkList.getCheckModel().isChecked(header))
 										columnMap.put(header, true);
@@ -924,7 +923,11 @@ final class TableCellCallBack
 	{
 		try
 		{
-			return new SimpleObjectProperty(p.getValue().getRow().get(colNo));
+			Object value = p.getValue().getRow().get(colNo);
+			if(value == null)
+				return new SimpleObjectProperty(value);
+			else
+				return new SimpleObjectProperty(value.toString());
 		}
 		catch (Exception exception)
 		{
