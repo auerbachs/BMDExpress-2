@@ -1,4 +1,3 @@
-
 package com.sciome.charts.jfree.violin;
 
 import java.awt.Color;
@@ -8,7 +7,6 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -41,14 +39,9 @@ import org.jfree.data.category.SlidingCategoryDataset;
 import com.sciome.bmdexpress2.util.ShapeCreator;
 
 /**
- * A box-and-whisker renderer.  This renderer requires a
+ * A violin renderer.  This renderer requires a
  * {@link ViolinCategoryDataset} and is for use with the
- * {@link CategoryPlot} class.  The example shown here is generated
- * by the {@code BoxAndWhiskerChartDemo1.java} program included in the
- * JFreeChart Demo Collection:
- * <br><br>
- * <img src="../../../../../images/BoxAndWhiskerRendererSample.png"
- * alt="BoxAndWhiskerRendererSample.png">
+ * {@link CategoryPlot} class. 
  */
 public class ViolinRenderer extends AbstractCategoryItemRenderer
         implements Cloneable, PublicCloneable, Serializable {
@@ -513,7 +506,7 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
         }
         if (!(check instanceof ViolinCategoryDataset)) {
             throw new IllegalArgumentException(
-                    "BoxAndWhiskerRenderer.drawItem() : the data should be "
+                    "ViolinRenderer.drawItem() : the data should be "
                     + "of type ViolinCategoryDataset only.");
         }
 
@@ -620,32 +613,30 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
                     location);
             double yymid = yy + state.getBarWidth() / 2.0;
     		yyBox = yymid - (boxWidth / 2.0);
-            double halfW = (state.getBarWidth() / 2.0) * this.whiskerWidth;
 
           //Draw curve
-    		Map<Number, Number> func = value.getDistribution();
+    		Map<Number, Point2D.Double> func = value.getDistribution();
     		double max = 0;
-    		for(Map.Entry<Number, Number> entry : func.entrySet()) {
-    			if(entry.getValue().doubleValue() > max)
-    				max = entry.getValue().doubleValue();
+    		for(Map.Entry<Number, Point2D.Double> entry : func.entrySet()) {
+    			if(entry.getValue().getY() > max)
+    				max = entry.getValue().getY();
     		}
     		
     		Path2D.Float topPath = new Path2D.Float();
     		Path2D.Float bottomPath = new Path2D.Float();
-    		topPath.moveTo(xxMin, yymid);
-    		bottomPath.moveTo(xxMin, yymid);
-    		double inc = 0;
-    		for(int i = 1; i < ViolinCalculator.NUM_MAX_VALUES; i++) {
-    			double yValue = ((func.get(i).doubleValue() * halfWidth) / max);
-    			inc += ((xxMax - xxMin) / ViolinCalculator.NUM_MAX_VALUES);
-    			topPath.lineTo(xxMin + inc, yymid + yValue);
-    			bottomPath.lineTo(xxMin + inc, yymid - yValue);
+    		topPath.moveTo(0, yymid);
+    		bottomPath.moveTo(0, yymid);
+    		for(int i = 0; i < ViolinCalculator.NUM_MAX_VALUES; i++) {
+    			double x = rangeAxis.valueToJava2D(func.get(i).getX(), dataArea, location);
+    			double yValue = ((func.get(i).getY() * halfWidth) / max);
+    			topPath.lineTo(x, yymid + yValue);
+    			bottomPath.lineTo(x , yymid - yValue);
     		}
     		topPath.lineTo(xxMax, yymid);
-    		topPath.lineTo(xxMin, yymid);
-    		bottomPath.lineTo(xxMax, yymid);
-    		bottomPath.lineTo(xxMin, yymid);
+    		topPath.lineTo(0, yymid);
     		topPath.closePath();
+    		bottomPath.lineTo(xxMax, yymid);
+    		bottomPath.lineTo(0, yymid);
     		bottomPath.closePath();
     		g2.fill(topPath);
     		g2.fill(bottomPath);
@@ -864,11 +855,11 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
                     dataArea, location);
 
             //Draw curve
-            Map<Number, Number> func = value.getDistribution();
+            Map<Number, Point2D.Double> func = value.getDistribution();
             double max = 0;
-            for(Map.Entry<Number, Number> entry : func.entrySet()) {
-            	if(entry.getValue().doubleValue() > max)
-            		max = entry.getValue().doubleValue();
+            for(Map.Entry<Number, Point2D.Double> entry : func.entrySet()) {
+            	if(entry.getValue().getY() > max)
+            		max = entry.getValue().getY();
             }
             
             Path2D.Float leftPath = new Path2D.Float();
@@ -877,7 +868,7 @@ public class ViolinRenderer extends AbstractCategoryItemRenderer
             rightPath.moveTo(xxmid, yyMin);
             double inc = 0;
             for(int i = 1; i < ViolinCalculator.NUM_MAX_VALUES; i++) {
-            	double yValue = ((func.get(i).doubleValue() * halfWidth) / max);
+            	double yValue = ((func.get(i).getY() * halfWidth) / max);
             	inc += ((yyMax - yyMin) / ViolinCalculator.NUM_MAX_VALUES);
             	leftPath.lineTo(xxmid - yValue, yyMin + inc);
             	rightPath.lineTo(xxmid + yValue, yyMin + inc);

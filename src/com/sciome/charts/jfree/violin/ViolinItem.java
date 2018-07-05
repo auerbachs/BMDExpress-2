@@ -1,5 +1,6 @@
 package com.sciome.charts.jfree.violin;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +19,11 @@ public class ViolinItem  {
 	private Number tenPercentile;
 	private Number tenRank;
 	private Number twentyFiveRank;
-	private Map<Number, Number> distribution;
+	private Map<Number, Point2D.Double> distribution;
 
 	public ViolinItem(Number mean, Number median, Number q1, Number q3, Number minRegularValue, Number maxRegularValue,
 		Number minOutlier, Number maxOutlier, List<Number> outliers, Number onePercentile, Number fivePercentile,
-		Number tenPercentile, Number tenRank, Number twentyFiveRank, Map<Number, Number> distribution)
+		Number tenPercentile, Number tenRank, Number twentyFiveRank, Map<Number, Point2D.Double> distribution)
 	{
 		this.mean = mean;
 		this.median = median;
@@ -97,7 +98,7 @@ public class ViolinItem  {
 		return twentyFiveRank;
 	}
 
-	public Map<Number, Number> getDistribution() {
+	public Map<Number, Point2D.Double> getDistribution() {
 		return distribution;
 	}
 }

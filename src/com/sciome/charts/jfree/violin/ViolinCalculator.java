@@ -1,5 +1,6 @@
 package com.sciome.charts.jfree.violin;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,8 +117,6 @@ public class ViolinCalculator {
             minOutlier = Math.min(minOutlier, minRegularValue);
             maxOutlier = Math.max(maxOutlier, maxRegularValue);
         }
-		
-
         
         int size = vlist.size();
         Number onePercentile = (Number)vlist.get((int)(Math.ceil(.01 * size)));
@@ -131,7 +130,7 @@ public class ViolinCalculator {
         	twentyFiveRank = (Number)vlist.get(24);
         
         //Calculate kernel density estimation
-        HashMap<Number, Number> dist = new HashMap<Number, Number>();
+        HashMap<Number, Point2D.Double> dist = new HashMap<Number, Point2D.Double>();
         
         StandardDeviation std = new StandardDeviation();
         double[] data = new double[vlist.size()];
@@ -146,7 +145,7 @@ public class ViolinCalculator {
 			bandwidth /= 10;
         }
 		
-		for(int i = 1; i <= NUM_MAX_VALUES; i++) {
+		for(int i = 0; i <= NUM_MAX_VALUES; i++) {
 			double x = i * (max/(double)NUM_MAX_VALUES);
 			double sum = 0;
 			for(int j = 0; j < data.length; j++) {
@@ -154,7 +153,7 @@ public class ViolinCalculator {
 				sum += gaussVal;
 			}
 			double y = (1/(data.length * bandwidth)) * sum;
-			dist.put(i, y);
+			dist.put(i, new Point2D.Double(x,y));
 		}
         
         return new ViolinItem(new Double(mean), new Double(median),
