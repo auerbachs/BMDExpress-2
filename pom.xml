@@ -91,6 +91,13 @@
 		    <artifactId>jfreechart-fx</artifactId>
 		    <version>1.0.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jfree/jfreesvg -->
+		<dependency>
+		    <groupId>org.jfree</groupId>
+		    <artifactId>jfreesvg</artifactId>
+		    <version>3.3</version>
+		</dependency>
+		
 
          <!-- sciome commons math functions-->
          <dependency>
