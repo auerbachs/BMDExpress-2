@@ -50,7 +50,7 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 				columnMap.put(header, true);
 			}
 			if(!columnOrder.contains(header)) {
-				columnOrder.add(0, header);
+				columnOrder.add(header);
 			}
 		}
 		// Create a CellFactory for the category id

@@ -35,7 +35,7 @@ public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResul
 				columnMap.put(header, true);
 			}
 			if(!columnOrder.contains(header)) {
-				columnOrder.add(0, header);
+				columnOrder.add(header);
 			}
 		}
 		

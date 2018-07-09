@@ -36,7 +36,7 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 				columnMap.put(header, true);
 			}
 			if(!columnOrder.contains(header)) {
-				columnOrder.add(0, header);
+				columnOrder.add(header);
 			}
 		}
 		
