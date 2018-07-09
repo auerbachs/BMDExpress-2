@@ -47,6 +47,11 @@ public class OneWayANOVADataView extends BMDExpressDataView<OneWayANOVAResults> 
 	}
 
 	@Override
+	protected void setCellFactory() {
+		//Do nothing for now
+	}
+	
+	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return new OneWayANOVADataVisualizationView();

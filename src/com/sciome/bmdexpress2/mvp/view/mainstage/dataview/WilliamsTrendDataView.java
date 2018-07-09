@@ -46,6 +46,11 @@ public class WilliamsTrendDataView extends BMDExpressDataView<WilliamsTrendResul
 	}
 
 	@Override
+	protected void setCellFactory() {
+		//Do nothing for now
+	}
+	
+	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return new WilliamsTrendDataVisualizationView();

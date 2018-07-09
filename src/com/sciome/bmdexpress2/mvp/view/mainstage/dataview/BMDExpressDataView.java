@@ -341,6 +341,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 								}
 								
 								setUpTableView(analysisDataSet);
+								setCellFactory();
 								return true;
 							}
 
@@ -365,6 +366,11 @@ public abstract class BMDExpressDataView<T> extends VBox
 	}
 
 	protected abstract Map<String, Map<String, Set<String>>> fillUpDBToPathwayGeneSymbols();
+	
+	/**
+	 * Used to setup any clickable columns or change the apperance of them
+	 */
+	protected abstract void setCellFactory();
 
 	/*
 	 * This method is called by the child class if the child class wants to set up the table in the default

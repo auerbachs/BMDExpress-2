@@ -51,6 +51,11 @@ public class ExpressionDataSetDataView extends BMDExpressDataView<ProbeResponse>
 	}
 
 	@Override
+	protected void setCellFactory() {
+		//Do nothing for now
+	}
+	
+	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return new ExpressionDataVisualizationView();

@@ -44,6 +44,11 @@ public class OriogenDataView extends BMDExpressDataView<OriogenResults> implemen
 	}
 
 	@Override
+	protected void setCellFactory() {
+		//Do nothing for now
+	}
+	
+	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
 		return new OriogenDataVisualizationView();

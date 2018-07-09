@@ -53,21 +53,15 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 				columnOrder.add(header);
 			}
 		}
-		// Create a CellFactory for the category id
-		categoryCellFactory = new CategoryTableCallBack();
 
 		setUpTableView(categoryAnalysisResults);
 		setUpTableListeners();
 		if (categoryAnalysisResults.getColumnHeader().size() == 0)
 			return;
-
-		int pathwayColumn = 0;
-		if (categoryAnalysisResults instanceof CombinedDataSet)
-			pathwayColumn = 1;
-		TableColumn tc = tableView.getColumns().get(pathwayColumn);
-		tc.setCellFactory(categoryCellFactory);
+		
+		setCellFactory();
+		
 		presenter.showVisualizations(categoryAnalysisResults);
-
 	}
 
 	@Override
@@ -88,6 +82,20 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		}
 		return new HashMap<>();
 
+	}
+	
+	@Override
+	protected void setCellFactory() 
+	{
+		if(columnMap.get("GO/Pathway/Gene Set ID")) {
+			// Create a CellFactory for the category id
+			categoryCellFactory = new CategoryTableCallBack();
+			
+			int pathwayColumn = columnOrder.indexOf("GO/Pathway/Gene Set ID");
+			
+			TableColumn tc = tableView.getColumns().get(pathwayColumn);
+			tc.setCellFactory(categoryCellFactory);
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

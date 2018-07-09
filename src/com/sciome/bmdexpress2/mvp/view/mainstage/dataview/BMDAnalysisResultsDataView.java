@@ -65,26 +65,8 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 			setUpTableView(bmdResult);
 			setUpTableListeners();
 
-			int probeIDColumn = 0;
-			if (bmdResult instanceof CombinedDataSet)
-				probeIDColumn = 1;
-			TableColumn tc = tableView.getColumns().get(probeIDColumn);
-
-			if (bmdResult instanceof BMDResult)
-			{
-				// Create a CellFactory for the probeid. The reason for this is to allow us to detect user
-				// mouse
-				// click
-				// inside the cell so we can show the curve
-				probeIDCellFactory = new BMDTableCallBack((BMDResult) bmdResult);
-				tc.setCellFactory(probeIDCellFactory);
-			}
-			else if (bmdResult instanceof CombinedDataSet)
-			{
-				probeIDCellFactory = new BMDTableCallBack(null);
-				tc.setCellFactory(probeIDCellFactory);
-			}
-
+			setCellFactory();
+			
 			presenter.showVisualizations(bmdResult);
 		}
 		catch (Exception e)
@@ -93,6 +75,30 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		}
 	}
 
+	@Override
+	protected void setCellFactory() {
+		if(columnMap.get("Probe ID")) {
+			int probeIDColumn = columnOrder.indexOf("Probe ID");
+			
+			TableColumn tc = tableView.getColumns().get(probeIDColumn);
+	
+			if (bmdAnalysisDataSet instanceof BMDResult)
+			{
+				// Create a CellFactory for the probeid. The reason for this is to allow us to detect user
+				// mouse
+				// click
+				// inside the cell so we can show the curve
+				probeIDCellFactory = new BMDTableCallBack((BMDResult) bmdAnalysisDataSet);
+				tc.setCellFactory(probeIDCellFactory);
+			}
+			else if (bmdAnalysisDataSet instanceof CombinedDataSet)
+			{
+				probeIDCellFactory = new BMDTableCallBack(null);
+				tc.setCellFactory(probeIDCellFactory);
+			}
+		}
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void close()
