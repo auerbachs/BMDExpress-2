@@ -30,7 +30,6 @@ public class SciomeViolinPlotDatasetJFree extends SciomeViolinPlot
 		SciomeSeries<String, List<Double>> series = new SciomeSeries<>("");
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
-
 			List<Double> valuesForViolin = new ArrayList<Double>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{
@@ -41,6 +40,10 @@ public class SciomeViolinPlotDatasetJFree extends SciomeViolinPlot
 
 				valuesForViolin.add(dataPoint);
 			}
+			//If there are no data points for a violin, move on to the next one
+			if(valuesForViolin.size() == 0)
+				continue;
+			
 			SciomeData<String, List<Double>> xyData = new SciomeData(chartDataPack.getName(),
 					chartDataPack.getName(), valuesForViolin, chartDataPack.getChartData().get(0).getCharttableObject());
 			series.getData().add(xyData);

@@ -131,7 +131,11 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 			@Override
 			public String generateToolTip(CategoryDataset dataset, int row, int column)
 			{
-				return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
+				try {
+					return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
+				} catch(Exception e) {
+					return "";
+				}
 			}
 		};
 		renderer.setDefaultToolTipGenerator(tooltipGenerator);
@@ -262,7 +266,8 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 					min = item.getMinOutlier().doubleValue();
 			}
 		}
-		((CategoryPlot) chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
+		if(min < max)
+			((CategoryPlot) chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
 	}
 
 	private void showConfiguration()
