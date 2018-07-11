@@ -308,10 +308,25 @@ public abstract class BMDExpressDataView<T> extends VBox
 							checkList.getCheckModel().check(header);
 					}
 					
+					Button checkAll = new Button("Check All");
+					checkAll.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							checkList.getCheckModel().checkAll();
+						}
+					});
+					Button clear = new Button("Clear");
+					clear.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							checkList.getCheckModel().clearChecks();
+						}
+					});
+					
 					HBox hb2 = new HBox();
 					hb2.setAlignment(Pos.CENTER_LEFT);
 					hb2.setSpacing(10.0);
-					hb1.getChildren().addAll(checkList);
+					hb1.getChildren().addAll(checkList, checkAll, clear);
 					vb.getChildren().addAll(hb1);
 
 					dialog.getDialogPane().setContent(vb);
@@ -391,7 +406,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 			{
 				TableColumn tc = null;
 				TableColumn tcSub = null;
-//				final int colNo = i;
 
 				if(!columnMap.containsKey(columnOrder.get(i)) || columnMap.get(columnOrder.get(i))) {
 					int colNo = columnHeaders.indexOf(columnOrder.get(i));
@@ -471,7 +485,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 					for(int i = 0; i < prevHeaderList.size(); i++) {
 						String text = prevHeaderList.get(i);
 						String newText = ((TableColumn)c.getList().get(i)).getText();
-						System.out.println(text + " " + newText);
 						if(!text.equals(newText)) {
 							//Check to see if the column was moved forward or backward
 							if(newText.equals(prevHeaderList.get(i + 1))) {
@@ -929,11 +942,7 @@ final class TableCellCallBack
 	{
 		try
 		{
-			Object value = p.getValue().getRow().get(colNo);
-			if(value == null)
-				return new SimpleObjectProperty(value);
-			else
-				return new SimpleObjectProperty(value.toString());
+			return new SimpleObjectProperty(p.getValue().getRow().get(colNo));
 		}
 		catch (Exception exception)
 		{
