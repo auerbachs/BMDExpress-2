@@ -3,9 +3,6 @@ package com.sciome.charts.jfree.violin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.SlidingCategoryDataset;
-
 import com.sciome.bmdexpress2.mvp.model.ChartKey;
 import com.sciome.charts.SciomeChartListener;
 import com.sciome.charts.data.ChartData;
@@ -27,9 +24,9 @@ public class SciomeViolinPlotDatasetJFree extends SciomeViolinPlot
 		ChartKey key = keys[0];
 
 		List<SciomeSeries<String, List<Double>>> seriesData = new ArrayList<>();
-		SciomeSeries<String, List<Double>> series = new SciomeSeries<>("");
 		for (ChartDataPack chartDataPack : getChartDataPacks())
 		{
+			SciomeSeries<String, List<Double>> series = new SciomeSeries<>("");
 			List<Double> valuesForViolin = new ArrayList<Double>();
 			for (ChartData chartData : chartDataPack.getChartData())
 			{

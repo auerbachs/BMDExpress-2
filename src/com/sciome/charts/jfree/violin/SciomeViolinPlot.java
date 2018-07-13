@@ -49,13 +49,14 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 
 public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Double>>{
-
-	private static final int		MAX_NODES_SHOWN	= 5;
-
 	private JFreeChart				chart;
 	private SlidingCategoryDataset	slidingDataset;
-	private Double					bandwidth		= null;
 	private ChartKey				key;
+	
+	//Adjustable settings
+	private Double					bandwidth		= null;
+	private Integer					maxNodesShown	= 5;
+	
 	
 	public SciomeViolinPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key, boolean allowXAxisSlider,
 			boolean allowYAxisSlider, SciomeChartListener chartListener) {
@@ -115,7 +116,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 			}
 		}
 
-		slidingDataset = new SlidingCategoryDataset(dataset, 0, MAX_NODES_SHOWN);
+		slidingDataset = new SlidingCategoryDataset(dataset, 0, maxNodesShown);
 		setSliders(dataset.getColumnCount());
 
 		// Set axis
@@ -222,7 +223,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 
 	protected void setSliders(double numValues)
 	{
-		Slider slider = new Slider(0, numValues - MAX_NODES_SHOWN, 0);
+		Slider slider = new Slider(0, numValues - maxNodesShown, 0);
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number oldValue, Number newValue)
@@ -246,7 +247,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		for (int i = 0; i < getSeriesData().size(); i++)
 		{
 			int first = slidingDataset.getFirstCategoryIndex();
-			for (int j = 0; j < MAX_NODES_SHOWN; j++)
+			for (int j = 0; j < maxNodesShown; j++)
 			{
 				ViolinItem item = null;
 				try
@@ -280,22 +281,48 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		dialog.setResizable(false);
 		TextField bandwidthTF = new TextField();
 		bandwidthTF.setMaxWidth(100.0);
+		TextField maxNodesTF = new TextField();
+		maxNodesTF.setMaxWidth(100.0);
+		
 		if (bandwidth != null)
 			bandwidthTF.setText(bandwidth.toString());
+		maxNodesTF.setText(maxNodesShown.toString());
+		
+		HBox mainBox = new HBox();
+		mainBox.setSpacing(20.0);
+		
+		VBox leftBox = new VBox();
+		leftBox.setPrefWidth(200.0);
+		leftBox.setSpacing(20.0);
+		VBox rightBox = new VBox();
+		rightBox.setSpacing(20.0);
+		rightBox.setPrefWidth(200.0);
+		
+		HBox firstLeft = new HBox();
+		firstLeft.setAlignment(Pos.CENTER_RIGHT);
+		firstLeft.setSpacing(10.0);
+		firstLeft.getChildren().addAll(new Label("Bandwidth"));
 
-		VBox vb = new VBox();
-		vb.setSpacing(20.0);
-		HBox hb1 = new HBox();
-		hb1.setAlignment(Pos.CENTER_LEFT);
-		hb1.setSpacing(10.0);
+		HBox secondLeft = new HBox();
+		secondLeft.setAlignment(Pos.CENTER_RIGHT);
+		secondLeft.setSpacing(10.0);
+		secondLeft.getChildren().addAll(new Label("Max Nodes Shown"));
+		
+		HBox firstRight = new HBox();
+		firstRight.setAlignment(Pos.CENTER_LEFT);
+		firstRight.setSpacing(10.0);
+		firstRight.getChildren().addAll(bandwidthTF);
 
-		HBox hb2 = new HBox();
-		hb2.setAlignment(Pos.CENTER_LEFT);
-		hb2.setSpacing(10.0);
-		hb1.getChildren().addAll(new Label("Bandwidth"), bandwidthTF);
-		vb.getChildren().addAll(hb1);
+		HBox secondRight = new HBox();
+		secondRight.setAlignment(Pos.CENTER_LEFT);
+		secondRight.setSpacing(10.0);
+		secondRight.getChildren().addAll(maxNodesTF);
+		
+		leftBox.getChildren().addAll(firstLeft, secondLeft);
+		rightBox.getChildren().addAll(firstRight, secondRight);
+		mainBox.getChildren().addAll(leftBox, rightBox);
 
-		dialog.getDialogPane().setContent(vb);
+		dialog.getDialogPane().setContent(mainBox);
 
 		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
@@ -309,7 +336,13 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 
 				if (b == buttonTypeOk)
 				{
-					bandwidth = Double.valueOf(bandwidthTF.getText());
+					//If the user keeps the box empty, leave the value the same
+					if(!bandwidthTF.getText().equals(""))
+						bandwidth = Double.valueOf(bandwidthTF.getText());
+
+					if(!maxNodesTF.getText().equals(""))
+						maxNodesShown = Integer.valueOf(maxNodesTF.getText());
+					
 					convertChartDataPacksToSciomeSeries(new ChartKey[] { key }, getChartDataPacks());
 					return true;
 				}
