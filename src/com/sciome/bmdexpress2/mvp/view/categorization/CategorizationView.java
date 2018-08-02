@@ -253,6 +253,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		{
 			mainVBox.getChildren().remove(selectionHBox);
 		}
+		else if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
+		{
+			mainVBox.getChildren().remove(probeFileHBox);
+			mainVBox.getChildren().remove(categoryFileHBox);
+			mainVBox.getChildren().remove(selectionHBox);
+		}
 		
 		// Initalize fields using saved settings
 		this.removePromiscuousProbesCheckBox.setSelected(input.isRemovePromiscuousProbes());
@@ -327,7 +333,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			params.setCategoryFileParameters(this.categoryFileParameters);
 			params.setProbeFileParameters(this.probeFileParameters);
 		}
-
+		
 		// common parameters
 		params.setIdentifyConflictingProbeSets(this.conflictingProbeSetsCheckBox.isSelected());
 		params.setCorrelationCutoffConflictingProbeSets(

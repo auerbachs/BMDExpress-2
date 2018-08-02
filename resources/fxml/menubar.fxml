@@ -58,6 +58,7 @@
             <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
             <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />
             <MenuItem fx:id="definedCategoryAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_definedCategoryAnalyses" text="Defined Category Analyses" />
+         	<MenuItem fx:id="geneLevelBMDMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_geneLevelBMD" text="Gene Level BMD" />
          </items>
       </Menu>
       <Menu mnemonicParsing="false" text="Help">

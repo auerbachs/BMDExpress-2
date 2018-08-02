@@ -64,6 +64,8 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	private MenuItem		pathwayAnalysesMenuItem;
 	@FXML
 	private MenuItem		definedCategoryAnalysesMenuItem;
+	@FXML
+	private MenuItem		geneLevelBMDMenuItem;
 
 	MenuBarPresenter		presenter;
 
@@ -343,6 +345,11 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.performCategoryAnalysis(CategoryAnalysisEnum.DEFINED);
 
 	}
+	
+	public void handle_geneLevelBMD(ActionEvent event)
+	{
+		presenter.performCategoryAnalysis(CategoryAnalysisEnum.GENE_LEVEL);
+	}
 
 	/*
 	 * show the tutorial
@@ -417,9 +424,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(false);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
+		toggleCategoryMenuItems(true);
 
 	}
 
@@ -428,9 +433,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
+		toggleCategoryMenuItems(true);
 
 	}
 
@@ -439,9 +442,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
+		toggleCategoryMenuItems(true);
 	}
 
 	@Override
@@ -449,9 +450,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
+		toggleCategoryMenuItems(true);
 	}
 
 	@Override
@@ -459,9 +458,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
 		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(false);
-		this.pathwayAnalysesMenuItem.setDisable(false);
-		this.definedCategoryAnalysesMenuItem.setDisable(false);
+		toggleCategoryMenuItems(false);
 
 	}
 
@@ -470,9 +467,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
 		togglePrefilterMenuItems(true);
-		this.GOAnalysesMenuItem.setDisable(true);
-		this.pathwayAnalysesMenuItem.setDisable(true);
-		this.definedCategoryAnalysesMenuItem.setDisable(true);
+		toggleCategoryMenuItems(true);
 	}
 
 	@Override
@@ -511,6 +506,14 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.oneWayANOVAMenuItem.setDisable(disabled);
 		this.williamsTrendMenuItem.setDisable(disabled);
 		this.oriogenMenuItem.setDisable(disabled);
+	}
+	
+	private void toggleCategoryMenuItems(boolean disabled)
+	{
+		this.GOAnalysesMenuItem.setDisable(disabled);
+		this.pathwayAnalysesMenuItem.setDisable(disabled);
+		this.definedCategoryAnalysesMenuItem.setDisable(disabled);
+		this.geneLevelBMDMenuItem.setDisable(disabled);
 	}
 
 	@Override

@@ -185,12 +185,16 @@ public class CategoryMapTool
 			File catFile = new File(params.getCategoryFileParameters().getFileName());
 			String catFileName = catFile.getName();
 
-			rstName += "_DEFINED-" + catFileName.substring(0, catFileName.lastIndexOf('.'));;
+			rstName += "_DEFINED-" + catFileName.substring(0, catFileName.lastIndexOf('.'));
 			analysisInfo.getNotes().add("Defined Category Analyses");
 
 			probeGeneMaps = probeCategoryGeneMaps;
 		}
-
+		else if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
+		{
+			//TODO: NEED TO IMPLEMENT THIS
+		}
+		
 		if (params.getDeduplicateGeneSets())
 			analysisInfo.getNotes().add("Deduplicate Gene Sets: true");
 		else

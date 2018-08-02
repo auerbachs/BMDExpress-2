@@ -1,13 +1,10 @@
 package com.sciome.bmdexpress2.mvp.presenter.categorization;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
-import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
-import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.categorization.ICategorizationView;
 import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
@@ -18,7 +15,6 @@ import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
-import com.sciome.bmdexpress2.util.categoryanalysis.CategoryMapTool;
 import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
 
 import javafx.application.Platform;
