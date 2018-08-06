@@ -23,13 +23,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -145,7 +145,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
 
 	private CategoryInput					input;
-	
+
 	public CategorizationView()
 	{
 		this(BMDExpressEventBus.getInstance());
@@ -189,9 +189,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			presenter.startAnalyses(params);
 
 	}
-	
+
 	@Override
-	public void handle_saveSettingsButtonPressed(ActionEvent event) {
+	public void handle_saveSettingsButtonPressed(ActionEvent event)
+	{
 		input.setRemovePromiscuousProbes(this.removePromiscuousProbesCheckBox.isSelected());
 		input.setRemoveBMDGreaterThanHighestDose(this.bmdFilter1CheckBox.isSelected());
 		input.setRemoveBMDLessThanPValue(this.bmdFilter2CheckBox.isSelected());
@@ -204,19 +205,24 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		input.setRemoveGenesWithPrefilterAdjustedPValue(this.bmdFilterMaxAdjustedPValueCheckBox.isSelected());
 		input.setEliminateGeneSetRedundancy(this.deduplicateGeneSetsCheckBox.isSelected());
 		input.setIdentifyConflictingProbeSets(this.conflictingProbeSetsCheckBox.isSelected());
-		
+
 		input.setRemoveBMDLessThanPValueNumber(Double.parseDouble(this.bmdFilter2Value.getText()));
 		input.setRemoveGenesWithBMD_BMDLNumber(Double.parseDouble(this.bmdFilter3Value.getText()));
 		input.setRemoveGenesWithBMDU_BMDNumber(Double.parseDouble(this.BMDUBMDTextbox.getText()));
 		input.setRemoveGenesWithBMDU_BMDLNumber(Double.parseDouble(this.BMDUBMDLTextbox.getText()));
-		input.setRemoveGenesWithBMDValuesGreaterThanNFoldNumber(Double.parseDouble(this.bmdFilter4Value.getText()));
-		input.setRemoveGenesWithMaxFoldChangeLessThanNumber(Double.parseDouble(this.bmdFilterMaxFoldChangeValue.getText()));
-		input.setRemoveGenesWithPrefilterPValueNumber(Double.parseDouble(this.bmdFilterMaxPValueChangeValue.getText()));
-		input.setRemoveGenesWithPrefilterAdjustedPValueNumber(Double.parseDouble(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
-		input.setCorrelationCutoffForConflictingProbeSets(Double.parseDouble(this.correlationCutoffProbeSetsValue.getText()));
-		
+		input.setRemoveGenesWithBMDValuesGreaterThanNFoldNumber(
+				Double.parseDouble(this.bmdFilter4Value.getText()));
+		input.setRemoveGenesWithMaxFoldChangeLessThanNumber(
+				Double.parseDouble(this.bmdFilterMaxFoldChangeValue.getText()));
+		input.setRemoveGenesWithPrefilterPValueNumber(
+				Double.parseDouble(this.bmdFilterMaxPValueChangeValue.getText()));
+		input.setRemoveGenesWithPrefilterAdjustedPValueNumber(
+				Double.parseDouble(this.bmdFilterMaxAdjustedPValueChangeValue.getText()));
+		input.setCorrelationCutoffForConflictingProbeSets(
+				Double.parseDouble(this.correlationCutoffProbeSetsValue.getText()));
+
 		BMDExpressProperties.getInstance().saveCategoryInput(input);
-		
+
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Saved Settings");
 		alert.setHeaderText(null);
@@ -259,7 +265,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			mainVBox.getChildren().remove(categoryFileHBox);
 			mainVBox.getChildren().remove(selectionHBox);
 		}
-		
+
 		// Initalize fields using saved settings
 		this.removePromiscuousProbesCheckBox.setSelected(input.isRemovePromiscuousProbes());
 		this.bmdFilter1CheckBox.setSelected(input.isRemoveBMDGreaterThanHighestDose());
@@ -273,7 +279,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		this.BMDUBMDLCheckBox.setSelected(input.isRemoveGenesWithBMDU_BMDL());
 		this.conflictingProbeSetsCheckBox.setSelected(input.isIdentifyConflictingProbeSets());
 		this.deduplicateGeneSetsCheckBox.setSelected(input.isEliminateGeneSetRedundancy());
-		
+
 		this.bmdFilter2Value.setText("" + input.getRemoveBMDLessThanPValueNumber());
 		this.bmdFilter3Value.setText("" + input.getRemoveGenesWithBMD_BMDLNumber());
 		this.BMDUBMDTextbox.setText("" + input.getRemoveGenesWithBMDU_BMDNumber());
@@ -281,8 +287,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		this.bmdFilter4Value.setText("" + input.getRemoveGenesWithBMDValuesGreaterThanNFoldNumber());
 		this.bmdFilterMaxFoldChangeValue.setText("" + input.getRemoveGenesWithMaxFoldChangeLessThanNumber());
 		this.bmdFilterMaxPValueChangeValue.setText("" + input.getRemoveGenesWithPrefilterPValueNumber());
-		this.bmdFilterMaxAdjustedPValueChangeValue.setText("" + input.getRemoveGenesWithPrefilterAdjustedPValueNumber());
-		this.correlationCutoffProbeSetsValue.setText("" + input.getCorrelationCutoffForConflictingProbeSets());
+		this.bmdFilterMaxAdjustedPValueChangeValue
+				.setText("" + input.getRemoveGenesWithPrefilterAdjustedPValueNumber());
+		this.correlationCutoffProbeSetsValue
+				.setText("" + input.getCorrelationCutoffForConflictingProbeSets());
 		presenter.initData(bmdResults, catAnalysisEnum);
 
 	}
@@ -333,7 +341,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			params.setCategoryFileParameters(this.categoryFileParameters);
 			params.setProbeFileParameters(this.probeFileParameters);
 		}
-		
+
 		// common parameters
 		params.setIdentifyConflictingProbeSets(this.conflictingProbeSetsCheckBox.isSelected());
 		params.setCorrelationCutoffConflictingProbeSets(

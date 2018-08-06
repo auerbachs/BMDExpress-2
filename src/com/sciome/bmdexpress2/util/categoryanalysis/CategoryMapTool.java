@@ -29,6 +29,7 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.DefinedCategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.GOAnalysisResult;
+import com.sciome.bmdexpress2.mvp.model.category.GeneLevelAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.PathwayAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -43,6 +44,7 @@ import com.sciome.bmdexpress2.util.NumberManager;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.CategoryMap;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.CategoryMapBase;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.GOTermMap;
+import com.sciome.bmdexpress2.util.categoryanalysis.catmap.GeneLevelCategoryMap;
 import com.sciome.bmdexpress2.util.categoryanalysis.catmap.GenesPathways;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.ProbeCategoryMaps;
 import com.sciome.bmdexpress2.util.stat.DosesStat;
@@ -192,9 +194,32 @@ public class CategoryMapTool
 		}
 		else if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
 		{
-			//TODO: NEED TO IMPLEMENT THIS
+			if (params.getRemovePromiscuousProbes())
+				removePromiscuousProbes(params.getProbeFileParameters().getUsedColumns()[0],
+						params.getProbeFileParameters().getUsedColumns()[1],
+						params.getProbeFileParameters().getMatrixData(), probeHash);
+			probeGeneMaps.probeGeneMaping(chip, true);
+			ProbeCategoryMaps probeCategoryGeneMaps = new ProbeCategoryMaps(bmdResults);
+			probeCategoryGeneMaps.readProbes(true);
+			// probeCategoryGeneMaps.readArraysInfo();
+			probeCategoryGeneMaps.setProbesHash(probeHash);
+			probeCategoryGeneMaps.probeGeneMaping(params.getProbeFileParameters().getUsedColumns()[0],
+					params.getProbeFileParameters().getUsedColumns()[1],
+					params.getProbeFileParameters().getMatrixData());
+			catMap = new GeneLevelCategoryMap(params.getCategoryFileParameters().getUsedColumns()[0],
+					params.getCategoryFileParameters().getUsedColumns()[1],
+					params.getCategoryFileParameters().getUsedColumns()[2],
+					params.getCategoryFileParameters().getMatrixData().getData(), probeCategoryGeneMaps);
+
+			File catFile = new File(params.getCategoryFileParameters().getFileName());
+			String catFileName = catFile.getName();
+
+			rstName += "_GENE";
+			analysisInfo.getNotes().add("Gene Level Analyses");
+
+			probeGeneMaps = probeCategoryGeneMaps;
 		}
-		
+
 		if (params.getDeduplicateGeneSets())
 			analysisInfo.getNotes().add("Deduplicate Gene Sets: true");
 		else
@@ -397,10 +422,15 @@ public class CategoryMapTool
 			{
 				categoryAnalysisResult = new PathwayAnalysisResult();
 			}
+			else if (categoryGeneMap instanceof GeneLevelCategoryMap)
+			{
+				categoryAnalysisResult = new GeneLevelAnalysisResult();
+			}
 			else if (categoryGeneMap instanceof CategoryMap)
 			{
 				categoryAnalysisResult = new DefinedCategoryAnalysisResult();
 			}
+
 			else
 			{
 				categoryAnalysisResult = new GOAnalysisResult();

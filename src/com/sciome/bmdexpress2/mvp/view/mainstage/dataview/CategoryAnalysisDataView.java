@@ -42,15 +42,18 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		super(CategoryAnalysisResult.class, categoryAnalysisResults, viewTypeKey);
 		presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
 
-		//Add any new columns to the map and list
+		// Add any new columns to the map and list
 		columnMap = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisMap();
 		columnOrder = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisOrder();
-		for(String header : categoryAnalysisResults.getColumnHeader()) {
-			if(!columnMap.containsKey(header)) {
+		for (String header : categoryAnalysisResults.getColumnHeader())
+		{
+			if (!columnMap.containsKey(header))
+			{
 				columnMap.put(header, true);
 			}
-			if(!columnOrder.contains(header)) {
-				if(header.equals("Analysis"))
+			if (!columnOrder.contains(header))
+			{
+				if (header.equals("Analysis"))
 					columnOrder.add(0, header);
 				else
 					columnOrder.add(header);
@@ -61,9 +64,9 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		setUpTableListeners();
 		if (categoryAnalysisResults.getColumnHeader().size() == 0)
 			return;
-		
+
 		setCellFactory();
-		
+
 		presenter.showVisualizations(categoryAnalysisResults);
 	}
 
@@ -86,16 +89,17 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		return new HashMap<>();
 
 	}
-	
+
 	@Override
-	protected void setCellFactory() 
+	protected void setCellFactory()
 	{
-		if(columnMap.get("GO/Pathway/Gene Set ID")) {
+		if (columnMap.get("GO/Pathway/Gene Set ID"))
+		{
 			// Create a CellFactory for the category id
 			categoryCellFactory = new CategoryTableCallBack();
-			
+
 			int pathwayColumn = columnOrder.indexOf("GO/Pathway/Gene Set ID");
-			
+
 			TableColumn tc = tableView.getColumns().get(pathwayColumn);
 			tc.setCellFactory(categoryCellFactory);
 		}
@@ -177,11 +181,11 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 		@Override
 		public TableCell call(TableColumn param)
 		{
-			TableCell cell = new TableCell<BMDExpressAnalysisRow, String>() {
+			TableCell cell = new TableCell<BMDExpressAnalysisRow, Object>() {
 
 				// must override drawing the cell so we can color it blue.
 				@Override
-				public void updateItem(String item, boolean empty)
+				public void updateItem(Object item, boolean empty)
 				{
 					super.updateItem(item, empty);
 					setTextFill(javafx.scene.paint.Color.BLUE);

@@ -15,12 +15,14 @@ import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.GeneLevelUtils;
 import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class CategorizationPresenter extends ServicePresenterBase<ICategorizationView, ICategoryAnalysisService>
+public class CategorizationPresenter
+		extends ServicePresenterBase<ICategorizationView, ICategoryAnalysisService>
 		implements ICategoryMapToolProgress
 {
 	private List<BMDResult>			bmdResults;
@@ -31,7 +33,8 @@ public class CategorizationPresenter extends ServicePresenterBase<ICategorizatio
 	 * Constructors
 	 */
 
-	public CategorizationPresenter(ICategorizationView view, ICategoryAnalysisService service, BMDExpressEventBus eventBus)
+	public CategorizationPresenter(ICategorizationView view, ICategoryAnalysisService service,
+			BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 		init();
@@ -51,6 +54,7 @@ public class CategorizationPresenter extends ServicePresenterBase<ICategorizatio
 
 	}
 
+	@SuppressWarnings("restriction")
 	public void startAnalyses(CategoryAnalysisParameters params)
 	{
 
@@ -61,47 +65,65 @@ public class CategorizationPresenter extends ServicePresenterBase<ICategorizatio
 			@Override
 			protected Integer call() throws Exception
 			{
-				for (BMDResult bmdResult : bmdResults)
+				try
 				{
-					Platform.runLater(() ->
+					for (BMDResult bmdResult : bmdResults)
 					{
-						getView().startedCategorization();
-					});
-					try
-					{
-						CategoryAnalysisResults categoryAnalysisResults = getService().categoryAnalysis(params, bmdResult, catAnalysisEnum, me);
 
+						// for gene level analysis, just use the genes as categories
+						// basically recreate the defined pathway
+						if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
+						{
+							params.setCategoryFileParameters(GeneLevelUtils
+									.getCategoryFileParameters(bmdResult.getDoseResponseExperiment()));
+							params.setProbeFileParameters(GeneLevelUtils
+									.getProbeFileParameters(bmdResult.getDoseResponseExperiment()));
+						}
 						Platform.runLater(() ->
 						{
+							getView().startedCategorization();
+						});
+						try
+						{
+							CategoryAnalysisResults categoryAnalysisResults = getService()
+									.categoryAnalysis(params, bmdResult, catAnalysisEnum, me);
 
-							getView().finishedCategorization();
-							if (categoryAnalysisResults != null)
+							Platform.runLater(() ->
 							{
 
-								getEventBus()
-										.post(new CategoryAnalysisDataLoadedEvent(categoryAnalysisResults));
+								getView().finishedCategorization();
+								if (categoryAnalysisResults != null)
+								{
 
-							}
+									getEventBus().post(
+											new CategoryAnalysisDataLoadedEvent(categoryAnalysisResults));
 
-						});
+								}
 
-					}
-					catch (Exception exception)
-					{
-						Platform.runLater(() ->
+							});
+
+						}
+						catch (Exception exception)
 						{
-							CategorizationPresenter.this.getEventBus().post(
-									new ShowErrorEvent("Category Analysis Failure: " + exception.toString()));
-							getView().enableButtons();
-						});
-						exception.printStackTrace();
+							Platform.runLater(() ->
+							{
+								CategorizationPresenter.this.getEventBus().post(new ShowErrorEvent(
+										"Category Analysis Failure: " + exception.toString()));
+								getView().enableButtons();
+							});
+							exception.printStackTrace();
+						}
 					}
-				}
 
-				Platform.runLater(() ->
+					Platform.runLater(() ->
+					{
+						getView().closeWindow();
+					});
+				}
+				catch (Exception e)
 				{
-					getView().closeWindow();
-				});
+					e.printStackTrace();
+				}
 				return 0;
 			}
 		};
