@@ -288,7 +288,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		}
 		// start the BMD Analysis
 		if (selectModelsOnly)
+		{
 			presenter.performReselectParameters(inputParameters, modelSectionParameters);
+			this.closeWindow();
+		}
 		else
 			presenter.performBMDAnalysis(inputParameters, modelSectionParameters, modelsToRun);
 	}

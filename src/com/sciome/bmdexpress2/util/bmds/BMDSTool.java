@@ -785,21 +785,22 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				}
 				else
 				{
-					double aic1 = bestPolyResult.getAIC();
+
 					double bmd1 = bestPolyResult.getBMD();
 					double bmdl1 = bestPolyResult.getBMDL();
+					double bmdu1 = bestPolyResult.getBMDU();
+					double aic1 = bestPolyResult.getAIC();
 					double bmd2 = statResult.getBMD();
 					double bmdl2 = statResult.getBMDL();
-					double aic2 = statResult.getAIC();
-
-					double bmdu1 = bestPolyResult.getBMDU();
 					double bmdu2 = statResult.getBMDU();
+					double aic2 = statResult.getAIC();
 
 					// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
 					// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-					if ((aic1 > aic2 || bmd1 == DEFAULTDOUBLE || bmdl1 == DEFAULTDOUBLE
-							|| bmdu1 == DEFAULTDOUBLE)
-							|| (bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE))
+					if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE
+							|| bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
+							|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE
+									&& bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE))
 					{
 						bestPolyResult = statResult;
 					}
