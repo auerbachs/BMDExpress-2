@@ -100,6 +100,11 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 
 			int pathwayColumn = columnOrder.indexOf("GO/Pathway/Gene Set ID");
 
+			// if this is a combined dataset then the analysis will be first column
+			// analysis column is special. We increment the pathway column by one in that case.
+			if (!(bmdAnalysisDataSet instanceof CombinedDataSet) && pathwayColumn > 0)
+				pathwayColumn--;
+
 			TableColumn tc = tableView.getColumns().get(pathwayColumn);
 			tc.setCellFactory(categoryCellFactory);
 		}
