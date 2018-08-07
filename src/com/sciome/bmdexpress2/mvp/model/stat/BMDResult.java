@@ -78,6 +78,29 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public static final String		LOEL_VALUE					= "LOTEL";
 	public static final String		NOEL_VALUE					= "NOTEL";
 
+	// clone a bmdexpress result
+	public BMDResult(BMDResult bmdResult)
+	{
+		this.setName(bmdResult.getName());
+		this.setDoseResponseExperiment(bmdResult.getDoseResponseExperiment());
+		this.setLogwAUC(bmdResult.getLogwAUC());
+		this.setwAUC(bmdResult.getwAUC());
+		this.setAnalysisInfo(bmdResult.getAnalysisInfo());
+		this.setPrefilterResults(bmdResult.getPrefilterResults());
+		probeStatResults = new ArrayList<>();
+		for (ProbeStatResult probeStatResult : bmdResult.getProbeStatResults())
+		{
+			// clone probestatResults
+			probeStatResults.add(new ProbeStatResult(probeStatResult));
+		}
+
+	}
+
+	public BMDResult()
+	{
+		// TODO Auto-generated constructor stub
+	}
+
 	@JsonIgnore
 	public Long getID()
 	{

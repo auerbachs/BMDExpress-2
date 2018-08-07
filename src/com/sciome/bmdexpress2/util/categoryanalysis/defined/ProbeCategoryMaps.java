@@ -76,9 +76,12 @@ public class ProbeCategoryMaps extends ProbeGeneMaps
 			{
 				allGenes.add(component);
 
-				ReferenceGene refGene = new CustomGene();
-				refGene.setId(component);
-				this.getReferenceGeneMap().put(component, refGene);
+				if (!this.getReferenceGeneMap().containsKey(component))
+				{
+					ReferenceGene refGene = new CustomGene();
+					refGene.setId(component);
+					this.getReferenceGeneMap().put(component, refGene);
+				}
 			}
 			if (probesHash.containsKey(probe))
 			{

@@ -200,12 +200,14 @@ public class CategoryMapTool
 						params.getProbeFileParameters().getMatrixData(), probeHash);
 			probeGeneMaps.probeGeneMaping(chip, true);
 			ProbeCategoryMaps probeCategoryGeneMaps = new ProbeCategoryMaps(bmdResults);
-			probeCategoryGeneMaps.readProbes(true);
+
 			// probeCategoryGeneMaps.readArraysInfo();
+			probeCategoryGeneMaps.readProbes(false);
 			probeCategoryGeneMaps.setProbesHash(probeHash);
 			probeCategoryGeneMaps.probeGeneMaping(params.getProbeFileParameters().getUsedColumns()[0],
 					params.getProbeFileParameters().getUsedColumns()[1],
 					params.getProbeFileParameters().getMatrixData());
+
 			catMap = new GeneLevelCategoryMap(params.getCategoryFileParameters().getUsedColumns()[0],
 					params.getCategoryFileParameters().getUsedColumns()[1],
 					params.getCategoryFileParameters().getUsedColumns()[2],

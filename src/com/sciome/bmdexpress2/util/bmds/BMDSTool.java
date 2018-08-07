@@ -408,8 +408,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			return true;
 		}
 
-		polyModelsTest(bmdResults);
-
 		selectBestModels(bmdResults);
 
 		return true;
@@ -417,6 +415,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 	public void selectBestModels(BMDResult bmdResults)
 	{
+		polyModelsTest(bmdResults);
+
 		if (modelsToRun != null && isModelInThere("hill", modelsToRun))
 		{
 			if (modelSelectionParameters.isFlagHillModel())

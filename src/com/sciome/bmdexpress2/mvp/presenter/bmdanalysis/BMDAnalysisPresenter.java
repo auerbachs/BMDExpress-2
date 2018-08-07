@@ -6,12 +6,16 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.mvp.model.stat.ExponentialResult;
+import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
+import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
+import com.sciome.bmdexpress2.mvp.model.stat.PowerResult;
+import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
 import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -19,7 +23,10 @@ import com.sciome.bmdexpress2.util.bmds.BMDSTool;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
 import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
 import javafx.application.Platform;
@@ -126,17 +133,42 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 		for (IStatModelProcessable processableData : processableDatas)
 		{
 			List<StatModel> modelsToRun = new ArrayList<>();
-			modelsToRun.add(new HillModel());
+			BMDResult bmdResult = new BMDResult((BMDResult) processableData);
+
+			for (StatResult statResult : bmdResult.getProbeStatResults().get(0).getStatResults())
+			{
+				StatModel statModel = null;
+				if (statResult instanceof HillResult)
+					statModel = new HillModel();
+				else if (statResult instanceof PolyResult)
+				{
+					PolyModel pm = new PolyModel();
+					pm.setDegree(((PolyResult) statResult).getDegree());
+					statModel = pm;
+				}
+				else if (statResult instanceof PowerResult)
+					statModel = new PowerModel();
+				else if (statResult instanceof ExponentialResult)
+				{
+					ExponentialModel em = new ExponentialModel();
+					em.setOption(((ExponentialResult) statResult).getOption());
+					statModel = em;
+				}
+				modelsToRun.add(statModel);
+			}
 			bMDSTool = new BMDSTool(processableData.getProcessableProbeResponses(),
 					processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
 					modelSelectionParameters, modelsToRun, this, processableData, null);
 			((BMDResult) processableData).getAnalysisInfo().getNotes().add("Parameter Reselect");
-			bMDSTool.selectBestModels((BMDResult) processableData);
+			// create a shallow clone of the bmdresult
+
+			bMDSTool.selectBestModels(bmdResult);
 
 			// refresh the tabular data inside of bmdresults
-			((BMDResult) processableData).getColumnHeader();
+			bmdResult.getColumnHeader();
 
-			getEventBus().post(new BMDAnalysisDataSelectedEvent(((BMDResult) processableData)));
+			// load the new bmdResult
+			getEventBus().post(new BMDAnalysisDataLoadedEvent(bmdResult));
 		}
 
 	}

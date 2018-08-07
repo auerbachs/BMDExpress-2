@@ -54,6 +54,21 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 
 	private Long					id;
 
+	// clone probestatresult. but this is really for
+	// reselecting best models. so keep the beststat/bestpolystatresults empty
+	// reslecting them will fill them up
+	public ProbeStatResult(ProbeStatResult probeStatResult)
+	{
+		this.setProbeResponse(probeStatResult.getProbeResponse());
+		this.setChiSquaredResults(probeStatResult.getChiSquaredResults());
+		this.setStatResults(probeStatResult.getStatResults());
+	}
+
+	public ProbeStatResult()
+	{
+		// TODO Auto-generated constructor stub
+	}
+
 	@JsonIgnore
 	public Long getID()
 	{
