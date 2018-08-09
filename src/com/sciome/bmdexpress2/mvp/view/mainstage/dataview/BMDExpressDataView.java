@@ -294,11 +294,14 @@ public abstract class BMDExpressDataView<T> extends VBox
 					dialog.initModality(Modality.WINDOW_MODAL);
 					dialog.setResizable(false);
 
-					VBox vb = new VBox();
-					vb.setSpacing(20.0);
-					HBox hb1 = new HBox();
-					hb1.setAlignment(Pos.CENTER_LEFT);
-					hb1.setSpacing(10.0);
+					HBox hb = new HBox();
+					hb.setSpacing(20.0);
+					VBox vb1 = new VBox();
+					vb1.setAlignment(Pos.CENTER_LEFT);
+					vb1.setSpacing(10.0);
+					VBox vb2 = new VBox();
+					vb2.setAlignment(Pos.CENTER_LEFT);
+					vb2.setSpacing(10.0);
 
 					CheckListView<String> checkList = new CheckListView<String>();
 					checkList.getItems().setAll(analysisDataSet.getColumnHeader());
@@ -309,6 +312,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 					}
 					
 					Button checkAll = new Button("Check All");
+					checkAll.setPrefWidth(100);
 					checkAll.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent event) {
@@ -316,6 +320,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 						}
 					});
 					Button clear = new Button("Clear");
+					clear.setPrefWidth(100);
 					clear.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent event) {
@@ -323,13 +328,11 @@ public abstract class BMDExpressDataView<T> extends VBox
 						}
 					});
 					
-					HBox hb2 = new HBox();
-					hb2.setAlignment(Pos.CENTER_LEFT);
-					hb2.setSpacing(10.0);
-					hb1.getChildren().addAll(checkList, checkAll, clear);
-					vb.getChildren().addAll(hb1);
+					vb1.getChildren().addAll(checkList);
+					vb2.getChildren().addAll(checkAll, clear);
+					hb.getChildren().addAll(vb1, vb2);
 
-					dialog.getDialogPane().setContent(vb);
+					dialog.getDialogPane().setContent(hb);
 
 					ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 					ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
