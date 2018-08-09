@@ -197,16 +197,16 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		if (bestStatResult == null)
 		{
 			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
-			row.add("none");
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
+			row.add(Double.NaN);
 		}
 		else
 		{
