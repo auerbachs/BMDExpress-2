@@ -652,7 +652,10 @@ public class PrefilterService implements IPrefilterService
 							.doubleValue();
 					count++;
 				}
-				pValues.add(new Float((float) test.tTest(sample0, sample1)));
+				if(sample0.length > 1 && sample1.length > 1)
+					pValues.add(new Float((float) test.tTest(sample0, sample1)));
+				else
+					pValues.add(Float.NaN);
 			}
 			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
 
