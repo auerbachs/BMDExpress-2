@@ -75,7 +75,7 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				BMDUDOWN_MEAN							= "BMDU Down Mean";
 	public static final String				BMDUDOWN_MEDIAN							= "BMDU Down Median";
 	public static final String				BMDUDOWN_SD								= "BMDU Down Standard Deviation";
-	
+
 	public static final String				BMD_LIST								= "BMD List";
 	public static final String				BMDL_LIST								= "BMDL List";
 	public static final String				BMDU_LIST								= "BMDU List";
@@ -95,8 +95,8 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				BMD_BMDL_MEAN_RATIO						= "BMD Mean/BMDL Mean";
 	public static final String				BMDU_BMD_MEAN_RATIO						= "BMDU Mean/BMD Mean";
 
-	public static final String				CATEGORY_ID								= "GO/Pathway/Gene Set ID";
-	public static final String				CATEGORY_DESCRIPTION					= "GO/Pathway/Gene Set Name";
+	public static final String				CATEGORY_ID								= "GO/Pathway/Gene Set/Gene ID";
+	public static final String				CATEGORY_DESCRIPTION					= "GO/Pathway/Gene Set/Gene Name";
 	public static final String				GO_TERM_LEVEL							= "GO Term Level";
 
 	public static final String				OVERALL_DIRECTION						= "Overall Direction";

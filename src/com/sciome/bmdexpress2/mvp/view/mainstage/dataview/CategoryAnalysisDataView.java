@@ -40,34 +40,41 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	public CategoryAnalysisDataView(BMDExpressAnalysisDataSet categoryAnalysisResults, String viewTypeKey)
 	{
 		super(CategoryAnalysisResult.class, categoryAnalysisResults, viewTypeKey);
-		presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
-
-		// Add any new columns to the map and list
-		columnMap = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisMap();
-		columnOrder = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisOrder();
-		for (String header : categoryAnalysisResults.getColumnHeader())
+		try
 		{
-			if (!columnMap.containsKey(header))
+			presenter = new CategoryAnalysisDataViewPresenter(this, BMDExpressEventBus.getInstance());
+
+			// Add any new columns to the map and list
+			columnMap = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisMap();
+			columnOrder = BMDExpressProperties.getInstance().getTableInformation().getCategoryAnalysisOrder();
+			for (String header : categoryAnalysisResults.getColumnHeader())
 			{
-				columnMap.put(header, true);
+				if (!columnMap.containsKey(header))
+				{
+					columnMap.put(header, true);
+				}
+				if (!columnOrder.contains(header))
+				{
+					if (header.equals("Analysis"))
+						columnOrder.add(0, header);
+					else
+						columnOrder.add(header);
+				}
 			}
-			if (!columnOrder.contains(header))
-			{
-				if (header.equals("Analysis"))
-					columnOrder.add(0, header);
-				else
-					columnOrder.add(header);
-			}
+
+			setUpTableView(categoryAnalysisResults);
+			setUpTableListeners();
+			if (categoryAnalysisResults.getColumnHeader().size() == 0)
+				return;
+
+			setCellFactory();
+
+			presenter.showVisualizations(categoryAnalysisResults);
 		}
-
-		setUpTableView(categoryAnalysisResults);
-		setUpTableListeners();
-		if (categoryAnalysisResults.getColumnHeader().size() == 0)
-			return;
-
-		setCellFactory();
-
-		presenter.showVisualizations(categoryAnalysisResults);
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -93,12 +100,12 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 	@Override
 	protected void setCellFactory()
 	{
-		if (columnMap.get("GO/Pathway/Gene Set ID"))
+		if (columnMap.get(CategoryAnalysisResults.CATEGORY_ID))
 		{
 			// Create a CellFactory for the category id
 			categoryCellFactory = new CategoryTableCallBack();
 
-			int pathwayColumn = columnOrder.indexOf("GO/Pathway/Gene Set ID");
+			int pathwayColumn = columnOrder.indexOf(CategoryAnalysisResults.CATEGORY_ID);
 
 			// if this is a combined dataset then the analysis will be first column
 			// analysis column is special. We increment the pathway column by one in that case.

@@ -85,7 +85,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		this.setDoseResponseExperiment(bmdResult.getDoseResponseExperiment());
 		this.setLogwAUC(bmdResult.getLogwAUC());
 		this.setwAUC(bmdResult.getwAUC());
-		this.setAnalysisInfo(bmdResult.getAnalysisInfo());
+		this.setAnalysisInfo(new AnalysisInfo(bmdResult.getAnalysisInfo()));
+
 		this.setPrefilterResults(bmdResult.getPrefilterResults());
 		probeStatResults = new ArrayList<>();
 		for (ProbeStatResult probeStatResult : bmdResult.getProbeStatResults())

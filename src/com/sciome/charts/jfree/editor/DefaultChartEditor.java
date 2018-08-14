@@ -52,7 +52,6 @@ import java.awt.Label;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -66,7 +65,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
@@ -79,44 +77,45 @@ import org.jfree.layout.LCBLayout;
 import org.jfree.ui.PaintSample;
 
 /**
- * A panel for editing chart properties (includes subpanels for the title,
- * legend and plot).
+ * A panel for editing chart properties (includes subpanels for the title, legend and plot).
  */
-class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
-	private static final String SERIES_COLOR = "Series Color";
+class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor
+{
+	private static final String		SERIES_COLOR			= "Series Color";
 
 	/** A panel for displaying/editing the properties of the title. */
-	private DefaultTitleEditor titleEditor;
+	private DefaultTitleEditor		titleEditor;
 
 	/** A panel for displaying/editing the properties of the plot. */
-	private DefaultPlotEditor plotEditor;
+	private DefaultPlotEditor		plotEditor;
 
 	/**
 	 * A checkbox indicating whether or not the chart is drawn with anti-aliasing.
 	 */
-	private JCheckBox antialias;
+	private JCheckBox				antialias;
 
 	/** The chart background color. */
-	private PaintSample background;
+	private PaintSample				background;
 
 	/** The current series color */
-	private ArrayList<Paint> seriesColor;
-	
+	private ArrayList<Paint>		seriesColor;
+
 	/** The color panel used to display the current series colors */
-	private JPanel colorPanel;
+	private JPanel					colorPanel;
 
 	/** The resourceBundle for the localization. */
-	protected static ResourceBundle localizationResources = ResourceBundleWrapper
+	protected static ResourceBundle	localizationResources	= ResourceBundleWrapper
 			.getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 	/**
-	 * Standard constructor - the property panel is made up of a number of
-	 * sub-panels that are displayed in the tabbed pane.
+	 * Standard constructor - the property panel is made up of a number of sub-panels that are displayed in
+	 * the tabbed pane.
 	 *
 	 * @param chart
 	 *            the chart, whichs properties should be changed.
 	 */
-	public DefaultChartEditor(JFreeChart chart) {
+	public DefaultChartEditor(JFreeChart chart)
+	{
 		setLayout(new BorderLayout());
 
 		JPanel other = new JPanel(new BorderLayout());
@@ -147,27 +146,34 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 
 		JTextField info = new JTextField(localizationResources.getString("No_editor_implemented"));
 		Plot plot = chart.getPlot();
-		if (plot instanceof XYPlot) {
+		if (plot instanceof XYPlot)
+		{
 			seriesColor = new ArrayList<Paint>();
 			colorPanel = new JPanel();
-			for (int i = 0; i < ((XYPlot) plot).getSeriesCount(); i++) {
+			for (int i = 0; i < ((XYPlot) plot).getSeriesCount(); i++)
+			{
 				seriesColor.add(((XYPlot) plot).getRenderer().getSeriesPaint(i));
 				colorPanel.add(new PaintSample(seriesColor.get(i)));
 			}
 			interior.add(colorPanel);
 			button.setActionCommand(SERIES_COLOR);
 			button.addActionListener(this);
-		} else if (plot instanceof CategoryPlot) {
+		}
+		else if (plot instanceof CategoryPlot)
+		{
 			seriesColor = new ArrayList<Paint>();
 			colorPanel = new JPanel();
-			for (int i = 0; i < ((CategoryPlot) plot).getDataset().getRowCount(); i++) {
+			for (int i = 0; i < ((CategoryPlot) plot).getDataset().getRowCount(); i++)
+			{
 				seriesColor.add(((CategoryPlot) plot).getRenderer().getSeriesPaint(i));
 				colorPanel.add(new PaintSample(seriesColor.get(i)));
 			}
 			interior.add(colorPanel);
 			button.setActionCommand(SERIES_COLOR);
 			button.addActionListener(this);
-		} else {
+		}
+		else
+		{
 			info.setEnabled(false);
 			button.setEnabled(false);
 			interior.add(info);
@@ -211,9 +217,12 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 		this.titleEditor.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		tabs.addTab(localizationResources.getString("Title"), this.titleEditor);
 
-		if (plot instanceof PolarPlot) {
+		if (plot instanceof PolarPlot)
+		{
 			this.plotEditor = new DefaultPolarPlotEditor((PolarPlot) plot);
-		} else {
+		}
+		else
+		{
 			this.plotEditor = new DefaultPlotEditor(plot);
 		}
 		this.plotEditor.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -229,7 +238,8 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	 *
 	 * @return A panel for editing the title.
 	 */
-	public DefaultTitleEditor getTitleEditor() {
+	public DefaultTitleEditor getTitleEditor()
+	{
 		return this.titleEditor;
 	}
 
@@ -238,7 +248,8 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	 *
 	 * @return A panel for editing the plot properties.
 	 */
-	public DefaultPlotEditor getPlotEditor() {
+	public DefaultPlotEditor getPlotEditor()
+	{
 		return this.plotEditor;
 	}
 
@@ -247,7 +258,8 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	 *
 	 * @return <code>true</code> if anti-aliasing is enabled.
 	 */
-	public boolean getAntiAlias() {
+	public boolean getAntiAlias()
+	{
 		return this.antialias.isSelected();
 	}
 
@@ -256,7 +268,8 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	 *
 	 * @return The current background paint.
 	 */
-	public Paint getBackgroundPaint() {
+	public Paint getBackgroundPaint()
+	{
 		return this.background.getPaint();
 	}
 
@@ -267,74 +280,89 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	 *            a BackgroundPaint action.
 	 */
 	@Override
-	public void actionPerformed(ActionEvent event) {
+	public void actionPerformed(ActionEvent event)
+	{
 		String command = event.getActionCommand();
-		if (command.equals("BackgroundPaint")) {
+		if (command.equals("BackgroundPaint"))
+		{
 			attemptModifyBackgroundPaint();
-		} else if (command.equals(SERIES_COLOR)) {
+		}
+		else if (command.equals(SERIES_COLOR))
+		{
 			attemptModifySeriesPaint();
 		}
 	}
 
 	/**
-	 * Allows the user the opportunity to select a new background paint. Uses
-	 * JColorChooser, so we are only allowing a subset of all Paint objects to be
-	 * selected (fix later).
+	 * Allows the user the opportunity to select a new background paint. Uses JColorChooser, so we are only
+	 * allowing a subset of all Paint objects to be selected (fix later).
 	 */
-	private void attemptModifyBackgroundPaint() {
+	private void attemptModifyBackgroundPaint()
+	{
 		Color c;
-		c = JColorChooser.showDialog(new FrontDialog(this), localizationResources.getString("Background_Color"),
-				Color.blue);
-		if (c != null) {
+		c = JColorChooser.showDialog(new FrontDialog(this),
+				localizationResources.getString("Background_Color"), Color.blue);
+		if (c != null)
+		{
 			this.background.setPaint(c);
 		}
 	}
 
 	/**
-	 * Allows the user the opportunity to select a new set of series paint. Uses
-	 * JColorChooser, so we are only allowing a subset of all Paint objects to be
-	 * selected (fix later).
+	 * Allows the user the opportunity to select a new set of series paint. Uses JColorChooser, so we are only
+	 * allowing a subset of all Paint objects to be selected (fix later).
 	 */
-	private void attemptModifySeriesPaint() {
+	private void attemptModifySeriesPaint()
+	{
 		JDialog dialog = new FrontDialog(this);
 		JPanel panel = new JPanel();
 		GridLayout layout = new GridLayout(seriesColor.size() + 1, 2);
 		panel.setLayout(layout);
-		
+
 		ArrayList<Paint> tempSeriesColor = new ArrayList<Paint>();
-		for(int i = 0; i < seriesColor.size(); i++) {
+		for (int i = 0; i < seriesColor.size(); i++)
+		{
 			tempSeriesColor.add(seriesColor.get(i));
 		}
-		
+
 		final Component comp = this;
-		//Create action listeners for all the buttons
+		// Create action listeners for all the buttons
 		ActionListener listener = new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(e.getActionCommand().equals("Ok")) {
+			public void actionPerformed(ActionEvent e)
+			{
+				if (e.getActionCommand().equals("Ok"))
+				{
 					seriesColor = tempSeriesColor;
 					setColorPanel();
 					dialog.setVisible(false);
-				} else if(e.getActionCommand().equals("Cancel")) {
+				}
+				else if (e.getActionCommand().equals("Cancel"))
+				{
 					dialog.setVisible(false);
-				} else {
-					//Open up the color chooser
+				}
+				else
+				{
+					// Open up the color chooser
 					Color c;
 					Integer series = Integer.parseInt(e.getActionCommand());
 					c = JColorChooser.showDialog(new FrontDialog(comp), "Series " + series + " Color",
 							Color.blue);
-					if (c != null) {
-						((Button)e.getSource()).setBackground(c);
+					if (c != null)
+					{
+						((Button) e.getSource()).setBackground(c);
 						tempSeriesColor.set(series, c);
 					}
 				}
 			}
 		};
-		
-		for(int i = 0; i < seriesColor.size(); i++) {
+
+		for (int i = 0; i < seriesColor.size(); i++)
+		{
 			panel.add(new Label("Series " + (i + 1)));
-			Button btn = new Button("");
-			btn.setBackground((Color)seriesColor.get(i));
+			Button btn = new Button();
+			btn.setBackground((Color) seriesColor.get(i));
+			btn.setForeground((Color) seriesColor.get(i));
 			btn.setActionCommand("" + i);
 			btn.addActionListener(listener);
 			panel.add(btn);
@@ -347,7 +375,7 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 		cancel.addActionListener(listener);
 		panel.add(ok);
 		panel.add(cancel);
-		
+
 		JScrollPane scroll = new JScrollPane(panel);
 		dialog.add(scroll);
 		dialog.setSize(200, 300);
@@ -355,34 +383,38 @@ class DefaultChartEditor extends JPanel implements ActionListener, ChartEditor {
 	}
 
 	/**
-	 * Updates the properties of a chart to match the properties defined on the
-	 * panel.
+	 * Updates the properties of a chart to match the properties defined on the panel.
 	 *
 	 * @param chart
 	 *            the chart.
 	 */
 	@Override
-	public void updateChart(JFreeChart chart) {
+	public void updateChart(JFreeChart chart)
+	{
 		this.titleEditor.setTitleProperties(chart);
 		this.plotEditor.updatePlotProperties(chart.getPlot());
 		chart.setAntiAlias(getAntiAlias());
 		chart.setBackgroundPaint(getBackgroundPaint());
 		Plot plot = chart.getPlot();
-		if(plot instanceof XYPlot) {
-			for(int i = 0; i < seriesColor.size(); i++)
+		if (plot instanceof XYPlot)
+		{
+			for (int i = 0; i < seriesColor.size(); i++)
 				((XYPlot) plot).getRenderer().setSeriesPaint(i, seriesColor.get(i));
-		} else if(plot instanceof CategoryPlot) {
-			for(int i = 0; i < seriesColor.size(); i++)
+		}
+		else if (plot instanceof CategoryPlot)
+		{
+			for (int i = 0; i < seriesColor.size(); i++)
 				((CategoryPlot) plot).getRenderer().setSeriesPaint(i, seriesColor.get(i));
-		} 
+		}
 	}
-	
+
 	/**
 	 * Reset the color panel with the new series colors
 	 */
-	private void setColorPanel() {
+	private void setColorPanel()
+	{
 		colorPanel.removeAll();
-		for(int i = 0; i < seriesColor.size(); i++) 
+		for (int i = 0; i < seriesColor.size(); i++)
 			colorPanel.add(new PaintSample(seriesColor.get(i)));
 		colorPanel.revalidate();
 	}

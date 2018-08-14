@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.model.info;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -18,6 +19,18 @@ public class AnalysisInfo implements Serializable
 
 	private List<String>		notes;
 	private Long				id					= null;
+
+	public AnalysisInfo()
+	{
+
+	}
+
+	public AnalysisInfo(AnalysisInfo analysisInfo)
+	{
+		notes = new ArrayList<>();
+		for (String note : analysisInfo.getNotes())
+			notes.add(note);
+	}
 
 	@JsonIgnore
 	public Long getID()
