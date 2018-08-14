@@ -2,7 +2,11 @@ package com.sciome.bmdexpress2;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import com.sciome.bmdexpress2.mvp.model.TableInformation;
+import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressInformation;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
@@ -27,6 +31,7 @@ public class BMDExpress2Main extends Application
 
 	private Scene scene;
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void start(Stage primaryStage)
 	{
@@ -127,6 +132,7 @@ public class BMDExpress2Main extends Application
 	{
 		Float myflot = Float.MIN_VALUE;
 		Double mydoub = Double.MIN_VALUE;
+		renameTableInformationJSONFields();
 		launch(args);
 	}
 
@@ -179,6 +185,36 @@ public class BMDExpress2Main extends Application
 			BMDExpressProperties.getInstance().writeVersion(version);
 			BMDExpressInformation.getInstance().showVersionDialog(scene, version);
 		}
+
+	}
+
+	// This function is used to rename column names in the
+	// tableinformation.json file. Occasionally we are requested to
+	// change a column name, which used to be as simple as changing a
+	// constant. But now we are storing column order and visibility.
+	// So we need to make sure this is in sync with current naming scheme.
+	private static void renameTableInformationJSONFields()
+	{
+		TableInformation tableInformation = BMDExpressProperties.getInstance().getTableInformation();
+
+		// change the name of Category Analysis id and name fields. aug 14, 2018
+		Map<String, Boolean> catAnalysisMap = tableInformation.getCategoryAnalysisMap();
+		if (catAnalysisMap.get("GO/Pathway/Gene Set ID") != null)
+			catAnalysisMap.put(CategoryAnalysisResults.CATEGORY_ID,
+					catAnalysisMap.get("GO/Pathway/Gene Set ID"));
+
+		if (catAnalysisMap.get("GO/Pathway/Gene Set Name") != null)
+			catAnalysisMap.put(CategoryAnalysisResults.CATEGORY_DESCRIPTION,
+					catAnalysisMap.get("GO/Pathway/Gene Set Name"));
+
+		List<String> catAnalysisOrder = tableInformation.getCategoryAnalysisOrder();
+		for (int i = 0; i < catAnalysisOrder.size(); i++)
+			if (catAnalysisOrder.get(i).equals("GO/Pathway/Gene Set Name"))
+				catAnalysisOrder.set(i, CategoryAnalysisResults.CATEGORY_DESCRIPTION);
+			else if (catAnalysisOrder.get(i).equals("GO/Pathway/Gene Set ID"))
+				catAnalysisOrder.set(i, CategoryAnalysisResults.CATEGORY_ID);
+
+		BMDExpressProperties.getInstance().saveTableInformation();
 
 	}
 
