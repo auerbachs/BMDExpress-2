@@ -7,15 +7,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxWidth="-Infinity" prefHeight="670.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView">
+<BorderPane maxWidth="-Infinity" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView">
    <center>
-      <ScrollPane hbarPolicy="NEVER" prefHeight="631.0" prefViewportHeight="600.0" prefViewportWidth="800.0" prefWidth="825.0">
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="665.0" prefViewportHeight="600.0" prefViewportWidth="800.0" prefWidth="1000.0">
          <content>
-            <AnchorPane prefHeight="585.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+            <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <VBox fx:id="mainVBox" prefHeight="670.0" prefWidth="800.0" AnchorPane.bottomAnchor="-85.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="mainVBox" prefHeight="670.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="dataOptionsPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+                        <AnchorPane fx:id="dataOptionsPane" maxHeight="-Infinity" VBox.vgrow="SOMETIMES">
                            <children>
                               <TitledPane collapsible="false" layoutX="22.0" layoutY="-14.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="800.0" text="Data Options" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
@@ -58,7 +58,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="modelsPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="135.0" prefWidth="800.0">
+                        <AnchorPane fx:id="modelsPane" maxHeight="-Infinity">
                            <children>
                               <TitledPane collapsible="false" prefHeight="98.0" prefWidth="800.0" text="Continuous Models" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
@@ -135,7 +135,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="129.0" prefWidth="800.0" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" VBox.vgrow="NEVER">
                            <children>
                               <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
                                  <content>
@@ -187,14 +187,36 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="modelSelectionPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="160.0" prefWidth="800.0" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="modelSelectionPane" VBox.vgrow="NEVER">
                            <children>
-                              <TitledPane collapsible="false" layoutY="-27.0" prefHeight="156.0" prefWidth="800.0" text="Model Selection" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-27.0">
+                              <TitledPane collapsible="false" layoutY="-27.0" text="Model Selection" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-27.0">
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                        <children>
                                           <VBox layoutX="143.0" layoutY="-26.0" prefHeight="195.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
+                                                <GridPane>
+                                                   <children>
+                                                      <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="198.0" text="BMDL and BMDU:">
+                                                         <padding>
+                                                            <Insets right="20.0" />
+                                                         </padding>
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                      <ComboBox fx:id="bmdlBmduComboBox" prefHeight="26.0" prefWidth="196.0" GridPane.columnIndex="1" />
+                                                   </children>
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                </GridPane>
                                                 <GridPane>
                                                   <columnConstraints>
                                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -285,11 +307,11 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="threadPane" prefHeight="126.0" prefWidth="800.0">
+                        <AnchorPane fx:id="threadPane">
                            <children>
                               <TitledPane collapsible="false" layoutY="-19.0" prefHeight="79.0" prefWidth="800.0" text="Multiple Threads" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-19.0">
                                  <content>
-                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0">
+                                    <AnchorPane prefHeight="113.0" prefWidth="996.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" layoutX="29.0" layoutY="51.4" prefHeight="49.0" prefWidth="740.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
                                              <children>
@@ -305,7 +327,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="startCancelPane" prefHeight="100.0" prefWidth="800.0">
+                        <AnchorPane fx:id="startCancelPane">
                            <children>
                               <HBox alignment="CENTER" layoutX="247.0" prefHeight="73.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>

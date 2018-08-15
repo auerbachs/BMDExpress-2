@@ -17,6 +17,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
@@ -104,6 +105,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private ComboBox					flagHillkParamComboBox;
 	@FXML
 	private ComboBox					bestModelSeletionWithFlaggedHillComboBox;
+
+	@FXML
+	private ComboBox					bmdlBmduComboBox;
 
 	@FXML
 	private ComboBox					numberOfThreadsComboBox;
@@ -477,6 +481,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		flagHillkParamComboBox.getItems().setAll(FlagHillModelDoseEnum.values());
 		flagHillkParamComboBox.getSelectionModel().select(input.getkParameterLessThan());
 
+		bmdlBmduComboBox.getItems().setAll(BestModelSelectionBMDLandBMDU.values());
+		bmdlBmduComboBox.getSelectionModel().select(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE);
+
 		bestModelSeletionWithFlaggedHillComboBox.getItems()
 				.setAll(BestModelSelectionWithFlaggedHillModelEnum.values());
 
@@ -613,6 +620,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		{
 			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(0.5);
 		}
+
+		modelSelectionParameters.setBestModelSelectionBMDLandBMDU(
+				(BestModelSelectionBMDLandBMDU) bmdlBmduComboBox.getSelectionModel().getSelectedItem());
 
 		return modelSelectionParameters;
 

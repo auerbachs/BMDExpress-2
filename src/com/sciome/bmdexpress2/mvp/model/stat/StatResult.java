@@ -71,6 +71,8 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 
 	public double getBMDL()
 	{
+		if (BMDL == -9999)
+			return Double.NaN;
 		return BMDL;
 	}
 
@@ -81,6 +83,8 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 
 	public double getBMDU()
 	{
+		if (BMDU == -9999)
+			return Double.NaN;
 		return BMDU;
 	}
 
@@ -139,17 +143,21 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 		this.curveParameters = curveParameters;
 	}
 
-	public String getSuccess() {
+	public String getSuccess()
+	{
 		return success;
 	}
 
-	public void setSuccess(String success) {
+	public void setSuccess(String success)
+	{
 		this.success = success;
 	}
 
 	@JsonIgnore
 	public double getBMDdiffBMDL()
 	{
+		if (BMDL == -9999 || BMDL == 0.0)
+			return Double.NaN;
 		return BMD / BMDL;
 	}
 
@@ -157,7 +165,9 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	public double getBMDUdiffBMDL()
 	{
 		if (BMDU == 0)
-			return -9999;
+			return Double.NaN;
+		if (BMDU == -9999 || BMDL == -9999)
+			return -Double.NaN;
 		return BMDU / BMDL;
 	}
 
@@ -165,7 +175,10 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	public double getBMDUdiffBMD()
 	{
 		if (BMDU == 0)
-			return -9999;
+			return Double.NaN;
+
+		if (BMDU == -9999)
+			return Double.NaN;
 		return BMDU / BMD;
 	}
 

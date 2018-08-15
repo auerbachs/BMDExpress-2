@@ -43,7 +43,7 @@ public class PowerResult extends StatResult
 		return new ArrayList<Object>(
 				Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()), (this.getFitPValue()),
 						(this.getFitLogLikelihood()), (this.getAIC()), (this.getAdverseDirection()),
-						(this.getBMD() / this.getBMDL()), param1, param2, param3, this.getSuccess()));
+						(this.getBMDdiffBMDL()), param1, param2, param3, this.getSuccess()));
 	}
 
 	@Override

@@ -49,9 +49,10 @@ public class ExponentialResult extends StatResult
 	@Override
 	public List<Object> getRow()
 	{
+
 		List<Object> returnList = new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()),
 				(this.getBMDU()), (this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
-				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), this.getSuccess()));
+				(this.getAdverseDirection()), (this.getBMDdiffBMDL()), this.getSuccess()));
 		int pcount = 2;
 		int start = 1;
 		// option 2 and 3 have a "sign" as a parameter too.

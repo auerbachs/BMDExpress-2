@@ -55,7 +55,7 @@ public class PolyResult extends StatResult
 	{
 		List<Object> returnList = new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()),
 				(this.getBMDU()), (this.getFitPValue()), (this.getFitLogLikelihood()), (this.getAIC()),
-				(this.getAdverseDirection()), (this.getBMD() / this.getBMDL()), this.getSuccess()));
+				(this.getAdverseDirection()), (this.getBMDdiffBMDL()), this.getSuccess()));
 
 		for (int i = 0; i < this.curveParameters.length; i++)
 		{

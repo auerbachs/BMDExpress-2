@@ -1079,12 +1079,15 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						if (probeStatResult.getBestStatResult() == null
-								|| probeStatResult.getBestStatResult().getBMD()
-										/ probeStatResult.getBestStatResult().getBMDL() > bmdBmdlRatio)
+						double bmddivbmdl = probeStatResult.getBestStatResult().getBMDdiffBMDL();
+						// if this ratio is NaN, then allow passage.
+						if (bmddivbmdl != Double.NaN)
 						{
-							probes.remove(st);
-							removedProbes.add(st);
+							if (probeStatResult.getBestStatResult() == null || bmddivbmdl > bmdBmdlRatio)
+							{
+								probes.remove(st);
+								removedProbes.add(st);
+							}
 						}
 					}
 				}
@@ -1126,12 +1129,15 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						if (probeStatResult.getBestStatResult() == null
-								|| probeStatResult.getBestStatResult().getBMDU()
-										/ probeStatResult.getBestStatResult().getBMDL() > ratio)
+						double bmdudivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
+						// if this ratio is NaN, then allow passage.
+						if (bmdudivbmdl != Double.NaN)
 						{
-							probes.remove(st);
-							removedProbes.add(st);
+							if (probeStatResult.getBestStatResult() == null || bmdudivbmdl > ratio)
+							{
+								probes.remove(st);
+								removedProbes.add(st);
+							}
 						}
 					}
 				}
@@ -1219,12 +1225,15 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						if (probeStatResult.getBestStatResult() == null
-								|| probeStatResult.getBestStatResult().getBMDU()
-										/ probeStatResult.getBestStatResult().getBMD() > ratio)
+						double bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMD();
+						// if this ratio is NaN, then allow passage.
+						if (bmdudivbmd != Double.NaN)
 						{
-							probes.remove(st);
-							removedProbes.add(st);
+							if (probeStatResult.getBestStatResult() == null || bmdudivbmd > ratio)
+							{
+								probes.remove(st);
+								removedProbes.add(st);
+							}
 						}
 					}
 				}
@@ -1288,10 +1297,9 @@ public class BMDStatatistics
 
 		return pcGenes;
 	}
-	
-	public Vector<String> checkPValueBelowDose(Vector<String> vectGenes,
-			double pValue, Hashtable<String, Vector> subHashG2Ids,
-			Set<String> removedProbes)
+
+	public Vector<String> checkPValueBelowDose(Vector<String> vectGenes, double pValue,
+			Hashtable<String, Vector> subHashG2Ids, Set<String> removedProbes)
 	{
 		Vector<String> pcGenes = new Vector<String>();
 
@@ -1334,10 +1342,9 @@ public class BMDStatatistics
 
 		return pcGenes;
 	}
-	
-	public Vector<String> checkAdjustedPValueBelowDose(Vector<String> vectGenes,
-			double adjustedPValue, Hashtable<String, Vector> subHashG2Ids,
-			Set<String> removedProbes)
+
+	public Vector<String> checkAdjustedPValueBelowDose(Vector<String> vectGenes, double adjustedPValue,
+			Hashtable<String, Vector> subHashG2Ids, Set<String> removedProbes)
 	{
 		Vector<String> pcGenes = new Vector<String>();
 

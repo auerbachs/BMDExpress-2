@@ -1,6 +1,7 @@
 
 package com.sciome.bmdexpress2.util.bmds;
 
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
@@ -13,6 +14,7 @@ public class ModelSelectionParameters
 	private FlagHillModelDoseEnum						flagHillModelDose;
 	private BestModelSelectionWithFlaggedHillModelEnum	bestModelSelectionWithFlaggedHill;
 	private double										modFlaggedHillBMDFractionMinBMD;
+	private BestModelSelectionBMDLandBMDU				bestModelSelectionBMDLandBMDU;
 
 	public BestPolyModelTestEnum getBestPolyModelTest()
 	{
@@ -73,6 +75,16 @@ public class ModelSelectionParameters
 	public void setModFlaggedHillBMDFractionMinBMD(double modFlaggedHillBMDFractionMinBMD)
 	{
 		this.modFlaggedHillBMDFractionMinBMD = modFlaggedHillBMDFractionMinBMD;
+	}
+
+	public BestModelSelectionBMDLandBMDU getBestModelSelectionBMDLandBMDU()
+	{
+		return bestModelSelectionBMDLandBMDU;
+	}
+
+	public void setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU bestModelSelectionBMDLandBMDU)
+	{
+		this.bestModelSelectionBMDLandBMDU = bestModelSelectionBMDLandBMDU;
 	}
 
 }

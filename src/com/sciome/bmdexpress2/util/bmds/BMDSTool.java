@@ -41,6 +41,7 @@ import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.NumberManager;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
@@ -387,6 +388,33 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 					currentMessage = "running " + polyString + " Model";
 					progressReciever.updateProgress(currentMessage, 0.0);
 					statResults = fitPolynomialModel(((PolyModel) modelToRun).getDegree());
+				}
+
+				// if user said do not comput, then assign the ever so non-value -9999
+				// I would assign null but these are primitives.
+				if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+						.equals(BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE))
+				{
+					for (StatResult statResult : statResults)
+					{
+						statResult.setBMDL(-9999);
+						statResult.setBMDU(-9999);
+					}
+				}
+
+				// deal with 0.0 values for bmdl and bmdu when compute but ignore.
+				// these should never be 0.0 but if they are make them invalid
+				// using our special number
+				if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+						.equals(BestModelSelectionBMDLandBMDU.COMPUTE_BUT_IGNORE))
+				{
+					for (StatResult statResult : statResults)
+					{
+						if (statResult.getBMDL() == 0.0)
+							statResult.setBMDL(-9999);
+						if (statResult.getBMDU() == 0.0)
+							statResult.setBMDU(-9999);
+					}
 				}
 			}
 
@@ -786,23 +814,45 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				else
 				{
 
-					double bmd1 = bestPolyResult.getBMD();
-					double bmdl1 = bestPolyResult.getBMDL();
-					double bmdu1 = bestPolyResult.getBMDU();
-					double aic1 = bestPolyResult.getAIC();
-					double bmd2 = statResult.getBMD();
-					double bmdl2 = statResult.getBMDL();
-					double bmdu2 = statResult.getBMDU();
-					double aic2 = statResult.getAIC();
-
-					// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
-					// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-					if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE
-							|| bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
-							|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE
-									&& bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE))
+					// if compute and utilize bmdl and bmdu, make sure they converged
+					// in the process of selection best
+					if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+							.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
 					{
-						bestPolyResult = statResult;
+						double bmd1 = bestPolyResult.getBMD();
+						double bmdl1 = bestPolyResult.getBMDL();
+						double bmdu1 = bestPolyResult.getBMDU();
+						double aic1 = bestPolyResult.getAIC();
+						double bmd2 = statResult.getBMD();
+						double bmdl2 = statResult.getBMDL();
+						double bmdu2 = statResult.getBMDU();
+						double aic2 = statResult.getAIC();
+
+						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
+						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
+						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE
+								|| bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
+								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE
+										&& bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE))
+						{
+							bestPolyResult = statResult;
+						}
+					}
+					else // don't worry about bmdl or bmdu convergence.
+					{
+						double bmd1 = bestPolyResult.getBMD();
+						double aic1 = bestPolyResult.getAIC();
+						double bmd2 = statResult.getBMD();
+						double aic2 = statResult.getAIC();
+
+						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
+						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
+						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE)
+								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE))
+						{
+							bestPolyResult = statResult;
+						}
+
 					}
 
 				}
@@ -828,24 +878,47 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		double bmdu1 = statResult1.getBMDU();
 		double bmdu2 = statResult2.getBMDU();
 
-		boolean better = (aic2 < aic1 && bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
-				&& bmdu2 != DEFAULTDOUBLE);
+		// use bmdl and bmdu in chosing best
+		if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+				.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
+		{
+			boolean better = (aic2 < aic1 && bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
+					&& bmdu2 != DEFAULTDOUBLE);
 
-		// don't allow 0's no matter what.
-		if (bmd1 == 0.0 || bmdl1 == 0.0 || bmdu1 == 0.0)
-			return false;
+			// don't allow 0's no matter what.
+			if (bmd1 == 0.0 || bmdl1 == 0.0 || bmdu1 == 0.0)
+				return false;
 
-		if (aic1 < aic2)
-		{ // second AIC smaller
-			if ((bmd1 == DEFAULTDOUBLE || bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
-					&& (bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE)
-					&& bmd2 > 0.0 && bmdl2 > 0.0 && bmdu2 > 0.0)
-			{
-				better = true;
+			if (aic1 < aic2)
+			{ // second AIC smaller
+				if ((bmd1 == DEFAULTDOUBLE || bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
+						&& (bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE)
+						&& bmd2 > 0.0 && bmdl2 > 0.0 && bmdu2 > 0.0)
+				{
+					better = true;
+				}
 			}
-		}
 
-		return better;
+			return better;
+		}
+		else // disregard bmdl and bmdu from chosing best
+		{
+			boolean better = (aic2 < aic1 && bmd2 != DEFAULTDOUBLE);
+
+			// don't allow 0's no matter what.
+			if (bmd1 == 0.0)
+				return false;
+
+			if (aic1 < aic2)
+			{ // second AIC smaller
+				if ((bmd1 == DEFAULTDOUBLE) && (bmd2 != DEFAULTDOUBLE) && bmd2 > 0.0)
+				{
+					better = true;
+				}
+			}
+
+			return better;
+		}
 	}
 
 	/**
@@ -1254,17 +1327,34 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			try
 			{
 				// check to see if the beststatresult is indeed valid
-				if (negativeDef.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMD())) == 0
-						|| negativeDef
-								.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMDL())) == 0
-						|| negativeDef
-								.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMDU())) == 0
-						|| probeStatResult.getBestStatResult().getBMD() == 0.0
-						|| probeStatResult.getBestStatResult().getBMDL() == 0.0
-						|| probeStatResult.getBestStatResult().getBMDU() == 0.0)
+
+				// compute and utilize means to force the bmdu and bmdl to be present.
+				if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+						.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
 				{
-					probeStatResult.setBestStatResult(null);
+					if (negativeDef
+							.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMD())) == 0
+							|| negativeDef.compareTo(
+									Double.valueOf(probeStatResult.getBestStatResult().getBMDL())) == 0
+							|| negativeDef.compareTo(
+									Double.valueOf(probeStatResult.getBestStatResult().getBMDU())) == 0
+							|| probeStatResult.getBestStatResult().getBMD() == 0.0
+							|| probeStatResult.getBestStatResult().getBMDL() == 0.0
+							|| probeStatResult.getBestStatResult().getBMDU() == 0.0)
+					{
+						probeStatResult.setBestStatResult(null);
+					}
 				}
+				else // don't worry about the bmdl and bmdu in best model selection
+				{
+					if (negativeDef
+							.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMD())) == 0
+							|| probeStatResult.getBestStatResult().getBMD() == 0.0)
+					{
+						probeStatResult.setBestStatResult(null);
+					}
+				}
+
 			}
 			catch (Exception e)
 			{}
