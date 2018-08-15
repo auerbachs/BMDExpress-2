@@ -1,6 +1,9 @@
 package com.sciome.bmdexpress2.shared;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class BMDExpressConstants
 {
@@ -41,7 +44,7 @@ public class BMDExpressConstants
 	public final String[]				KEGGFILES		= { "taxonomy.KEGG", "map_title.tab.gz",
 			"_gene_map.tab.gz" };
 
-	// From ArrayInfo
+	// From ArrayInfo application.properties
 	public final String					ANNOTATION_BASE_PATH;
 
 	public final String[]				TITLES			= { "Automatic Update - Array Annotation",
@@ -69,7 +72,7 @@ public class BMDExpressConstants
 	protected BMDExpressConstants()
 	{
 
-		BMDBASEPATH = System.getProperty("user.home") + File.separator + "bmdexpress2";
+		BMDBASEPATH = System.getProperty("user.home") + File.separator + getBaseDir();
 		if (!new File(BMDBASEPATH).exists())
 		{
 			new File(BMDBASEPATH).mkdir();
@@ -163,4 +166,25 @@ public class BMDExpressConstants
 		}
 		return instance;
 	}
+
+	private String getBaseDir()
+	{
+		Properties applicationProperties = new Properties();
+		InputStream in = this.getClass().getResourceAsStream("/application.properties");
+		try
+		{
+			applicationProperties.load(in);
+			String basedir = applicationProperties.getProperty("bmdexpress2.homedir");
+			if (basedir != null && basedir != "")
+				return basedir;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+
+		}
+
+		return "bmdexpress2";
+	}
+
 }

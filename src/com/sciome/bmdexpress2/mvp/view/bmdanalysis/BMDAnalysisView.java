@@ -335,6 +335,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 				(BestModelSelectionWithFlaggedHillModelEnum) this.bestModelSeletionWithFlaggedHillComboBox
 						.getValue());
 
+		input.setBestModelSelectionBMDLandBMDU(
+				(BestModelSelectionBMDLandBMDU) this.bmdlBmduComboBox.getValue());
+
 		BMDExpressProperties.getInstance().saveBMDInput(input);
 
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -482,7 +485,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		flagHillkParamComboBox.getSelectionModel().select(input.getkParameterLessThan());
 
 		bmdlBmduComboBox.getItems().setAll(BestModelSelectionBMDLandBMDU.values());
-		bmdlBmduComboBox.getSelectionModel().select(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE);
+		bmdlBmduComboBox.getSelectionModel().select(input.getBestModelSelectionBMDLandBMDU());
 
 		bestModelSeletionWithFlaggedHillComboBox.getItems()
 				.setAll(BestModelSelectionWithFlaggedHillModelEnum.values());

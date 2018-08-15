@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.model.stat;
 
 import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
@@ -31,6 +32,7 @@ public class BMDInput
 	private BestPolyModelTestEnum						bestPolyModelTest;
 	private FlagHillModelDoseEnum						kParameterLessThan;
 	private BestModelSelectionWithFlaggedHillModelEnum	bestModelWithFlaggedHill;
+	private BestModelSelectionBMDLandBMDU				bestModelSelectionBMDLandBMDU;
 
 	public BMDInput()
 	{
@@ -59,6 +61,7 @@ public class BMDInput
 		bestPolyModelTest = BestPolyModelTestEnum.NESTED_CHI_SQUARED;
 		kParameterLessThan = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 		bestModelWithFlaggedHill = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
+		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE;
 	}
 
 	public boolean isExp2()
@@ -291,4 +294,15 @@ public class BMDInput
 	{
 		this.bestModelWithFlaggedHill = bestModelWithFlaggedHill;
 	}
+
+	public BestModelSelectionBMDLandBMDU getBestModelSelectionBMDLandBMDU()
+	{
+		return bestModelSelectionBMDLandBMDU;
+	}
+
+	public void setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU bestModelSelectionBMDLandBMDU)
+	{
+		this.bestModelSelectionBMDLandBMDU = bestModelSelectionBMDLandBMDU;
+	}
+
 }
