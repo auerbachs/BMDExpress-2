@@ -45,6 +45,7 @@ import com.sciome.bmdexpress2.util.FileIO;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
@@ -416,6 +417,18 @@ public class AnalyzeRunner
 			bestModeSel = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
 
 		modelSelectionParameters.setBestModelSelectionWithFlaggedHill(bestModeSel);
+
+		BestModelSelectionBMDLandBMDU bestModelSelBMDLBMDU = null;
+		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence().equals(1))
+			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence()
+				.equals(2))
+			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_BUT_IGNORE;
+		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence()
+				.equals(3))
+			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE;
+
+		modelSelectionParameters.setBestModelSelectionBMDLandBMDU(bestModelSelBMDLBMDU);
 
 		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(4))
 			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(

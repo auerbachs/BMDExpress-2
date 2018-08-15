@@ -65,6 +65,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 
 	}
 
+	@SuppressWarnings("restriction")
 	public void performBMDAnalysis(ModelInputParameters inputParameters,
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun)
 	{
@@ -173,6 +174,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void updateProgress(String label, double value)
 	{
@@ -191,6 +193,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void clearProgress()
 	{

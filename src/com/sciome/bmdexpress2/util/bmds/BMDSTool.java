@@ -207,6 +207,9 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		else
 			notes.add("Destory Model Processes If Run More Than: none");
 
+		notes.add("BMDL and BMDU Model Selection: "
+				+ modelSelectionParameters.getBestModelSelectionBMDLandBMDU());
+
 		analysisInfo.setNotes(notes);
 
 	}

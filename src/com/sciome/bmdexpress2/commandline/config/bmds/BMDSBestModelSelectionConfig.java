@@ -24,6 +24,12 @@ public class BMDSBestModelSelectionConfig
 	// fraction of minimum BMD to set modified flagged hill to
 	private Double	modifyFlaggedHillWithFractionMinBMD;
 
+	// 1,2,3
+	// 1 Compute and utilize in best model selection
+	// 2 Compute but ignore non-convergence in best model selection
+	// 3 Do not compute
+	private Integer	bestModelSelectionBMDLandBMDUConvergence;
+
 	public Integer getBestPolyTest()
 	{
 		return bestPolyTest;
@@ -82,6 +88,16 @@ public class BMDSBestModelSelectionConfig
 	public void setModifyFlaggedHillWithFractionMinBMD(Double modifyFlaggedHillWithFractionMinBMD)
 	{
 		this.modifyFlaggedHillWithFractionMinBMD = modifyFlaggedHillWithFractionMinBMD;
+	}
+
+	public Integer getBestModelSelectionBMDLandBMDUConvergence()
+	{
+		return bestModelSelectionBMDLandBMDUConvergence;
+	}
+
+	public void setBestModelSelectionBMDLandBMDUConvergence(Integer bestModelSelectionBMDLandBMDUConvergence)
+	{
+		this.bestModelSelectionBMDLandBMDUConvergence = bestModelSelectionBMDLandBMDUConvergence;
 	}
 
 }
