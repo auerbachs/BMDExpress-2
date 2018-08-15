@@ -151,9 +151,12 @@ public class NumberManager
 
 	public static double numberFormat(String pattern, double num)
 	{
+		if (Double.isNaN(num))
+			return Double.NaN;
 		DecimalFormat formatter = new DecimalFormat(pattern);
 		String s = formatter.format(num);
 		return Double.parseDouble(s);
+
 	}
 
 	/**
