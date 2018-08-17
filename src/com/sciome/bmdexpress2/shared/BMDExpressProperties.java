@@ -36,6 +36,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
+import com.sciome.bmdexpress2.mvp.model.stat.GCurvePInput;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 
@@ -61,7 +62,7 @@ public class BMDExpressProperties
 	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
 
 	private TableInformation			tableInformation;
-	
+
 	private Properties					versionProperties	= new Properties();
 
 	private WilliamsTrendInput			williamsInput;
@@ -71,6 +72,8 @@ public class BMDExpressProperties
 	private OneWayANOVAInput			oneWayInput;
 
 	private BMDInput					bmdInput;
+
+	private GCurvePInput				gCurvePInput;
 
 	private CategoryInput				categoryInput;
 
@@ -86,7 +89,6 @@ public class BMDExpressProperties
 		checkLocalFiles(BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "preferences",
 				"/preferences", false, false);
 
-	
 		loadTableInformation();
 		loadProperties();
 		readPreferences();
@@ -136,6 +138,8 @@ public class BMDExpressProperties
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
 		File categoryInputFile = new File(
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
+		File gCurvePInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "gCurveP.json");
 
 		if (williamsInputFile.exists())
 		{
@@ -181,6 +185,16 @@ public class BMDExpressProperties
 		{
 			categoryInput = new CategoryInput();
 			mapper.writerWithDefaultPrettyPrinter().writeValue(categoryInputFile, categoryInput);
+		}
+
+		if (gCurvePInputFile.exists())
+		{
+			gCurvePInput = mapper.readValue(gCurvePInputFile, GCurvePInput.class);
+		}
+		else
+		{
+			gCurvePInput = new GCurvePInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(gCurvePInputFile, gCurvePInput);
 		}
 	}
 
@@ -248,6 +262,23 @@ public class BMDExpressProperties
 		}
 	}
 
+	public void saveGCurvePInput(GCurvePInput input)
+	{
+		File bmdInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "gCurveP.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.gCurvePInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
 	public void saveCategoryInput(CategoryInput input)
 	{
 		File categoryInputFile = new File(
@@ -299,13 +330,14 @@ public class BMDExpressProperties
 	{
 		propertiesParser = new PropertiesParser(propertyFile);
 	}
-	
-	public void saveTableInformation() {
+
+	public void saveTableInformation()
+	{
 		ObjectMapper mapper = new ObjectMapper();
 
 		File tableInformationFile = new File(
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "tableInformation.json");
-		
+
 		try
 		{
 			mapper.writerWithDefaultPrettyPrinter().writeValue(tableInformationFile, tableInformation);
@@ -315,13 +347,15 @@ public class BMDExpressProperties
 			e.printStackTrace();
 		}
 	}
-	
-	private void loadTableInformation() {
+
+	private void loadTableInformation()
+	{
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		File tableInformationFile = new File(
-			BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "tableInformation.json");
-		try {
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "tableInformation.json");
+		try
+		{
 			if (tableInformationFile.exists())
 			{
 				tableInformation = mapper.readValue(tableInformationFile, TableInformation.class);
@@ -331,7 +365,9 @@ public class BMDExpressProperties
 				tableInformation = new TableInformation();
 				mapper.writerWithDefaultPrettyPrinter().writeValue(tableInformationFile, tableInformation);
 			}
-		} catch(Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -1095,12 +1131,18 @@ public class BMDExpressProperties
 		return bmdInput;
 	}
 
+	public GCurvePInput getGCurvePnput()
+	{
+		return gCurvePInput;
+	}
+
 	public CategoryInput getCategoryInput()
 	{
 		return categoryInput;
 	}
 
-	public TableInformation getTableInformation() {
+	public TableInformation getTableInformation()
+	{
 		return tableInformation;
 	}
 

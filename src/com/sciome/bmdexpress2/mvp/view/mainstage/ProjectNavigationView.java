@@ -14,8 +14,6 @@ import java.util.Optional;
 import org.controlsfx.control.CheckListView;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
-import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
@@ -28,13 +26,13 @@ import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter;
+import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisGCurvePView;
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView;
 import com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IProjectNavigationView;
-import com.sciome.bmdexpress2.service.DataCombinerService;
 import com.sciome.bmdexpress2.service.ProjectNavigationService;
 import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
@@ -49,7 +47,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -87,7 +84,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String									ORIOGEN_DATA				= "Oriogen";
 	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
 	private final String									CATEGORY_DATA				= "Functional Classifications";
-	
+
 	private final String									RENAME						= "Rename";
 	private final String									REMOVE						= "Remove";
 	private final String									EXPORT						= "Export";
@@ -569,6 +566,63 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						BMDAnalysisView viewCode = loader.<BMDAnalysisView> getController();
 						// The false means that we are not running "select models only mode"
 						viewCode.initData(selectedItems, false);
+						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+							@Override
+							public void handle(WindowEvent event)
+							{
+								viewCode.close();
+							}
+						});
+						// stage.sizeToScene();
+						stage.show();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+	}
+
+	@Override
+	public void performBMDAnalysisGCurveP()
+	{
+		// need to run this on the main ui thread. this is being called from event bus thread..hence the
+		// runlater.
+		Platform.runLater(new Runnable() {
+
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void run()
+			{
+
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
+				List<IStatModelProcessable> selectedItems = new ArrayList<>();
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
+				{
+					if ((selectedItem instanceof IStatModelProcessable
+							&& ((IStatModelProcessable) selectedItem).getProcessableProbeResponses() != null))
+					{
+						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
+						selectedItems.add(processableData);
+					}
+				}
+
+				if (selectedItems.size() > 0)
+				{
+					try
+					{
+						FXMLLoader loader = new FXMLLoader(
+								getClass().getResource("/fxml/bmdanalysisgcurvep.fxml"));
+
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("BMD Analysis GCurveP");
+						stage.setScene(new Scene((BorderPane) loader.load()));
+						BMDAnalysisGCurvePView viewCode = loader.<BMDAnalysisGCurvePView> getController();
+						// The false means that we are not running "select models only mode"
+						viewCode.initData(selectedItems);
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 							@Override
 							public void handle(WindowEvent event)
@@ -1374,12 +1428,12 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 				{
 					List<BMDExpressAnalysisDataSet> selectedDataSets = getSelectedItems();
 
-					//Decide whether or not we should display the export filtered option
-					if(getCheckedItems().size() == 0)
+					// Decide whether or not we should display the export filtered option
+					if (getCheckedItems().size() == 0)
 						visualizationSelected = false;
-					else 
+					else
 						visualizationSelected = true;
-					
+
 					if (selectedDataSets.size() == 1)
 						dealWithRightClickOnTree(selectedDataSets.get(0), mouseEvent);
 					else if (selectedDataSets.size() > 1)

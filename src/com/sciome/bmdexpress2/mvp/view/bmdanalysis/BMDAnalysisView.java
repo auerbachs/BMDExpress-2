@@ -189,7 +189,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	/*
 	 * use clicked close button
 	 */
-	@Override
 	public void handle_close(ActionEvent event)
 	{
 
@@ -198,7 +197,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	/*
 	 * use clicked start button
 	 */
-	@Override
 	public void handle_start(ActionEvent event)
 	{
 		// create InputParameters object based on things that are selected.
@@ -300,7 +298,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			presenter.performBMDAnalysis(inputParameters, modelSectionParameters, modelsToRun);
 	}
 
-	@Override
 	public void handle_saveSettingsButtonPressed(ActionEvent event)
 	{
 		// Set check box values
@@ -351,7 +348,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	/*
 	 * use clicked done button
 	 */
-	@Override
 	public void handle_cancel(ActionEvent event)
 	{
 		// if presenter cancels the process it will return true
@@ -382,7 +378,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		}
 	}
 
-	@Override
 	public void handle_FlagHillCheckBox(ActionEvent event)
 	{
 
@@ -403,7 +398,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	}
 
-	@Override
 	public void handle_HillCheckBox(ActionEvent event)
 	{
 
@@ -416,7 +410,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		handle_FlagHillCheckBox(event);
 	}
 
-	@Override
 	public void handle_PowerCheckBox(ActionEvent event)
 	{
 		restrictPowerComboBox.setDisable(!powerCheckBox.isSelected());

@@ -19,7 +19,7 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 @JsonSubTypes({ @Type(value = HillResult.class, name = "hill"),
 		@Type(value = PolyResult.class, name = "poly"),
 		@Type(value = ExponentialResult.class, name = "exponential"),
-		@Type(value = PowerResult.class, name = "power") })
+		@Type(value = PowerResult.class, name = "power"), @Type(value = GCurvePResult.class, name = "gcurvep") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public abstract class StatResult extends BMDExpressAnalysisRow implements Serializable
 {

@@ -12,6 +12,7 @@ import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.IMenuBarView;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisGCurvePRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
@@ -248,6 +249,14 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void importJSONFile()
 	{
 		getEventBus().post(new ImportJSONEvent(null));
+
+	}
+
+	public void performBMDAnalsyisGCurveP()
+	{
+		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
+		// which dataset to analyze
+		getEventBus().post(new BMDAnalysisGCurvePRequestEvent(""));
 
 	}
 

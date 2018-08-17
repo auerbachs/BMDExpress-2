@@ -8,6 +8,7 @@ import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
+import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 
 public interface IBMDAnalysisService
 {
@@ -16,4 +17,7 @@ public interface IBMDAnalysisService
 			IBMDSToolProgress progressUpdater);
 
 	public boolean cancel();
+
+	public BMDResult bmdAnalysisGCurveP(IStatModelProcessable processableData,
+			GCurvePInputParameters inputParameters, IBMDSToolProgress me);
 }

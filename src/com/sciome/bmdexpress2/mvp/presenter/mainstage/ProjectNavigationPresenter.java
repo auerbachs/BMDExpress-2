@@ -11,7 +11,6 @@ import java.util.Set;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
-import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
@@ -34,13 +33,13 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSe
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisGCurvePRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.DataFilteredEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
@@ -85,8 +84,6 @@ import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowDataVisualizati
 import com.sciome.bmdexpress2.util.DialogWithThreadProcess;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
-
-import javafx.collections.transformation.FilteredList;
 
 public class ProjectNavigationPresenter
 		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
@@ -312,6 +309,18 @@ public class ProjectNavigationPresenter
 	{
 
 		getView().performBMDAnalysis();
+
+	}
+
+	/*
+	 * some one asked to perform bmd analysis. lets ask the view to figure out what is selected and then do
+	 * it.
+	 */
+	@Subscribe
+	public void onBMDAnalysisGCurvePRequest(BMDAnalysisGCurvePRequestEvent event)
+	{
+
+		getView().performBMDAnalysisGCurveP();
 
 	}
 
@@ -705,7 +714,6 @@ public class ProjectNavigationPresenter
 	{
 		getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 	}
-	
 
 	/*
 	 * write the best model for each probestat result to text file

@@ -16,12 +16,16 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
+import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 
 public class BMDAnalysisService implements IBMDAnalysisService
 {
 
 	BMDSTool bMDSTool;
 
+	/*
+	 * Run parametric bmd analylsis via epa models on processable data
+	 */
 	@Override
 	public BMDResult bmdAnalysis(IStatModelProcessable processableData, ModelInputParameters inputParameters,
 			ModelSelectionParameters modelSelectionParameters, List<StatModel> modelsToRun, String tmpFolder,
@@ -35,8 +39,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		BMDResult bMDResults = bMDSTool.bmdAnalyses();
 		if (bMDResults == null)
 			return null;
-		
-		DoseResponseExperiment doseResponseExperiment = processableData.getProcessableDoseResponseExperiment();
+
+		DoseResponseExperiment doseResponseExperiment = processableData
+				.getProcessableDoseResponseExperiment();
 		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
 		if (processableData instanceof PrefilterResults)
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
@@ -69,7 +74,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		// Calculate and set log 2 wAUC values
 		List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
 		bMDResults.setLogwAUC(logwAUCList);
-		
+
 		// clean up any leftovers from this process
 		bMDSTool.cleanUp();
 		return bMDResults;
@@ -84,6 +89,18 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			return true;
 		}
 		return false;
+	}
+
+	/*
+	 * Run GcurveP on the processable data given
+	 * 
+	 */
+	@Override
+	public BMDResult bmdAnalysisGCurveP(IStatModelProcessable processableData,
+			GCurvePInputParameters inputParameters, IBMDSToolProgress me)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxWidth="-Infinity" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisGCurvePView">
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="665.0" prefViewportHeight="600.0" prefViewportWidth="800.0" prefWidth="1000.0">
+         <content>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <VBox fx:id="mainVBox" prefHeight="670.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane fx:id="dataOptionsPane" maxHeight="-Infinity" VBox.vgrow="SOMETIMES">
+                           <children>
+                              <TitledPane collapsible="false" layoutX="22.0" layoutY="-14.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="800.0" text="Data Options" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="90.0" prefWidth="200.0">
+                                       <children>
+                                          <GridPane prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="342.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="192.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="489.0" minWidth="10.0" prefWidth="298.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label alignment="TOP_RIGHT" prefHeight="16.0" prefWidth="424.0" text="Expression Data:" textAlignment="RIGHT" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.vgrow="ALWAYS" />
+                                                <Label fx:id="oneWayANOVADataLabelLabel" alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="376.0" text="Prefilter:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                                                <Label fx:id="expressionDataLabel" prefHeight="16.0" prefWidth="412.0" GridPane.columnIndex="2">
+                                                   <padding>
+                                                      <Insets left="20.0" />
+                                                   </padding>
+                                                </Label>
+                                                <Label fx:id="oneWayANOVADataLabel" prefHeight="16.0" prefWidth="406.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                   <padding>
+                                                      <Insets left="20.0" />
+                                                   </padding>
+                                                </Label>
+                                                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="146.0" progress="0.0" />
+                                                <Label fx:id="progressLabel" prefHeight="16.0" prefWidth="326.0" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="9.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" VBox.vgrow="NEVER">
+                           <children>
+                              <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
+                                 <content>
+                                    <AnchorPane prefHeight="106.0" prefWidth="798.0">
+                                       <children>
+                                          <GridPane layoutX="21.4" layoutY="20.4" prefHeight="101.0" prefWidth="777.0" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="183.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.00000762939453" minWidth="10.0" prefWidth="109.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="135.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="177.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="182.00003051757812" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="Confidence Level" GridPane.columnIndex="2" />
+                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="14.0" prefHeight="16.0" prefWidth="161.0" text="Maximum Iterations" />
+                                                <TextField fx:id="maximumIterationsTextField" layoutX="122.0" layoutY="9.0" text="250" GridPane.columnIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </TextField>
+                                                <ComboBox fx:id="confidenceLevelComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="3">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </ComboBox>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="threadPane">
+                           <children>
+                              <TitledPane collapsible="false" layoutY="-19.0" prefHeight="79.0" prefWidth="800.0" text="Multiple Threads" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-19.0">
+                                 <content>
+                                    <AnchorPane prefHeight="113.0" prefWidth="996.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" layoutX="29.0" layoutY="51.4" prefHeight="49.0" prefWidth="740.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="157.0" text="Number of Threads: " />
+                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="161.0" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="282.0" text="Model Execution Timeout (secs):" />
+                                                <ComboBox fx:id="killTimeComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="153.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="startCancelPane">
+                           <children>
+                              <HBox alignment="CENTER" layoutX="247.0" prefHeight="73.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="startButton" alignment="BASELINE_CENTER" mnemonicParsing="false" onAction="#handle_start" text="Start">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
+                                    <Button fx:id="cancelButton" alignment="BASELINE_CENTER" mnemonicParsing="false" onAction="#handle_cancel" text="Cancel">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

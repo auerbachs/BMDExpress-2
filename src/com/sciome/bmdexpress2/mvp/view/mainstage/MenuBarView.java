@@ -67,6 +67,9 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	@FXML
 	private MenuItem		geneLevelBMDMenuItem;
 
+	@FXML
+	private MenuItem		bMDAnalysesGcurvePMenuItem;
+
 	MenuBarPresenter		presenter;
 
 	public MenuBarView()
@@ -319,6 +322,12 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	}
 
+	public void handle_BMDAnalysesGcurveP(ActionEvent event)
+	{
+		presenter.performBMDAnalsyisGCurveP();
+
+	}
+
 	/*
 	 * GO analysis
 	 */
@@ -345,7 +354,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		presenter.performCategoryAnalysis(CategoryAnalysisEnum.DEFINED);
 
 	}
-	
+
 	public void handle_geneLevelBMD(ActionEvent event)
 	{
 		presenter.performCategoryAnalysis(CategoryAnalysisEnum.GENE_LEVEL);
@@ -423,6 +432,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void expressionDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
+		bMDAnalysesGcurvePMenuItem.setDisable(false);
 		togglePrefilterMenuItems(false);
 		toggleCategoryMenuItems(true);
 
@@ -432,6 +442,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void oneWayANOVADataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
+		bMDAnalysesGcurvePMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
 		toggleCategoryMenuItems(true);
 
@@ -441,6 +452,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void williamsTrendDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
+		bMDAnalysesGcurvePMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
 		toggleCategoryMenuItems(true);
 	}
@@ -449,6 +461,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void oriogenDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
+		bMDAnalysesGcurvePMenuItem.setDisable(false);
 		togglePrefilterMenuItems(true);
 		toggleCategoryMenuItems(true);
 	}
@@ -457,6 +470,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void bMDAnalysisDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
+		bMDAnalysesGcurvePMenuItem.setDisable(true);
 		togglePrefilterMenuItems(true);
 		toggleCategoryMenuItems(false);
 
@@ -466,6 +480,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void functionalCategoryDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
+		bMDAnalysesGcurvePMenuItem.setDisable(true);
 		togglePrefilterMenuItems(true);
 		toggleCategoryMenuItems(true);
 	}
@@ -507,7 +522,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.williamsTrendMenuItem.setDisable(disabled);
 		this.oriogenMenuItem.setDisable(disabled);
 	}
-	
+
 	private void toggleCategoryMenuItems(boolean disabled)
 	{
 		this.GOAnalysesMenuItem.setDisable(disabled);
@@ -526,6 +541,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	public void noDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(true);
+		bMDAnalysesGcurvePMenuItem.setDisable(true);
 		togglePrefilterMenuItems(true);
 		this.GOAnalysesMenuItem.setDisable(true);
 		this.pathwayAnalysesMenuItem.setDisable(true);

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 
-public interface IBMDAnalysisView
+public interface IBMDAnalysisGCurvePView
 {
 
 	public void clearProgressBar();
@@ -19,6 +19,6 @@ public interface IBMDAnalysisView
 
 	public void closeWindow();
 
-	void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly);
+	void initData(List<IStatModelProcessable> processableData);
 
 }
