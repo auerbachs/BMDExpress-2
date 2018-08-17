@@ -164,9 +164,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			gResult.setCurveParameters(null);
 			gResult.setFitLogLikelihood(Double.NaN);
 			gResult.setSuccess("true");
-			gResult.setBMDL(values.get(1).doubleValue());
-			gResult.setBMD(values.get(2).doubleValue());
-			gResult.setBMDU(values.get(3).doubleValue());
+			gResult.setBMDL(Math.pow(10.0, values.get(1).doubleValue()));
+			gResult.setBMD(Math.pow(10.0, values.get(2).doubleValue()));
+			gResult.setBMDU(Math.pow(10.0, values.get(3).doubleValue()));
 			gResult.setBMDLauc(values.get(4).doubleValue());
 			gResult.setBMDauc(values.get(5).doubleValue());
 			gResult.setBMDUauc(values.get(6).doubleValue());
