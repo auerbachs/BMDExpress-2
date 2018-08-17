@@ -106,6 +106,8 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 
 		this.processableData = processableData;
 
+		input = BMDExpressProperties.getInstance().getGCurvePnput();
+
 	}
 
 	@Override

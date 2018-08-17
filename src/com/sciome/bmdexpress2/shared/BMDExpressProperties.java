@@ -264,13 +264,13 @@ public class BMDExpressProperties
 
 	public void saveGCurvePInput(GCurvePInput input)
 	{
-		File bmdInputFile = new File(
+		File gCurvePFile = new File(
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "gCurveP.json");
 		ObjectMapper mapper = new ObjectMapper();
 		this.gCurvePInput = input;
 		try
 		{
-			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+			mapper.writerWithDefaultPrettyPrinter().writeValue(gCurvePFile, gCurvePInput);
 		}
 		catch (IOException e)
 		{
