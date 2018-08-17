@@ -260,4 +260,10 @@ public class WilliamsTrendResults extends BMDExpressAnalysisDataSet
 		return this;
 	}
 
+	@Override
+	public String getDataSetName()
+	{
+		return getName();
+	}
+
 }

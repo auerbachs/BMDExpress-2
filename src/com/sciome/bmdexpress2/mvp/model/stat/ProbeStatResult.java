@@ -228,7 +228,8 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 			row.add(bestStatResult.getBMDUdiffBMD());
 		}
 
-		row.add(wAUC);
+		if (wAUC != null)
+			row.add(wAUC);
 		// row.add(logwAUC);
 
 		row.add(pValue);

@@ -255,4 +255,10 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 	{
 		return this;
 	}
+
+	@Override
+	public String getDataSetName()
+	{
+		return getName();
+	}
 }

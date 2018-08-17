@@ -50,7 +50,7 @@
             <Menu mnemonicParsing="false" text="Prefilter">
               <items>            
                   <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="Williams Trend Test" />
-                  <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="Benchmark Dose Analysis" />    
+                  <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One Way ANOVA" />    
                   <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />
               </items>
             </Menu>
@@ -60,10 +60,14 @@
                   <MenuItem fx:id="bMDAnalysesGcurvePMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalysesGcurveP" text="Sciome GCurveP (Non-parametric)" />
                </items>
             </Menu>
-         	<MenuItem fx:id="geneLevelBMDMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_geneLevelBMD" text="Individual Gene Analysis" />
-            <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
-            <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />
-            <MenuItem fx:id="definedCategoryAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_definedCategoryAnalyses" text="Defined Category Analyses" />
+            <Menu mnemonicParsing="false" text="Category Analysis">
+              <items>
+               	<MenuItem fx:id="geneLevelBMDMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_geneLevelBMD" text="Individual Gene Analysis" />
+                  <MenuItem fx:id="GOAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_GOAnalyses" text="Gene Ontology Analyses" />
+                  <MenuItem fx:id="pathwayAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_pathwayAnalyses" text="Signaling Pathway Analyses" />
+                  <MenuItem fx:id="definedCategoryAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_definedCategoryAnalyses" text="Defined Category Analyses" />
+              </items>
+            </Menu>
          </items>
       </Menu>
       <Menu mnemonicParsing="false" text="Help">

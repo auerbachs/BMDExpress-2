@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxWidth="-Infinity" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisGCurvePView">
+<BorderPane maxWidth="-Infinity" prefHeight="454.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisGCurvePView">
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="665.0" prefViewportHeight="600.0" prefViewportWidth="800.0" prefWidth="1000.0">
          <content>
@@ -15,21 +15,21 @@
                <children>
                   <VBox fx:id="mainVBox" prefHeight="670.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="dataOptionsPane" maxHeight="-Infinity" VBox.vgrow="SOMETIMES">
+                        <AnchorPane fx:id="dataOptionsPane" VBox.vgrow="SOMETIMES">
                            <children>
                               <TitledPane collapsible="false" layoutX="22.0" layoutY="-14.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="800.0" text="Data Options" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
-                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="90.0" prefWidth="200.0">
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="122.0" prefWidth="996.0">
                                        <children>
-                                          <GridPane prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="342.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="192.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="489.0" minWidth="10.0" prefWidth="298.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="398.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="496.0" minWidth="10.0" prefWidth="203.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="489.0" minWidth="10.0" prefWidth="359.0" />
                                             </columnConstraints>
                                             <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
+                                              <RowConstraints maxHeight="52.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
                                                 <Label alignment="TOP_RIGHT" prefHeight="16.0" prefWidth="424.0" text="Expression Data:" textAlignment="RIGHT" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.vgrow="ALWAYS" />
@@ -44,8 +44,8 @@
                                                       <Insets left="20.0" />
                                                    </padding>
                                                 </Label>
-                                                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="146.0" progress="0.0" />
-                                                <Label fx:id="progressLabel" prefHeight="16.0" prefWidth="326.0" GridPane.rowIndex="1">
+                                                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="375.0" progress="0.0" />
+                                                <Label fx:id="progressLabel" prefHeight="26.0" prefWidth="375.0" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="9.0" />
                                                    </font>
@@ -58,14 +58,15 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="parametersPane" VBox.vgrow="NEVER">
                            <children>
-                              <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
+                              <TitledPane collapsible="false" layoutY="-4.0" prefHeight="137.0" prefWidth="998.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-4.0">
                                  <content>
-                                    <AnchorPane prefHeight="106.0" prefWidth="798.0">
+                                    <AnchorPane prefHeight="97.0" prefWidth="996.0">
                                        <children>
                                           <GridPane layoutX="21.4" layoutY="20.4" prefHeight="101.0" prefWidth="777.0" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                              <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="183.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="183.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.00000762939453" minWidth="10.0" prefWidth="109.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="135.0" />
@@ -76,18 +77,20 @@
                                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="Confidence Level" GridPane.columnIndex="2" />
-                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="14.0" prefHeight="16.0" prefWidth="161.0" text="Maximum Iterations" />
-                                                <TextField fx:id="maximumIterationsTextField" layoutX="122.0" layoutY="9.0" text="250" GridPane.columnIndex="1">
+                                                <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="pValue Confidence Interval" GridPane.columnIndex="4" />
+                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="14.0" prefHeight="16.0" prefWidth="161.0" text="Bootstraps" GridPane.columnIndex="2" />
+                                                <TextField fx:id="bootStrapsTextField" layoutX="122.0" layoutY="9.0" text="1000" GridPane.columnIndex="3">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
                                                 </TextField>
-                                                <ComboBox fx:id="confidenceLevelComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="3">
+                                                <ComboBox fx:id="pValueConfidenceInterval" editable="true" prefWidth="150.0" GridPane.columnIndex="5">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
                                                 </ComboBox>
+                                                <ComboBox fx:id="bMRFactorComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
+                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="157.0" text="BMR Factor" />
                                              </children>
                                           </GridPane>
                                        </children>
@@ -105,9 +108,7 @@
                                           <HBox alignment="CENTER_LEFT" layoutX="29.0" layoutY="51.4" prefHeight="49.0" prefWidth="740.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="41.0">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="157.0" text="Number of Threads: " />
-                                                <ComboBox fx:id="numberOfThreadsComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="161.0" />
-                                                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="282.0" text="Model Execution Timeout (secs):" />
-                                                <ComboBox fx:id="killTimeComboBox" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="153.0" />
+                                                <ComboBox fx:id="numberOfThreadsComboBox" disable="true" editable="true" minWidth="-Infinity" prefHeight="27.0" prefWidth="161.0" />
                                              </children>
                                           </HBox>
                                        </children>

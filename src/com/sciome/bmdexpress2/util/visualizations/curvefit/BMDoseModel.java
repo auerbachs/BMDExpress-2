@@ -165,6 +165,8 @@ public class BMDoseModel
 
 	public String getModelEquation(String model)
 	{
+		if (model.equals("GCurveP"))
+			return "gcurvep";
 		StringBuilder sb = new StringBuilder("RESPONSE = " + parameters[base]);
 
 		if (model.equals("Power"))

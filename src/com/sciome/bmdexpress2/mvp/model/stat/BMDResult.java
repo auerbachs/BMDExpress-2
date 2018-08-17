@@ -190,7 +190,8 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		columnHeader = probStatResult.generateColumnHeader();
 
 		// Add Curve P Header
-		columnHeader.add(WAUC);
+		if (this.getwAUC() != null)
+			columnHeader.add(WAUC);
 		// Commenting out for now
 		// columnHeader.add(LOG_WAUC);
 		columnHeader.add(PREFILTER_PVALUE);
@@ -428,6 +429,12 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String getDataSetName()
+	{
+		return getName();
 	}
 
 }

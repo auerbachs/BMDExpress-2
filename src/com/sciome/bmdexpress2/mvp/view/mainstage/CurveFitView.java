@@ -918,7 +918,13 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 		else
 		{
-			double parameters[] = new double[1];
+			double parameters[] = new double[6];
+			parameters[0] = theStatResult.getBMD();
+			parameters[1] = theStatResult.getBMDL();
+			parameters[2] = theStatResult.getBMDU();
+			parameters[3] = theStatResult.getFitPValue();
+			parameters[4] = theStatResult.getAIC();
+			parameters[5] = theStatResult.getFitLogLikelihood();
 			this.parameters = truncateDecimal(parameters);
 		}
 

@@ -46,8 +46,8 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	private transient List<Object>			columnHeader2;
 	private Long							id;
 
-	public static final String				EXPRESSION_VALUES = "Expression Value";
-	
+	public static final String				EXPRESSION_VALUES	= "Expression Value";
+
 	@JsonIgnore
 	public Long getID()
 	{
@@ -243,6 +243,12 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	public Object getObject()
 	{
 		return this;
+	}
+
+	@Override
+	public String getDataSetName()
+	{
+		return getName();
 	}
 
 }
