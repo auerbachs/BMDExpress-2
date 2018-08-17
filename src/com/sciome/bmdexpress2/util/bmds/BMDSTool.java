@@ -400,8 +400,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				{
 					for (StatResult statResult : statResults)
 					{
-						statResult.setBMDL(-9999);
-						statResult.setBMDU(-9999);
+						statResult.setBMDL(DEFAULTDOUBLE);
+						statResult.setBMDU(DEFAULTDOUBLE);
 					}
 				}
 
@@ -414,9 +414,9 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 					for (StatResult statResult : statResults)
 					{
 						if (statResult.getBMDL() == 0.0)
-							statResult.setBMDL(-9999);
+							statResult.setBMDL(DEFAULTDOUBLE);
 						if (statResult.getBMDU() == 0.0)
-							statResult.setBMDU(-9999);
+							statResult.setBMDU(DEFAULTDOUBLE);
 					}
 				}
 			}
@@ -753,11 +753,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				double bmdu1 = polyResults.get(i).getBMDU();
 				double bmdu2 = polyResults.get(i + 1).getBMDU();
 
-				if ((chiOut[polyCount - 1 + i] > modelSelectionParameters.getpValue() && bmd1 != DEFAULTDOUBLE
-						&& bmdl1 != DEFAULTDOUBLE && bmdu1 != DEFAULTDOUBLE)
+				if ((chiOut[polyCount - 1 + i] > modelSelectionParameters.getpValue() && isConvergent(bmd1)
+						&& isConvergent(bmdl1) && isConvergent(bmdu1))
 						|| (chiOut[polyCount - 1 + i] < modelSelectionParameters.getpValue()
-								&& (bmd2 == DEFAULTDOUBLE || bmdl2 == DEFAULTDOUBLE
-										|| bmdu2 == DEFAULTDOUBLE)))
+								&& (!isConvergent(bmd2) || !isConvergent(bmdl2) || !isConvergent(bmdu2))))
 				{
 					bestPoly = polyResults.get(i);
 					break;
@@ -833,10 +832,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
 						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE
-								|| bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
-								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE
-										&& bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE))
+						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || !isConvergent(bmd1)
+								|| !isConvergent(bmdl1) || !isConvergent(bmdu1))
+								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && isConvergent(bmd2)
+										&& isConvergent(bmdl2) && isConvergent(bmdu2)))
 						{
 							bestPolyResult = statResult;
 						}
@@ -850,8 +849,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
 						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || bmd1 == DEFAULTDOUBLE)
-								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && bmd2 != DEFAULTDOUBLE))
+						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || !isConvergent(bmd1))
+								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && isConvergent(bmd2)))
 						{
 							bestPolyResult = statResult;
 						}
@@ -885,8 +884,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
 				.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
 		{
-			boolean better = (aic2 < aic1 && bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
-					&& bmdu2 != DEFAULTDOUBLE);
+			boolean better = (aic2 < aic1 && isConvergent(bmd2) && isConvergent(bmdl2)
+					&& isConvergent(bmdu2));
 
 			// don't allow 0's no matter what.
 			if (bmd1 == 0.0 || bmdl1 == 0.0 || bmdu1 == 0.0)
@@ -894,9 +893,9 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			if (aic1 < aic2)
 			{ // second AIC smaller
-				if ((bmd1 == DEFAULTDOUBLE || bmdl1 == DEFAULTDOUBLE || bmdu1 == DEFAULTDOUBLE)
-						&& (bmd2 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE && bmdu2 != DEFAULTDOUBLE)
-						&& bmd2 > 0.0 && bmdl2 > 0.0 && bmdu2 > 0.0)
+				if ((!isConvergent(bmd1) || !isConvergent(bmdl1) || !isConvergent(bmdu1))
+						&& (isConvergent(bmd2) && isConvergent(bmdl2) && isConvergent(bmdu2)) && bmd2 > 0.0
+						&& bmdl2 > 0.0 && bmdu2 > 0.0)
 				{
 					better = true;
 				}
@@ -906,7 +905,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 		else // disregard bmdl and bmdu from chosing best
 		{
-			boolean better = (aic2 < aic1 && bmd2 != DEFAULTDOUBLE);
+			boolean better = (aic2 < aic1 && isConvergent(bmd2));
 
 			// don't allow 0's no matter what.
 			if (bmd1 == 0.0)
@@ -914,7 +913,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			if (aic1 < aic2)
 			{ // second AIC smaller
-				if ((bmd1 == DEFAULTDOUBLE) && (bmd2 != DEFAULTDOUBLE) && bmd2 > 0.0)
+				if ((!isConvergent(bmd1)) && (isConvergent(bmd2)) && bmd2 > 0.0)
 				{
 					better = true;
 				}
@@ -1322,9 +1321,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private void fixBestModel(BMDResult bmdResults)
 	{
 
-		Integer negativeOne = new Integer(-1);
-		Double negativeDef = new Double(DEFAULTDOUBLE);
-
 		for (ProbeStatResult probeStatResult : bmdResults.getProbeStatResults())
 		{
 			try
@@ -1335,24 +1331,16 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
 						.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
 				{
-					if (negativeDef
-							.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMD())) == 0
-							|| negativeDef.compareTo(
-									Double.valueOf(probeStatResult.getBestStatResult().getBMDL())) == 0
-							|| negativeDef.compareTo(
-									Double.valueOf(probeStatResult.getBestStatResult().getBMDU())) == 0
-							|| probeStatResult.getBestStatResult().getBMD() == 0.0
-							|| probeStatResult.getBestStatResult().getBMDL() == 0.0
-							|| probeStatResult.getBestStatResult().getBMDU() == 0.0)
+					if (!isConvergent(probeStatResult.getBestStatResult().getBMD())
+							|| !isConvergent(probeStatResult.getBestStatResult().getBMDL())
+							|| !isConvergent(probeStatResult.getBestStatResult().getBMDU()))
 					{
 						probeStatResult.setBestStatResult(null);
 					}
 				}
 				else // don't worry about the bmdl and bmdu in best model selection
 				{
-					if (negativeDef
-							.compareTo(Double.valueOf(probeStatResult.getBestStatResult().getBMD())) == 0
-							|| probeStatResult.getBestStatResult().getBMD() == 0.0)
+					if (!isConvergent(probeStatResult.getBestStatResult().getBMD()))
 					{
 						probeStatResult.setBestStatResult(null);
 					}
@@ -1571,6 +1559,14 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 
 		return null;
+	}
+
+	private boolean isConvergent(double value)
+	{
+		if (Double.isNaN(value) || Double.valueOf(value).equals(DEFAULTDOUBLE))
+			return false;
+
+		return true;
 	}
 
 }
