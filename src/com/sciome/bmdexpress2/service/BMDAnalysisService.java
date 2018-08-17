@@ -99,8 +99,47 @@ public class BMDAnalysisService implements IBMDAnalysisService
 	public BMDResult bmdAnalysisGCurveP(IStatModelProcessable processableData,
 			GCurvePInputParameters inputParameters, IBMDSToolProgress me)
 	{
-		// TODO Auto-generated method stub
-		return null;
+
+		BMDResult bMDResults = new BMDResult();
+
+		DoseResponseExperiment doseResponseExperiment = processableData
+				.getProcessableDoseResponseExperiment();
+		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
+		if (processableData instanceof PrefilterResults)
+			bMDResults.setPrefilterResults((PrefilterResults) processableData);
+
+		List<ProbeResponse> responses = processableData.getProcessableProbeResponses();
+		List<Treatment> treatments = doseResponseExperiment.getTreatments();
+		List<ArrayList<Float>> numericMatrix = new ArrayList<ArrayList<Float>>();
+		List<Float> doseVector = new ArrayList<Float>();
+		// Fill numeric matrix
+		for (int i = 0; i < responses.size(); i++)
+			numericMatrix.add((ArrayList<Float>) responses.get(i).getResponses());
+
+		// Fill doseVector
+		for (int i = 0; i < treatments.size(); i++)
+			doseVector.add(treatments.get(i).getDose());
+
+		/* do the gcurvep processing here! */
+
+		// Calculate and set wAUC values
+		// float currBMR = (float) inputParameters.getBmrLevel();
+		// List<Float> wAUCList = new ArrayList<Float>();
+		// for (int i = 0; i < responses.size(); i++)
+		// {
+		// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), currBMR));
+		// //CurvePProcessor.c
+		// }
+		// bMDResults.setwAUC(wAUCList);
+
+		// Calculate and set log 2 wAUC values
+		// List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
+		// bMDResults.setLogwAUC(logwAUCList);
+
+		// clean up any leftovers from this process
+		bMDSTool.cleanUp();
+		return bMDResults;
+
 	}
 
 }
