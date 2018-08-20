@@ -694,8 +694,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(parameters[0], bmdModel.response(parameters[0]));
-			bmdSeries.add(parameters[0], LOW - .01);
+			bmdSeries.add(maskDose(parameters[0]), bmdModel.response(parameters[0]));
+			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
 		double smallestDose = 0.0;
@@ -708,24 +708,24 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(parameters[1], bmdModel.response(parameters[0]));
-			bmdlSeries.add(parameters[1], LOW - .01);
+			bmdlSeries.add(maskDose(parameters[1]), bmdModel.response(parameters[0]));
+			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(parameters[2], bmdModel.response(parameters[0]));
-			bmduSeries.add(parameters[2], LOW - .01);
+			bmduSeries.add(maskDose(parameters[2]), bmdModel.response(parameters[0]));
+			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(parameters[0], bmdModel.response(parameters[0]));
+		bmduSeries.add(maskDose(parameters[0]), bmdModel.response(parameters[0]));
 
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
-			noelSeries.add(probeStatResult.getPrefilterNoel().doubleValue(),
+			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()),
 					bmdModel.response(probeStatResult.getPrefilterNoel().doubleValue()));
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
-			loelSeries.add(probeStatResult.getPrefilterLoel().doubleValue(),
+			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()),
 					bmdModel.response(probeStatResult.getPrefilterLoel().doubleValue()));
 
 	}
@@ -891,7 +891,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 	private double maskDose(double dose)
 	{
-		if (logDosesCheckBox.isSelected() && dose == 0)
+		if (logDosesCheckBox.isSelected() && (dose == 0.0 || dose < logZeroDose))
 			return logZeroDose;
 
 		return dose;
@@ -1226,8 +1226,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(parameters[0], maxResponse);
-			bmdSeries.add(parameters[0], LOW - .01);
+			bmdSeries.add(maskDose(parameters[0]), maxResponse);
+			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
 		double smallestDose = 0.0;
@@ -1240,15 +1240,15 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(parameters[1], maxResponse);
-			bmdlSeries.add(parameters[1], LOW - .01);
+			bmdlSeries.add(maskDose(parameters[1]), maxResponse);
+			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(parameters[2], maxResponse);
-			bmduSeries.add(parameters[2], LOW - .01);
+			bmduSeries.add(maskDose(parameters[2]), maxResponse);
+			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(parameters[0], maxResponse);
+		bmduSeries.add(maskDose(parameters[0]), maxResponse);
 
 		probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
