@@ -32,7 +32,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
@@ -1187,7 +1186,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		meanSeriesSet.addSeries(meanPlusSD);
 		meanSeriesSet.addSeries(meanMinusSD);
 
-		XYSplineRenderer renderer1 = new XYSplineRenderer();
+		XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
 		renderer1.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
 		renderer1.setSeriesStroke(1, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
@@ -1198,7 +1197,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		renderer1.setSeriesPaint(1, Color.blue);
 		renderer1.setSeriesPaint(2, Color.blue);
 
-		XYSplineRenderer renderer2 = new XYSplineRenderer();
+		XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
 
 		renderer2.setSeriesPaint(0, Color.black);
 
