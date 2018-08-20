@@ -1266,9 +1266,11 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
-			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()), maxResponse);
+			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()), getYFromLineSeries(
+					medianSeries, maskDose(probeStatResult.getPrefilterNoel().doubleValue())));
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
-			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()), maxResponse);
+			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()), getYFromLineSeries(
+					medianSeries, maskDose(probeStatResult.getPrefilterLoel().doubleValue())));
 
 	}
 
