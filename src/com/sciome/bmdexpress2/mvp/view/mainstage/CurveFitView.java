@@ -30,6 +30,7 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.util.ShapeUtils;
@@ -1125,6 +1126,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Variables to hold the chart plot, combobox items,
 		// model parameters and responses
 
+		XYSeriesCollection meanSDSeriesSet = new XYSeriesCollection();
 		XYSeriesCollection meanSeriesSet = new XYSeriesCollection();
 		XYSeriesCollection medianSeriesSet = new XYSeriesCollection();
 		double lastDose, mean, stdD, median;
@@ -1183,29 +1185,36 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		medianSeries.add(maskDose(lastDose), median);
 		medianSeriesSet.addSeries(medianSeries);
 		meanSeriesSet.addSeries(meanSeries);
-		meanSeriesSet.addSeries(meanPlusSD);
-		meanSeriesSet.addSeries(meanMinusSD);
+		meanSDSeriesSet.addSeries(meanPlusSD);
+		meanSDSeriesSet.addSeries(meanMinusSD);
 
-		XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
+		Color blueTrans = new Color(0.0f, 0.9f, 0.0f, 0.2f);
+		XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(blueTrans, blueTrans, true);
 		renderer1.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
 		renderer1.setSeriesStroke(1, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
-		renderer1.setSeriesStroke(2, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
-		renderer1.setSeriesPaint(0, Color.black);
+
+		renderer1.setSeriesPaint(0, Color.blue);
 		renderer1.setSeriesPaint(1, Color.blue);
-		renderer1.setSeriesPaint(2, Color.blue);
+		renderer1.setSeriesFillPaint(0, Color.blue);
+		renderer1.setSeriesFillPaint(1, Color.blue);
 
 		XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
-
 		renderer2.setSeriesPaint(0, Color.black);
 
-		plot.setDataset(1, meanSeriesSet);
+		XYLineAndShapeRenderer renderer3 = new XYLineAndShapeRenderer();
+		renderer3.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
+		renderer3.setSeriesPaint(0, Color.black);
+
+		plot.setDataset(1, meanSDSeriesSet);
 		plot.setDataset(2, medianSeriesSet);
+		plot.setDataset(3, meanSeriesSet);
 
 		plot.setRenderer(1, renderer1);
 		plot.setRenderer(2, renderer2);
+		plot.setRenderer(3, renderer3);
 
 		// now put the lotel/notel/bmd/bmdl/bmdu on that bad boy
 
