@@ -35,6 +35,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.Range;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -193,7 +194,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		chartColors = new Color[5];
 		chartColors[0] = Color.RED;
 		chartColors[1] = Color.BLUE;
-		chartColors[2] = Color.BLACK;
+		chartColors[2] = Color.black;
 		chartColors[3] = Color.GREEN;
 		chartColors[4] = Color.orange;
 
@@ -1201,12 +1202,12 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		renderer1.setSeriesFillPaint(1, Color.blue);
 
 		XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
-		renderer2.setSeriesPaint(0, Color.black);
+		renderer2.setSeriesPaint(0, Color.blue);
 
 		XYLineAndShapeRenderer renderer3 = new XYLineAndShapeRenderer();
 		renderer3.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
-		renderer3.setSeriesPaint(0, Color.black);
+		renderer3.setSeriesPaint(0, Color.blue);
 
 		plot.setDataset(1, meanSDSeriesSet);
 		plot.setDataset(2, medianSeriesSet);
@@ -1235,7 +1236,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(maskDose(parameters[0]), maxResponse);
+			bmdSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
@@ -1245,19 +1246,21 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		else
 			smallestDose = minDose;
 
-		bmdSeries.add(smallestDose, maxResponse);
+		bmdSeries.add(smallestDose, getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(maskDose(parameters[1]), maxResponse);
+			bmdlSeries.add(maskDose(parameters[1]),
+					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(maskDose(parameters[2]), maxResponse);
+			bmduSeries.add(maskDose(parameters[2]),
+					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(maskDose(parameters[0]), maxResponse);
+		bmduSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
@@ -1266,6 +1269,45 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()), maxResponse);
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
 			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()), maxResponse);
+
+	}
+
+	private double getYFromLineSeries(XYSeries series, double x)
+	{
+
+		XYDataItem dataItem1 = null;
+		XYDataItem dataItem2 = null;
+		for (int i = 0; i < series.getItemCount(); i++)
+		{
+			if (dataItem1 == null)
+			{
+				dataItem1 = series.getDataItem(i);
+				continue;
+			}
+			if (x >= series.getDataItem(i).getX().doubleValue())
+			{
+				dataItem1 = series.getDataItem(i);
+				continue;
+			}
+
+			if (x <= series.getDataItem(i).getX().doubleValue())
+			{
+				dataItem2 = series.getDataItem(i);
+				break;
+			}
+		}
+		if (dataItem1 != null && dataItem2 != null)
+		{
+			double slope = (dataItem2.getYValue() - dataItem1.getYValue())
+					/ (dataItem2.getXValue() - dataItem1.getXValue());
+
+			double b = dataItem1.getYValue() - slope * dataItem1.getXValue();
+
+			double returnvalue = slope * x + b;
+			return returnvalue;
+		}
+
+		return 0.0;
 
 	}
 }
