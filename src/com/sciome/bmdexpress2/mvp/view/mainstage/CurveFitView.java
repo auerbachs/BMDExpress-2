@@ -1308,6 +1308,14 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			double returnvalue = slope * x + b;
 			return returnvalue;
 		}
+		else if (dataItem1 != null)
+		{
+			return dataItem1.getYValue();
+		}
+		else if (dataItem2 != null)
+		{
+			return dataItem2.getYValue();
+		}
 
 		return 0.0;
 
