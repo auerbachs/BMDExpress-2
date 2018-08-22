@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.DoubleStream;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
@@ -37,25 +36,25 @@ public class CurvePProcessor
 
 	private static float MAD(Float[] m, float mm, float perturb)
 	{
-		/* SD-like metric, median absolute difference = MAD;
-		 * NB: does not require sorting of m[] since its median mm is supplied;
-		 * perturb is usually small number, such as 0.000001f to avoid exact zero
+		/*
+		 * SD-like metric, median absolute difference = MAD; NB: does not require sorting of m[] since its
+		 * median mm is supplied; perturb is usually small number, such as 0.000001f to avoid exact zero
 		 */
-		
+
 		Float[] v = m.clone();
 		for (int i = 0; i < m.length; i++)
 			if (v[i] > mm)
 				v[i] -= mm;
 			else
 				v[i] = mm - v[i];
-		
-		Arrays.sort(v); //needed for proper median estimate right below. 
+
+		Arrays.sort(v); // needed for proper median estimate right below.
 		float x = smedian(v);
 		if (x < perturb)
 			x = perturb;
 		return x;
 	} // end of MAD()
-	
+
 	private static float MAD(Float[] m, float perturb)
 	{
 		// SD-like metric, median absolute difference = MAD;
@@ -78,7 +77,7 @@ public class CurvePProcessor
 	{
 		return MAD(m, 0.000001f);
 	}
-	
+
 	private static Float[] TukeyBiWs(Float[] m, float c, float p)
 	{
 		/*
@@ -89,7 +88,7 @@ public class CurvePProcessor
 		Float[] f = m.clone();
 		Arrays.sort(f);
 		float piv = smedian(f);
-		float madv = MAD(f, piv, p); 
+		float madv = MAD(f, piv, p);
 
 		for (int i = 0; i < m.length; i++)
 		{// fills f[] corresponding to the order in m[]
@@ -107,7 +106,7 @@ public class CurvePProcessor
 	{
 		return TukeyBiWs(m, c, 0.000001f);
 	}
-	
+
 	private static Float[] TukeyBiWs(Float[] m)
 	{
 		return TukeyBiWs(m, 5.0f);
@@ -172,7 +171,7 @@ public class CurvePProcessor
 		usDoses.add(sDoses[0]);
 		for (int d = 1; d < sDoses.length; d++)
 		{
-			if ( sDoses[d].floatValue() == sDoses[d - 1].floatValue() )
+			if (sDoses[d].floatValue() == sDoses[d - 1].floatValue())
 				continue;
 
 			usDoses.add(sDoses[d]);
@@ -182,20 +181,20 @@ public class CurvePProcessor
 	} // end of CollapseDoses()
 
 	public static int[] DoseGroups(List<Float> allDoses, List<Float> UniqueDoses)
-	{//returns number of replicates in each dose group
+	{// returns number of replicates in each dose group
 		int groups[] = new int[UniqueDoses.size()];
-		
+
 		for (int i = 0; i < groups.length; i++)
 		{
 			Float g = UniqueDoses.get(i);
 			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
-			if (allDoses.get(ad).floatValue() == g)
-				groups[i] ++;
+				if (allDoses.get(ad).floatValue() == g)
+					groups[i]++;
 		}
-		
+
 		return groups;
 	}
-	
+
 	public static List<Float> calc_WgtAvResponses(List<Float> allDoses, List<Float> allResponses)
 	{
 		/*
@@ -213,7 +212,6 @@ public class CurvePProcessor
 				if (allDoses.get(ad).floatValue() == g)
 					gR.add(allResponses.get(ad));
 
-			
 			Float[] gResps = gR.toArray(new Float[0]);
 			Float[] cfs = TukeyBiWs(gResps, 5.0f, 0.00001f);
 
@@ -314,12 +312,12 @@ public class CurvePProcessor
 			float Vsz = Math.abs(V.get(z) - V.get(s));
 			if (Vsz < Math.abs(V.get(z) - L))
 				continue;
-			
+
 			if (Vsz < Math.abs(V.get(s) - L))
 				continue;
 
-			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));			
-			
+			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));
+
 			break;
 		}
 
@@ -329,8 +327,9 @@ public class CurvePProcessor
 	public static float SafeImputeDose(List<Float> D, List<Float> V, float L)
 	/*
 	 * Interpolates the dose at which the L threshold of response is reached D - unique doses (can be
-	 * log-transformed) V - responses corresponding to D[] L - threshold response
-	 * NB: puts additional restrictions on imputation near 0th (untreated) dose, where degenerate cases can happen (i.e. __-------)
+	 * log-transformed) V - responses corresponding to D[] L - threshold response NB: puts additional
+	 * restrictions on imputation near 0th (untreated) dose, where degenerate cases can happen (i.e.
+	 * __-------)
 	 */
 	{
 		int e = D.size() - 1;
@@ -351,26 +350,26 @@ public class CurvePProcessor
 			float Vsz = Math.abs(V.get(z) - V.get(s));
 			if (Vsz < Math.abs(V.get(z) - L))
 				continue;
-			
+
 			if (Vsz < Math.abs(V.get(s) - L))
 				continue;
 
 			iD = D.get(s) + (D.get(z) - D.get(s)) * (L - V.get(s)) / (V.get(z) - V.get(s));
-			
+
 			if (s == 0)
-			{//safe impute for cases when log-transformed doses have untreated Dose as arbitrary small number
+			{// safe impute for cases when log-transformed doses have untreated Dose as arbitrary small number
 				int s2 = z + 1;
-				
-				//impute from the next spline (s+1; s+2) backwards
+
+				// impute from the next spline (s+1; s+2) backwards
 				float iD2 = D.get(s2) + (D.get(z) - D.get(s2)) * (L - V.get(s2)) / (V.get(z) - V.get(s2));
 
-				//if this spline has a good slope, then apply its extrapolation
-				if (Float.isFinite(iD2)) 
-					iD2 = Math.min(iD2,  D.get(z)); 
-				else 
+				// if this spline has a good slope, then apply its extrapolation
+				if (Float.isFinite(iD2))
+					iD2 = Math.min(iD2, D.get(z));
+				else
 					iD2 = D.get(z);
-				
-				//pick most conservative imputation, considering this could be a degenerate dose-response
+
+				// pick most conservative imputation, considering this could be a degenerate dose-response
 				iD = Math.max(iD, iD2);
 			}
 			break;
@@ -378,15 +377,16 @@ public class CurvePProcessor
 
 		return iD;
 	} // end of SafeImputeDose()
-	
+
 	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog, float AUC)
 	{
-		/* autonomous version that does all auxiliary calculations internally
-		 * returns a POD estimate based on curve signal (AUC value)
+		/*
+		 * autonomous version that does all auxiliary calculations internally returns a POD estimate based on
+		 * curve signal (AUC value)
 		 * 
-		 * allD - all doses, allR - all responses (for all replicates in all dose groups) 
-		 * Z_thr - Z-score threshold to calculate POD response level (both directions will be checked if AUC == 0) 
-		 * UseLog - if on, the doses will be log-transformed
+		 * allD - all doses, allR - all responses (for all replicates in all dose groups) Z_thr - Z-score
+		 * threshold to calculate POD response level (both directions will be checked if AUC == 0) UseLog - if
+		 * on, the doses will be log-transformed
 		 */
 
 		List<Float> sdr = calc_WgtSdResponses(allD, allR);
@@ -407,49 +407,57 @@ public class CurvePProcessor
 				// e.printStackTrace();
 			}
 
-		if (sdr.get(0) == 0.0) return ulD.get(0);
-		
+		if (sdr.get(0) == 0.0)
+			return ulD.get(0);
+
 		float L1 = avr.get(0) - Z_thr * sdr.get(0);
 		float L2 = avr.get(0) + Z_thr * sdr.get(0);
 
 		float P1 = SafeImputeDose(ulD, avr, L1);
 		float P2 = SafeImputeDose(ulD, avr, L2);
 
-		//picks appropriate POD depending on the overall direction (judged by AUC)
-		if (AUC < 0) return P1;
-		if (AUC > 0) return P2;
-		
-		return Math.min(P1, P2); //only for AUC == 0 cases
+		// picks appropriate POD depending on the overall direction (judged by AUC)
+		if (AUC < 0)
+			return P1;
+		if (AUC > 0)
+			return P2;
+
+		return Math.min(P1, P2); // only for AUC == 0 cases
 	}
 
 	public static float calc_POD(List<Float> ud, List<Float> avr, List<Float> sdr, float Z_thr, float dir)
 	{
-		/* shortcut version that does all auxiliary calculations internally
-		 * returns a POD estimate for appropriate (decreasing and increasing) direction (dir)
-		 * large number indicates no POD
+		/*
+		 * shortcut version that does all auxiliary calculations internally returns a POD estimate for
+		 * appropriate (decreasing and increasing) direction (dir) large number indicates no POD
 		 */
-		
-		if (sdr.get(0) == 0.0) return ud.get(0);
-		
-		//05.15.2018 add-on; This is needed when quantile normalizations leads to a degeneracy of the median for untreated control
-		
+
+		if (sdr.get(0) == 0.0)
+			return ud.get(0);
+
+		// 05.15.2018 add-on; This is needed when quantile normalizations leads to a degeneracy of the median
+		// for untreated control
+
 		float maxsd = sdr.get(0);
-		for (int x = 1; x < sdr.size(); x++) if (sdr.get(x) > maxsd) maxsd = sdr.get(x); 
-		
+		for (int x = 1; x < sdr.size(); x++)
+			if (sdr.get(x) > maxsd)
+				maxsd = sdr.get(x);
+
 		float L1 = avr.get(0) - Z_thr * maxsd;
 		float L2 = avr.get(0) + Z_thr * maxsd;
 
 		float P1 = SafeImputeDose(ud, avr, L1);
 		float P2 = SafeImputeDose(ud, avr, L2);
 
-		//picks appropriate POD depending on the overall direction (judged by AUC)
-		if (dir < 0) return P1;
-		if (dir > 0) return P2;
-		
-		return Math.min(P1, P2); //only for AUC == 0 cases
+		// picks appropriate POD depending on the overall direction (judged by AUC)
+		if (dir < 0)
+			return P1;
+		if (dir > 0)
+			return P2;
+
+		return Math.min(P1, P2); // only for AUC == 0 cases
 	}
 
-	
 	public static float calc_AUC(List<Float> D, List<Float> R)
 	/*
 	 * returns AUC - area-under-curve relative to baseline, calculated by trapezoids method on: unique doses
@@ -474,133 +482,138 @@ public class CurvePProcessor
 
 	public static float calc_wAUC(float AUC, float POD, List<Float> Doses)
 	/*
-	 * returns AUC normalized by point of departure (POD) and dose test range 
-	 * NB: Doses, AUC, and POD have to be on the matching scale of dose units 
+	 * returns AUC normalized by point of departure (POD) and dose test range NB: Doses, AUC, and POD have to
+	 * be on the matching scale of dose units
 	 */
 	{
 		float UnDose = Doses.get(0), LoDose = Doses.get(1), HiDose = Doses.get(Doses.size() - 1);
-		
+
 		if (POD > HiDose)
 			return 0.0f;
-		
+
 		if (POD < UnDose)
 			return 0.0f;
 
 		Float wAUC = AUC; // signed area-under-curve, such as from calc_AUC()
-		
+
 		wAUC /= HiDose - UnDose;
-		wAUC *= LoDose - UnDose; //norm by POD relative to the LoDose (this + next op act as a scaling coefficient)
+		wAUC *= LoDose - UnDose; // norm by POD relative to the LoDose (this + next op act as a scaling
+									// coefficient)
 		wAUC /= POD - UnDose;
-		
+
 		return wAUC;
 	}
 
-	public static float parametric_val(float D0, List<Float>P, int type)
-	/* calculates  response at D0 dose based on parametric curve model, 
-	 * P contains curve coefficients, 
-	 * type defines math.equation:  
-	 * 		0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill 
+	public static float parametric_val(float D0, List<Float> P, int type)
+	/*
+	 * calculates response at D0 dose based on parametric curve model, P contains curve coefficients, type
+	 * defines math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
 	 */
 	{
 		float rBase = 0.0f;
-		
-		rBase = P.get(0); 
-		if (type == 0)	//polynomial (incl. linear and constant cases)
-		{//y(x) = P[0] + P[1]*x + ... + P[n]*x^n
-			for (int i = 1; i < P.size(); i++) 
-				rBase += P.get(i)*Math.pow(D0, i);			
+
+		rBase = P.get(0);
+		if (type == 0) // polynomial (incl. linear and constant cases)
+		{// y(x) = P[0] + P[1]*x + ... + P[n]*x^n
+			for (int i = 1; i < P.size(); i++)
+				rBase += P.get(i) * Math.pow(D0, i);
 		}
-		
-		if (type == 1) //power
-		{//y(x) = P[0] + P[1]*x^P[2]
-			rBase += P.get(1)*Math.pow(D0, P.get(2));
+
+		if (type == 1) // power
+		{// y(x) = P[0] + P[1]*x^P[2]
+			rBase += P.get(1) * Math.pow(D0, P.get(2));
 		}
-		
+
 		if (type == 2) // exponential
-		{//y(x) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * x^P[3] ) }
-			
-			rBase = (float)Math.exp(  P.get(1)*Math.pow(D0, P.get(3))  );
+		{// y(x) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * x^P[3] ) }
+
+			rBase = (float) Math.exp(P.get(1) * Math.pow(D0, P.get(3)));
 			rBase *= 1 - P.get(2);
 			rBase += P.get(2);
 			rBase *= P.get(0);
 		}
-		
+
 		if (type == 3) // logarithmic
 		{// y(x) = P[0] + P[1]*ln(x)
-			rBase += P.get(1)*Math.log(D0);
+			rBase += P.get(1) * Math.log(D0);
 		}
-		
+
 		if (type == 4) // Hill
 		{// y(x0 = P[0] + P[1] - P[1]P[3]/(x^P[2] + P[3])
-			
+
 			rBase += P.get(1);
-			rBase -= P.get(1)*P.get(3)/(Math.pow(D0, P.get(2))+P.get(3));			
+			rBase -= P.get(1) * P.get(3) / (Math.pow(D0, P.get(2)) + P.get(3));
 		}
 
 		return rBase;
-	} //end of parametric_val()
-	
+	} // end of parametric_val()
+
 	public static float intg_log_AUC(List<Float> D, List<Float> P, int type, int log0fix, int npoints)
-	/* log10-integrates several curve types to calculate AUC, P contains curve coefficients, 
-	 * type defines math.equation:  0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
+	/*
+	 * log10-integrates several curve types to calculate AUC, P contains curve coefficients, type defines
+	 * math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
 	 * 
-	 * calls logBaseDoses(D, log0fix) to obtain log10 transform for D[]   
+	 * calls logBaseDoses(D, log0fix) to obtain log10 transform for D[]
 	 */
 	{
 		List<Float> luD;
-		
-		try {
+
+		try
+		{
 			luD = logBaseDoses(D, log0fix);
-		} catch (Exception e) {			
+		}
+		catch (Exception e)
+		{
 			return 0.0f;
 		}
-		
-		List<Float> estR = new ArrayList<Float>(); //estimated responses
-		List<Float> estD = new ArrayList<Float>(); //sampled log-doses
-		
-		//since we cannot analytically integrate all the cases, switch to trapezoid estimate instead with arbitrary precision (npoints)
+
+		List<Float> estR = new ArrayList<Float>(); // estimated responses
+		List<Float> estD = new ArrayList<Float>(); // sampled log-doses
+
+		// since we cannot analytically integrate all the cases, switch to trapezoid estimate instead with
+		// arbitrary precision (npoints)
 		int nscan = npoints - 3;
-		float hiD = luD.get( luD.size() - 1), loD = luD.get(1);
-		
-		estD.add( luD.get(0) );
-		estR.add( parametric_val(0.0f, P, type) );
-		
+		float hiD = luD.get(luD.size() - 1), loD = luD.get(1);
+
+		estD.add(luD.get(0));
+		estR.add(parametric_val(0.0f, P, type));
+
 		float stepD = (hiD - loD) / nscan;
-				
+
 		for (int p = -1; p <= nscan; p++)
 		{
-			float startD  = loD + p*stepD;
-			
+			float startD = loD + p * stepD;
+
 			estD.add(startD);
-			estR.add( parametric_val((float)Math.pow(10, startD), P, type) );			
+			estR.add(parametric_val((float) Math.pow(10, startD), P, type));
 		}
-		
+
 		return calc_AUC(estD, estR);
-	} //end of intg_log_AUC()
-	
-	
+	} // end of intg_log_AUC()
+
 	public static float intg_AUC(List<Float> D, List<Float> P, int type)
 	{
-	/* analytically integrates several curve types to calculate AUC, P contains curve coefficients, 
-	 * type defines math.equation:  0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill 
-	 */
-		
+		/*
+		 * analytically integrates several curve types to calculate AUC, P contains curve coefficients, type
+		 * defines math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
+		 */
+
 		int N = P.size();
-		float hiD = D.get(N-1), unD = D.get(0);		
+		float hiD = D.get(N - 1), unD = D.get(0);
 		float iAUC = parametric_val(unD, P, type);
-		iAUC *= unD - hiD; //now iAUC contains -baseline's AUC;
-		
+		iAUC *= unD - hiD; // now iAUC contains -baseline's AUC;
+
 		if (type == 0) // polynomial, including linear and constant cases
 		{
 			// y(x) = P[0] + P[1]*x + ... + P[n]*x^n
 			// F(y)dx = C + P[0]*x + P[1]*x^2/2 + ... P[n]*x^(n+1)/(n+1)
-		
+
 			for (int i = 0; i < N; i++)
 			{
 				float c = P.get(i);
-				if (i == 0) 
+				if (i == 0)
 				{
-					iAUC += c*(hiD - unD);
+					iAUC += c * (hiD - unD);
 					continue;
 				}
 				int i1 = i + 1;
@@ -614,49 +627,49 @@ public class CurvePProcessor
 		{
 			// y(x) = P[0] + P[1]*x^P[2]
 			// F(y)dx = C + P[0]*x + P[1]*x^(P[2]+1)/(P[2]+1)
-			
+
 			float pp = P.get(2) + 1;
-			float c = P.get(1)/pp;
+			float c = P.get(1) / pp;
 			c *= Math.pow(hiD, pp) - Math.pow(unD, pp);
-			
-			iAUC += P.get(0)*(hiD - unD) + c;
+
+			iAUC += P.get(0) * (hiD - unD) + c;
 		}
 
 		if (type == 2) // exponential
 		{
 			// y(x) = P[0] * { P[2] - (P[2]-1)* exp( P[1] * x^P[3] ) }
 			// F(y)dx = C + P[0] * { P[2]*x - (P[2]-1)* exp( P[1] * x^P[3] )/P[1]/P[3]/x^(P[3]-1) }
-			
-			float pp =  P.get(3) - 1;
+
+			float pp = P.get(3) - 1;
 			float c = 1 - P.get(2);
 			c /= P.get(1) * P.get(3) / P.get(0);
-			
-			float p1 = (float)Math.exp( Math.pow(unD, P.get(3))*P.get(1) );
-			p1 /= Math.pow(unD,  pp);
-			
-			float p2 = (float)Math.exp( Math.pow(hiD, P.get(3))*P.get(1) );
-			p2 /= Math.pow(hiD,  pp);
 
-			iAUC += P.get(0)*P.get(2)*(hiD - unD) + c*(p2-p1);
+			float p1 = (float) Math.exp(Math.pow(unD, P.get(3)) * P.get(1));
+			p1 /= Math.pow(unD, pp);
+
+			float p2 = (float) Math.exp(Math.pow(hiD, P.get(3)) * P.get(1));
+			p2 /= Math.pow(hiD, pp);
+
+			iAUC += P.get(0) * P.get(2) * (hiD - unD) + c * (p2 - p1);
 		}
 
 		if (type == 3) // logarithmic
-		{//NB: this type will be a issue for cases where x = 0; currently not supported
-			
-			//y(x) = P[0] + P[1]*ln(x)
-			//F(y)dx = C + P[0]*x + x(ln(x) - 1)P[1]
-			
+		{// NB: this type will be a issue for cases where x = 0; currently not supported
+
+			// y(x) = P[0] + P[1]*ln(x)
+			// F(y)dx = C + P[0]*x + x(ln(x) - 1)P[1]
+
 			float c = P.get(1);
-			c *= hiD*Math.log(hiD) - unD*Math.log(unD);
-			
-			iAUC += (P.get(0) - P.get(1))*(hiD - unD) + c;
+			c *= hiD * Math.log(hiD) - unD * Math.log(unD);
+
+			iAUC += (P.get(0) - P.get(1)) * (hiD - unD) + c;
 		}
 
 		if (type == 4) // Hill
 		{
-			// y(x) = P[0] + P[1]*x^P[2] / ( x^P[2] + P[3]) = 
-			//P[0] + P[1] - P[1]P[3]/(x^P[2] + P[3])
-			
+			// y(x) = P[0] + P[1]*x^P[2] / ( x^P[2] + P[3]) =
+			// P[0] + P[1] - P[1]P[3]/(x^P[2] + P[3])
+
 			// F(y)dx = C + x^
 
 		}
@@ -670,335 +683,375 @@ public class CurvePProcessor
 	{
 		for (int td = allD.indexOf(TargetDose); td <= allD.lastIndexOf(TargetDose); td++)
 			if (allD.get(td).floatValue() == TargetDose)
-			{	    				
-				Float xx = allR.get(td) + RShift;	    				
+			{
+				Float xx = allR.get(td) + RShift;
 				allR.set(td, xx);
 			}
 	}
-	
+
 	public static boolean dr_OOR(Float base_av, Float base_sd, Float x_av, Float x_sd)
-	{//out-of-range check for two intervals, ci and f, defined by average and sd
+	{// out-of-range check for two intervals, ci and f, defined by average and sd
 		Float davx = Math.abs(base_av - x_av);
-		if (davx > Math.max(base_sd, x_sd)) return true;
+		if (davx > Math.max(base_sd, x_sd))
+			return true;
 		return false;
 	}
-	
+
 	public static float[] scan_dr_4mono(List<Float> avR, List<Float> sdR, int mode)
-	//Calculates monotonicity signs (from -1 to 1) measured for each interval in Dose-Response data (uses AVERAGE and SD of responses as input)
-	//mode: 0 - from left-to-right, 1 - from right-to-left, 2 - harmonic mean of both, 3 - strict (min of both), 4 - lax (max of both)
+	// Calculates monotonicity signs (from -1 to 1) measured for each interval in Dose-Response data (uses
+	// AVERAGE and SD of responses as input)
+	// mode: 0 - from left-to-right, 1 - from right-to-left, 2 - harmonic mean of both, 3 - strict (min of
+	// both), 4 - lax (max of both)
 	{
-	  
-	  int m = avR.size() - 1;
-	  float Zs[] = new float[m];
-	  
-	  for (int ci = 0; ci < m; ci++)
-	  {
-	    //estimate sigma from standard deviations of (ci) and (ci+1) replicates
-	    Float esd = 0.0f, esd1 = sdR.get(ci), esd2 = sdR.get(ci+1);
-	    if (mode == 0) esd = esd1;
-	    if (mode == 1) esd = esd2;
-	    if (mode == 2) esd = 2.0f*esd1*esd2/(esd1 + esd2);
-	    if (mode == 3) esd = Math.max(esd1, esd2);
-	    if (mode == 4) esd = Math.min(esd1, esd2);	    
-	    
-	    if (!Float.isFinite(esd) || (esd < 0.0001)) esd = 0.0001f;  //a crutch to fix fake input data with duplicate "replicates" causing 0 st.dev
-	    
-	    //difference of means is divided by estimated sigma
-	    Zs[ci] = avR.get(ci+1) - avR.get(ci); // esd;	    
-	  }
-	  return (Zs);
+
+		int m = avR.size() - 1;
+		float Zs[] = new float[m];
+
+		for (int ci = 0; ci < m; ci++)
+		{
+			// estimate sigma from standard deviations of (ci) and (ci+1) replicates
+			Float esd = 0.0f, esd1 = sdR.get(ci), esd2 = sdR.get(ci + 1);
+			if (mode == 0)
+				esd = esd1;
+			if (mode == 1)
+				esd = esd2;
+			if (mode == 2)
+				esd = 2.0f * esd1 * esd2 / (esd1 + esd2);
+			if (mode == 3)
+				esd = Math.max(esd1, esd2);
+			if (mode == 4)
+				esd = Math.min(esd1, esd2);
+
+			if (!Float.isFinite(esd) || (esd < 0.0001))
+				esd = 0.0001f; // a crutch to fix fake input data with duplicate "replicates" causing 0 st.dev
+
+			// difference of means is divided by estimated sigma
+			Zs[ci] = avR.get(ci + 1) - avR.get(ci); // esd;
+		}
+		return (Zs);
 	}
 
-	public static int monotonize(List<Float> allD, List<Float> allR, List<Float> corrR, int Direction) {
-		//returns number of corrected points, which themselves are written into corrR		
+	public static int monotonize(List<Float> allD, List<Float> allR, List<Float> corrR, int Direction)
+	{
+		// returns number of corrected points, which themselves are written into corrR
 		corrR.clear();
 		corrR.addAll(allR);
-		
+
 		List<Float> sdr = calc_WgtSdResponses(allD, allR);
-		List<Float> avr = calc_WgtAvResponses(allD, allR);		
+		List<Float> avr = calc_WgtAvResponses(allD, allR);
 		List<Float> unqD = CollapseDoses(allD);
-		
-		//-- luD will be needed for extrapolation
+
+		// -- luD will be needed for extrapolation
 		List<Float> luD;
 		try
 		{
 			luD = logBaseDoses(unqD, -24);
-			
+
 		}
 		catch (Exception e)
 		{
 			System.out.println("problems with calculations");
 			return 0;
 		}
-		//-----------------
-		
+		// -----------------
+
 		int n = unqD.size();
-		//mask of corrections
+		// mask of corrections
 		byte[] Baddies = new byte[n];
-		for (int v = 0; v < Baddies.length; v++) Baddies[v] = 0;
-		
+		for (int v = 0; v < Baddies.length; v++)
+			Baddies[v] = 0;
+
 		Float BBA = avr.get(0), BBS = sdr.get(0);
 		Float BL = BBA - BBS, BU = BBA + BBS;
-		
-	
-	    if (Direction == 0)
-	    {//constant curves
-	    	int ncorr = 0;
-	    	for (int v = 1; v < n; v++)
-	    	{
-	    		Float vR = avr.get(v);
-	    		if ( (vR > BU) || (vR < BL) )
-	    		{
-	    			ncorr ++;
-	    			Baddies[v] = 1; 
-	    			Float diff = BBA - vR, cd = unqD.get(v);
-	    			shift_dr_group(allD, corrR, cd, diff);
-	    		}
-	    	}
-	    	
-	    	return ncorr;
-	    }
-	    
-	    //below are supposed-to-be-monotonic cases
-	    
-	    //get extreme response values
-	    Float mna = BBA, mxa = BBA;	    
-	    for (int v = 1; v < n; v++)
-	    {
-	    	Float ca = avr.get(v);
-	    	if (ca > mxa) mxa = ca;
-	    	if (ca < mna) mna = ca;
-	    }
-	    
-	    Float extr = mxa;
-	    if (Direction < 0) extr = mna;
-	    	
-	    //invalidate non-conforming tail, when obvious
-	    for (int u = n-1; u >0; u--)
-	    {
-	    	Float cr = avr.get(u), csd = sdr.get(u);
-	    	Float crl = cr - csd, cru = cr + csd;
-	    	if ( (extr < crl) || (extr > cru) ) Baddies[u] = 1; else break;
-	    }
-	    
-	    //Detect a minimum set of violators
-	    byte[] TrialBest = Baddies.clone();
-	    int tbSize = Baddies.length; //#corrections to do, will be updated
-	    int bdSize = 0;
-	    for (int v = 0; v < Baddies.length; v++) bdSize += Baddies[v];
-	    
-        //scan_dr_4mono(avr, sdr, 0); //addl invalidation of glitches, but can be tricky	    
 
-	    for (int v = 0; v < n; v++)
-	    {   
-	    	if (Baddies[v] == 1) continue;
-	    	
-		    //v is the initial seed for the "trusted" point
-	    	byte[] Trial = Baddies.clone();
-	    	int f = v, ci = v;
-	    	
-	    	//first, check forward from v
-	    	while (++ci < n)
-	    	{
-	    		if (Baddies[ci] == 1) continue;
-	    		Float ci_a = avr.get(ci), f_a = avr.get(f), ci_s = sdr.get(ci), f_s = sdr.get(f);
-	    		if (dr_OOR(f_a, f_s, ci_a, ci_s))
-	    		{
-	    			if ( Direction * (ci_a - f_a) < 0)
-	    			{
-	    				Trial[ci] = 1;
-	    				continue;
-	    			}
-	    		}
-	    		f = ci;
-	    	}
-	    	
-	    	//then check backward from v
-	    	f = v;
-	    	ci = v;
-	    	while (ci > 1)
-	    	{//avoid changing untreated (control) sample point 
-	    		ci --;
-	    		if (Baddies[ci] == 1) continue;
-	    		Float ci_a = avr.get(ci), f_a = avr.get(f), ci_s = sdr.get(ci), f_s = sdr.get(f);
-	    		if (dr_OOR(f_a, f_s, ci_a, ci_s))
-	    		{
-	    			if ( Direction * (f_a - ci_a) < 0)
-	    			{
-	    				Trial[ci] = 1;
-	    				continue;
-	    			}
-	    		}
-	    		f = ci;
-	    	}
-	    	
-	    	f = 0;
-	    	for (int z = 0; z < Trial.length; z++) f += Trial[z];
-	    	if (tbSize < f) continue;
-	    	if (tbSize > f)
-	    	{
-	    		TrialBest = Trial;
-	    		tbSize = f;
-	    	}
-	    	
-	    	if (tbSize == bdSize) break; //optimum reached
-	    } //v	    
-	    
-	    Baddies = TrialBest;
-	    for (int ci = 1; ci < n; ci++) {
-	    	if (Baddies[ci] == 0) continue;
-	    	int f = ci, v = ci; //find valid points around ci
-	    	while (v > 0) if (Baddies[v] == 1) v--; else break;
-	    	while (f < n) if (Baddies[f] == 1) f++; else break;
-	    	
-	    	Float new_ci = avr.get(v);
-	    	if (f < n)
-	    	{//interpolate	    		
-	    		new_ci = luD.get(ci) - luD.get(v);
-	    		new_ci /= luD.get(f) - luD.get(v);
-	    		new_ci *= avr.get(f) - avr.get(v);
-	    		new_ci += avr.get(v);
-	    	}	    	
-	    	
-			shift_dr_group(allD, corrR, unqD.get(ci), new_ci - avr.get(ci)); //apply corrections
-	    }
-	    return tbSize;
+		if (Direction == 0)
+		{// constant curves
+			int ncorr = 0;
+			for (int v = 1; v < n; v++)
+			{
+				Float vR = avr.get(v);
+				if ((vR > BU) || (vR < BL))
+				{
+					ncorr++;
+					Baddies[v] = 1;
+					Float diff = BBA - vR, cd = unqD.get(v);
+					shift_dr_group(allD, corrR, cd, diff);
+				}
+			}
+
+			return ncorr;
+		}
+
+		// below are supposed-to-be-monotonic cases
+
+		// get extreme response values
+		Float mna = BBA, mxa = BBA;
+		for (int v = 1; v < n; v++)
+		{
+			Float ca = avr.get(v);
+			if (ca > mxa)
+				mxa = ca;
+			if (ca < mna)
+				mna = ca;
+		}
+
+		Float extr = mxa;
+		if (Direction < 0)
+			extr = mna;
+
+		// invalidate non-conforming tail, when obvious
+		for (int u = n - 1; u > 0; u--)
+		{
+			Float cr = avr.get(u), csd = sdr.get(u);
+			Float crl = cr - csd, cru = cr + csd;
+			if ((extr < crl) || (extr > cru))
+				Baddies[u] = 1;
+			else
+				break;
+		}
+
+		// Detect a minimum set of violators
+		byte[] TrialBest = Baddies.clone();
+		int tbSize = Baddies.length; // #corrections to do, will be updated
+		int bdSize = 0;
+		for (int v = 0; v < Baddies.length; v++)
+			bdSize += Baddies[v];
+
+		// scan_dr_4mono(avr, sdr, 0); //addl invalidation of glitches, but can be tricky
+
+		for (int v = 0; v < n; v++)
+		{
+			if (Baddies[v] == 1)
+				continue;
+
+			// v is the initial seed for the "trusted" point
+			byte[] Trial = Baddies.clone();
+			int f = v, ci = v;
+
+			// first, check forward from v
+			while (++ci < n)
+			{
+				if (Baddies[ci] == 1)
+					continue;
+				Float ci_a = avr.get(ci), f_a = avr.get(f), ci_s = sdr.get(ci), f_s = sdr.get(f);
+				if (dr_OOR(f_a, f_s, ci_a, ci_s))
+				{
+					if (Direction * (ci_a - f_a) < 0)
+					{
+						Trial[ci] = 1;
+						continue;
+					}
+				}
+				f = ci;
+			}
+
+			// then check backward from v
+			f = v;
+			ci = v;
+			while (ci > 1)
+			{// avoid changing untreated (control) sample point
+				ci--;
+				if (Baddies[ci] == 1)
+					continue;
+				Float ci_a = avr.get(ci), f_a = avr.get(f), ci_s = sdr.get(ci), f_s = sdr.get(f);
+				if (dr_OOR(f_a, f_s, ci_a, ci_s))
+				{
+					if (Direction * (f_a - ci_a) < 0)
+					{
+						Trial[ci] = 1;
+						continue;
+					}
+				}
+				f = ci;
+			}
+
+			f = 0;
+			for (int z = 0; z < Trial.length; z++)
+				f += Trial[z];
+			if (tbSize < f)
+				continue;
+			if (tbSize > f)
+			{
+				TrialBest = Trial;
+				tbSize = f;
+			}
+
+			if (tbSize == bdSize)
+				break; // optimum reached
+		} // v
+
+		Baddies = TrialBest;
+		for (int ci = 1; ci < n; ci++)
+		{
+			if (Baddies[ci] == 0)
+				continue;
+			int f = ci, v = ci; // find valid points around ci
+			while (v > 0)
+				if (Baddies[v] == 1)
+					v--;
+				else
+					break;
+			while (f < n)
+				if (Baddies[f] == 1)
+					f++;
+				else
+					break;
+
+			Float new_ci = avr.get(v);
+			if (f < n)
+			{// interpolate
+				new_ci = luD.get(ci) - luD.get(v);
+				new_ci /= luD.get(f) - luD.get(v);
+				new_ci *= avr.get(f) - avr.get(v);
+				new_ci += avr.get(v);
+			}
+
+			shift_dr_group(allD, corrR, unqD.get(ci), new_ci - avr.get(ci)); // apply corrections
+		}
+		return tbSize;
 	}
 
 	public static List<Float> r_sample(int n, Float avr, Float sdr)
-	{//samples n responses from normal distribution with the mean = avr and st.dev = sdr
-		List<Float> bootr = new ArrayList<Float>();	 
+	{// samples n responses from normal distribution with the mean = avr and st.dev = sdr
+		List<Float> bootr = new ArrayList<Float>();
 		java.util.Random xx = new java.util.Random();
 		for (int nn = 0; nn < n; nn++)
 		{
-			double v = avr + sdr*xx.nextGaussian();
-			bootr.add((float)v);
+			double v = avr + sdr * xx.nextGaussian();
+			bootr.add((float) v);
 		}
 		return (bootr);
 	}
 
 	public static float get_dr_signal(List<Float> r)
-	{//r is array of single-value responses (one per dose, such as averaged curve, etc.)
+	{// r is array of single-value responses (one per dose, such as averaged curve, etc.)
 		int n = r.size();
 		float base = r.get(0), sig = 0.0f;
-		for (int i=1; i < n; i++) sig += r.get(i) - base;
-		
-		return sig / n; //returns averaged signal relative to control (0-element)
+		for (int i = 1; i < n; i++)
+			sig += r.get(i) - base;
+
+		return sig / n; // returns averaged signal relative to control (0-element)
 	}
-	
+
 	public static List<Float> get_combi_dr(int[] ndoses, List<Float> r)
-	{//generates one random combination of responses picked from each dose group of replicates (ndoses)
+	{// generates one random combination of responses picked from each dose group of replicates (ndoses)
 		List<Float> c_dr = new ArrayList<Float>();
 		java.util.Random cc = new java.util.Random();
-		
-		for (int i=0, shift = 0; i < ndoses.length; i++)
+
+		for (int i = 0, shift = 0; i < ndoses.length; i++)
 		{
 			int picked = cc.nextInt(ndoses[i]) + shift;
-			c_dr.add( r.get(picked) );
-			shift += ndoses[i]; 
+			c_dr.add(r.get(picked));
+			shift += ndoses[i];
 		}
-		
+
 		return c_dr;
 	}
-	
+
 	public static List<Float> get_dr_sample(int[] ndoses, List<Float> avr, List<Float> sdr)
-	{//gets one bootstrap sample of a curve, based on mean and sd responses provided (ndoses specify #replicates for each dose)
+	{// gets one bootstrap sample of a curve, based on mean and sd responses provided (ndoses specify
+		// #replicates for each dose)
 		List<Float> rand_dr = new ArrayList<Float>();
-		for (int i=0; i < ndoses.length; i++)
+		for (int i = 0; i < ndoses.length; i++)
 		{
 			List<Float> cgroup = r_sample(ndoses[i], avr.get(i), sdr.get(i));
-			rand_dr.addAll( cgroup );
+			rand_dr.addAll(cgroup);
 		}
-		
+
 		return rand_dr;
 	}
-	
-	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, List<Float> dr0, float BMR, int mono, int nboot, float p) {
-	/*	corrects curves monotonically based on supplied direction in mono (0 - flat, 1 - rising, -1 - falling)
-		bootstraps to estimate POD and AUC (only if nboot*p > 1), 
-		p is pvalue for confidence interval boundaries on returned metrics
-		returns list of 10 values: 
-			1st = #fit-score, 0..1, (the higher the fewer are the corrections) 
-			2nd - 4th POD triplet (lower confidence, POD, upper confidence)
-			5th - 7th AUC triplet
-			8th - 10th wAUC triplet 
-	*/				
-		
+
+	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, List<Float> dr0, float BMR,
+			int mono, int nboot, float p)
+	{
+		/*
+		 * corrects curves monotonically based on supplied direction in mono (0 - flat, 1 - rising, -1 -
+		 * falling) bootstraps to estimate POD and AUC (only if nboot*p > 1), p is pvalue for confidence
+		 * interval boundaries on returned metrics returns list of 10 values: 1st = #fit-score, 0..1, (the
+		 * higher the fewer are the corrections) 2nd - 4th POD triplet (lower confidence, POD, upper
+		 * confidence) 5th - 7th AUC triplet 8th - 10th wAUC triplet
+		 */
+
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
 		List<Float> unqD = CollapseDoses(allD);
-		List<Float> sdR = calc_WgtSdResponses(allD, allR); //SDs will not change during corrections
-		
+		List<Float> sdR = calc_WgtSdResponses(allD, allR); // SDs will not change during corrections
+
 		List<Float> luD;
 		try
 		{
 			luD = logBaseDoses(unqD, -24);
 		}
-		
+
 		catch (Exception e)
 		{
 			System.out.println("curvep failure, check input data");
 			return null;
 		}
-		
-		//List<Float> dr0  = new ArrayList<Float>(), dr1 = new ArrayList<Float>();		
+
+		// List<Float> dr0 = new ArrayList<Float>(), dr1 = new ArrayList<Float>();
 		List<Float> dr1 = new ArrayList<Float>();
 		int nfixed = monotonize(allD, allR, dr0, mono);
-		
-		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);		
+
+		for (int i = 0; i < dr0.size(); i++)
+			if (!dr0.get(i).equals(allR.get(i)))
+				System.out.println();
+
+		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
 		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
 		Float mywAUC = calc_wAUC(myAUC, myPOD, luD);
 
-		//normally, this very function is called only when significant response is detected, 
-		//so the below signal-estimates should not be near-0
-		float asis_sgnl = get_dr_signal(avR), corr_sgnl = get_dr_signal(xx_avR); 
-		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);		
-		if (!Float.isFinite(fit_score)) fit_score = -1.0f;
-			
-		List<Float> metrics = new ArrayList<Float>(); //results
-		if (p*(float)nboot < 1.0f) //skip bootstrap
+		// normally, this very function is called only when significant response is detected,
+		// so the below signal-estimates should not be near-0
+		float asis_sgnl = get_dr_signal(avR), corr_sgnl = get_dr_signal(xx_avR);
+		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);
+		if (!Float.isFinite(fit_score))
+			fit_score = -1.0f;
+
+		List<Float> metrics = new ArrayList<Float>(); // results
+		if (p * (float) nboot < 1.0f) // skip bootstrap
 		{
-			//metrics.add((float)nfixed); //replaced with more quantitative measure
+			// metrics.add((float)nfixed); //replaced with more quantitative measure
 			metrics.add(fit_score);
-			
+
 			metrics.add(myAUC);
 			metrics.add(myAUC);
 			metrics.add(myAUC);
-			
+
 			metrics.add(myPOD);
 			metrics.add(myPOD);
 			metrics.add(myPOD);
-			
+
 			metrics.add(mywAUC);
 			metrics.add(mywAUC);
 			metrics.add(mywAUC);
 			return metrics;
 		}
-		
+
 		int[] ngroups = DoseGroups(allD, unqD);
-		
+
 		List<Float> bAUC = new ArrayList<Float>();
 		List<Float> bPOD = new ArrayList<Float>();
 		List<Float> bwAUC = new ArrayList<Float>();
-		
+
 		List<Double> bFit = new ArrayList<Double>();
 		for (int s = 0; s < nboot; s++)
 		{
 			List<Float> curr_cdr = get_combi_dr(ngroups, allR);
-			bFit.add( (double)get_dr_signal(curr_cdr) );
-			
+			bFit.add((double) get_dr_signal(curr_cdr));
+
 			List<Float> curr_dr = get_dr_sample(ngroups, avR, sdR);
 			monotonize(allD, curr_dr, dr1, mono);
 			xx_avR = calc_WgtAvResponses(allD, dr1);
-			
+
 			float cbAUC = calc_AUC(luD, xx_avR);
 			float cbPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
-			bAUC.add( cbAUC );
-			bPOD.add( cbPOD );
-			bwAUC.add( calc_wAUC(cbAUC, cbPOD, luD) );
+			bAUC.add(cbAUC);
+			bPOD.add(cbPOD);
+			bwAUC.add(calc_wAUC(cbAUC, cbPOD, luD));
 		}
 
-		//NB: t-test is not a good choice here, oversensitive, maybe due to too many combi-samples
+		// NB: t-test is not a good choice here, oversensitive, maybe due to too many combi-samples
 		/*--------------------------
 		   //t-test based calculations based on unique combinatorial samples of the asis-curve
 		org.apache.commons.math3.stat.inference.TTest ff = new org.apache.commons.math3.stat.inference.TTest();		
@@ -1008,47 +1061,50 @@ public class CurvePProcessor
 		   //the higher the p, the fewer corrections were applied
 		fit_score = (float)ff.tTest((double)corr_sgnl, DoubleStream.of(fits).distinct().toArray());
 		//-------------------------- */
-		
-		//non-parametric calculations, faster and more realistic
+
+		// non-parametric calculations, faster and more realistic
 		fit_score = 1.0f;
 		Collections.sort(bFit);
 		int ii = 0, nn = bFit.size();
-		for (;ii < nn; ii++) if (bFit.get(ii) > corr_sgnl) break;
-		fit_score -= 2*Math.abs(0.5f - (float)ii/nn);		
-		//--------------------------
-		
-		//ascending sort
+		for (; ii < nn; ii++)
+			if (bFit.get(ii) > corr_sgnl)
+				break;
+		fit_score -= 2 * Math.abs(0.5f - (float) ii / nn);
+		// --------------------------
+
+		// ascending sort
 		Collections.sort(bAUC);
 		Collections.sort(bPOD);
 		Collections.sort(bwAUC);
-		
-		int rank = (int)Math.round(p*nboot);
+
+		int rank = (int) Math.round(p * nboot);
 		int lrank = nboot - rank;
 		rank--;
-		
-		//metrics.add((float)nfixed);
-		metrics.add((float)fit_score);
-		
+
+		// metrics.add((float)nfixed);
+		metrics.add((float) fit_score);
+
 		metrics.add(bAUC.get(rank));
 		metrics.add(myAUC);
 		metrics.add(bAUC.get(lrank));
-		
+
 		metrics.add(bPOD.get(rank));
 		metrics.add(myPOD);
 		metrics.add(bPOD.get(lrank));
-		
+
 		metrics.add(bwAUC.get(rank));
 		metrics.add(mywAUC);
 		metrics.add(bwAUC.get(lrank));
-		return metrics;		
+		return metrics;
 	}
-	
-	public static Float curveP(List<Float> allD, List<Float> allR, float BMR) {
-		//basic calculator of wAUC, does not do corrections or bootstrap
+
+	public static Float curveP(List<Float> allD, List<Float> allR, float BMR)
+	{
+		// basic calculator of wAUC, does not do corrections or bootstrap
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
 		List<Float> sdR = calc_WgtSdResponses(allD, allR);
 		List<Float> unqD = CollapseDoses(allD);
-		
+
 		List<Float> luD;
 		try
 		{
@@ -1058,7 +1114,7 @@ public class CurvePProcessor
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
-//			System.out.printf("wAUC = %f%n", res);
+			// System.out.printf("wAUC = %f%n", res);
 			return res;
 		}
 		catch (Exception e)
@@ -1067,8 +1123,9 @@ public class CurvePProcessor
 			return null;
 		}
 	}
-	
-	public static void main(String args[])	{
+
+	public static void main(String args[])
+	{
 		System.out.println("Hi Dudes");
 
 		// below is example run of calculations using fake dose-response data
@@ -1123,7 +1180,7 @@ public class CurvePProcessor
 		System.out.println("Happy Christmas, you dirty animal... And Hapy New Year!");
 
 	}
-	
+
 	public static void debug_curvep(DoseResponseExperiment doseResponseExperiment)
 	{
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
@@ -1142,66 +1199,65 @@ public class CurvePProcessor
 			doseVector.add(treatments.get(i).getDose());
 		}
 		List<Float> wAUCList = new ArrayList<Float>();
-		
-		
-		
-		for(int i = 0; i < responses.size(); i++) {
-			
-			if ( responses.get(i).getProbe().getId().equals("FIS1_2429") )
+
+		for (int i = 0; i < responses.size(); i++)
+		{
+
+			if (responses.get(i).getProbe().getId().equals("FIS1_2429"))
 				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			
-			if ( responses.get(i).getProbe().getId().equals("FIS1_2429") )
+
+			if (responses.get(i).getProbe().getId().equals("FIS1_2429"))
 			{
 				List<Float> corr_r = new ArrayList<Float>();
 				List<Float> rr = curvePcorr(doseVector, numericMatrix.get(i), corr_r, 1.34f, -1, 100, 0.05f);
-				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9) );				
-				//wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			}			
-			if ( responses.get(i).getProbe().getId().equals("ATAD5_21054") )
+				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9));
+				// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+			}
+			if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
 				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			
-			//if ( responses.get(i).getProbe().getId().equals("1390430_at") )
-			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			
-			//if ( responses.get(i).getProbe().getId().equals("1387874_at") )
-			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-			
-			//if ( responses.get(i).getProbe().getId().equals("1371076_at") ) //i == 3681
-			//    wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+
+			// if ( responses.get(i).getProbe().getId().equals("1390430_at") )
+			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+
+			// if ( responses.get(i).getProbe().getId().equals("1387874_at") )
+			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+
+			// if ( responses.get(i).getProbe().getId().equals("1371076_at") ) //i == 3681
+			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 		}
 	}
-	
+
 	public static List<Float> logwAUC(List<Float> wauc)
 	{
 		List<Float> logwAUC = new ArrayList<Float>();
-		
-		for(int i = 0; i < wauc.size(); i++)
+
+		for (int i = 0; i < wauc.size(); i++)
 		{
 			logwAUC.add(directionallyAdjustedLog(wauc.get(i), 2, 1.0f));
 		}
-		
+
 		return logwAUC;
 	}
-	
-	public static Float directionallyAdjustedLog(Float val, int base, Float K)
-	{//K is a positive scaling coefficient, values in [-K; K] become 0, others get log-compressed (base -> 1)		
 
-		if(Math.abs(val) < K) {
+	public static Float directionallyAdjustedLog(Float val, int base, Float K)
+	{// K is a positive scaling coefficient, values in [-K; K] become 0, others get log-compressed (base -> 1)
+
+		if (Math.abs(val) < K)
+		{
 			return new Float(0);
 		}
-		
+
 		boolean sign = false;
-		if(val < 0)
-			sign = true;	
-		
+		if (val < 0)
+			sign = true;
+
 		Float ret = Math.abs(val / K);
-		ret = (float) (Math.log(ret)/Math.log(base));
-		
-		if(sign)
+		ret = (float) (Math.log(ret) / Math.log(base));
+
+		if (sign)
 			return -ret;
-		
+
 		return ret;
 	}
-	
-	
+
 }

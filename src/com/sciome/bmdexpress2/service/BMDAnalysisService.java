@@ -148,13 +148,20 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			}
 			List<Float> correctedPoints = new ArrayList<>();
 
-			int mono = -1;
-			if (CurvePProcessor.calc_AUC(doseVector, numericMatrix.get(i)) > 0)
-				mono = 1;
-
-			List<Float> values = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i), correctedPoints,
-					inputParameters.getBMR(), mono, inputParameters.getBootStraps(),
+			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
+					correctedPoints, inputParameters.getBMR(), -1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
+
+			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
+					correctedPoints, inputParameters.getBMR(), 1, inputParameters.getBootStraps(),
+					inputParameters.getpValueCutoff());
+			List<Float> values = valuesPlus;
+			int mono = 1;
+			if (valuesMinus.get(5).doubleValue() < valuesPlus.get(5).doubleValue())
+			{
+				mono = -1;
+				values = valuesMinus;
+			}
 
 			ProbeStatResult psR = new ProbeStatResult();
 			GCurvePResult gResult = new GCurvePResult();
@@ -164,7 +171,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			gResult.setCurveParameters(null);
 			gResult.setFitLogLikelihood(Double.NaN);
 			gResult.setSuccess("true");
-			gResult.setBMDL(Math.pow(10.0, values.get(4).doubleValue())); 
+			gResult.setBMDL(Math.pow(10.0, values.get(4).doubleValue()));
 			gResult.setBMD(Math.pow(10.0, values.get(5).doubleValue()));
 			gResult.setBMDU(Math.pow(10.0, values.get(6).doubleValue()));
 			gResult.setBMDLauc(values.get(1).doubleValue());
@@ -173,6 +180,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			gResult.setBMDLwAuc(values.get(7).doubleValue());
 			gResult.setBMDwAuc(values.get(8).doubleValue());
 			gResult.setBMDUwAuc(values.get(9).doubleValue());
+			gResult.setAdverseDirection((short) mono);
 			psR.setBestPolyStatResult(null);
 
 			psR.setBestPolyStatResult(null);

@@ -19,7 +19,8 @@ import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 @JsonSubTypes({ @Type(value = HillResult.class, name = "hill"),
 		@Type(value = PolyResult.class, name = "poly"),
 		@Type(value = ExponentialResult.class, name = "exponential"),
-		@Type(value = PowerResult.class, name = "power"), @Type(value = GCurvePResult.class, name = "gcurvep") })
+		@Type(value = PowerResult.class, name = "power"),
+		@Type(value = GCurvePResult.class, name = "gcurvep") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public abstract class StatResult extends BMDExpressAnalysisRow implements Serializable
 {
@@ -61,36 +62,47 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 
 	public double getBMD()
 	{
+		if (BMD == -9999 || Double.isInfinite(BMD))
+			return Double.NaN;
 		return BMD;
 	}
 
 	public void setBMD(double bMD)
 	{
-		BMD = bMD;
+		if (Double.isInfinite(bMD))
+			BMD = Double.NaN;
+		else
+			BMD = bMD;
 	}
 
 	public double getBMDL()
 	{
-		if (BMDL == -9999)
+		if (BMDL == -9999 || Double.isInfinite(BMDL))
 			return Double.NaN;
 		return BMDL;
 	}
 
 	public void setBMDL(double bMDL)
 	{
-		BMDL = bMDL;
+		if (Double.isInfinite(bMDL))
+			BMDL = Double.NaN;
+		else
+			BMDL = bMDL;
 	}
 
 	public double getBMDU()
 	{
-		if (BMDU == -9999)
+		if (BMDU == -9999 || Double.isInfinite(BMDU))
 			return Double.NaN;
 		return BMDU;
 	}
 
 	public void setBMDU(double bMD)
 	{
-		BMDU = bMD;
+		if (Double.isInfinite(bMD))
+			BMDU = Double.NaN;
+		else
+			BMDU = bMD;
 	}
 
 	public double getFitPValue()
