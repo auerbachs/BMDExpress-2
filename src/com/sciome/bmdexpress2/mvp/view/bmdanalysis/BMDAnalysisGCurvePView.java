@@ -200,6 +200,8 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		bMRFactorComboBox.getItems().addAll(initBMRFactors());
 		bMRFactorComboBox.getSelectionModel().select(input.getBmrFactor());
 
+		this.bootStrapsTextField.setText(String.valueOf(input.getBootStrapIterations()));
+
 	}
 
 	@Override

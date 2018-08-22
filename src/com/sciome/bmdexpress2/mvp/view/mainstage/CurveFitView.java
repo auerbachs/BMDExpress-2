@@ -30,10 +30,12 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.Range;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -192,7 +194,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		chartColors = new Color[5];
 		chartColors[0] = Color.RED;
 		chartColors[1] = Color.BLUE;
-		chartColors[2] = Color.BLACK;
+		chartColors[2] = Color.black;
 		chartColors[3] = Color.GREEN;
 		chartColors[4] = Color.orange;
 
@@ -694,8 +696,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(parameters[0], bmdModel.response(parameters[0]));
-			bmdSeries.add(parameters[0], LOW - .01);
+			bmdSeries.add(maskDose(parameters[0]), bmdModel.response(parameters[0]));
+			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
 		double smallestDose = 0.0;
@@ -708,24 +710,24 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(parameters[1], bmdModel.response(parameters[0]));
-			bmdlSeries.add(parameters[1], LOW - .01);
+			bmdlSeries.add(maskDose(parameters[1]), bmdModel.response(parameters[0]));
+			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(parameters[2], bmdModel.response(parameters[0]));
-			bmduSeries.add(parameters[2], LOW - .01);
+			bmduSeries.add(maskDose(parameters[2]), bmdModel.response(parameters[0]));
+			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(parameters[0], bmdModel.response(parameters[0]));
+		bmduSeries.add(maskDose(parameters[0]), bmdModel.response(parameters[0]));
 
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
-			noelSeries.add(probeStatResult.getPrefilterNoel().doubleValue(),
+			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()),
 					bmdModel.response(probeStatResult.getPrefilterNoel().doubleValue()));
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
-			loelSeries.add(probeStatResult.getPrefilterLoel().doubleValue(),
+			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()),
 					bmdModel.response(probeStatResult.getPrefilterLoel().doubleValue()));
 
 	}
@@ -891,7 +893,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 	private double maskDose(double dose)
 	{
-		if (logDosesCheckBox.isSelected() && dose == 0)
+		if (logDosesCheckBox.isSelected() && (dose == 0.0 || dose < logZeroDose))
 			return logZeroDose;
 
 		return dose;
@@ -1125,6 +1127,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Variables to hold the chart plot, combobox items,
 		// model parameters and responses
 
+		XYSeriesCollection meanSDSeriesSet = new XYSeriesCollection();
 		XYSeriesCollection meanSeriesSet = new XYSeriesCollection();
 		XYSeriesCollection medianSeriesSet = new XYSeriesCollection();
 		double lastDose, mean, stdD, median;
@@ -1183,29 +1186,36 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		medianSeries.add(maskDose(lastDose), median);
 		medianSeriesSet.addSeries(medianSeries);
 		meanSeriesSet.addSeries(meanSeries);
-		meanSeriesSet.addSeries(meanPlusSD);
-		meanSeriesSet.addSeries(meanMinusSD);
+		meanSDSeriesSet.addSeries(meanPlusSD);
+		meanSDSeriesSet.addSeries(meanMinusSD);
 
-		XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();
+		Color blueTrans = new Color(0.0f, 0.9f, 0.0f, 0.2f);
+		XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(blueTrans, blueTrans, true);
 		renderer1.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
 		renderer1.setSeriesStroke(1, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
 				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
-		renderer1.setSeriesStroke(2, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
-		renderer1.setSeriesPaint(0, Color.black);
+
+		renderer1.setSeriesPaint(0, Color.blue);
 		renderer1.setSeriesPaint(1, Color.blue);
-		renderer1.setSeriesPaint(2, Color.blue);
+		renderer1.setSeriesFillPaint(0, Color.blue);
+		renderer1.setSeriesFillPaint(1, Color.blue);
 
 		XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
+		renderer2.setSeriesPaint(0, Color.blue);
 
-		renderer2.setSeriesPaint(0, Color.black);
+		XYLineAndShapeRenderer renderer3 = new XYLineAndShapeRenderer();
+		renderer3.setSeriesStroke(0, new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+				1.0f, new float[] { 2.0f, 6.0f }, 0.0f));
+		renderer3.setSeriesPaint(0, Color.blue);
 
-		plot.setDataset(1, meanSeriesSet);
+		plot.setDataset(1, meanSDSeriesSet);
 		plot.setDataset(2, medianSeriesSet);
+		plot.setDataset(3, meanSeriesSet);
 
 		plot.setRenderer(1, renderer1);
 		plot.setRenderer(2, renderer2);
+		plot.setRenderer(3, renderer3);
 
 		// now put the lotel/notel/bmd/bmdl/bmdu on that bad boy
 
@@ -1226,8 +1236,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(parameters[0], maxResponse);
-			bmdSeries.add(parameters[0], LOW - .01);
+			bmdSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
 		double smallestDose = 0.0;
@@ -1236,27 +1246,78 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		else
 			smallestDose = minDose;
 
-		bmdSeries.add(smallestDose, maxResponse);
+		bmdSeries.add(smallestDose, getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(parameters[1], maxResponse);
-			bmdlSeries.add(parameters[1], LOW - .01);
+			bmdlSeries.add(maskDose(parameters[1]),
+					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(parameters[2], maxResponse);
-			bmduSeries.add(parameters[2], LOW - .01);
+			bmduSeries.add(maskDose(parameters[2]),
+					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(parameters[0], maxResponse);
+		bmduSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
-			noelSeries.add(probeStatResult.getPrefilterNoel().doubleValue(), maxResponse);
+			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()), getYFromLineSeries(
+					medianSeries, maskDose(probeStatResult.getPrefilterNoel().doubleValue())));
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
-			loelSeries.add(probeStatResult.getPrefilterLoel().doubleValue(), maxResponse);
+			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()), getYFromLineSeries(
+					medianSeries, maskDose(probeStatResult.getPrefilterLoel().doubleValue())));
+
+	}
+
+	private double getYFromLineSeries(XYSeries series, double x)
+	{
+
+		XYDataItem dataItem1 = null;
+		XYDataItem dataItem2 = null;
+		for (int i = 0; i < series.getItemCount(); i++)
+		{
+			if (dataItem1 == null)
+			{
+				dataItem1 = series.getDataItem(i);
+				continue;
+			}
+			if (x >= series.getDataItem(i).getX().doubleValue())
+			{
+				dataItem1 = series.getDataItem(i);
+				continue;
+			}
+
+			if (x <= series.getDataItem(i).getX().doubleValue())
+			{
+				dataItem2 = series.getDataItem(i);
+				break;
+			}
+		}
+		if (dataItem1 != null && dataItem2 != null)
+		{
+			double slope = (dataItem2.getYValue() - dataItem1.getYValue())
+					/ (dataItem2.getXValue() - dataItem1.getXValue());
+
+			double b = dataItem1.getYValue() - slope * dataItem1.getXValue();
+
+			double returnvalue = slope * x + b;
+			return returnvalue;
+		}
+		else if (dataItem1 != null)
+		{
+			return dataItem1.getYValue();
+		}
+		else if (dataItem2 != null)
+		{
+			return dataItem2.getYValue();
+		}
+
+		return 0.0;
 
 	}
 }
