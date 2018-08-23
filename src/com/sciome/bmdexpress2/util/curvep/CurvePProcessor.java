@@ -992,10 +992,6 @@ public class CurvePProcessor
 		List<Float> dr1 = new ArrayList<Float>();
 		int nfixed = monotonize(allD, allR, dr0, mono);
 
-		for (int i = 0; i < dr0.size(); i++)
-			if (!dr0.get(i).equals(allR.get(i)))
-				System.out.println();
-
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
 		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);

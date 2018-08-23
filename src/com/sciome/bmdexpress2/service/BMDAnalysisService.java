@@ -159,7 +159,42 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			List<Float> values = valuesPlus;
 			List<Float> correctedPoints = correctedPointsPlus;
 			int mono = 1;
-			if (valuesMinus.get(5).doubleValue() < valuesPlus.get(5).doubleValue())
+
+			boolean allgoodminus = Double.isFinite(valuesMinus.get(5).doubleValue())
+					&& Double.isFinite(valuesMinus.get(4).doubleValue())
+					&& Double.isFinite(valuesMinus.get(6).doubleValue());
+			boolean allgoodplus = Double.isFinite(valuesPlus.get(5).doubleValue())
+					&& Double.isFinite(valuesPlus.get(4).doubleValue())
+					&& Double.isFinite(valuesPlus.get(6).doubleValue());
+
+			// first choose the direction where fitpvalue is not 0.0
+			if (valuesMinus.get(0).doubleValue() == 0.0 && valuesPlus.get(0).doubleValue() != 0.0)
+			{
+				values = valuesPlus;
+				correctedPoints = correctedPointsPlus;
+				mono = 1;
+			}
+			else if (valuesPlus.get(0).doubleValue() == 0.0 && valuesMinus.get(0).doubleValue() != 0.0)
+			{
+				mono = -1;
+				values = valuesMinus;
+				correctedPoints = correctedPointsMinus;
+			}
+			// then after fitpvalue choose the one with convergence on bmdl/bmd/bmdu
+			else if (allgoodminus && !allgoodplus)
+			{
+				mono = -1;
+				values = valuesMinus;
+				correctedPoints = correctedPointsMinus;
+			}
+			else if (!allgoodminus && allgoodplus)
+			{
+				values = valuesPlus;
+				correctedPoints = correctedPointsPlus;
+				mono = 1;
+			}
+			// if all converge, and there is a pvalue != 0.0..choose the one with lowest bmd
+			else if (valuesMinus.get(5).doubleValue() < valuesPlus.get(5).doubleValue())
 			{
 				mono = -1;
 				values = valuesMinus;
