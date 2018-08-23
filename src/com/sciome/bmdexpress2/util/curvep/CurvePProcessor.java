@@ -994,20 +994,21 @@ public class CurvePProcessor
 
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
-		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);		
 		Float mywAUC = calc_wAUC(myAUC, myPOD, luD);
 
 		// normally, this very function is called only when significant response is detected,
 		// so the below signal-estimates should not be near-0
-		float asis_sgnl = get_dr_signal(avR), corr_sgnl = get_dr_signal(xx_avR);
+		float asis_sgnl = Math.abs( get_dr_signal(avR) ), corr_sgnl = Math.abs( get_dr_signal(xx_avR) );
 		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);
-		if (!Float.isFinite(fit_score))
-			fit_score = -1.0f;
-
+		if (!Float.isFinite(fit_score)) fit_score = -1.0f;
+		if (nfixed == 0) fit_score = 1.0f;
+		
+		if (myPOD > luD.get(luD.size()-1)) myPOD  = Float.NaN; //luD.get(luD.size()-1); //fixes NA PODs
+		
 		List<Float> metrics = new ArrayList<Float>(); // results
 		if (p * (float) nboot < 1.0f) // skip bootstrap
 		{
-			// metrics.add((float)nfixed); //replaced with more quantitative measure
 			metrics.add(fit_score);
 
 			metrics.add(myAUC);
@@ -1040,11 +1041,13 @@ public class CurvePProcessor
 			monotonize(allD, curr_dr, dr1, mono);
 			xx_avR = calc_WgtAvResponses(allD, dr1);
 
-			float cbAUC = calc_AUC(luD, xx_avR);
-			float cbPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+			float cbAUC  = calc_AUC(luD, xx_avR);
+			float cbPOD  = calc_POD(luD, xx_avR, sdR, BMR, mono);
+			float cbwAUC = calc_wAUC(cbAUC, cbPOD, luD);			
+			
 			bAUC.add(cbAUC);
 			bPOD.add(cbPOD);
-			bwAUC.add(calc_wAUC(cbAUC, cbPOD, luD));
+			bwAUC.add(cbwAUC);
 		}
 
 		// NB: t-test is not a good choice here, oversensitive, maybe due to too many combi-samples
@@ -1058,14 +1061,12 @@ public class CurvePProcessor
 		fit_score = (float)ff.tTest((double)corr_sgnl, DoubleStream.of(fits).distinct().toArray());
 		//-------------------------- */
 
-		// non-parametric calculations, faster and more realistic
-		fit_score = 1.0f;
-		Collections.sort(bFit);
-		int ii = 0, nn = bFit.size();
-		for (; ii < nn; ii++)
-			if (bFit.get(ii) > corr_sgnl)
-				break;
-		fit_score -= 2 * Math.abs(0.5f - (float) ii / nn);
+		// update fitness based on non-parametric calculations
+		double corr_median = Math.abs( bFit.get( (bFit.size() >> 1) ) );
+		float fit_score2 = Math.min(asis_sgnl, (float)corr_median) / Math.max(asis_sgnl, (float)corr_median);
+		if (!Float.isFinite(fit_score2))	fit_score2 = -1.0f;
+		fit_score = Math.max(fit_score2, fit_score);
+		if (nfixed == 0) fit_score = 1.0f; //if nothing was fixed, set to perfect fit
 		// --------------------------
 
 		// ascending sort
@@ -1077,16 +1078,19 @@ public class CurvePProcessor
 		int lrank = nboot - rank;
 		rank--;
 
-		// metrics.add((float)nfixed);
 		metrics.add((float) fit_score);
 
 		metrics.add(bAUC.get(rank));
 		metrics.add(myAUC);
 		metrics.add(bAUC.get(lrank));
 
-		metrics.add(bPOD.get(rank));
-		metrics.add(myPOD);
-		metrics.add(bPOD.get(lrank));
+		float PODL = bPOD.get(rank), PODU = bPOD.get(lrank);
+		if (PODL > luD.get(luD.size()-1)) PODL  = Float.NaN;
+		if (PODU > luD.get(luD.size()-1)) PODU  = Float.NaN;
+		
+		metrics.add(PODL);
+		metrics.add(myPOD); //myPOD was checked and fixed earlier, if invalid
+		metrics.add(PODU);
 
 		metrics.add(bwAUC.get(rank));
 		metrics.add(mywAUC);
