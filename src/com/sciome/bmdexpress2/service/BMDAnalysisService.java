@@ -146,21 +146,24 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				cancel = false;
 				return null;
 			}
-			List<Float> correctedPoints = new ArrayList<>();
+			List<Float> correctedPointsMinus = new ArrayList<>();
+			List<Float> correctedPointsPlus = new ArrayList<>();
 
 			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPoints, inputParameters.getBMR(), -1, inputParameters.getBootStraps(),
+					correctedPointsMinus, inputParameters.getBMR(), -1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 
 			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPoints, inputParameters.getBMR(), 1, inputParameters.getBootStraps(),
+					correctedPointsPlus, inputParameters.getBMR(), 1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 			List<Float> values = valuesPlus;
+			List<Float> correctedPoints = correctedPointsPlus;
 			int mono = 1;
 			if (valuesMinus.get(5).doubleValue() < valuesPlus.get(5).doubleValue())
 			{
 				mono = -1;
 				values = valuesMinus;
+				correctedPoints = correctedPointsMinus;
 			}
 
 			ProbeStatResult psR = new ProbeStatResult();
