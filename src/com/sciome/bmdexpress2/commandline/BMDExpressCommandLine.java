@@ -39,6 +39,7 @@ public class BMDExpressCommandLine
 
 	public final static String	CONFIG_FILE			= "config-file";
 	public final static String	INPUT_BM2			= "input-bm2";
+	public final static String	INPUT_BM2_FILES		= "input-bm2-files";
 	public final static String	OUTPUT_FORMAT		= "output-format";
 	public final static String	ANALYSIS_GROUP		= "analysis-group";
 	public final static String	ANALYSIS_NAME		= "analysis-name";
@@ -48,6 +49,7 @@ public class BMDExpressCommandLine
 	public final static String	QUERY				= "query";
 	public final static String	EXPORT				= "export";
 	public final static String	DELETE				= "delete";
+	public final static String	COMBINE				= "combine";
 	public final static String	VERSION				= "--version";
 
 	// Analysis Group names Current working directory
@@ -64,6 +66,7 @@ public class BMDExpressCommandLine
 	Options						deleteOptions		= new Options();
 
 	Options						queryOptions		= new Options();
+	Options						combineOptions		= new Options();
 
 	public static void main(String[] args)
 	{
@@ -101,6 +104,11 @@ public class BMDExpressCommandLine
 		queryOptions.addOption(
 				Option.builder().longOpt(ANALYSIS_GROUP).hasArg().required().argName("GROUP").build());
 
+		combineOptions.addOption(
+				Option.builder().longOpt(OUTPUT_FILE_NAME).hasArg().required().argName("OUTPUT").build());
+		combineOptions.addOption(Option.builder().longOpt(INPUT_BM2_FILES).hasArgs().required()
+				.argName("INPUT BM2 FILES").build());
+
 		try
 		{
 			if (args.length < 1)
@@ -135,6 +143,13 @@ public class BMDExpressCommandLine
 				QueryRunner qRunner = new QueryRunner();
 				qRunner.analyze(cmd.getOptionValue(INPUT_BM2), cmd.getOptionValue(ANALYSIS_GROUP));
 			}
+			else if (args[0].equals(COMBINE))
+			{
+				CommandLine cmd = parser.parse(combineOptions, theArgs);
+				CombineRunner cRunner = new CombineRunner();
+				cRunner.combine(cmd.getOptionValue(OUTPUT_FILE_NAME),
+						Arrays.asList(cmd.getOptionValues(INPUT_BM2_FILES)));
+			}
 			else if (args[0].equals(VERSION))
 			{
 				System.out.println(BMDExpressProperties.getInstance().getVersion());
@@ -161,6 +176,7 @@ public class BMDExpressCommandLine
 
 		formatter.printHelp("bmdexpress2-cmd " + DELETE, "", deleteOptions, "", true);
 		formatter.printHelp("bmdexpress2-cmd " + QUERY, "", queryOptions, "", true);
+		formatter.printHelp("bmdexpress2-cmd " + COMBINE, "", combineOptions, "", true);
 
 		// List of group possibilities
 		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " + ORIOGEN

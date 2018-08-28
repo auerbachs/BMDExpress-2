@@ -83,6 +83,7 @@ import com.sciome.bmdexpress2.shared.eventbus.visualizations.DataVisualizationRe
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowDataVisualizationEvent;
 import com.sciome.bmdexpress2.util.DialogWithThreadProcess;
 import com.sciome.bmdexpress2.util.MatrixData;
+import com.sciome.bmdexpress2.util.ProjectUtilities;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 
 public class ProjectNavigationPresenter
@@ -414,37 +415,7 @@ public class ProjectNavigationPresenter
 			if (newProject != null)
 			{
 				// add files to the current project
-				for (DoseResponseExperiment data : newProject.getDoseResponseExperiments())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getDoseResponseExperiments().add(data);
-				}
-				for (WilliamsTrendResults data : newProject.getWilliamsTrendResults())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getWilliamsTrendResults().add(data);
-				}
-				for (OneWayANOVAResults data : newProject.getOneWayANOVAResults())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getOneWayANOVAResults().add(data);
-				}
-				for (OriogenResults data : newProject.getOriogenResults())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getOriogenResults().add(data);
-				}
-
-				for (BMDResult data : newProject.getbMDResult())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getbMDResult().add(data);
-				}
-				for (CategoryAnalysisResults data : newProject.getCategoryAnalysisResults())
-				{
-					currentProject.giveBMDAnalysisUniqueName(data, data.getName());
-					currentProject.getCategoryAnalysisResults().add(data);
-				}
+				ProjectUtilities.addProjectToProject(currentProject, newProject);
 
 				// Set project file to null to request new file name for saving
 				currentProjectFile = null;
