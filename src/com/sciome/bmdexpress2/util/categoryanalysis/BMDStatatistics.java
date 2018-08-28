@@ -1080,14 +1080,12 @@ public class BMDStatatistics
 							continue;
 
 						double bmddivbmdl = probeStatResult.getBestStatResult().getBMDdiffBMDL();
-						// if this ratio is NaN, then allow passage.
-						if (!Double.valueOf(bmddivbmdl).equals(Double.NaN))
+
+						if (Double.isNaN(bmddivbmdl) || probeStatResult.getBestStatResult() == null
+								|| bmddivbmdl > bmdBmdlRatio)
 						{
-							if (probeStatResult.getBestStatResult() == null || bmddivbmdl > bmdBmdlRatio)
-							{
-								probes.remove(st);
-								removedProbes.add(st);
-							}
+							probes.remove(st);
+							removedProbes.add(st);
 						}
 					}
 				}
@@ -1132,13 +1130,11 @@ public class BMDStatatistics
 						double bmdudivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
 						// if this ratio is NaN, then allow passage.
 
-						if (!Double.valueOf(bmdudivbmdl).equals(Double.NaN))
+						if (Double.isNaN(bmdudivbmdl) || probeStatResult.getBestStatResult() == null
+								|| bmdudivbmdl > ratio)
 						{
-							if (probeStatResult.getBestStatResult() == null || bmdudivbmdl > ratio)
-							{
-								probes.remove(st);
-								removedProbes.add(st);
-							}
+							probes.remove(st);
+							removedProbes.add(st);
 						}
 					}
 				}
@@ -1229,13 +1225,11 @@ public class BMDStatatistics
 						double bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMD();
 						// if this ratio is NaN, then allow passage.
 
-						if (!Double.valueOf(bmdudivbmd).equals(Double.NaN))
+						if (Double.isNaN(bmdudivbmd) || probeStatResult.getBestStatResult() == null
+								|| bmdudivbmd > ratio)
 						{
-							if (probeStatResult.getBestStatResult() == null || bmdudivbmd > ratio)
-							{
-								probes.remove(st);
-								removedProbes.add(st);
-							}
+							probes.remove(st);
+							removedProbes.add(st);
 						}
 					}
 				}
