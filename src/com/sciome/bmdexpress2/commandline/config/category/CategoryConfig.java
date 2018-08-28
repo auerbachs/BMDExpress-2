@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = DefinedConfig.class, name = "defined"),
-		@Type(value = GOConfig.class, name = "go"), @Type(value = PathwayConfig.class, name = "pathway") })
+		@Type(value = GOConfig.class, name = "go"), @Type(value = PathwayConfig.class, name = "pathway"),
+		@Type(value = GeneLevelConfig.class, name = "gene") })
 public abstract class CategoryConfig
 {
 	// name of bmdanalysis to cateogorize

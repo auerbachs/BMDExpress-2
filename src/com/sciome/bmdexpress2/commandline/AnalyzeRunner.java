@@ -24,6 +24,7 @@ import com.sciome.bmdexpress2.commandline.config.bmds.PowerConfig;
 import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
 import com.sciome.bmdexpress2.commandline.config.category.DefinedConfig;
 import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
+import com.sciome.bmdexpress2.commandline.config.category.GeneLevelConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
@@ -186,6 +187,11 @@ public class AnalyzeRunner
 		{
 			catAn = CategoryAnalysisEnum.PATHWAY;
 			analysisSpecificMessage = "Pathway = " + ((PathwayConfig) catConfig).getSignalingPathway();
+		}
+		else if (catConfig instanceof GeneLevelConfig)
+		{
+			catAn = CategoryAnalysisEnum.GENE_LEVEL;
+			analysisSpecificMessage = "Gene Level Category Analysis";
 		}
 
 		if (catConfig.getInputName() != null)
