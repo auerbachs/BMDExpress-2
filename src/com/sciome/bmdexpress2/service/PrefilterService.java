@@ -642,6 +642,9 @@ public class PrefilterService implements IPrefilterService
 				count++;
 			}
 
+			/*
+			 * compare each dose group to the control dosegroup using TTest store the corresponding P values
+			 */
 			for (int j = 1; j < doseGroups.size(); j++)
 			{
 				double[] sample1 = new double[doseGroups.get(j)];
@@ -652,17 +655,19 @@ public class PrefilterService implements IPrefilterService
 							.doubleValue();
 					count++;
 				}
-				if(sample0.length > 1 && sample1.length > 1)
+				if (sample0.length > 1 && sample1.length > 1)
 					pValues.add(new Float((float) test.tTest(sample0, sample1)));
 				else
 					pValues.add(Float.NaN);
 			}
 			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
 
-			// Loop through the doses (excluding lowest)
+			// Loop through the doses (excluding control dose)
 			for (int j = 1; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size(); j++)
 			{
-				// If t test and fold change are above threshold then set noel and loel values
+				// If t test p value is less than parameter and fold change is above threshold, then set
+				// NOEL/LOEL
+				// and stop.
 				if (Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges()
 						.get(j)) > foldFilterValue && pValues.get(j - 1) < pValue)
 				{
