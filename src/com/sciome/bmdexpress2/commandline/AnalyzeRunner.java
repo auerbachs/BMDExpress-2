@@ -27,6 +27,7 @@ import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
 import com.sciome.bmdexpress2.commandline.config.category.GeneLevelConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
+import com.sciome.bmdexpress2.commandline.config.nonparametric.NonParametricConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.OriogenConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
@@ -57,6 +58,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
+import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 
 /*
  * When command line is in "analyze" mode, use this class to run the different analyses
@@ -518,6 +520,73 @@ public class AnalyzeRunner
 					modelSelectionParameters, modelsToRun, inputParameters, bmdsConfig.getTmpFolder());
 			if (bmdsConfig.getOutputName() != null)
 				result.setName(bmdsConfig.getOutputName());
+			else
+				project.giveBMDAnalysisUniqueName(result, result.getName());
+			project.getbMDResult().add(result);
+		}
+
+	}
+
+	/*
+	 * perform bmd analysis on the data.
+	 */
+	private void doNonParametricAnalysis(NonParametricConfig config)
+	{
+		if (config.getInputName() != null)
+			System.out.println(
+					"bmd analysis on " + config.getInputName() + " from group " + config.getInputCategory());
+		else
+			System.out.println("non parametric bmd analysis on group " + config.getInputCategory());
+		// first set up the model input parameters basedo n
+		// bmdsConfig setup
+		GCurvePInputParameters inputParameters = new GCurvePInputParameters();
+		inputParameters.setBootStraps(config.getBootStraps());
+		inputParameters.setBMR(config.getBmrFactor().floatValue());
+		inputParameters.setpValueCutoff(config.getpValueConfidence().floatValue());
+
+		// if inputname is specified then get the analysis that matches name.
+		// otherwise get all the analysis based on the given input category.
+		// input category can be "anova" or "expression" which means
+		// one way anova results or dose response expersssion data.
+		List<IStatModelProcessable> processables = new ArrayList<>();
+		// get the dataset to run
+
+		for (OneWayANOVAResults ways : project.getOneWayANOVAResults())
+			if (config.getInputCategory().equalsIgnoreCase("anova"))
+				if (config.getInputName() == null)
+					processables.add(ways);
+				else if (ways.getName().equalsIgnoreCase(config.getInputName()))
+					processables.add(ways);
+
+		for (WilliamsTrendResults will : project.getWilliamsTrendResults())
+			if (config.getInputCategory().equalsIgnoreCase("williams"))
+				if (config.getInputName() == null)
+					processables.add(will);
+				else if (will.getName().equalsIgnoreCase(config.getInputName()))
+					processables.add(will);
+
+		for (OriogenResults ori : project.getOriogenResults())
+			if (config.getInputCategory().equalsIgnoreCase("oriogen"))
+				if (config.getInputName() == null)
+					processables.add(ori);
+				else if (ori.getName().equalsIgnoreCase(config.getInputName()))
+					processables.add(ori);
+
+		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
+			if (config.getInputCategory().equalsIgnoreCase("expression"))
+				if (config.getInputName() == null)
+					processables.add(exps);
+				else if (exps.getName().equalsIgnoreCase(config.getInputName()))
+					processables.add(exps);
+
+		// for each processable analysis, run the models and select best models.
+		for (IStatModelProcessable processableData : processables)
+		{
+			BMDResult result = new NonParametricAnalysisRunner().runBMDAnalysis(processableData,
+					inputParameters);
+
+			if (config.getOutputName() != null)
+				result.setName(config.getOutputName());
 			else
 				project.giveBMDAnalysisUniqueName(result, result.getName());
 			project.getbMDResult().add(result);
