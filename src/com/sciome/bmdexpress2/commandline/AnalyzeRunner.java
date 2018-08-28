@@ -129,13 +129,19 @@ public class AnalyzeRunner
 			for (BMDSConfig bmdsConfig : bmdsConfigs)
 				doBMDSAnalysis(bmdsConfig);
 
-		// 4: get all the category analysis configs
+		// 4: get all the analysis configs
+		List<NonParametricConfig> nonParametricConfigs = runConfig.getNonParametricConfigs();
+		if (nonParametricConfigs != null)
+			for (NonParametricConfig nonPConfig : nonParametricConfigs)
+				doNonParametricAnalysis(nonPConfig);
+
+		// 5: get all the category analysis configs
 		List<CategoryConfig> catConfigs = runConfig.getCategoryAnalysisConfigs();
 		if (catConfigs != null)
 			for (CategoryConfig catConfig : catConfigs)
 				doCatAnalysis(catConfig);
 
-		// 5. see if this needs exporting to json
+		// 6. see if this needs exporting to json
 		if (runConfig.getJsonExportFileName() != null)
 			doJsonExport(runConfig.getJsonExportFileName());
 

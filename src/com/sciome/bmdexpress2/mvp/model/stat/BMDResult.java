@@ -431,6 +431,7 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getDataSetName()
 	{

@@ -245,6 +245,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getDataSetName()
 	{

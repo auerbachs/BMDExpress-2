@@ -268,6 +268,7 @@ public class OneWayANOVAResults extends BMDExpressAnalysisDataSet
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getDataSetName()
 	{

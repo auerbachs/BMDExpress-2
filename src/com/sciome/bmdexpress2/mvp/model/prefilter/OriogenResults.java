@@ -256,6 +256,7 @@ public class OriogenResults extends BMDExpressAnalysisDataSet
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getDataSetName()
 	{

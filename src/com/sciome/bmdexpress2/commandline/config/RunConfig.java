@@ -5,6 +5,7 @@ import java.util.List;
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSConfig;
 import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
+import com.sciome.bmdexpress2.commandline.config.nonparametric.NonParametricConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
 
 public class RunConfig
@@ -13,6 +14,7 @@ public class RunConfig
 	private List<ExpressionDataConfig>	expressionDataConfigs;
 	private List<PrefilterConfig>		preFilterConfigs;
 	private List<BMDSConfig>			bmdsConfigs;
+	private List<NonParametricConfig>	nonParametricConfigs;
 	private List<CategoryConfig>		categoryAnalysisConfigs;
 
 	private String						bm2FileName;
@@ -121,6 +123,16 @@ public class RunConfig
 	public void setBasePath(String basePath)
 	{
 		this.basePath = basePath;
+	}
+
+	public List<NonParametricConfig> getNonParametricConfigs()
+	{
+		return nonParametricConfigs;
+	}
+
+	public void setNonParametricConfigs(List<NonParametricConfig> nonParametricConfigs)
+	{
+		this.nonParametricConfigs = nonParametricConfigs;
 	}
 
 }

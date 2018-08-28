@@ -148,6 +148,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			}
 			List<Float> correctedPointsMinus = new ArrayList<>();
 			List<Float> correctedPointsPlus = new ArrayList<>();
+			List<Float> correctedPointsNeutral = new ArrayList<>();
 
 			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsMinus, inputParameters.getBMR(), -1, inputParameters.getBootStraps(),
@@ -156,16 +157,33 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsPlus, inputParameters.getBMR(), 1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
+
+			List<Float> valuesNeutral = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
+					correctedPointsNeutral, inputParameters.getBMR(), 0, inputParameters.getBootStraps(),
+					inputParameters.getpValueCutoff());
+
 			List<Float> values = valuesPlus;
 			List<Float> correctedPoints = correctedPointsPlus;
 			int mono = 1;
 
 			boolean allgoodminus = Double.isFinite(valuesMinus.get(5).doubleValue())
 					&& Double.isFinite(valuesMinus.get(4).doubleValue())
-					&& Double.isFinite(valuesMinus.get(6).doubleValue());
+					&& Double.isFinite(valuesMinus.get(6).doubleValue())
+					&& !Double.isNaN(valuesMinus.get(5).doubleValue())
+					&& !Double.isNaN(valuesMinus.get(4).doubleValue())
+					&& !Double.isNaN(valuesMinus.get(6).doubleValue());
 			boolean allgoodplus = Double.isFinite(valuesPlus.get(5).doubleValue())
 					&& Double.isFinite(valuesPlus.get(4).doubleValue())
-					&& Double.isFinite(valuesPlus.get(6).doubleValue());
+					&& Double.isFinite(valuesPlus.get(6).doubleValue())
+					&& !Double.isNaN(valuesPlus.get(5).doubleValue())
+					&& !Double.isNaN(valuesPlus.get(4).doubleValue())
+					&& !Double.isNaN(valuesPlus.get(6).doubleValue());
+			boolean allgoodneutral = Double.isFinite(valuesNeutral.get(5).doubleValue())
+					&& Double.isFinite(valuesNeutral.get(4).doubleValue())
+					&& Double.isFinite(valuesNeutral.get(6).doubleValue())
+					&& !Double.isNaN(valuesNeutral.get(5).doubleValue())
+					&& !Double.isNaN(valuesNeutral.get(4).doubleValue())
+					&& !Double.isNaN(valuesNeutral.get(6).doubleValue());
 
 			// first choose the direction where fitpvalue is not 0.0
 			if (valuesMinus.get(0).doubleValue() == 0.0 && valuesPlus.get(0).doubleValue() != 0.0)
