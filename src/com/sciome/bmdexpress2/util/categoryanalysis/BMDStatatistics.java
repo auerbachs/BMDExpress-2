@@ -1079,7 +1079,9 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						double bmddivbmdl = probeStatResult.getBestStatResult().getBMDdiffBMDL();
+						double bmddivbmdl = Double.NaN;
+						if (probeStatResult.getBestStatResult() != null)
+							bmddivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
 
 						if (Double.isNaN(bmddivbmdl) || probeStatResult.getBestStatResult() == null
 								|| bmddivbmdl > bmdBmdlRatio)
@@ -1127,7 +1129,9 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						double bmdudivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
+						double bmdudivbmdl = Double.NaN;
+						if (probeStatResult.getBestStatResult() != null)
+							bmdudivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
 						// if this ratio is NaN, then allow passage.
 
 						if (Double.isNaN(bmdudivbmdl) || probeStatResult.getBestStatResult() == null
@@ -1222,7 +1226,9 @@ public class BMDStatatistics
 						if (probeStatResult == null)
 							continue;
 
-						double bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMD();
+						double bmdudivbmd = Double.NaN;
+						if (probeStatResult.getBestStatResult() != null)
+							bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
 						// if this ratio is NaN, then allow passage.
 
 						if (Double.isNaN(bmdudivbmd) || probeStatResult.getBestStatResult() == null

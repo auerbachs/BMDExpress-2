@@ -300,11 +300,6 @@ public class AnalyzeRunner
 		else
 			params.setRemovePromiscuousProbes(catConfig.getRemovePromiscuousProbes());
 
-		if (catConfig.getIdentifyConflictingProbeSets() == null)
-			params.setDeduplicateGeneSets(false);
-		else
-			params.setDeduplicateGeneSets(catConfig.getDeduplicateGeneSets());
-
 		if (catConfig.getDeduplicateGeneSets() == null)
 			params.setDeduplicateGeneSets(false);
 		else
