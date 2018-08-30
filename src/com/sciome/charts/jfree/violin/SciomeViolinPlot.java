@@ -123,6 +123,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		CategoryAxis xAxis = new CategoryAxis();
 		ValueAxis yAxis = SciomeNumberAxisGeneratorJFree.generateAxis(getLogYAxis().isSelected(),
 				key.toString());
+		yAxis.setVerticalTickLabels(true);
 
 		
 		ViolinRenderer renderer = new ViolinRenderer();
