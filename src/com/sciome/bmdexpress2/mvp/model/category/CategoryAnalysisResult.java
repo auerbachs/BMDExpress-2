@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -2188,65 +2185,51 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 		for (ReferenceGeneProbeStatResult rgp : referenceGeneProbeStatResults)
 		{
+			int i = 0;
+			double BMDValue = 0.0;
+			double BMDLValue = 0.0;
+			double BMDUValue = 0.0;
 			for (ProbeStatResult probeStatResult : rgp.getProbeStatResults())
 			{
 				if (probeStatResult.getBestStatResult() == null)
 					continue;
+				BMDValue += probeStatResult.getBestBMD();
+				BMDLValue += probeStatResult.getBestBMDL();
+				BMDUValue += probeStatResult.getBestBMDU();
 
-				statsBMD.addValue(probeStatResult.getBestBMD());
-				statsBMDL.addValue(probeStatResult.getBestBMDL());
-				statsBMDU.addValue(probeStatResult.getBestBMDU());
+				i++;
+			}
+			if (i > 0)
+			{
+				statsBMD.addValue(BMDValue / i);
+				statsBMDL.addValue(BMDLValue / i);
+				statsBMDU.addValue(BMDUValue / i);
 			}
 		}
 
-		// Calculate 95% confidence interval
-		// double ciBMD = calcMeanCI(statsBMD, 0.95);
-		// bmdLower95 = statsBMD.getMean() - ciBMD;
-		// bmdUpper95 = statsBMD.getMean() + ciBMD;
-		bmdLower95 = calculateNormalQuantile(statsBMD, (1 - .95) / 2);
-		bmdUpper95 = calculateNormalQuantile(statsBMD, 1.0 - (1 - .95) / 2);
+		double ninetyfiveBMD = calculate95(statsBMD);
+		double ninetyfiveBMDL = calculate95(statsBMDL);
+		double ninetyfiveBMDU = calculate95(statsBMDU);
 
-		// double ciBMDL = calcMeanCI(statsBMDL, 0.95);
-		bmdlLower95 = calculateNormalQuantile(statsBMDL, (1 - .95) / 2);
-		bmdlUpper95 = calculateNormalQuantile(statsBMDL, 1.0 - (1 - .95) / 2);
-		// bmdlLower95 = statsBMDL.getMean() - ciBMDL;
-		// bmdlUpper95 = statsBMDL.getMean() + ciBMDL;
+		bmdLower95 = statsBMD.getMean() - ninetyfiveBMD;
+		bmdUpper95 = statsBMD.getMean() + ninetyfiveBMD;
 
-		// double ciBMDU = calcMeanCI(statsBMDU, 0.95);
-		bmduLower95 = calculateNormalQuantile(statsBMDU, (1 - .95) / 2);
-		bmduUpper95 = calculateNormalQuantile(statsBMDU, 1.0 - (1 - .95) / 2);
-		// bmduLower95 = statsBMDU.getMean() - ciBMDU;
-		// bmduUpper95 = statsBMDU.getMean() + ciBMDU;
+		bmdlLower95 = statsBMDL.getMean() - ninetyfiveBMDL;
+		bmdlUpper95 = statsBMDL.getMean() + ninetyfiveBMDL;
+
+		bmduLower95 = statsBMDU.getMean() - ninetyfiveBMDU;
+		bmduUpper95 = statsBMDU.getMean() + ninetyfiveBMDU;
 
 	}
 
-	private static double calculateNormalQuantile(SummaryStatistics stats, double level)
+	private static double calculate95(SummaryStatistics stats)
 	{
 		try
 		{
-			NormalDistribution normDist = new NormalDistribution(stats.getMean(),
-					stats.getStandardDeviation());
-			return normDist.cumulativeProbability(level);
+			// use z-distribution value that gets us to 95% confidence level
+			return stats.getStandardDeviation() * 1.96 / Math.sqrt(stats.getN());
 		}
-		catch (MathIllegalArgumentException e)
-		{
-			return Double.NaN;
-		}
-	}
-
-	private static double calcMeanCI(SummaryStatistics stats, double level)
-	{
-		try
-		{
-			// Create T Distribution with N-1 degrees of freedom
-			// TDistribution tDist = new TDistribution(stats.getN() - 1);
-			TDistribution tDist = new TDistribution(stats.getN() - 1);
-			// Calculate critical value
-			double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - level) / 2);
-			// Calculate confidence interval
-			return critVal * stats.getStandardDeviation() / Math.sqrt(stats.getN());
-		}
-		catch (MathIllegalArgumentException e)
+		catch (Exception e)
 		{
 			return Double.NaN;
 		}
