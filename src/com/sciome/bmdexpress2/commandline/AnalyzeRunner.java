@@ -397,9 +397,9 @@ public class AnalyzeRunner
 		if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(1))
 			flagHillDose = FlagHillModelDoseEnum.LOWEST_DOSE;
 		else if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(2))
-			flagHillDose = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
-		else if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(3))
 			flagHillDose = FlagHillModelDoseEnum.ONE_HALF_OF_LOWEST_DOSE;
+		else if (bmdsConfig.getBmdsBestModelSelection().getkParameterValue().equals(3))
+			flagHillDose = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 
 		modelSelectionParameters.setFlagHillModelDose(flagHillDose);
 
