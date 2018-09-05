@@ -363,7 +363,7 @@ public class AnalyzeRunner
 		inputParameters.setBmrLevel(bmdsConfig.getBmdsInputConfig().getBmrFactor());
 		inputParameters.setNumThreads(bmdsConfig.getNumberOfThreads());
 		if (bmdsConfig.getKillTime() != null)
-			inputParameters.setKillTime(bmdsConfig.getKillTime().intValue());
+			inputParameters.setKillTime(bmdsConfig.getKillTime().intValue() * 1000);
 		else
 			inputParameters.setKillTime(600000); // default to 10 minute timeout
 
@@ -380,7 +380,7 @@ public class AnalyzeRunner
 		ModelSelectionParameters modelSelectionParameters = new ModelSelectionParameters();
 
 		BestPolyModelTestEnum polyTest = null;
-		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(0))
+		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(2))
 			polyTest = BestPolyModelTestEnum.LOWEST_AIC;
 		else if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(1))
 			polyTest = BestPolyModelTestEnum.NESTED_CHI_SQUARED;
