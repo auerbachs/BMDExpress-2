@@ -73,6 +73,7 @@ public class ExportRunner
 					if (analysisName.equals(experiment.getName()))
 					{
 						service.exportDoseResponseExperiment(experiment, new File(outputFile));
+						break;
 					}
 				}
 			}
@@ -93,7 +94,11 @@ public class ExportRunner
 			{
 				for (OneWayANOVAResults experiment : project.getOneWayANOVAResults())
 				{
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+					if (analysisName.equals(experiment.getName()))
+					{
+						service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+						break;
+					}
 				}
 			}
 		}
@@ -113,7 +118,11 @@ public class ExportRunner
 			{
 				for (OriogenResults experiment : project.getOriogenResults())
 				{
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+					if (analysisName.equals(experiment.getName()))
+					{
+						service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+						break;
+					}
 				}
 			}
 		}
@@ -133,7 +142,11 @@ public class ExportRunner
 			{
 				for (WilliamsTrendResults experiment : project.getWilliamsTrendResults())
 				{
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+					if (analysisName.equals(experiment.getName()))
+					{
+						service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+						break;
+					}
 				}
 			}
 		}
@@ -153,7 +166,11 @@ public class ExportRunner
 			{
 				for (BMDResult experiment : project.getbMDResult())
 				{
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+					if (analysisName.equals(experiment.getName()))
+					{
+						service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+						break;
+					}
 				}
 			}
 		}
@@ -172,7 +189,11 @@ public class ExportRunner
 			else
 				for (CategoryAnalysisResults experiment : project.getCategoryAnalysisResults())
 				{
-					service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+					if (analysisName.equals(experiment.getName()))
+					{
+						service.exportBMDExpressAnalysisDataSet(experiment, new File(outputFile));
+						break;
+					}
 				}
 		}
 
