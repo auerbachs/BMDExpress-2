@@ -797,67 +797,19 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 	private void lowestAICPolys(BMDResult bmdResult)
 	{
-
 		for (ProbeStatResult probeStatResult : bmdResult.getProbeStatResults())
 		{
 			StatResult bestPolyResult = null;
 
-			int polyCount = 0;
 			for (StatResult statResult : probeStatResult.getStatResults())
 			{
 				if (!(statResult instanceof PolyResult))
 					continue;
 
-				polyCount++;
 				if (bestPolyResult == null)
-				{
 					bestPolyResult = statResult;
-				}
-				else
-				{
-
-					// if compute and utilize bmdl and bmdu, make sure they converged
-					// in the process of selection best
-					if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
-							.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE))
-					{
-						double bmd1 = bestPolyResult.getBMD();
-						double bmdl1 = bestPolyResult.getBMDL();
-						double bmdu1 = bestPolyResult.getBMDU();
-						double aic1 = bestPolyResult.getAIC();
-						double bmd2 = statResult.getBMD();
-						double bmdl2 = statResult.getBMDL();
-						double bmdu2 = statResult.getBMDU();
-						double aic2 = statResult.getAIC();
-
-						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
-						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || !isConvergent(bmd1)
-								|| !isConvergent(bmdl1) || !isConvergent(bmdu1))
-								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && isConvergent(bmd2)
-										&& isConvergent(bmdl2) && isConvergent(bmdu2)))
-						{
-							bestPolyResult = statResult;
-						}
-					}
-					else // don't worry about bmdl or bmdu convergence.
-					{
-						double bmd1 = bestPolyResult.getBMD();
-						double aic1 = bestPolyResult.getAIC();
-						double bmd2 = statResult.getBMD();
-						double aic2 = statResult.getAIC();
-
-						// || (bmd1 != DEFAULTDOUBLE && bmdl2 != DEFAULTDOUBLE
-						// the originial had bmd1 rather than bmd2 != DEFAULTDOUBLE. I changed it to bmd2
-						if (((aic1 > aic2 && aic2 != DEFAULTDOUBLE) || !isConvergent(bmd1))
-								|| ((aic1 > aic2 && aic2 != DEFAULTDOUBLE) && isConvergent(bmd2)))
-						{
-							bestPolyResult = statResult;
-						}
-
-					}
-
-				}
+				else if (nextAICBetter(bestPolyResult, statResult))
+					bestPolyResult = statResult;
 			}
 			probeStatResult.setBestPolyStatResult(bestPolyResult);
 		}
