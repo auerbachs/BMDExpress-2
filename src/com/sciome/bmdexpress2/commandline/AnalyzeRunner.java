@@ -631,7 +631,7 @@ public class AnalyzeRunner
 						String.valueOf(preFilterConfig.getFoldChange()),
 						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						project));
+						preFilterConfig.gettTest(), project));
 			}
 		}
 		else if (preFilterConfig instanceof WilliamsConfig)
@@ -651,7 +651,7 @@ public class AnalyzeRunner
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
 						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						project));
+						preFilterConfig.gettTest(), project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)
@@ -674,7 +674,7 @@ public class AnalyzeRunner
 						String.valueOf(preFilterConfig.getFoldChange()),
 						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						project));
+						preFilterConfig.gettTest(), project));
 			}
 		}
 		System.out.println(stdoutInfo);

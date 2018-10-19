@@ -10,16 +10,17 @@ public interface IPrefilterService {
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
-			SimpleProgressUpdater updater);
+			SimpleProgressUpdater updater, boolean tTest);
 	
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 
 			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater);
+			String foldFilterValue, String loelPValue, String loelFoldChange, 
+			SimpleProgressUpdater updater, boolean tTest);
 	
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange);
+			String foldFilterValue, String loelPValue, String loelFoldChange, boolean tTest);
 	
 	public void cancel();
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.inference.TTest;
@@ -28,6 +30,7 @@ import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.bmdexpress2.util.prefilter.OneWayANOVAAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
 import com.sciome.commons.math.MathUtil;
+import com.sciome.commons.math.dunnetts.DunnettsTest;
 import com.sciome.commons.math.oriogen.Origen_Data;
 import com.sciome.commons.math.oriogen.OriogenTestResult;
 import com.sciome.commons.math.oriogen.OriogenUtil;
@@ -47,9 +50,8 @@ public class PrefilterService implements IPrefilterService
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
-			SimpleProgressUpdater updater)
+			SimpleProgressUpdater updater, boolean tTest)
 	{
-
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
@@ -167,7 +169,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(williamsTrendResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
+		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
 
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
@@ -217,7 +219,7 @@ public class PrefilterService implements IPrefilterService
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, float s0Adjustment,
 			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue,
-			String loelFoldChange, SimpleProgressUpdater updater)
+			String loelFoldChange, SimpleProgressUpdater updater, boolean tTest)
 	{
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -405,7 +407,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
+		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
 
 		if (multipleTestingCorrection)
 		{
@@ -442,9 +444,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange)
+			String foldFilterValue, String loelPValue, String loelFoldChange, boolean tTest)
 	{
-
 		DecimalFormat df = new DecimalFormat("#.####");
 
 		long startTime = System.currentTimeMillis();
@@ -525,7 +526,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
 				baseValue, useFoldFilter);
-		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange));
+		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
 
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
 
@@ -590,9 +591,8 @@ public class PrefilterService implements IPrefilterService
 		}
 	}
 
-	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue)
+	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest)
 	{
-
 		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
 		List<Integer> doseGroups = new ArrayList<Integer>();
@@ -627,38 +627,58 @@ public class PrefilterService implements IPrefilterService
 			probeResponseMap.put(pr.getProbe().getId(), pr.getResponses());
 
 		TTest test = new TTest();
+		DunnettsTest dunnetts = new DunnettsTest();
 		// Loop through the probes
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
 
-			// Calculate p vlaue
+			// Calculate p value
 			List<Float> pValues = new ArrayList<Float>();
-			double[] sample0 = new double[doseGroups.get(0)];
+			double[] control = new double[doseGroups.get(0)];
 			count = 0;
 			for (int j = 0; j < doseGroups.get(0); j++)
 			{
-				sample0[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(i).getProbeID())
+				control[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(i).getProbeID())
 						.get(count).doubleValue();
 				count++;
 			}
-
-			/*
-			 * compare each dose group to the control dosegroup using TTest store the corresponding P values
-			 */
-			for (int j = 1; j < doseGroups.size(); j++)
-			{
-				double[] sample1 = new double[doseGroups.get(j)];
-				for (int k = 0; k < doseGroups.get(j); k++)
+			
+			if(tTest) {
+				//compare each dose group to the control dosegroup using TTest store the corresponding P values
+				for (int j = 1; j < doseGroups.size(); j++)
 				{
-					sample1[k] = probeResponseMap
-							.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
-							.doubleValue();
-					count++;
+					double[] sample1 = new double[doseGroups.get(j)];
+					for (int k = 0; k < doseGroups.get(j); k++)
+					{
+						sample1[k] = probeResponseMap
+								.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
+								.doubleValue();
+						count++;
+					}
+					if (control.length > 1 && sample1.length > 1)
+						pValues.add(new Float((float) test.tTest(control, sample1)));
+					else
+						pValues.add(Float.NaN);
 				}
-				if (sample0.length > 1 && sample1.length > 1)
-					pValues.add(new Float((float) test.tTest(sample0, sample1)));
-				else
-					pValues.add(Float.NaN);
+			} else {
+				//Use Dunnett's test to calculate p values
+				double[][] doses = new double[doseGroups.size() - 1][];
+				for (int j = 1; j < doseGroups.size(); j++)
+				{
+					double[] sample1 = new double[doseGroups.get(j)];
+					for (int k = 0; k < doseGroups.get(j); k++)
+					{
+						sample1[k] = probeResponseMap
+								.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
+								.doubleValue();
+						count++;
+					}
+					doses[j - 1] = sample1;
+				}
+				double[] pVals = dunnetts.dunnettsTest(control, doses);
+				for(int j = 0; j < pVals.length; j++) {
+					pValues.add((float)pVals[j]);
+				}
 			}
 			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
 
@@ -675,7 +695,6 @@ public class PrefilterService implements IPrefilterService
 					prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j - 1));
 					prefilterResults.getPrefilterResults().get(i).setLoelDose(treatments.get(j));
 					break;
-
 				}
 			}
 		}

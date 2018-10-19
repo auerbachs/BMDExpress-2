@@ -41,7 +41,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	 */
 	public void performWilliamsTrend(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange)
+			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
+			boolean tTest)
 	{
 		WilliamsTrendResults[] resultList = new WilliamsTrendResults[processableData.size()];
 		List<WilliamsUpdater> updaters = Collections.synchronizedList(new ArrayList<WilliamsUpdater>());
@@ -64,7 +65,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 						if(running) {
 							resultList[threadCount] = getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
 									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange,
-									updater);
+									updater, tTest);
 							//Once the method is finished, set progress to 1
 							updater.setProgress(1);
 						}
@@ -139,7 +140,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	 */
 	public void performWilliamsTrend(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange)
+			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
+			boolean tTest)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -150,7 +152,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 				try
 				{
 					WilliamsTrendResults williamsTrendResults = getService().williamsTrendAnalysis(processableData, pCutOff, multipleTestingCorrection,
-							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, me);
+							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, me, tTest);
 					
 					// post the new williams object to the event bus so folks can do the right thing.
 					if(williamsTrendResults != null && running) {

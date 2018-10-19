@@ -17,10 +17,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAView, Initializable
@@ -34,17 +36,19 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	private CheckBox					benAndHochCheckBox;
 	@FXML
 	private CheckBox					filterControlGenesCheckBox;
-
 	@FXML
 	private CheckBox					useFoldChangeCheckBox;
-
 	@FXML
 	private TextField					foldChangeValueTextField;
-	
 	@FXML
 	private TextField					pValueLoelTextField;
 	@FXML
 	private TextField					foldChangeLoelTextField;
+	@FXML
+	private RadioButton					dunnettsRadioButton;
+	@FXML
+	private RadioButton					tRadioButton;
+	
 
 	private List<IStatModelProcessable>	processableData		= null;
 	private List<IStatModelProcessable>	processableDatas	= null;
@@ -74,7 +78,6 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	public void initData(List<IStatModelProcessable> processableData,
 			List<IStatModelProcessable> processableDatas)
 	{
-
 		this.processableData = processableData;
 		this.processableDatas = processableDatas;
 
@@ -91,6 +94,10 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 			expressionDataComboBox.setDisable(true);
 		}
 		
+		ToggleGroup radioGroup = new ToggleGroup();
+		tRadioButton.setToggleGroup(radioGroup);
+		dunnettsRadioButton.setToggleGroup(radioGroup);
+		
 		adjustedPValueCutoffComboBox.getItems().add("0.05");
 		adjustedPValueCutoffComboBox.getItems().add("0.01");
 		adjustedPValueCutoffComboBox.getItems().add("0.10");
@@ -100,6 +107,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		benAndHochCheckBox.setSelected(input.isUseBenAndHoch());
 		filterControlGenesCheckBox.setSelected(input.isFilterControlGenes());
 		useFoldChangeCheckBox.setSelected(input.isUseFoldChange());
+		tRadioButton.setSelected(input.istTest());
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
@@ -121,7 +129,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 			presenter.performOneWayANOVA(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 					filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
 					foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
-					foldChangeLoelTextField.getText());
+					foldChangeLoelTextField.getText(), tRadioButton.isSelected());
 		}
 		else
 		{
@@ -129,7 +137,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 					(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 					pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
 					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
-					pValueLoelTextField.getText(), foldChangeLoelTextField.getText());
+					pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), tRadioButton.isSelected());
 		}
 
 		closeWindow();
@@ -145,6 +153,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		input.setFilterControlGenes(this.filterControlGenesCheckBox.isSelected());
 		input.setUseBenAndHoch(this.benAndHochCheckBox.isSelected());
 		input.setUseFoldChange(this.useFoldChangeCheckBox.isSelected());
+		input.settTest(this.tRadioButton.isSelected());
 		input.setpValueCutOff(Double.parseDouble(this.adjustedPValueCutoffComboBox.getEditor().getText()));
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
 		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));

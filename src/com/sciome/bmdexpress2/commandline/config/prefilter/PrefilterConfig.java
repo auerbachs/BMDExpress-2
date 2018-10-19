@@ -27,6 +27,8 @@ public abstract class PrefilterConfig
 	private Double	foldChange;
 	private Double	foldChangeLoel;
 	private Double	pValueLoel;
+	
+	private Boolean	tTest							= false;
 
 	public String getInputName()
 	{
@@ -116,5 +118,13 @@ public abstract class PrefilterConfig
 	public void setpValueLoel(Double pValueLoel) 
 	{
 		this.pValueLoel = pValueLoel;
+	}
+
+	public Boolean gettTest() {
+		return tTest;
+	}
+
+	public void settTest(Boolean tTest) {
+		this.tTest = tTest;
 	}
 }
