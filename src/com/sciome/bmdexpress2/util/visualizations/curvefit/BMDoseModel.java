@@ -153,11 +153,11 @@ public class BMDoseModel
 		}
 		else if (name.startsWith("Exp 4"))
 		{
-			formula = "a * (c - (c - 1) * exp(-b * dose)";
+			formula = "a * (c - (c - 1) * exp(-b * dose))";
 		}
 		else if (name.startsWith("Exp 5"))
 		{
-			formula = "a * (c - (c - 1) * exp((-b * dose)^d)";
+			formula = "a * (c - (c - 1) * exp(-(b * dose)^d))";
 		}
 
 		return formula;
@@ -242,7 +242,7 @@ public class BMDoseModel
 			double a = parameters[base + 1];
 			double b = parameters[base + 2];
 			double c = parameters[base + 3];
-			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP(-" + b + " * DOSE)");
+			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP(-" + b + " * DOSE))");
 		}
 		else if (model.equals("Exp 5"))
 		{
@@ -251,7 +251,7 @@ public class BMDoseModel
 			double b = parameters[base + 2];
 			double c = parameters[base + 3];
 			double d = parameters[base + 4];
-			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP((-" + b + " * DOSE)^" + d + ")");
+			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP(-(" + b + " * DOSE)^" + d + "))");
 		}
 		else
 		{ // Linear (1d) and Polinominal d
