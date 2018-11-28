@@ -6,6 +6,10 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 
 public interface IOneWayANOVAView
 {
+	public void updateProgress(double progress);
+	
+	public void updateMessage(String message);
+	
 	public void closeWindow();
 
 	// void initData(IStatModelProcessable processableData, List<IStatModelProcessable> processabelDatas);

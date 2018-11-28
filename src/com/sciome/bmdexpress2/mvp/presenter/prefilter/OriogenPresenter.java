@@ -25,7 +25,6 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	public OriogenPresenter(IOriogenView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
-		init();
 	}
 
 	/*
@@ -46,15 +45,13 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 				try
 				{
 					List<OriogenResults> resultList = new ArrayList<OriogenResults>();
-					int count = 1;
 					for(int i = 0; i < processableData.size(); i++) {
 						if(running) {
-							setMessage(count + "/" + processableData.size());
+							setMessage((i + 1) + "/" + processableData.size());
 							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
 									initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
 									loelPValue, loelFoldChange, me, tTest));
 							me.setProgress(0);
-							count++;
 						}
 					}
 					// post the new oriogen object to the event bus so folks can do the right thing.
@@ -179,11 +176,5 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 		{
 			getView().closeWindow();
 		});
-	}
-	
-	/*
-	 * private methods
-	 */
-	private void init() {
 	}
 }

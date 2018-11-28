@@ -20,7 +20,8 @@ public interface IPrefilterService {
 	
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, boolean tTest);
+			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater, 
+			boolean tTest);
 	
 	public void cancel();
 }

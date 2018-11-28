@@ -98,13 +98,6 @@
 		    <version>3.3</version>
 		</dependency>
 		
-
-         <!-- sciome commons math functions-->
-         <dependency>
-             <groupId>sciome-commons</groupId>
-             <artifactId>math</artifactId>
-             <version>1.04.0063</version>
-         </dependency>
 		
 		
 		<!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx -->

@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.inference.TTest;
@@ -96,7 +98,9 @@ public class PrefilterService implements IPrefilterService
 		{
 			doseVector[i] = treatments.get(i).getDose();
 		}
-
+		
+		updater.setMessage("Williams Trend");
+		
 		WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
 				MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
 				updater);
@@ -169,7 +173,12 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(williamsTrendResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
+		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
+		
+		if(cancel) {
+			updater.setProgress(0);
+			return null;
+		}
 
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_williams_" + df.format(pCutOff);
@@ -407,7 +416,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
 				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
+		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
 
 		if (multipleTestingCorrection)
 		{
@@ -444,7 +453,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, boolean tTest)
+			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater, 
+			boolean tTest)
 	{
 		DecimalFormat df = new DecimalFormat("#.####");
 
@@ -526,7 +536,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
 				baseValue, useFoldFilter);
-		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest);
+		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
 
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
 
@@ -591,8 +601,10 @@ public class PrefilterService implements IPrefilterService
 		}
 	}
 
-	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest)
+	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest, SimpleProgressUpdater updater)
 	{
+		updater.setProgress(0);
+		updater.setMessage("Dunnett's Test");
 		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
 		List<Integer> doseGroups = new ArrayList<Integer>();
@@ -628,75 +640,96 @@ public class PrefilterService implements IPrefilterService
 
 		TTest test = new TTest();
 		DunnettsTest dunnetts = new DunnettsTest();
+		BlockingQueue<Runnable> runnables = new SynchronousQueue<Runnable>();
+
+		ExecutorService executor = Executors.newFixedThreadPool(5);
 		// Loop through the probes
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
-
-			// Calculate p value
-			List<Float> pValues = new ArrayList<Float>();
-			double[] control = new double[doseGroups.get(0)];
-			count = 0;
-			for (int j = 0; j < doseGroups.get(0); j++)
-			{
-				control[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(i).getProbeID())
-						.get(count).doubleValue();
-				count++;
-			}
-			
-			if(tTest) {
-				//compare each dose group to the control dosegroup using TTest store the corresponding P values
-				for (int j = 1; j < doseGroups.size(); j++)
-				{
-					double[] sample1 = new double[doseGroups.get(j)];
-					for (int k = 0; k < doseGroups.get(j); k++)
+			final int index = i;
+		    Runnable run = new Runnable() {
+		        @Override
+		        public void run() {
+					List<Float> pValues = new ArrayList<Float>();
+		        	double[] control = new double[doseGroups.get(0)];
+					int count = 0;
+					for (int j = 0; j < doseGroups.get(0); j++)
 					{
-						sample1[k] = probeResponseMap
-								.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
-								.doubleValue();
+						control[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(index).getProbeID())
+								.get(count).doubleValue();
 						count++;
 					}
-					if (control.length > 1 && sample1.length > 1)
-						pValues.add(new Float((float) test.tTest(control, sample1)));
-					else
-						pValues.add(Float.NaN);
-				}
-			} else {
-				//Use Dunnett's test to calculate p values
-				double[][] doses = new double[doseGroups.size() - 1][];
-				for (int j = 1; j < doseGroups.size(); j++)
-				{
-					double[] sample1 = new double[doseGroups.get(j)];
-					for (int k = 0; k < doseGroups.get(j); k++)
-					{
-						sample1[k] = probeResponseMap
-								.get(prefilterResults.getPrefilterResults().get(i).getProbeID()).get(count)
-								.doubleValue();
-						count++;
+					
+					if(tTest) {
+						//compare each dose group to the control dosegroup using TTest store the corresponding P values
+						for (int j = 1; j < doseGroups.size(); j++)
+						{
+							double[] sample1 = new double[doseGroups.get(j)];
+							for (int k = 0; k < doseGroups.get(j); k++)
+							{
+								sample1[k] = probeResponseMap
+										.get(prefilterResults.getPrefilterResults().get(index).getProbeID()).get(count)
+										.doubleValue();
+								count++;
+							}
+							if (control.length > 1 && sample1.length > 1)
+								pValues.add(new Float((float) test.tTest(control, sample1)));
+							else
+								pValues.add(Float.NaN);
+						}
+					} else {
+						//Use Dunnett's test to calculate p values
+						double[][] doses = new double[doseGroups.size() - 1][];
+						for (int j = 1; j < doseGroups.size(); j++)
+						{
+							double[] sample1 = new double[doseGroups.get(j)];
+							for (int k = 0; k < doseGroups.get(j); k++)
+							{
+								sample1[k] = probeResponseMap
+										.get(prefilterResults.getPrefilterResults().get(index).getProbeID()).get(count)
+										.doubleValue();
+								count++;
+							}
+							doses[j - 1] = sample1;
+						}
+						double[] pVals = dunnetts.dunnettsTest(control, doses, 15000);
+						for(int j = 0; j < pVals.length; j++) {
+							pValues.add((float)pVals[j]);
+						}
 					}
-					doses[j - 1] = sample1;
-				}
-				double[] pVals = dunnetts.dunnettsTest(control, doses);
-				for(int j = 0; j < pVals.length; j++) {
-					pValues.add((float)pVals[j]);
-				}
-			}
-			prefilterResults.getPrefilterResults().get(i).setNoelLoelPValues(pValues);
+					prefilterResults.getPrefilterResults().get(index).setNoelLoelPValues(pValues);
 
-			// Loop through the doses (excluding control dose)
-			for (int j = 1; j < prefilterResults.getPrefilterResults().get(i).getFoldChanges().size(); j++)
-			{
-				// If t test p value is less than parameter and fold change is above threshold, then set
-				// NOEL/LOEL
-				// and stop.
-				if (Math.abs(prefilterResults.getPrefilterResults().get(i).getFoldChanges()
-						.get(j)) > foldFilterValue && pValues.get(j - 1) < pValue)
-				{
+					// Loop through the doses (excluding control dose)
+					for (int j = 1; j < prefilterResults.getPrefilterResults().get(index).getFoldChanges().size(); j++)
+					{
+						// If t test p value is less than parameter and fold change is above threshold, then set
+						// NOEL/LOEL
+						// and stop.
+						if (Math.abs(prefilterResults.getPrefilterResults().get(index).getFoldChanges()
+								.get(j)) > foldFilterValue && pValues.get(j - 1) < pValue)
+						{
 
-					prefilterResults.getPrefilterResults().get(i).setNoelDose(treatments.get(j - 1));
-					prefilterResults.getPrefilterResults().get(i).setLoelDose(treatments.get(j));
-					break;
-				}
-			}
+							prefilterResults.getPrefilterResults().get(index).setNoelDose(treatments.get(j - 1));
+							prefilterResults.getPrefilterResults().get(index).setLoelDose(treatments.get(j));
+							break;
+						}
+					}
+					if(updater != null) {
+						double progress = index / (double)prefilterResults.getPrefilterResults().size();
+						System.out.println(progress);
+						updater.setProgress(progress);
+					}
+		        }
+		    };
+	    	executor.execute(run);
 		}
+
+	    executor.shutdown();
+	    while (!executor.isTerminated()) {
+	    	if(cancel) {
+	    		executor.shutdownNow();
+	    		return;
+	    	}
+	    }
 	}
 }

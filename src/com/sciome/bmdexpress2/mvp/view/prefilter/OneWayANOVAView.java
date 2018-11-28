@@ -17,9 +17,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -48,6 +51,16 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	private RadioButton					dunnettsRadioButton;
 	@FXML
 	private RadioButton					tRadioButton;
+	@FXML
+	private ProgressBar					oneWayProgressBar;
+	@FXML
+	private Label						oneWayProgressMessage;
+	@FXML
+	private Button						startButton;
+	@FXML
+	private Button						saveSettingsButton;
+	@FXML
+	private Button						stopButton;
 	
 
 	private List<IStatModelProcessable>	processableData		= null;
@@ -139,14 +152,16 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
 					pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), tRadioButton.isSelected());
 		}
-
-		closeWindow();
 	}
 
 	public void handle_cancelButtonPressed(ActionEvent event)
 	{
-		this.closeWindow();
-
+		if(!presenter.hasStartedTask()) {
+			this.closeWindow();
+		} else {
+			presenter.cancel();
+			startButton.setDisable(false);
+		}
 	}
 	
 	public void handle_saveSettingsButtonPressed(ActionEvent event) {
@@ -190,6 +205,16 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	public void initialize(URL location, ResourceBundle resources)
 	{
 
+	}
+	
+	@Override
+	public void updateProgress(double progress) {
+		oneWayProgressBar.setProgress(progress);
+	}
+	
+	@Override
+	public void updateMessage(String message) {
+		oneWayProgressMessage.setText(message);
 	}
 
 	@Override

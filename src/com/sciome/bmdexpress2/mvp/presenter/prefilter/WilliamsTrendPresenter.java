@@ -122,6 +122,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 						} else {
 							//Otherwise we just set the progress bar
 							setProgress(progress);
+							//Arbitrarily use the first updater for setting messages
+							setMessage(updaters.get(0).getMessage());
 						}
 					}
 				} else {
@@ -143,7 +145,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
 			boolean tTest)
 	{
-		SimpleProgressUpdater me = this;
+		WilliamsUpdater me = new WilliamsUpdater();
 		Task<Integer> task = new Task<Integer>() {
 			@Override
 			protected Integer call() throws Exception
@@ -202,7 +204,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 
 		});
 	}
-
+	
+	@Override
 	public void setMessage(String message) {
 		Platform.runLater(() ->
 		{
@@ -241,15 +244,25 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	 */
 	private class WilliamsUpdater implements SimpleProgressUpdater {
 		private double progress;
+		private String message;
 		
 		@Override
 		public void setProgress(double progress) {
 			this.progress = progress;
 		}
 		
+		@Override
+		public void setMessage(String message) {
+			this.message = message;
+		}
+		
 		public double getProgress()
 		{
 			return this.progress;
+		}
+		
+		public String getMessage() {
+			return this.message;
 		}
 	}
 }
