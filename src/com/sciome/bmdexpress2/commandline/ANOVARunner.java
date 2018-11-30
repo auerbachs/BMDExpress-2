@@ -18,7 +18,7 @@ public class ANOVARunner
 		PrefilterService service = new PrefilterService();
 		OneWayANOVAResults results = service.oneWayANOVAAnalysis(processableData, pCutOff,
 				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue,
-				pValueLoel, foldChangeLoel, tTest);
+				pValueLoel, foldChangeLoel, null, tTest);
 
 		if (outputName != null)
 			results.setName(outputName);
