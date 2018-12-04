@@ -52,7 +52,7 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 							setMessage((i + 1) + "/" + processableData.size());
 
 							//Set cancel to be false in case the service was cancelled before
-							getService().setCancel(false);
+							getService().start();
 							resultList.add(getService().oneWayANOVAAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection, 
 									filterOutControlGenes, useFoldFilter, foldFilterValue,
 									loelPValue, loelFoldChange, me, tTest));
@@ -107,7 +107,7 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 				try
 				{
 					//Set cancel to be false in case the service was cancelled before
-					getService().setCancel(false);
+					getService().start();
 					OneWayANOVAResults oneWayResults = getService().oneWayANOVAAnalysis(processableData, pCutOff, multipleTestingCorrection, 
 																		filterOutControlGenes, useFoldFilter, foldFilterValue,
 																		loelPValue, loelFoldChange, me, tTest);
@@ -149,7 +149,7 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 		setMessage("");
 		setProgress(0.0);
 		running = false;
-		getService().setCancel(true);
+		getService().cancel();
 	}
 	
 	@Override

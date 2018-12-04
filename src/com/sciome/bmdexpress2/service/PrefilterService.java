@@ -45,7 +45,7 @@ public class PrefilterService implements IPrefilterService
 	private WilliamsTrendTestUtil	williamsUtil	= new WilliamsTrendTestUtil();
 	private OriogenUtil				oriogenUtil		= new OriogenUtil();
 	private boolean					cancel			= false;
-
+	private ExecutorService 		executor;
 	/**
 	 * Performs a william's trend analysis and returns the corresponding WilliamsTrendResult object
 	 */
@@ -576,13 +576,28 @@ public class PrefilterService implements IPrefilterService
 		return oneWayResults;
 	}
 
-	public void setCancel(boolean cancel)
+	public void cancel()
 	{
-		if(cancel) {
-			williamsUtil.cancel();
-			oriogenUtil.cancel();
+		cancel = true;
+		
+		//Cancel any prefilter tests that are running
+		williamsUtil.cancel();
+		oriogenUtil.cancel();
+		
+		//Cancel the dunnett's test if it's running
+		if(executor != null) {
+			executor.shutdownNow();
+			try {
+				executor.awaitTermination(5, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				e.printStackTrace();
+			}
 		}
-		this.cancel = cancel;
+	}
+	
+	public void start() {
+		cancel = false;
 	}
 
 	private void performFoldFilter(PrefilterResults prefilterResults, IStatModelProcessable processableData,
@@ -650,7 +665,7 @@ public class PrefilterService implements IPrefilterService
 		TTest test = new TTest();
 		DunnettsTest dunnetts = new DunnettsTest();
 
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		executor = Executors.newFixedThreadPool(4);
 		// Loop through the probes
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
@@ -732,18 +747,14 @@ public class PrefilterService implements IPrefilterService
 		    };
 	    	executor.execute(run);
 		}
-
+		//Stop accepting new runnables
 	    executor.shutdown();
+	    
+	    //Wait for all the threads to finish
 	    while (!executor.isTerminated()) {
-    		try {
-		    	if(cancel) {
-					executor.shutdownNow();
-					executor.awaitTermination(2, TimeUnit.SECONDS);
-		    		return;
-		    	}
+	    	try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
 				e.printStackTrace();
 			}
 	    }

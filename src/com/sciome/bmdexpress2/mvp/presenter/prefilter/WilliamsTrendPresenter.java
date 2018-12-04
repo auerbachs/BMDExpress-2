@@ -64,7 +64,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 						}
 						if(running) {
 							//Set cancel to be false in case the service was cancelled before
-							getService().setCancel(false);
+							getService().start();
 							resultList[threadCount] = getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
 									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange,
 									updater, tTest);
@@ -155,7 +155,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 				running = true;
 				try
 				{
-					getService().setCancel(false);
+					getService().start();
 					WilliamsTrendResults williamsTrendResults = getService().williamsTrendAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, me, tTest);
 					
@@ -197,7 +197,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 		setProgress(0.0);
 		setMessage("");
 		running = false;
-		getService().setCancel(true);
+		getService().cancel();
 	}
 	
 	@Override

@@ -50,7 +50,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 							setMessage((i + 1) + "/" + processableData.size());
 
 							//Set cancel to be false in case the service was cancelled before
-							getService().setCancel(false);
+							getService().start();
 							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
 									initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
 									loelPValue, loelFoldChange, me, tTest));
@@ -105,7 +105,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 				try
 				{
 					//Set cancel to be false in case the service was cancelled before
-					getService().setCancel(false);
+					getService().start();
 					OriogenResults oriogenResults = getService().oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
 							loelPValue, loelFoldChange, me, tTest);
@@ -148,7 +148,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 		setMessage("");
 		setProgress(0.0);
 		running = false;
-		getService().setCancel(true);
+		getService().cancel();
 	}
 	
 	@Override
