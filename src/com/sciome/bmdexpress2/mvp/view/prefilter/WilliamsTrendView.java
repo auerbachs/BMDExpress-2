@@ -112,6 +112,11 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		tRadioButton.setToggleGroup(radioGroup);
 		dunnettsRadioButton.setToggleGroup(radioGroup);
 		
+		if(input.istTest())
+			tRadioButton.setSelected(true);
+		else
+			dunnettsRadioButton.setSelected(true);
+		
 		adjustedPValueCutoffComboBox.getItems().add("0.01");
 		adjustedPValueCutoffComboBox.getItems().add("0.05");
 		adjustedPValueCutoffComboBox.getItems().add("0.10");

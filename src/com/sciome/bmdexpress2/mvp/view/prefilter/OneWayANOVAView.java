@@ -111,6 +111,11 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		tRadioButton.setToggleGroup(radioGroup);
 		dunnettsRadioButton.setToggleGroup(radioGroup);
 		
+		if(input.istTest())
+			tRadioButton.setSelected(true);
+		else
+			dunnettsRadioButton.setSelected(true);
+		
 		adjustedPValueCutoffComboBox.getItems().add("0.05");
 		adjustedPValueCutoffComboBox.getItems().add("0.01");
 		adjustedPValueCutoffComboBox.getItems().add("0.10");
@@ -152,6 +157,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
 					pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), tRadioButton.isSelected());
 		}
+		startButton.setDisable(true);
 	}
 
 	public void handle_cancelButtonPressed(ActionEvent event)

@@ -63,6 +63,8 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 							updaters.add(updater);
 						}
 						if(running) {
+							//Set cancel to be false in case the service was cancelled before
+							getService().setCancel(false);
 							resultList[threadCount] = getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
 									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange,
 									updater, tTest);
@@ -145,7 +147,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
 			boolean tTest)
 	{
-		WilliamsUpdater me = new WilliamsUpdater();
+		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
 			@Override
 			protected Integer call() throws Exception
@@ -153,6 +155,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 				running = true;
 				try
 				{
+					getService().setCancel(false);
 					WilliamsTrendResults williamsTrendResults = getService().williamsTrendAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, me, tTest);
 					
@@ -191,27 +194,32 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 	}
 	
 	public void cancel() {
-		running = false;
-		getService().cancel();
+		setProgress(0.0);
 		setMessage("");
+		running = false;
+		getService().setCancel(true);
 	}
 	
 	@Override
 	public void setProgress(double progress) {
-		Platform.runLater(() ->
-		{
-			getView().updateProgress(progress);
-
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateProgress(progress);
+	
+			});
+		}
 	}
 	
 	@Override
 	public void setMessage(String message) {
-		Platform.runLater(() ->
-		{
-			getView().updateMessage(message);
-
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateMessage(message);
+	
+			});
+		}
 	}
 	
 	@Subscribe

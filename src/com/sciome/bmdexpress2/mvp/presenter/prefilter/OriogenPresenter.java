@@ -48,6 +48,9 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 					for(int i = 0; i < processableData.size(); i++) {
 						if(running) {
 							setMessage((i + 1) + "/" + processableData.size());
+
+							//Set cancel to be false in case the service was cancelled before
+							getService().setCancel(false);
 							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
 									initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
 									loelPValue, loelFoldChange, me, tTest));
@@ -101,6 +104,8 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 				running = true;
 				try
 				{
+					//Set cancel to be false in case the service was cancelled before
+					getService().setCancel(false);
 					OriogenResults oriogenResults = getService().oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
 							initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
 							loelPValue, loelFoldChange, me, tTest);
@@ -140,24 +145,29 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	}
 	
 	public void cancel() {
-		running = false;
-		getService().cancel();
 		setMessage("");
+		setProgress(0.0);
+		running = false;
+		getService().setCancel(true);
 	}
 	
 	@Override
 	public void setProgress(double progress) {
-		Platform.runLater(() ->
-		{
-			getView().updateProgress(progress);
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateProgress(progress);
+			});
+		}
 	}
 	
 	public void setMessage(String message) {
-		Platform.runLater(() ->
-		{
-			getView().updateMessage(message);
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateMessage(message);
+			});
+		}
 	}
 	
 	@Subscribe

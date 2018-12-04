@@ -114,6 +114,11 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		ToggleGroup radioGroup = new ToggleGroup();
 		tRadioButton.setToggleGroup(radioGroup);
 		dunnettsRadioButton.setToggleGroup(radioGroup);
+
+		if(input.istTest())
+			tRadioButton.setSelected(true);
+		else
+			dunnettsRadioButton.setSelected(true);
 		
 		adjustedPValueCutoffComboBox.getItems().add("0.05");
 		adjustedPValueCutoffComboBox.getItems().add("0.01");

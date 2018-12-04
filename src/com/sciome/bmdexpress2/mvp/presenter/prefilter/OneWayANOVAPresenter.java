@@ -50,6 +50,9 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 					for (int i = 0; i < processableData.size(); i++) {
 						if(running) {
 							setMessage((i + 1) + "/" + processableData.size());
+
+							//Set cancel to be false in case the service was cancelled before
+							getService().setCancel(false);
 							resultList.add(getService().oneWayANOVAAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection, 
 									filterOutControlGenes, useFoldFilter, foldFilterValue,
 									loelPValue, loelFoldChange, me, tTest));
@@ -103,6 +106,8 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 				running = true;
 				try
 				{
+					//Set cancel to be false in case the service was cancelled before
+					getService().setCancel(false);
 					OneWayANOVAResults oneWayResults = getService().oneWayANOVAAnalysis(processableData, pCutOff, multipleTestingCorrection, 
 																		filterOutControlGenes, useFoldFilter, foldFilterValue,
 																		loelPValue, loelFoldChange, me, tTest);
@@ -141,25 +146,30 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 	}
 
 	public void cancel() {
-		running = false;
-		getService().cancel();
 		setMessage("");
+		setProgress(0.0);
+		running = false;
+		getService().setCancel(true);
 	}
 	
 	@Override
 	public void setProgress(double progress) {
-		Platform.runLater(() ->
-		{
-			getView().updateProgress(progress);
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateProgress(progress);
+			});
+		}
 	}
 	
 	@Override
 	public void setMessage(String message) {
-		Platform.runLater(() ->
-		{
-			getView().updateMessage(message);
-		});
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateMessage(message);
+			});
+		}
 	}
 	
 	@Subscribe

@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.stat.inference.TTest;
@@ -124,7 +125,6 @@ public class PrefilterService implements IPrefilterService
 			}
 			else
 			{
-				updater.setProgress(0);
 				return null;
 			}
 		}
@@ -161,7 +161,6 @@ public class PrefilterService implements IPrefilterService
 			}
 			else
 			{
-				updater.setProgress(0);
 				return null;
 			}
 		}
@@ -176,7 +175,6 @@ public class PrefilterService implements IPrefilterService
 		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
 		
 		if(cancel) {
-			updater.setProgress(0);
 			return null;
 		}
 
@@ -190,9 +188,14 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		if(tTest)
+			notes.add("NOTEL/LOTEL Test: " + "T-Test");
+		else 
+			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
+		
+		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
-
+		
 		if (multipleTestingCorrection)
 		{
 			name += "_MTC";
@@ -256,7 +259,12 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		if(tTest)
+			notes.add("NOTEL/LOTEL Test: " + "T-Test");
+		else 
+			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
+		
+		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 
 		Origen_Data data = new Origen_Data();
@@ -367,7 +375,6 @@ public class PrefilterService implements IPrefilterService
 			}
 			else
 			{
-				updater.setProgress(0);
 				return null;
 			}
 		}
@@ -404,7 +411,6 @@ public class PrefilterService implements IPrefilterService
 			}
 			else
 			{
-				updater.setProgress(0);
 				return null;
 			}
 		}
@@ -475,16 +481,17 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		notes.add("NOTEL/LOTEL T-Test p-Value Threshold: " + loelPValue);
+		if(tTest)
+			notes.add("NOTEL/LOTEL Test: " + "T-Test");
+		else 
+			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
+		
+		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		// This class should eventually be moved to sciome commons
 		OneWayANOVAAnalysis aNOVAAnalysis = new OneWayANOVAAnalysis();
-
-		// debug entry, 04.24.2018
-		// CurvePProcessor.debug_curvep(doseResponseExperiment);
-		//
 
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
@@ -569,11 +576,13 @@ public class PrefilterService implements IPrefilterService
 		return oneWayResults;
 	}
 
-	public void cancel()
+	public void setCancel(boolean cancel)
 	{
-		williamsUtil.cancel();
-		oriogenUtil.cancel();
-		this.cancel = true;
+		if(cancel) {
+			williamsUtil.cancel();
+			oriogenUtil.cancel();
+		}
+		this.cancel = cancel;
 	}
 
 	private void performFoldFilter(PrefilterResults prefilterResults, IStatModelProcessable processableData,
@@ -604,7 +613,7 @@ public class PrefilterService implements IPrefilterService
 	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest, SimpleProgressUpdater updater)
 	{
 		updater.setProgress(0);
-		updater.setMessage("Dunnett's Test");
+		
 		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
 		List<Integer> doseGroups = new ArrayList<Integer>();
@@ -640,9 +649,8 @@ public class PrefilterService implements IPrefilterService
 
 		TTest test = new TTest();
 		DunnettsTest dunnetts = new DunnettsTest();
-		BlockingQueue<Runnable> runnables = new SynchronousQueue<Runnable>();
 
-		ExecutorService executor = Executors.newFixedThreadPool(5);
+		ExecutorService executor = Executors.newFixedThreadPool(4);
 		// Loop through the probes
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
@@ -678,6 +686,7 @@ public class PrefilterService implements IPrefilterService
 								pValues.add(Float.NaN);
 						}
 					} else {
+						updater.setMessage("Dunnett's Test: " + index + "/" + prefilterResults.getPrefilterResults().size());
 						//Use Dunnett's test to calculate p values
 						double[][] doses = new double[doseGroups.size() - 1][];
 						for (int j = 1; j < doseGroups.size(); j++)
@@ -726,10 +735,17 @@ public class PrefilterService implements IPrefilterService
 
 	    executor.shutdown();
 	    while (!executor.isTerminated()) {
-	    	if(cancel) {
-	    		executor.shutdownNow();
-	    		return;
-	    	}
+    		try {
+		    	if(cancel) {
+					executor.shutdownNow();
+					executor.awaitTermination(2, TimeUnit.SECONDS);
+		    		return;
+		    	}
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				e.printStackTrace();
+			}
 	    }
 	}
 }

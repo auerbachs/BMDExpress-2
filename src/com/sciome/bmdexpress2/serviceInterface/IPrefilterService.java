@@ -23,5 +23,5 @@ public interface IPrefilterService {
 			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater, 
 			boolean tTest);
 	
-	public void cancel();
+	public void setCancel(boolean cancel);
 }
