@@ -151,9 +151,9 @@
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label prefHeight="20.0" prefWidth="253.0" text="P-Value">
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="20.0" prefWidth="253.0" text="P-Value:" textAlignment="RIGHT">
                                        <GridPane.margin>
-                                          <Insets left="100.0" />
+                                          <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </Label>
                                     <TextField fx:id="foldChangeLoelTextField" layoutX="11.0" layoutY="1.0" prefHeight="20.0" prefWidth="140.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -161,12 +161,12 @@
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label prefHeight="20.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="1">
+                                    <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="253.0" text="Fold Change Value:" textAlignment="RIGHT" GridPane.rowIndex="1">
                                        <GridPane.margin>
-                                          <Insets left="100.0" />
+                                          <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <ProgressBar fx:id="oriogenProgressBar" prefHeight="20.0" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <ProgressBar fx:id="oriogenProgressBar" prefHeight="20.0" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin></ProgressBar>
@@ -180,16 +180,16 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </RadioButton>
-                                    <Label fx:id="oriogenProgressMessage" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="oriogenProgressMessage" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </Label>
                                  </children>
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" percentWidth="0.0" prefWidth="220.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" percentWidth="0.0" prefWidth="160.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" percentWidth="0.0" prefWidth="220.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
