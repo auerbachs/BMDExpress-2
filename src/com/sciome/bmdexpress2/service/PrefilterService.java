@@ -730,9 +730,8 @@ public class PrefilterService implements IPrefilterService
 						// NOEL/LOEL
 						// and stop.
 						if (Math.abs(prefilterResults.getPrefilterResults().get(index).getFoldChanges()
-								.get(j)) > foldFilterValue && pValues.get(j - 1) < pValue)
+								.get(j - 1)) > foldFilterValue && pValues.get(j - 1) < pValue)
 						{
-
 							prefilterResults.getPrefilterResults().get(index).setNoelDose(treatments.get(j - 1));
 							prefilterResults.getPrefilterResults().get(index).setLoelDose(treatments.get(j));
 							break;

@@ -47,7 +47,6 @@ public class FoldChange
 
 		Float bestFoldChange = 0.0f;
 		foldChanges = new ArrayList<>();
-		foldChanges.add(0.0f);
 		for (int i = 1; i < indexBuckets.size(); i++)
 		{
 			Float averageA = getAverage(getListFromIndexList(indexBuckets.get(i), responses));
