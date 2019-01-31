@@ -104,9 +104,12 @@ public class ChartDataPackMaker
 			chartData.setDataPointLists(new HashMap<>());
 			String label = "";
 
+			//Fill in data table before getting labels
+			object.getColumnHeader();
 			Object labelObject = object.getValueForHeaderAt(labelKey, i);
 			if (labelObject == null)
 				continue;
+			
 			label = labelObject.toString();
 			chartData.setDataPointLabel(label);
 
@@ -137,7 +140,6 @@ public class ChartDataPackMaker
 
 			}
 			chartDataList.add(chartData);
-
 		}
 
 		chartDataList.sort(new Comparator<ChartData>() {
@@ -153,7 +155,6 @@ public class ChartDataPackMaker
 		chartDataPack.setName(object.getName());
 
 		return chartDataPack;
-
 	}
 
 	private List<Double> parseForList(String value)
