@@ -1,168 +1,285 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="631.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
-  <center>
-    <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-      <children>
-        <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-          <children>
-            <AnchorPane prefHeight="291.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
-              <children>
-                <TitledPane collapsible="false" prefHeight="246.0" prefWidth="600.0" text="Data Source Options" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <content>
-                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                      <children>
-                        <VBox fx:id="mainVBox" alignment="TOP_CENTER" layoutX="21.4" layoutY="20.4" prefHeight="431.0" prefWidth="608.0" spacing="10.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                          <children>
-                            <HBox fx:id="progressHBox" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="200.0" spacing="20.0" visible="false">
-                              <children>
-                                <Label fx:id="progressLabel" text="Label" />
-                                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="278.0" progress="0.0" />
-                              </children>
-                            </HBox>
-                            <Label alignment="CENTER" prefHeight="17.0" prefWidth="603.0" text="Benchmark Dose Data:" />
-                            <HBox fx:id="selectionHBox" alignment="CENTER" spacing="15.0">
-                              <children>
-                                <Label fx:id="selectionLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="109.0" text="GO Categories:" />
-                                <ComboBox fx:id="categoryComboBox" prefWidth="150.0" />
-                              </children>
-                            </HBox>
-                            <HBox fx:id="probeFileHBox" alignment="CENTER" prefHeight="36.0" prefWidth="609.0" spacing="15.0">
-                              <children>
-                                <Label fx:id="probeFileLabel" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="100.0" text="Probe File:" />
-                                <TextField fx:id="probeFileTextField" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
-                                <Button fx:id="browseProbeFile" mnemonicParsing="false" onAction="#handle_browseProbe" text="Browse" />
-                              </children>
-                            </HBox>
-                            <HBox fx:id="categoryFileHBox" alignment="CENTER" prefHeight="30.0" prefWidth="609.0" spacing="15.0">
-                              <children>
-                                <Label fx:id="categoryFileLabel" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="100.0" text="Category File:" />
-                                <TextField fx:id="categoryFileTextField" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" />
-                                <Button fx:id="browseCategoryFile" mnemonicParsing="false" onAction="#handle_browseCategory" text="Browse" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="627.0">
-                              <children>
-                                <CheckBox id="bmdFilter4CheckBox" fx:id="removePromiscuousProbesCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="444.0" selected="true" text="Remove Promiscuous Probes" wrapText="true" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                              <children>
-                                <CheckBox fx:id="bmdFilter1CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="444.0" selected="true" text="Remove BMD &gt; Highest Dose from Category Descriptive Statistics" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="609.0" VBox.vgrow="NEVER">
-                              <children>
-                                <CheckBox fx:id="bmdFilter2CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove BMD with p-Value &lt; Cutoff:" />
-                                <TextField fx:id="bmdFilter2Value" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="0.1" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                              <children>
-                                <CheckBox fx:id="bmdFilter3CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMD/BMDL &gt;" />
-                                <TextField fx:id="bmdFilter3Value" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="20" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0">
-                              <children>
-                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMDU/BMD &gt;" />
-                                <TextField id="bmdFilter3Value" fx:id="BMDUBMDTextbox" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="20" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="-1.0" prefWidth="200.0">
-                              <children>
-                                <CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDLCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes with BMDU/BMDL &gt;" />
-                                <TextField id="bmdFilter3Value" fx:id="BMDUBMDLTextbox" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="40" />
-                              </children>
-                            </HBox>
-                            <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-1.0" prefHeight="50.0" prefWidth="627.0">
-                              <children>
-                                <CheckBox fx:id="bmdFilter4CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="347.0" selected="false" text="Remove Genes With BMD Values &gt; N Fold Below the Lowest Positive Dose" wrapText="true" />
-                                <TextField fx:id="bmdFilter4Value" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="10" />
-                              </children>
-                            </HBox>
-                                          <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
+	<center>
+		<AnchorPane minHeight="700.0" prefHeight="900.0" BorderPane.alignment="CENTER">
+			<children>
+				<VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+					<children>
+						<AnchorPane minHeight="500.0" minWidth="650.0" prefHeight="700.0" prefWidth="650.0" VBox.vgrow="ALWAYS">
+							<children>
+								<TabPane minHeight="500.0" prefHeight="500.0" prefWidth="650.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+									<tabs>
+										<Tab text="Category Analysis">
+											<content>
+												<AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+													<children>
+														<VBox fx:id="mainVBox" alignment="TOP_CENTER" layoutX="21.4" layoutY="20.4" prefHeight="431.0" prefWidth="608.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+															<children>
+																<Label alignment="CENTER" minHeight="25.0" prefHeight="25.0" prefWidth="603.0" text="Benchmark Dose Data:" />
+																<HBox fx:id="selectionHBox" alignment="CENTER" minHeight="25.0" prefHeight="25.0" spacing="15.0">
+																	<children>
+																		<Label fx:id="selectionLabel" alignment="CENTER_RIGHT" minHeight="25.0" prefHeight="25.0" prefWidth="109.0" text="GO Categories:" />
+																		<ComboBox fx:id="categoryComboBox" minHeight="25.0" prefHeight="25.0" prefWidth="150.0" />
+																	</children>
+																</HBox>
+																<HBox fx:id="probeFileHBox" alignment="CENTER" minHeight="25.0" prefHeight="25.0" prefWidth="609.0" spacing="15.0">
+																	<children>
+																		<Label fx:id="probeFileLabel" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="100.0" text="Probe File:" />
+																		<TextField fx:id="probeFileTextField" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" />
+																		<Button fx:id="browseProbeFile" minHeight="25.0" mnemonicParsing="false" onAction="#handle_browseProbe" prefHeight="25.0" text="Browse" />
+																	</children>
+																</HBox>
+																<HBox fx:id="categoryFileHBox" alignment="CENTER" minHeight="25.0" prefHeight="25.0" prefWidth="609.0" spacing="15.0">
+																	<children>
+																		<Label fx:id="categoryFileLabel" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" text="Category File:" />
+																		<TextField fx:id="categoryFileTextField" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0" />
+																		<Button fx:id="browseCategoryFile" minHeight="25.0" mnemonicParsing="false" onAction="#handle_browseCategory" prefHeight="25.0" text="Browse" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox id="bmdFilter4CheckBox" fx:id="removePromiscuousProbesCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" selected="true" text="Remove Promiscuous Probes" wrapText="true" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" minHeight="27.0" prefHeight="27.0" prefWidth="200.0" VBox.vgrow="NEVER">
+																	<children>
+																		<CheckBox fx:id="bmdFilter1CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" selected="true" text="Remove BMD &gt; Highest Dose from Category Descriptive Statistics" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="650.0" VBox.vgrow="NEVER">
+																	<children>
+																		<CheckBox fx:id="bmdFilter2CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="300.0" selected="false" text="Remove BMD with p-Value &lt; Cutoff:" />
+																		<TextField fx:id="bmdFilter2Value" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="27.0" prefWidth="96.0" text="0.1" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="200.0" VBox.vgrow="NEVER">
+																	<children>
+																		<CheckBox fx:id="bmdFilter3CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="300.0" selected="false" text="Remove Genes with BMD/BMDL &gt;" />
+																		<TextField fx:id="bmdFilter3Value" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="27.0" prefWidth="96.0" text="20" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="200.0">
+																	<children>
+																		<CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="300.0" selected="false" text="Remove Genes with BMDU/BMD &gt;" />
+																		<TextField id="bmdFilter3Value" fx:id="BMDUBMDTextbox" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="27.0" prefWidth="96.0" text="20" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="200.0">
+																	<children>
+																		<CheckBox id="bmdFilter3CheckBox" fx:id="BMDUBMDLCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="300.0" selected="false" text="Remove Genes with BMDU/BMDL &gt;" />
+																		<TextField id="bmdFilter3Value" fx:id="BMDUBMDLTextbox" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="27.0" prefWidth="96.0" text="40" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="40.0" prefHeight="40.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox fx:id="bmdFilter4CheckBox" minHeight="40.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="300.0" selected="false" text="Remove Genes With BMD Values &gt; N Fold Below the Lowest Positive Dose" wrapText="true" />
+																		<TextField fx:id="bmdFilter4Value" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="10" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox fx:id="bmdFilterMaxFoldChangeCheckBox" mnemonicParsing="false" prefWidth="300.0" selected="false" text="Remove Genes With Max Fold Change &lt;" wrapText="true" />
+																		<TextField fx:id="bmdFilterMaxFoldChangeValue" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="1.2" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox fx:id="bmdFilterMaxPValueCheckBox" mnemonicParsing="false" prefWidth="300.0" selected="false" text="Remove Genes With Prefilter p-Value &gt;" wrapText="true" />
+																		<TextField fx:id="bmdFilterMaxPValueChangeValue" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".05" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox fx:id="bmdFilterMaxAdjustedPValueCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="300.0" selected="false" text="Remove Genes With Prefilter Adjusted p-Value &gt;" wrapText="true" />
+																		<TextField fx:id="bmdFilterMaxAdjustedPValueChangeValue" maxWidth="-Infinity" minHeight="25.0" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".5" />
+																	</children>
+																</HBox>
+																<HBox alignment="CENTER" layoutX="10.0" layoutY="503.0" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+																	<children>
+																		<CheckBox fx:id="deduplicateGeneSetsCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="396.0" selected="false" text="Eliminate Gene Set Redundancy" wrapText="true" />
+																	</children>
+																</HBox>
+																<TitledPane collapsible="false" layoutY="2.0" minHeight="100.0" prefHeight="100.0" prefWidth="650.0" text="Probe Set to Gene Conversion" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
+									<content>
+										<AnchorPane prefHeight="200.0" prefWidth="200.0">
+											<children>
+												<GridPane prefHeight="110.0" prefWidth="627.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+													<children>
+														<CheckBox fx:id="conflictingProbeSetsCheckBox" mnemonicParsing="false" selected="true" text="Identify Conflicting Probe Sets" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
+														<Label alignment="BOTTOM_RIGHT" prefHeight="16.0" prefWidth="335.0" text="Correlation Cutoff for Conflicting Probe Sets:" GridPane.rowIndex="1">
+															<GridPane.margin>
+																<Insets right="20.0" />
+															</GridPane.margin>
+														</Label>
+														<TextField fx:id="correlationCutoffProbeSetsValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="56.0" text="0.5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+													</children>
+													<columnConstraints>
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="335.0" minWidth="10.0" prefWidth="331.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="333.0" minWidth="10.0" prefWidth="246.0" />
+													</columnConstraints>
+													<rowConstraints>
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+													</rowConstraints>
+												</GridPane>
+											</children>
+										</AnchorPane>
+									</content>
+								</TitledPane>
+															</children>
+														</VBox>
+													</children>
+												</AnchorPane>
+											</content>
+										</Tab>
+										<Tab text="IVIVE">
+											<content>
+												<AnchorPane minHeight="500.0" minWidth="650.0" prefHeight="555.0" prefWidth="650.0">
+                                       <children>
+                                          <VBox prefHeight="500.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <CheckBox fx:id="bmdFilterMaxFoldChangeCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With Max Fold Change &lt;" wrapText="true" />
-                                                <TextField fx:id="bmdFilterMaxFoldChangeValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text="1.2" />
+                                                <HBox prefHeight="50.0" prefWidth="650.0">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="1 Compartment">
+                                                         <HBox.margin>
+                                                            <Insets left="50.0" />
+                                                         </HBox.margin>
+                                                      </CheckBox>
+                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="PBTK" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox prefHeight="50.0" prefWidth="650.0">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="3 Compartment">
+                                                         <HBox.margin>
+                                                            <Insets left="50.0" />
+                                                         </HBox.margin>
+                                                      </CheckBox>
+                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="3 Compartmentss" />
+                                                   </children>
+                                                </HBox>
+                                                <Separator prefHeight="5.0" prefWidth="650.0" />
+                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
+                                                         <children>
+                                                            <Label alignment="CENTER" prefWidth="200.0" text="SMILES" />
+                                                            <TextField />
+                                                         </children>
+                                                         <padding>
+                                                            <Insets left="50.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                      <Label alignment="CENTER" prefHeight="75.0" prefWidth="50.0" text="OR" />
+                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="150.0">
+                                                         <children>
+                                                            <Label alignment="CENTER" prefWidth="200.0" text="CASRN" />
+                                                            <TextField />
+                                                         </children>
+                                                      </VBox>
+                                                      <Label alignment="CENTER" prefHeight="75.0" prefWidth="50.0" text="OR" />
+                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
+                                                         <children>
+                                                            <Label alignment="CENTER" prefWidth="200.0" text="DSSTOXID" />
+                                                            <TextField />
+                                                         </children>
+                                                         <padding>
+                                                            <Insets right="50.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets top="12.5" />
+                                                   </padding>
+                                                </HBox>
+                                                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Auto Populate">
+                                                   <VBox.margin>
+                                                      <Insets bottom="12.5" left="250.0" right="250.0" />
+                                                   </VBox.margin>
+                                                </Button>
+                                                <Separator prefHeight="5.0" prefWidth="650.0" />
+                                                <GridPane vgap="20.0">
+                                                  <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <VBox.margin>
+                                                      <Insets left="20.0" right="20.0" top="20.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <Label text="Name  " />
+                                                      <Label text="CASRN  " GridPane.rowIndex="1" />
+                                                      <Label text="SMILES  " GridPane.rowIndex="2" />
+                                                      <Label text="Kwt  " GridPane.rowIndex="3" />
+                                                      <TextField GridPane.columnIndex="1" />
+                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField GridPane.columnIndex="3" />
+                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                      <Label text="pKa Donor  " GridPane.columnIndex="2" />
+                                                      <Label text="pKa Accep  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                      <Label text="CLint  " GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                      <Label text="Fub  " GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                      <Label text="LogP  " GridPane.rowIndex="4" />
+                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                   </children>
+                                                </GridPane>
                                              </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
-                                             <children>
-                                                <CheckBox fx:id="bmdFilterMaxPValueCheckBox" mnemonicParsing="false" prefWidth="347.0" selected="false" text="Remove Genes With Prefilter p-Value &gt;" wrapText="true" />
-                                                <TextField fx:id="bmdFilterMaxPValueChangeValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".05" />
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
-                                             <children>
-                                                <CheckBox fx:id="bmdFilterMaxAdjustedPValueCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="347.0" selected="false" text="Remove Genes With Prefilter Adjusted p-Value &gt;" wrapText="true" />
-                                                <TextField fx:id="bmdFilterMaxAdjustedPValueChangeValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="96.0" text=".5" />
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER" layoutX="10.0" layoutY="503.0" maxHeight="-Infinity" prefHeight="50.0" prefWidth="627.0">
-                                             <children>
-                                                <CheckBox fx:id="deduplicateGeneSetsCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="441.0" selected="false" text="Eliminate Gene Set Redundancy" wrapText="true" />
-                                             </children>
-                                          </HBox>
-                          </children>
-                        </VBox>
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-              </children>
-            </AnchorPane>
-            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="113.0" prefWidth="631.0" VBox.vgrow="ALWAYS">
-              <children>
-                <TitledPane collapsible="false" layoutY="2.0" prefHeight="111.0" prefWidth="631.0" text="Probe Set to Gene Conversion" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
-                  <content>
-                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                      <children>
-                        <GridPane prefHeight="110.0" prefWidth="627.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="14.0">
-                          <children>
-                            <CheckBox fx:id="conflictingProbeSetsCheckBox" mnemonicParsing="false" selected="true" text="Identify Conflicting Probe Sets" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" />
-                            <Label alignment="BOTTOM_RIGHT" prefHeight="16.0" prefWidth="335.0" text="Correlation Cutoff for Conflicting Probe Sets:" GridPane.rowIndex="1">
-                              <GridPane.margin>
-                                <Insets right="20.0" />
-                              </GridPane.margin>
-                            </Label>
-                            <TextField fx:id="correlationCutoffProbeSetsValue" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="56.0" text="0.5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                          </children>
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="335.0" minWidth="10.0" prefWidth="331.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.0" minWidth="10.0" prefWidth="246.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                        </GridPane>
-                      </children>
-                    </AnchorPane>
-                  </content>
-                </TitledPane>
-              </children>
-            </AnchorPane>
-            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
-              <children>
-                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" spacing="50.0" AnchorPane.bottomAnchor="-0.5" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.5">
-                  <children>
-                    <Button fx:id="startButton" mnemonicParsing="false" onAction="#handle_start" text="Start" />
-                              <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
-                    <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handle_close" text="Close" />
-                  </children>
-                </HBox>
-              </children>
-            </AnchorPane>
-          </children>
-        </VBox>
-      </children>
-    </AnchorPane>
-  </center>
+                                          </VBox>
+                                       </children></AnchorPane>
+											</content>
+										</Tab>
+									</tabs>
+								</TabPane>
+							</children>
+						</AnchorPane>
+                  <AnchorPane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="650.0">
+                     <children>
+                        <HBox fx:id="progressHBox" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="650.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label fx:id="progressLabel" centerShape="false" text="Label" />
+                              <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="278.0" progress="0.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+						<AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+							<children>
+								<HBox alignment="CENTER" prefHeight="50.0" prefWidth="600.0" spacing="50.0" AnchorPane.bottomAnchor="-0.5" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.5">
+									<children>
+										<Button fx:id="startButton" mnemonicParsing="false" onAction="#handle_start" text="Start" />
+										<Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
+										<Button fx:id="closeButton" mnemonicParsing="false" onAction="#handle_close" text="Close" />
+									</children>
+								</HBox>
+							</children>
+						</AnchorPane>
+					</children>
+				</VBox>
+			</children>
+		</AnchorPane>
+	</center>
 </BorderPane>
