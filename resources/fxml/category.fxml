@@ -148,22 +148,22 @@
                                              <children>
                                                 <HBox prefHeight="50.0" prefWidth="650.0">
                                                    <children>
-                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="1 Compartment">
+                                                      <CheckBox fx:id="oneCompartmentCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="1 Compartment">
                                                          <HBox.margin>
                                                             <Insets left="50.0" />
                                                          </HBox.margin>
                                                       </CheckBox>
-                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="PBTK" />
+                                                      <CheckBox fx:id="pbtkCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="PBTK" />
                                                    </children>
                                                 </HBox>
                                                 <HBox prefHeight="50.0" prefWidth="650.0">
                                                    <children>
-                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="3 Compartment">
+                                                      <CheckBox fx:id="threeCompartmentCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="3 Compartment">
                                                          <HBox.margin>
                                                             <Insets left="50.0" />
                                                          </HBox.margin>
                                                       </CheckBox>
-                                                      <CheckBox mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="3 Compartmentss" />
+                                                      <CheckBox fx:id="threeCompartmentSSCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="3 Compartment-SS" />
                                                    </children>
                                                 </HBox>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
@@ -171,8 +171,8 @@
                                                    <children>
                                                       <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
                                                          <children>
-                                                            <Label alignment="CENTER" prefWidth="200.0" text="SMILES" />
-                                                            <TextField />
+                                                            <Label alignment="CENTER" prefWidth="200.0" text="Name" />
+                                                            <TextField fx:id="nameAutoPopulate" />
                                                          </children>
                                                          <padding>
                                                             <Insets left="50.0" />
@@ -182,14 +182,14 @@
                                                       <VBox minHeight="75.0" prefHeight="75.0" prefWidth="150.0">
                                                          <children>
                                                             <Label alignment="CENTER" prefWidth="200.0" text="CASRN" />
-                                                            <TextField />
+                                                            <TextField fx:id="casrnAutoPopulate" />
                                                          </children>
                                                       </VBox>
                                                       <Label alignment="CENTER" prefHeight="75.0" prefWidth="50.0" text="OR" />
                                                       <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
                                                          <children>
-                                                            <Label alignment="CENTER" prefWidth="200.0" text="DSSTOXID" />
-                                                            <TextField />
+                                                            <Label alignment="CENTER" prefWidth="200.0" text="SMILES" />
+                                                            <TextField fx:id="smilesAutoPopulate" />
                                                          </children>
                                                          <padding>
                                                             <Insets right="50.0" />
@@ -203,7 +203,7 @@
                                                       <Insets top="12.5" />
                                                    </padding>
                                                 </HBox>
-                                                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Auto Populate">
+                                                <Button fx:id="autoPopulateButton" mnemonicParsing="false" onAction="#handle_auto_populate" prefHeight="30.0" prefWidth="150.0" text="Auto Populate">
                                                    <VBox.margin>
                                                       <Insets bottom="12.5" left="250.0" right="250.0" />
                                                    </VBox.margin>
@@ -230,21 +230,21 @@
                                                       <Label text="Name  " />
                                                       <Label text="CASRN  " GridPane.rowIndex="1" />
                                                       <Label text="SMILES  " GridPane.rowIndex="2" />
-                                                      <Label text="Kwt  " GridPane.rowIndex="3" />
-                                                      <TextField GridPane.columnIndex="1" />
-                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                      <TextField GridPane.columnIndex="3" />
-                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                                      <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                      <Label text="MW  " GridPane.rowIndex="3" />
+                                                      <TextField fx:id="nameTextField" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="casrnTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="smilesTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="mwTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="pKaDonorTextField" GridPane.columnIndex="3" />
+                                                      <TextField fx:id="pKaAcceptorTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="clintTextField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="fubTextField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                                       <Label text="pKa Donor  " GridPane.columnIndex="2" />
-                                                      <Label text="pKa Accep  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                      <Label text="pKa Acceptor  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                       <Label text="CLint  " GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                                       <Label text="Fub  " GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                                       <Label text="LogP  " GridPane.rowIndex="4" />
-                                                      <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <TextField fx:id="logPTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                    </children>
                                                 </GridPane>
                                              </children>

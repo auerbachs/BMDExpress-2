@@ -165,12 +165,13 @@
 		
 		
 		<!-- sciome commons math functions-->
+		<!-- 
          <dependency>
              <groupId>sciome-commons</groupId>
              <artifactId>math</artifactId>
              <version>1.04.0078</version>
          </dependency>
-	
+		-->
 	</dependencies>	
   
   

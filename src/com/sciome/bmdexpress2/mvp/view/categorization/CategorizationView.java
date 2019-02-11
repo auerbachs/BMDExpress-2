@@ -1,8 +1,11 @@
 package com.sciome.bmdexpress2.mvp.view.categorization;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
@@ -18,7 +21,12 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFilesTool;
+import com.sciome.commons.math.httk.model.Compound;
+import com.sciome.commons.math.httk.model.CompoundTable;
+import com.sciome.commons.math.httk.model.InVitroData;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -143,6 +151,42 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private CheckBox						bmdFilterMaxAdjustedPValueCheckBox;
 	@FXML
 	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
+	
+	//IVIVE
+	@FXML
+	private CheckBox						oneCompartmentCheckBox;
+	@FXML
+	private CheckBox						pbtkCheckBox;
+	@FXML
+	private CheckBox						threeCompartmentCheckBox;
+	@FXML
+	private CheckBox						threeCompartmentSSCheckBox;
+	@FXML
+	private TextField						nameAutoPopulate;
+	@FXML
+	private TextField						casrnAutoPopulate;
+	@FXML
+	private TextField						smilesAutoPopulate;
+	@FXML
+	private Button							autoPopulateButton;
+	@FXML
+	private TextField						nameTextField;
+	@FXML
+	private TextField						casrnTextField;
+	@FXML
+	private TextField						smilesTextField;
+	@FXML
+	private TextField						mwTextField;
+	@FXML
+	private TextField						logPTextField;
+	@FXML
+	private TextField						pKaDonorTextField;
+	@FXML
+	private TextField						pKaAcceptorTextField;
+	@FXML
+	private TextField						clintTextField;
+	@FXML
+	private TextField						fubTextField;
 
 	private CategoryInput					input;
 
@@ -230,6 +274,48 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		alert.showAndWait();
 	}
+	
+	public void handle_auto_populate(ActionEvent event) {
+		CompoundTable table = CompoundTable.getInstance();
+		table.loadDefault();
+		
+		Compound compound = null;
+		if(!nameAutoPopulate.getText().equals("")) {
+			compound = table.getCompoundByName(nameAutoPopulate.getText());
+		} else if(!casrnAutoPopulate.getText().equals("")) {
+			compound = table.getCompoundByCAS(casrnAutoPopulate.getText());
+		} else if(!smilesAutoPopulate.getText().equals("")) {
+			compound = table.getCompoundBySMILES(smilesAutoPopulate.getText());
+		}
+		
+		if(compound != null) {
+			//If we got a compound fill in the fields
+			nameTextField.setText(compound.getName());
+			casrnTextField.setText(compound.getCAS());
+			smilesTextField.setText(compound.getSMILES());
+			mwTextField.setText("" + compound.getMW());
+			logPTextField.setText("" + compound.getLogP());
+			String pkaDonorString = "";
+			String pkaAcceptorString = "";
+			if(!compound.getpKaDonors().toString().equals("[]")) {
+				 pkaDonorString = compound.getpKaDonors().toString().substring(1, compound.getpKaDonors().toString().length() - 1);
+			}
+			if(!compound.getpKaAcceptors().toString().equals("[]")) {
+				pkaAcceptorString = compound.getpKaAcceptors().toString().substring(1, compound.getpKaAcceptors().toString().length() - 1);
+			}
+			pKaDonorTextField.setText(pkaDonorString);
+			pKaAcceptorTextField.setText(pkaAcceptorString);
+			clintTextField.setText("" + compound.getInVitroParam("Human", "Clint"));
+			fubTextField.setText("" + compound.getInVitroParam("Human", "Funbound.plasma"));
+		} else {
+			//Otherwise give user a message
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Compound Search");
+			alert.setHeaderText(null);
+			alert.setContentText("Could not find compound");
+			alert.showAndWait();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -293,6 +379,71 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				.setText("" + input.getCorrelationCutoffForConflictingProbeSets());
 		presenter.initData(bmdResults, catAnalysisEnum);
 
+		//Initialize IVIVE check box listeners
+		toggleIVIVE(true);
+		oneCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					toggleIVIVE(false);
+				} else if(!checkIVIVE()) {
+					toggleIVIVE(true);
+				}
+			}
+		});
+		pbtkCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					toggleIVIVE(false);
+				} else if(!checkIVIVE()) {
+					toggleIVIVE(true);
+				}
+			}
+		});
+		threeCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					toggleIVIVE(false);
+				} else if(!checkIVIVE()) {
+					toggleIVIVE(true);
+				}
+			}
+		});
+		threeCompartmentSSCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					toggleIVIVE(false);
+				} else if(!checkIVIVE()) {
+					toggleIVIVE(true);
+				}
+			}
+		});
+		
+		//Initialize Auto populate boxes
+		nameAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				casrnAutoPopulate.setText("");
+				smilesAutoPopulate.setText("");
+			}
+		});
+		casrnAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				nameAutoPopulate.setText("");
+				smilesAutoPopulate.setText("");
+			}
+		});
+		smilesAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				casrnAutoPopulate.setText("");
+				nameAutoPopulate.setText("");
+			}
+		});
 	}
 
 	@Override
@@ -375,8 +526,66 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
+		String name = nameTextField.getText();
+		String casrn = casrnTextField.getText();
+		String smiles = smilesTextField.getText();
+		double mw = Double.valueOf(mwTextField.getText());
+		double logP = Double.valueOf(logPTextField.getText());
+		
+		//Read in pka donors and acceptors
+		ArrayList<Double> pkaDonors = new ArrayList<Double>();
+		ArrayList<Double> pkaAcceptors = new ArrayList<Double>();
+		Scanner scanner = new Scanner(pKaDonorTextField.getText());
+		scanner.useDelimiter(",| ");
+		while(scanner.hasNextDouble()) {
+			pkaDonors.add(scanner.nextDouble());
+		}
+		scanner.close();
+		scanner = new Scanner(pKaAcceptorTextField.getText());
+		while(scanner.hasNextDouble()) {
+			pkaAcceptors.add(scanner.nextDouble());
+		}
+		scanner.close();
+		
+		//Initialize InVitroData with clint and fub
+		InVitroData data = new InVitroData();
+		data.setParam("Clint",  Double.valueOf(clintTextField.getText()));
+		data.setParam("Funbound.plasma",  Double.valueOf(fubTextField.getText()));
+		HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
+		map.put("Human", data);
+		
+		HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
+		
+		params.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
+		
+		//Set params with 
+		oneCompartmentCheckBox.isSelected();
+		threeCompartmentCheckBox.isSelected();
+		pbtkCheckBox.isSelected();
+		threeCompartmentSSCheckBox.isSelected();
+		
 		return params;
-
+	}
+	
+	private void toggleIVIVE(boolean disable) {
+		nameAutoPopulate.setDisable(disable);
+		casrnAutoPopulate.setDisable(disable);
+		smilesAutoPopulate.setDisable(disable);
+		autoPopulateButton.setDisable(disable);
+		nameTextField.setDisable(disable);
+		casrnTextField.setDisable(disable);
+		smilesTextField.setDisable(disable);
+		mwTextField.setDisable(disable);
+		logPTextField.setDisable(disable);
+		pKaDonorTextField.setDisable(disable);
+		pKaAcceptorTextField.setDisable(disable);
+		clintTextField.setDisable(disable);
+		fubTextField.setDisable(disable);
+	}
+	
+	private boolean checkIVIVE() {
+		return oneCompartmentCheckBox.isSelected() || pbtkCheckBox.isSelected() ||
+				threeCompartmentCheckBox.isSelected() || threeCompartmentSSCheckBox.isSelected();
 	}
 
 	@Override

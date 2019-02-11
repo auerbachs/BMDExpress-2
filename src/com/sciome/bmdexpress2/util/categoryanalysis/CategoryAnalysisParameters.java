@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.util.categoryanalysis;
 
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
+import com.sciome.commons.math.httk.model.Compound;
 
 public class CategoryAnalysisParameters
 {
@@ -45,6 +46,9 @@ public class CategoryAnalysisParameters
 	private double							minPositiveDose;
 
 	private boolean							deduplicateGeneSets				= false;
+	
+	//Compound for IVIVE calculation
+	private Compound						compound;
 
 	public DefinedCategoryFileParameters getProbeFileParameters()
 	{
@@ -340,4 +344,11 @@ public class CategoryAnalysisParameters
 
 	}
 
+	public Compound getCompound() {
+		return compound;
+	}
+
+	public void setCompound(Compound compound) {
+		this.compound = compound;
+	}
 }

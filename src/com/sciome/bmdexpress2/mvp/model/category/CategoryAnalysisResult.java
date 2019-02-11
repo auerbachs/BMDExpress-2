@@ -27,6 +27,7 @@ import com.sciome.bmdexpress2.mvp.model.IGeneContainer;
 import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
+import com.sciome.bmdexpress2.mvp.model.category.ivive.IVIVEResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.util.NumberManager;
@@ -39,7 +40,6 @@ import com.sciome.bmdexpress2.util.NumberManager;
 public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		implements Serializable, IGeneContainer, IMarkable
 {
-
 	/**
 	 * 
 	 */
@@ -161,6 +161,8 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	private transient Double					bmdlUpper95;
 	private transient Double					bmduUpper95;
 	private transient Double					bmduLower95;
+	
+	private IVIVEResult							ivive;
 
 	private StringBuffer getStringBuffer()
 	{
@@ -922,6 +924,14 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	{
 		this.fishersExactTwoTailPValue = fishersExactTwoTailPValue;
 	}
+	
+	public IVIVEResult getIvive() {
+		return ivive;
+	}
+
+	public void setIvive(IVIVEResult ivive) {
+		this.ivive = ivive;
+	}
 
 	// add in the ratios filters
 	@JsonIgnore
@@ -1137,6 +1147,19 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		headers.add("BMDL list (Conflict)");
 		headers.add("BMDU list (Conflict)");
 		headers.add("Model Counts");
+		
+		//IVIVE header values
+		headers.add("ThreeCompSS BMD Mean Dose");
+		headers.add("ThreeCompSS BMDL Mean Dose");
+		headers.add("ThreeCompSS BMDU Mean Dose");
+		
+		headers.add("ThreeCompSS BMD Median Dose");
+		headers.add("ThreeCompSS BMDL Median Dose");
+		headers.add("ThreeCompSS BMDU Median Dose");
+		
+		headers.add("ThreeCompSS BMD Minimum Dose");
+		headers.add("ThreeCompSS BMDL Minimum Dose");
+		headers.add("ThreeCompSS BMDU Minimum Dose");
 
 		return headers;
 	}
@@ -1288,7 +1311,19 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		row.add(this.percentWithOverallDirectionUP);
 		row.add(this.percentWithOverallDirectionDOWN);
 		row.add(this.percentWithOverallDirectionConflict);
-
+		
+		//IVIVE values
+		row.add(this.getIvive().getBmdMeanDose());
+		row.add(this.getIvive().getBmdlMeanDose());
+		row.add(this.getIvive().getBmduMeanDose());
+		
+		row.add(this.getIvive().getBmdMedianDose());
+		row.add(this.getIvive().getBmdlMedianDose());
+		row.add(this.getIvive().getBmduMedianDose());
+		
+		row.add(this.getIvive().getBmdMinimumDose());
+		row.add(this.getIvive().getBmdlMinimumDose());
+		row.add(this.getIvive().getBmduMinimumDose());
 	}
 
 	public void setGenesThatPassedAllFilters(Integer number)

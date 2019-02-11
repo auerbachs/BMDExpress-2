@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.pca.PCAResult;
@@ -37,12 +38,13 @@ public class PCAService implements IPCAService {
 		PCA pca = new PCA(MatrixUtils.createRealMatrix(numericMatrix).transpose(), CovarianceType.COVARIANCE, 4);
 		PCAResults pcaResults = new PCAResults();
 		List<PCAResult> pcaResultList = new ArrayList<PCAResult>();
-		for(int i = 0; i < pca.getTransformedData().getRowDimension(); i++) {
+		RealMatrix transformedData = pca.getTransformedData();
+		for(int i = 0; i < transformedData.getRowDimension(); i++) {
 			PCAResult singleRow = new PCAResult();
 			singleRow.setDosage(doseVector[i] + " - " + doseResponseExperiment.getTreatments().get(i).getName());
 			List<Float> floatList = new ArrayList<Float>();
-			for(int j = 0; j < pca.getTransformedData().getColumnDimension(); j++) {
-				floatList.add((float) pca.getTransformedData().getEntry(i, j));
+			for(int j = 0; j < transformedData.getColumnDimension(); j++) {
+				floatList.add((float) transformedData.getEntry(i, j));
 			}
 			singleRow.setPrincipleComponents(floatList);
 			pcaResultList.add(singleRow);
