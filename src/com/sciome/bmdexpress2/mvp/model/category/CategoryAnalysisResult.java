@@ -31,6 +31,7 @@ import com.sciome.bmdexpress2.mvp.model.category.ivive.IVIVEResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.util.NumberManager;
+import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = GOAnalysisResult.class, name = "go"),
@@ -162,7 +163,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	private transient Double					bmduUpper95;
 	private transient Double					bmduLower95;
 	
-	private IVIVEResult							ivive;
+	private Map<Model, IVIVEResult>				ivive;
 
 	private StringBuffer getStringBuffer()
 	{
@@ -925,11 +926,11 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		this.fishersExactTwoTailPValue = fishersExactTwoTailPValue;
 	}
 	
-	public IVIVEResult getIvive() {
+	public Map<Model, IVIVEResult> getIvive() {
 		return ivive;
 	}
 
-	public void setIvive(IVIVEResult ivive) {
+	public void setIvive(Map<Model, IVIVEResult> ivive) {
 		this.ivive = ivive;
 	}
 
@@ -1149,17 +1150,58 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		headers.add("Model Counts");
 		
 		//IVIVE header values
-		headers.add("ThreeCompSS BMD Mean Dose");
-		headers.add("ThreeCompSS BMDL Mean Dose");
-		headers.add("ThreeCompSS BMDU Mean Dose");
-		
-		headers.add("ThreeCompSS BMD Median Dose");
-		headers.add("ThreeCompSS BMDL Median Dose");
-		headers.add("ThreeCompSS BMDU Median Dose");
-		
-		headers.add("ThreeCompSS BMD Minimum Dose");
-		headers.add("ThreeCompSS BMDL Minimum Dose");
-		headers.add("ThreeCompSS BMDU Minimum Dose");
+		if(ivive.containsKey(Model.ONECOMP)) {
+			headers.add("OneComp BMD Mean Dose");
+			headers.add("OneComp BMDL Mean Dose");
+			headers.add("OneComp BMDU Mean Dose");
+			
+			headers.add("OneComp BMD Median Dose");
+			headers.add("OneComp BMDL Median Dose");
+			headers.add("OneComp BMDU Median Dose");
+			
+			headers.add("OneComp BMD Minimum Dose");
+			headers.add("OneComp BMDL Minimum Dose");
+			headers.add("OneComp BMDU Minimum Dose");
+		}
+		if(ivive.containsKey(Model.PBTK)) {
+			headers.add("PBTK BMD Mean Dose");
+			headers.add("PBTK BMDL Mean Dose");
+			headers.add("PBTK BMDU Mean Dose");
+			
+			headers.add("PBTK BMD Median Dose");
+			headers.add("PBTK BMDL Median Dose");
+			headers.add("PBTK BMDU Median Dose");
+			
+			headers.add("PBTK BMD Minimum Dose");
+			headers.add("PBTK BMDL Minimum Dose");
+			headers.add("PBTK BMDU Minimum Dose");
+		}
+		if(ivive.containsKey(Model.THREECOMP)) {
+			headers.add("ThreeComp BMD Mean Dose");
+			headers.add("ThreeComp BMDL Mean Dose");
+			headers.add("ThreeComp BMDU Mean Dose");
+			
+			headers.add("ThreeComp BMD Median Dose");
+			headers.add("ThreeComp BMDL Median Dose");
+			headers.add("ThreeComp BMDU Median Dose");
+			
+			headers.add("ThreeComp BMD Minimum Dose");
+			headers.add("ThreeComp BMDL Minimum Dose");
+			headers.add("ThreeComp BMDU Minimum Dose");
+		}
+		if(ivive.containsKey(Model.THREECOMPSS)) {
+			headers.add("ThreeCompSS BMD Mean Dose");
+			headers.add("ThreeCompSS BMDL Mean Dose");
+			headers.add("ThreeCompSS BMDU Mean Dose");
+			
+			headers.add("ThreeCompSS BMD Median Dose");
+			headers.add("ThreeCompSS BMDL Median Dose");
+			headers.add("ThreeCompSS BMDU Median Dose");
+			
+			headers.add("ThreeCompSS BMD Minimum Dose");
+			headers.add("ThreeCompSS BMDL Minimum Dose");
+			headers.add("ThreeCompSS BMDU Minimum Dose");
+		}
 
 		return headers;
 	}
@@ -1282,6 +1324,61 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		row.add(getBMDUConflictList());
 		row.add(calculateStatResultCounts());
 
+
+		//IVIVE values
+		if(ivive.containsKey(Model.ONECOMP)) {
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdMeanDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdlMeanDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmduMeanDose());
+			
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdMedianDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdlMedianDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmduMedianDose());
+			
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdMinimumDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmdlMinimumDose());
+			row.add(this.getIvive().get(Model.ONECOMP).getBmduMinimumDose());
+		} 
+		if(ivive.containsKey(Model.PBTK)) {
+			row.add(this.getIvive().get(Model.PBTK).getBmdMeanDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmdlMeanDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmduMeanDose());
+			
+			row.add(this.getIvive().get(Model.PBTK).getBmdMedianDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmdlMedianDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmduMedianDose());
+			
+			row.add(this.getIvive().get(Model.PBTK).getBmdMinimumDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmdlMinimumDose());
+			row.add(this.getIvive().get(Model.PBTK).getBmduMinimumDose());
+		} 
+		if(ivive.containsKey(Model.THREECOMP)) {
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdMeanDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdlMeanDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmduMeanDose());
+			
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdMedianDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdlMedianDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmduMedianDose());
+			
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdMinimumDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmdlMinimumDose());
+			row.add(this.getIvive().get(Model.THREECOMP).getBmduMinimumDose());
+		} 
+		if(ivive.containsKey(Model.THREECOMPSS)) {
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdMeanDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdlMeanDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmduMeanDose());
+			
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdMedianDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdlMedianDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmduMedianDose());
+			
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdMinimumDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmdlMinimumDose());
+			row.add(this.getIvive().get(Model.THREECOMPSS).getBmduMinimumDose());
+		}
+		
 		// calculate fold change stats for this row,
 		// then add them
 		calculateFoldChangeStats();
@@ -1312,18 +1409,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		row.add(this.percentWithOverallDirectionDOWN);
 		row.add(this.percentWithOverallDirectionConflict);
 		
-		//IVIVE values
-		row.add(this.getIvive().getBmdMeanDose());
-		row.add(this.getIvive().getBmdlMeanDose());
-		row.add(this.getIvive().getBmduMeanDose());
 		
-		row.add(this.getIvive().getBmdMedianDose());
-		row.add(this.getIvive().getBmdlMedianDose());
-		row.add(this.getIvive().getBmduMedianDose());
-		
-		row.add(this.getIvive().getBmdMinimumDose());
-		row.add(this.getIvive().getBmdlMinimumDose());
-		row.add(this.getIvive().getBmduMinimumDose());
 	}
 
 	public void setGenesThatPassedAllFilters(Integer number)

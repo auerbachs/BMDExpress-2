@@ -21,6 +21,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFilesTool;
+import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 import com.sciome.commons.math.httk.model.Compound;
 import com.sciome.commons.math.httk.model.CompoundTable;
 import com.sciome.commons.math.httk.model.InVitroData;
@@ -558,11 +559,18 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		
 		params.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
 		
-		//Set params with 
-		oneCompartmentCheckBox.isSelected();
-		threeCompartmentCheckBox.isSelected();
-		pbtkCheckBox.isSelected();
-		threeCompartmentSSCheckBox.isSelected();
+		//Set params with
+		List<Model> models = new ArrayList<Model>();
+		if(oneCompartmentCheckBox.isSelected())
+			models.add(Model.ONECOMP);
+		if(threeCompartmentCheckBox.isSelected())
+			models.add(Model.THREECOMP);
+		if(pbtkCheckBox.isSelected())
+			models.add(Model.PBTK);
+		if(threeCompartmentSSCheckBox.isSelected())
+			models.add(Model.THREECOMPSS);
+		
+		params.setModels(models);
 		
 		return params;
 	}
