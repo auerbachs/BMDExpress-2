@@ -1154,18 +1154,20 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		headers.add("Model Counts");
 		
 		//IVIVE header values
-		for(IVIVEResult iviveResult : ivive) {
-			headers.add(iviveResult.getName() + " BMD Mean Dose");
-			headers.add(iviveResult.getName() + " BMDL Mean Dose");
-			headers.add(iviveResult.getName() + " BMDU Mean Dose");
-			
-			headers.add(iviveResult.getName() + " BMD Median Dose");
-			headers.add(iviveResult.getName() + " BMDL Median Dose");
-			headers.add(iviveResult.getName() + " BMDU Median Dose");
-			
-			headers.add(iviveResult.getName() + " BMD Minimum Dose");
-			headers.add(iviveResult.getName() + " BMDL Minimum Dose");
-			headers.add(iviveResult.getName() + " BMDU Minimum Dose");
+		if(ivive != null) {
+			for(IVIVEResult iviveResult : ivive) {
+				headers.add(iviveResult.getName() + " BMD Mean Dose");
+				headers.add(iviveResult.getName() + " BMDL Mean Dose");
+				headers.add(iviveResult.getName() + " BMDU Mean Dose");
+				
+				headers.add(iviveResult.getName() + " BMD Median Dose");
+				headers.add(iviveResult.getName() + " BMDL Median Dose");
+				headers.add(iviveResult.getName() + " BMDU Median Dose");
+				
+				headers.add(iviveResult.getName() + " BMD Minimum Dose");
+				headers.add(iviveResult.getName() + " BMDL Minimum Dose");
+				headers.add(iviveResult.getName() + " BMDU Minimum Dose");
+			}
 		}
 
 		return headers;
@@ -1291,18 +1293,20 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 
 		//IVIVE values
-		for(IVIVEResult iviveResult : ivive) {
-			row.add(iviveResult.getBmdMeanDose());
-			row.add(iviveResult.getBmdlMeanDose());
-			row.add(iviveResult.getBmduMeanDose());
-			
-			row.add(iviveResult.getBmdMedianDose());
-			row.add(iviveResult.getBmdlMedianDose());
-			row.add(iviveResult.getBmduMedianDose());
-			
-			row.add(iviveResult.getBmdMinimumDose());
-			row.add(iviveResult.getBmdlMinimumDose());
-			row.add(iviveResult.getBmduMinimumDose());
+		if(ivive != null) {
+			for(IVIVEResult iviveResult : ivive) {
+				row.add(iviveResult.getBmdMeanDose());
+				row.add(iviveResult.getBmdlMeanDose());
+				row.add(iviveResult.getBmduMeanDose());
+				
+				row.add(iviveResult.getBmdMedianDose());
+				row.add(iviveResult.getBmdlMedianDose());
+				row.add(iviveResult.getBmduMedianDose());
+				
+				row.add(iviveResult.getBmdMinimumDose());
+				row.add(iviveResult.getBmdlMinimumDose());
+				row.add(iviveResult.getBmduMinimumDose());
+			}
 		}
 		
 		// calculate fold change stats for this row,
