@@ -1,6 +1,13 @@
 package com.sciome.bmdexpress2.mvp.model.category.ivive;
 
-public class IVIVEResult {
+import java.io.Serializable;
+
+public abstract class IVIVEResult implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7856227651672012848L;
+	
 	private Double bmdMedianDose;
 	private Double bmdlMedianDose;
 	private Double bmduMedianDose;
@@ -67,4 +74,6 @@ public class IVIVEResult {
 	public void setBmduMinimumDose(Double bmduMinimumDose) {
 		this.bmduMinimumDose = bmduMinimumDose;
 	}
+	
+	public abstract String getName();
 }

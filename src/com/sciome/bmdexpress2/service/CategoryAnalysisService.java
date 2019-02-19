@@ -1,13 +1,16 @@
 package com.sciome.bmdexpress2.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.ivive.IVIVEResult;
+import com.sciome.bmdexpress2.mvp.model.category.ivive.OneCompResult;
+import com.sciome.bmdexpress2.mvp.model.category.ivive.PBTKResult;
+import com.sciome.bmdexpress2.mvp.model.category.ivive.ThreeCompResult;
+import com.sciome.bmdexpress2.mvp.model.category.ivive.ThreeCompSSResult;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
@@ -37,7 +40,8 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		categoryAnalysisResults.setBmdResult(bmdResult);
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
-		calculateIVIVE(categoryAnalysisResults, params);
+		if(params.getModels() != null && !params.getModels().isEmpty())
+			calculateIVIVE(categoryAnalysisResults, params);
 		
 		long endTime = System.currentTimeMillis();
 
@@ -64,13 +68,23 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			
 			concentrations.add(rowConcentrations);
 		}
-		 
+		
 		Map<Model, List<List<Double>>> doses = calc_mc_oral_equiv.calcMultiple(concentrations, params.getModels(), params.getCompound(), .95, "Human", Units.MGPERL, Units.MOL, true);
 		
 		for(int i = 0; i < results.getCategoryAnalsyisResults().size(); i++) {
-			Map<Model, IVIVEResult> iviveResults = new HashMap<Model, IVIVEResult>();
+			List<IVIVEResult> iviveResults = new ArrayList<IVIVEResult>();
 			for(Model model : params.getModels()) {
-				IVIVEResult result = new IVIVEResult();
+				IVIVEResult result;
+				
+				if(model.equals(Model.ONECOMP))
+					result = new OneCompResult();
+				else if(model.equals(Model.PBTK))
+					result = new PBTKResult();
+				else if(model.equals(Model.THREECOMP))
+					result = new ThreeCompResult();
+				else
+					result = new ThreeCompSSResult();
+				
 				result.setBmdMeanDose(doses.get(model).get(i).get(0));
 				result.setBmdlMeanDose(doses.get(model).get(i).get(1));
 				result.setBmduMeanDose(doses.get(model).get(i).get(2));
@@ -81,7 +95,7 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 				result.setBmdlMinimumDose(doses.get(model).get(i).get(7));
 				result.setBmduMinimumDose(doses.get(model).get(i).get(8));
 				
-				iviveResults.put(model, result);
+				iviveResults.add(result);
 			}
 			results.getCategoryAnalsyisResults().get(i).setIvive(iviveResults);
 		}

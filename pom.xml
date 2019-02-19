@@ -98,8 +98,6 @@
 		    <version>3.3</version>
 		</dependency>
 		
-		
-		
 		<!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx -->
 		<dependency>
 		    <groupId>de.jensd</groupId>
@@ -121,7 +119,7 @@
 		    <version>2.9.7</version>
 		</dependency>
 		
-			<dependency>
+		<dependency>
 	        <groupId>com.fasterxml.jackson.core</groupId>
 	        <artifactId>jackson-databind</artifactId>
 	        <version>2.9.7</version>
@@ -134,7 +132,7 @@
 		    <version>1.4</version>
 		</dependency>
 		
-			<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 		    <groupId>commons-io</groupId>
 		    <artifactId>commons-io</artifactId>
@@ -162,16 +160,12 @@
 		    <version>8.40.14</version>
 		</dependency>
 
-		
-		
 		<!-- sciome commons math functions-->
-		<!-- 
          <dependency>
-             <groupId>sciome-commons</groupId>
-             <artifactId>math</artifactId>
-             <version>1.04.0078</version>
+         	<groupId>sciome-commons</groupId>
+         	<artifactId>math</artifactId>
+         	<version>1.04.0108</version>
          </dependency>
-		-->
 	</dependencies>	
   
   

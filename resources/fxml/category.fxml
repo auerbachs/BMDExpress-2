@@ -46,9 +46,14 @@
 																</HBox>
 																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
 																	<children>
-																		<CheckBox id="bmdFilter4CheckBox" fx:id="removePromiscuousProbesCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" selected="true" text="Remove Promiscuous Probes" wrapText="true" />
+																		<CheckBox id="bmdFilter4CheckBox" fx:id="isInVitroCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" text="Is the Data In Vitro" wrapText="true" />
 																	</children>
 																</HBox>
+                                                <HBox alignment="CENTER" layoutX="10.0" layoutY="130.0" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
+                                                   <children>
+                                                      <CheckBox id="bmdFilter4CheckBox" fx:id="removePromiscuousProbesCheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" selected="true" text="Remove Promiscuous Probes" wrapText="true" />
+                                                   </children>
+                                                </HBox>
 																<HBox alignment="CENTER" minHeight="27.0" prefHeight="27.0" prefWidth="200.0" VBox.vgrow="NEVER">
 																	<children>
 																		<CheckBox fx:id="bmdFilter1CheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" selected="true" text="Remove BMD &gt; Highest Dose from Category Descriptive Statistics" />
@@ -140,7 +145,7 @@
 												</AnchorPane>
 											</content>
 										</Tab>
-										<Tab text="IVIVE">
+										<Tab fx:id="iviveTab" text="IVIVE">
 											<content>
 												<AnchorPane minHeight="500.0" minWidth="650.0" prefHeight="555.0" prefWidth="650.0">
                                        <children>

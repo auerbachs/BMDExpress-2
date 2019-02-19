@@ -38,6 +38,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -53,6 +54,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private DefinedCategoryFileParameters	categoryFileParameters;
 
 	// FXML injection
+	@FXML
+	private Tab								iviveTab;
 
 	// checkboxes
 	@FXML
@@ -70,6 +73,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private CheckBox						bmdFilter1CheckBox;
 	@FXML
 	private CheckBox						conflictingProbeSetsCheckBox;
+	@FXML
+	private CheckBox						isInVitroCheckBox;
 	@FXML
 	private CheckBox						removePromiscuousProbesCheckBox;
 
@@ -227,12 +232,23 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@Override
 	public void handle_start(ActionEvent event)
 	{
-		startButton.setDisable(true);
-		closeButton.setDisable(true);
-		CategoryAnalysisParameters params = this.gatherParameters();
-		if (params != null)
+		CategoryAnalysisParameters params = null;
+		try {
+			params = this.gatherParameters();
+		} catch(NumberFormatException e) {
+			//Otherwise give user a message
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Invalid Input");
+			alert.setHeaderText(null);
+			alert.setContentText("Invalid input fields");
+			alert.showAndWait();
+		}
+		
+		if (params != null) {
+			startButton.setDisable(true);
+			closeButton.setDisable(true);
 			presenter.startAnalyses(params);
-
+		}
 	}
 
 	@Override
@@ -347,12 +363,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			mainVBox.getChildren().remove(selectionHBox);
 		}
 		else if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
-		{
+		{	
 			mainVBox.getChildren().remove(probeFileHBox);
 			mainVBox.getChildren().remove(categoryFileHBox);
 			mainVBox.getChildren().remove(selectionHBox);
 		}
-
+		
 		// Initalize fields using saved settings
 		this.removePromiscuousProbesCheckBox.setSelected(input.isRemovePromiscuousProbes());
 		this.bmdFilter1CheckBox.setSelected(input.isRemoveBMDGreaterThanHighestDose());
@@ -382,6 +398,22 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		//Initialize IVIVE check box listeners
 		toggleIVIVE(true);
+		
+		if(!this.isInVitroCheckBox.isSelected())
+			iviveTab.setDisable(true);
+			
+		isInVitroCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(newValue)
+					iviveTab.setDisable(false);
+				else
+					iviveTab.setDisable(true);
+			}
+			
+		});
+		
 		oneCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -527,50 +559,52 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
-		String name = nameTextField.getText();
-		String casrn = casrnTextField.getText();
-		String smiles = smilesTextField.getText();
-		double mw = Double.valueOf(mwTextField.getText());
-		double logP = Double.valueOf(logPTextField.getText());
-		
-		//Read in pka donors and acceptors
-		ArrayList<Double> pkaDonors = new ArrayList<Double>();
-		ArrayList<Double> pkaAcceptors = new ArrayList<Double>();
-		Scanner scanner = new Scanner(pKaDonorTextField.getText());
-		scanner.useDelimiter(",| ");
-		while(scanner.hasNextDouble()) {
-			pkaDonors.add(scanner.nextDouble());
+		if(isInVitroCheckBox.isSelected() && checkIVIVE()) {
+			String name = nameTextField.getText();
+			String casrn = casrnTextField.getText();
+			String smiles = smilesTextField.getText();
+			double mw = Double.valueOf(mwTextField.getText());
+			double logP = Double.valueOf(logPTextField.getText());
+			
+			//Read in pka donors and acceptors
+			ArrayList<Double> pkaDonors = new ArrayList<Double>();
+			ArrayList<Double> pkaAcceptors = new ArrayList<Double>();
+			Scanner scanner = new Scanner(pKaDonorTextField.getText());
+			scanner.useDelimiter(",| ");
+			while(scanner.hasNextDouble()) {
+				pkaDonors.add(scanner.nextDouble());
+			}
+			scanner.close();
+			scanner = new Scanner(pKaAcceptorTextField.getText());
+			while(scanner.hasNextDouble()) {
+				pkaAcceptors.add(scanner.nextDouble());
+			}
+			scanner.close();
+			
+			//Initialize InVitroData with clint and fub
+			InVitroData data = new InVitroData();
+			data.setParam("Clint",  Double.valueOf(clintTextField.getText()));
+			data.setParam("Funbound.plasma",  Double.valueOf(fubTextField.getText()));
+			HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
+			map.put("Human", data);
+			
+			HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
+			
+			params.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
+			
+			//Set params with
+			List<Model> models = new ArrayList<Model>();
+			if(oneCompartmentCheckBox.isSelected())
+				models.add(Model.ONECOMP);
+			if(threeCompartmentCheckBox.isSelected())
+				models.add(Model.THREECOMP);
+			if(pbtkCheckBox.isSelected())
+				models.add(Model.PBTK);
+			if(threeCompartmentSSCheckBox.isSelected())
+				models.add(Model.THREECOMPSS);
+			
+			params.setModels(models);
 		}
-		scanner.close();
-		scanner = new Scanner(pKaAcceptorTextField.getText());
-		while(scanner.hasNextDouble()) {
-			pkaAcceptors.add(scanner.nextDouble());
-		}
-		scanner.close();
-		
-		//Initialize InVitroData with clint and fub
-		InVitroData data = new InVitroData();
-		data.setParam("Clint",  Double.valueOf(clintTextField.getText()));
-		data.setParam("Funbound.plasma",  Double.valueOf(fubTextField.getText()));
-		HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
-		map.put("Human", data);
-		
-		HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
-		
-		params.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
-		
-		//Set params with
-		List<Model> models = new ArrayList<Model>();
-		if(oneCompartmentCheckBox.isSelected())
-			models.add(Model.ONECOMP);
-		if(threeCompartmentCheckBox.isSelected())
-			models.add(Model.THREECOMP);
-		if(pbtkCheckBox.isSelected())
-			models.add(Model.PBTK);
-		if(threeCompartmentSSCheckBox.isSelected())
-			models.add(Model.THREECOMPSS);
-		
-		params.setModels(models);
 		
 		return params;
 	}
