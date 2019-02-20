@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,14 +29,9 @@ import com.sciome.bmdexpress2.mvp.model.IMarkable;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.CategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.identifier.GOCategoryIdentifier;
 import com.sciome.bmdexpress2.mvp.model.category.ivive.IVIVEResult;
-import com.sciome.bmdexpress2.mvp.model.category.ivive.OneCompResult;
-import com.sciome.bmdexpress2.mvp.model.category.ivive.PBTKResult;
-import com.sciome.bmdexpress2.mvp.model.category.ivive.ThreeCompResult;
-import com.sciome.bmdexpress2.mvp.model.category.ivive.ThreeCompSSResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.util.NumberManager;
-import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = GOAnalysisResult.class, name = "go"),
@@ -166,6 +162,13 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 	private transient Double					bmdlUpper95;
 	private transient Double					bmduUpper95;
 	private transient Double					bmduLower95;
+	
+	private transient Double					bmdFifthPercentile;
+	private transient Double					bmdlFifthPercentile;
+	private transient Double					bmduFifthPercentile;
+	private transient Double					bmdTenthPercentile;
+	private transient Double					bmdlTenthPercentile;
+	private transient Double					bmduTenthPercentile;
 	
 	private List<IVIVEResult>					ivive;
 
@@ -1167,6 +1170,14 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 				headers.add(iviveResult.getName() + " BMD Minimum Dose");
 				headers.add(iviveResult.getName() + " BMDL Minimum Dose");
 				headers.add(iviveResult.getName() + " BMDU Minimum Dose");
+				
+				headers.add(iviveResult.getName() + " BMD Fifth Percentile Dose");
+				headers.add(iviveResult.getName() + " BMDL Fifth Percentile Dose");
+				headers.add(iviveResult.getName() + " BMDU Fifth Percentile Dose");
+				
+				headers.add(iviveResult.getName() + " BMD Tenth Percentile Dose");
+				headers.add(iviveResult.getName() + " BMDL Tenth Percentile Dose");
+				headers.add(iviveResult.getName() + " BMDU Tenth Percentile Dose");
 			}
 		}
 
@@ -1306,6 +1317,14 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 				row.add(iviveResult.getBmdMinimumDose());
 				row.add(iviveResult.getBmdlMinimumDose());
 				row.add(iviveResult.getBmduMinimumDose());
+				
+				row.add(iviveResult.getBmdFifthPercentile());
+				row.add(iviveResult.getBmdlFifthPercentile());
+				row.add(iviveResult.getBmduFifthPercentile());
+
+				row.add(iviveResult.getBmdTenthPercentile());
+				row.add(iviveResult.getBmdlTenthPercentile());
+				row.add(iviveResult.getBmduTenthPercentile());
 			}
 		}
 		
@@ -1339,7 +1358,7 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		row.add(this.percentWithOverallDirectionDOWN);
 		row.add(this.percentWithOverallDirectionConflict);
 		
-		
+		calculate5and10Percentiles();
 	}
 
 	public void setGenesThatPassedAllFilters(Integer number)
@@ -2139,6 +2158,54 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 		return bmduLower95;
 	}
 
+	public Double getBmdFifthPercentile() {
+		return bmdFifthPercentile;
+	}
+
+	public void setBmdFifthPercentile(Double bmdFifthPercentile) {
+		this.bmdFifthPercentile = bmdFifthPercentile;
+	}
+
+	public Double getBmdlFifthPercentile() {
+		return bmdlFifthPercentile;
+	}
+
+	public void setBmdlFifthPercentile(Double bmdlFifthPercentile) {
+		this.bmdlFifthPercentile = bmdlFifthPercentile;
+	}
+
+	public Double getBmduFifthPercentile() {
+		return bmduFifthPercentile;
+	}
+
+	public void setBmduFifthPercentile(Double bmduFifthPercentile) {
+		this.bmduFifthPercentile = bmduFifthPercentile;
+	}
+
+	public Double getBmdTenthPercentile() {
+		return bmdTenthPercentile;
+	}
+
+	public void setBmdTenthPercentile(Double bmdTenthPercentile) {
+		this.bmdTenthPercentile = bmdTenthPercentile;
+	}
+
+	public Double getBmdlTenthPercentile() {
+		return bmdlTenthPercentile;
+	}
+
+	public void setBmdlTenthPercentile(Double bmdlTenthPercentile) {
+		this.bmdlTenthPercentile = bmdlTenthPercentile;
+	}
+
+	public Double getBmduTenthPercentile() {
+		return bmduTenthPercentile;
+	}
+
+	public void setBmduTenthPercentile(Double bmduTenthPercentile) {
+		this.bmduTenthPercentile = bmduTenthPercentile;
+	}
+
 	private void calculateOverAllDirection()
 	{
 		if (referenceGeneProbeStatResults == null)
@@ -2222,6 +2289,48 @@ public abstract class CategoryAnalysisResult extends BMDExpressAnalysisRow
 
 	}
 
+	public void calculate5and10Percentiles() {
+		if (this.referenceGeneProbeStatResults == null)
+			return;
+
+		double[] bmd = new double[referenceGeneProbeStatResults.size()];
+		double[] bmdl = new double[referenceGeneProbeStatResults.size()];
+		double[] bmdu = new double[referenceGeneProbeStatResults.size()];
+
+		int count = 0;
+		for (ReferenceGeneProbeStatResult rgp : referenceGeneProbeStatResults) {
+			int i = 0;
+			double BMDValue = 0.0;
+			double BMDLValue = 0.0;
+			double BMDUValue = 0.0;
+			for (ProbeStatResult probeStatResult : rgp.getProbeStatResults()) {
+				if (probeStatResult.getBestStatResult() == null)
+					continue;
+				BMDValue += probeStatResult.getBestBMD();
+				BMDLValue += probeStatResult.getBestBMDL();
+				BMDUValue += probeStatResult.getBestBMDU();
+
+				i++;
+			}
+			if (i > 0) {
+				bmd[count] = BMDValue / i;
+				bmdl[count] = BMDLValue / i;
+				bmdu[count] = BMDUValue / i;
+			}
+			
+			count++;
+		}
+		
+		Percentile percentile = new Percentile(5);
+		bmdFifthPercentile = percentile.evaluate(bmd);
+		bmdlFifthPercentile = percentile.evaluate(bmdl);
+		bmduFifthPercentile = percentile.evaluate(bmdu);
+		percentile = new Percentile(10);
+		bmdTenthPercentile = percentile.evaluate(bmd);
+		bmdlTenthPercentile = percentile.evaluate(bmdl);
+		bmduTenthPercentile = percentile.evaluate(bmdu);
+	}
+	
 	/*
 	 * method to calculate 95% confidence intervals for bmd, bmdl and bmdu
 	 */

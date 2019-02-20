@@ -19,6 +19,8 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFilesTool;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
@@ -193,6 +195,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private TextField						clintTextField;
 	@FXML
 	private TextField						fubTextField;
+	@FXML
+	private ComboBox						doseUnitsComboBox;
 
 	private CategoryInput					input;
 
@@ -477,6 +481,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				nameAutoPopulate.setText("");
 			}
 		});
+		
+		//Initialize Dose Units Combo box fields
+		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
+		doseUnitsComboBox.getSelectionModel().select(0);
+		
 	}
 
 	@Override
@@ -590,7 +599,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			
 			HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
 			
-			params.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
+			IVIVEParameters parameters = new IVIVEParameters();
+			
+			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
 			
 			//Set params with
 			List<Model> models = new ArrayList<Model>();
@@ -603,7 +614,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			if(threeCompartmentSSCheckBox.isSelected())
 				models.add(Model.THREECOMPSS);
 			
-			params.setModels(models);
+			parameters.setModels(models);
+			parameters.setUnits((DoseUnits)doseUnitsComboBox.getSelectionModel().getSelectedItem());
+			
+			params.setIviveParameters(parameters);
 		}
 		
 		return params;
@@ -623,6 +637,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		pKaAcceptorTextField.setDisable(disable);
 		clintTextField.setDisable(disable);
 		fubTextField.setDisable(disable);
+		doseUnitsComboBox.setDisable(disable);
 	}
 	
 	private boolean checkIVIVE() {
