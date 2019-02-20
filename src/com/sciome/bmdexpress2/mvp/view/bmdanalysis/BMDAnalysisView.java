@@ -92,6 +92,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	@FXML
 	private ComboBox					bMRFactorComboBox;
 	@FXML
+	private ComboBox					bMRTypeComboBox;
+	@FXML
 	private ComboBox					confidenceLevelComboBox;
 	@FXML
 	private ComboBox					restrictPowerComboBox;
@@ -324,6 +326,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setModifyBMDFlaggedHill(Double.parseDouble(this.modifyFlaggedHillBMDTextField.getText()));
 
 		// Set String values
+		input.setBmrType(this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString());
 		input.setBMRFactor((BMRFactor) this.bMRFactorComboBox.getValue());
 		input.setRestrictPower((RestrictPowerEnum) this.restrictPowerComboBox.getValue());
 		input.setBestPolyModelTest((BestPolyModelTestEnum) this.bestPolyTestComboBox.getValue());
@@ -439,6 +442,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			expressionDataLabel.setText(processableData.get(0).getParentDataSetName());
 		}
 
+		bMRTypeComboBox.getItems().add("Standard Deviation");
+		bMRTypeComboBox.getItems().add("Relative Deviation");
+		bMRTypeComboBox.getSelectionModel().select(0);
+
 		// init checkboxes
 		exponential2CheckBox.setSelected(input.isExp2());
 		exponential3CheckBox.setSelected(input.isExp3());
@@ -540,10 +547,28 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			this.progressLabel.setVisible(false);
 		}
 		this.selectModelsOnly = selectModelsOnly;
-
+		bMRTypeComboBox.getSelectionModel().select(input.getBmrType());
 		// add data to the bmrFactor combobox
-		bMRFactorComboBox.getItems().addAll(initBMRFactors());
+		if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
+				.equalsIgnoreCase("standard deviation"))
+			bMRFactorComboBox.getItems().addAll(initBMRFactorsStandardDeviation());
+		else
+			bMRFactorComboBox.getItems().addAll(initBMRFactorsRelativeDeviation());
 		bMRFactorComboBox.getSelectionModel().select(input.getBMRFactor());
+
+		this.bMRTypeComboBox.getSelectionModel().selectedItemProperty().addListener(listener ->
+		{
+			bMRFactorComboBox.getItems().clear();
+
+			if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
+					.equalsIgnoreCase("standard deviation"))
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsStandardDeviation());
+			else
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsRelativeDeviation());
+
+			bMRFactorComboBox.getSelectionModel().select(0);
+
+		});
 
 		ActionEvent event = new ActionEvent();
 		handle_HillCheckBox(event);
@@ -557,6 +582,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		{
 			inputParameters.setIterations(Integer.valueOf(maximumIterationsTextField.getText()));
 			inputParameters.setConfidence(Double.valueOf(confidenceLevelComboBox.getEditor().getText()));
+			inputParameters.setBmrType(1);
+			if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
+					.equalsIgnoreCase("relative deviation"))
+				inputParameters.setBmrType(2);
 			inputParameters.setBmrLevel(Double.valueOf(
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
@@ -683,7 +712,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	}
 
-	private List<BMRFactor> initBMRFactors()
+	private List<BMRFactor> initBMRFactorsStandardDeviation()
 	{
 		List<BMRFactor> factors = new ArrayList<>();
 		factors.add(new BMRFactor("0.522 (1%)", "0.522"));
@@ -696,6 +725,33 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		factors.add(new BMRFactor("2.600898 (50%)", "2.600898"));
 		factors.add(new BMRFactor("2.855148 (60%)", "2.855148"));
 		factors.add(new BMRFactor("3 SD", "3.0"));
+		return factors;
+	}
+
+	private List<BMRFactor> initBMRFactorsRelativeDeviation()
+	{
+		List<BMRFactor> factors = new ArrayList<>();
+		factors.add(new BMRFactor("5%", "0.05"));
+		factors.add(new BMRFactor("10%", "0.10"));
+		factors.add(new BMRFactor("15%", "0.15"));
+		factors.add(new BMRFactor("20%", "0.2"));
+		factors.add(new BMRFactor("25%", "0.25"));
+		factors.add(new BMRFactor("30%", "0.3"));
+		factors.add(new BMRFactor("35%", "0.35"));
+		factors.add(new BMRFactor("40%", "0.4"));
+		factors.add(new BMRFactor("45%", "0.45"));
+		factors.add(new BMRFactor("50%", "0.5"));
+		factors.add(new BMRFactor("55%", "0.55"));
+		factors.add(new BMRFactor("60%", "0.6"));
+		factors.add(new BMRFactor("65%", "0.65"));
+		factors.add(new BMRFactor("70%", "0.7"));
+		factors.add(new BMRFactor("75%", "0.75"));
+		factors.add(new BMRFactor("80%", "0.8"));
+		factors.add(new BMRFactor("85%", "0.85"));
+		factors.add(new BMRFactor("90%", "0.9"));
+		factors.add(new BMRFactor("95%", "0.95"));
+		factors.add(new BMRFactor("100%", "0.95"));
+
 		return factors;
 	}
 }

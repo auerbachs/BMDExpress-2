@@ -182,6 +182,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("Confidence Level: " + inputParameters.getConfidence());
 
 		notes.add("Constant Variance: " + inputParameters.getConstantVariance());
+		if (inputParameters.getBmrType() == 1)
+			notes.add("BMR Type: Standard Deviation");
+		else if (inputParameters.getBmrType() == 2)
+			notes.add("BMR Type: Relative Deviation");
 		notes.add("BMR Factor: " + inputParameters.getBmrLevel());
 		if (modelsToRun != null && isModelInThere("power", modelsToRun))
 			notes.add("Restrict Power: " + inputParameters.getRestirctPower());

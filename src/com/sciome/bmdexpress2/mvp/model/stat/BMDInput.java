@@ -28,6 +28,7 @@ public class BMDInput
 	private double										pValueCutoff;
 	private double										modifyBMDFlaggedHill;
 	private BMRFactor									BMRFactor;
+	private String										bmrType;
 	private RestrictPowerEnum							restrictPower;
 	private BestPolyModelTestEnum						bestPolyModelTest;
 	private FlagHillModelDoseEnum						kParameterLessThan;
@@ -55,6 +56,7 @@ public class BMDInput
 		numThreads = 1;
 		// default kill time to 600 seconds (akay 10 minutes)
 		killTime = 600;
+		bmrType = "Standard Deviation";
 
 		BMRFactor = new BMRFactor("1.021 (5%)", "1.021");
 		restrictPower = RestrictPowerEnum.NO_RESTRICTION;
@@ -303,6 +305,16 @@ public class BMDInput
 	public void setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU bestModelSelectionBMDLandBMDU)
 	{
 		this.bestModelSelectionBMDLandBMDU = bestModelSelectionBMDLandBMDU;
+	}
+
+	public String getBmrType()
+	{
+		return bmrType;
+	}
+
+	public void setBmrType(String bmrType)
+	{
+		this.bmrType = bmrType;
 	}
 
 }

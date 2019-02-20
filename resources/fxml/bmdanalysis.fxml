@@ -144,10 +144,10 @@
                                           <GridPane layoutX="21.4" layoutY="20.4" prefHeight="101.0" prefWidth="777.0" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                              <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="183.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.00000762939453" minWidth="10.0" prefWidth="109.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="135.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="177.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="182.00003051757812" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.00000762939453" minWidth="10.0" prefWidth="177.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="150.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="194.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.9999694824219" minWidth="10.0" prefWidth="233.0" />
                                              </columnConstraints>
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -156,19 +156,19 @@
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="Confidence Level" GridPane.columnIndex="2" />
                                                 <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="14.0" prefHeight="16.0" prefWidth="161.0" text="Maximum Iterations" />
-                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="54.0" prefHeight="16.0" prefWidth="157.0" text="BMR Factor" GridPane.rowIndex="1" />
+                                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="54.0" prefHeight="16.0" prefWidth="157.0" text="BMR Factor" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                 <TextField fx:id="maximumIterationsTextField" layoutX="122.0" layoutY="9.0" text="250" GridPane.columnIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
                                                 </TextField>
-                                                <Label fx:id="restrictPowerLabel" alignment="CENTER_RIGHT" layoutX="425.0" layoutY="61.0" prefHeight="16.0" prefWidth="237.0" text="Restrict Power" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Label fx:id="restrictPowerLabel" alignment="CENTER_RIGHT" layoutX="425.0" layoutY="61.0" prefHeight="17.0" prefWidth="96.0" text="Restrict Power" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                                                 <ComboBox fx:id="confidenceLevelComboBox" editable="true" prefWidth="150.0" GridPane.columnIndex="3">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
                                                 </ComboBox>
-                                                <ComboBox fx:id="restrictPowerComboBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                <ComboBox fx:id="restrictPowerComboBox" prefHeight="27.0" prefWidth="121.0" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
@@ -178,7 +178,16 @@
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <ComboBox fx:id="bMRFactorComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="bMRFactorComboBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin></ComboBox>
+                                                <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="157.0" text="BMR Type" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="bMRTypeComboBox" prefHeight="27.0" prefWidth="199.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </ComboBox>
                                              </children>
                                           </GridPane>
                                        </children>
