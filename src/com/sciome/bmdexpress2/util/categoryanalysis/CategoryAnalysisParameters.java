@@ -51,8 +51,7 @@ public class CategoryAnalysisParameters
 	private boolean							deduplicateGeneSets				= false;
 	
 	//IVIVE calculation
-	private Compound						compound;
-	private List<Model>						models;
+	private IVIVEParameters					iviveParameters;
 
 	public DefinedCategoryFileParameters getProbeFileParameters()
 	{
@@ -348,21 +347,11 @@ public class CategoryAnalysisParameters
 
 	}
 
-	public Compound getCompound() {
-		return compound;
+	public IVIVEParameters getIviveParameters() {
+		return iviveParameters;
 	}
 
-	public void setCompound(Compound compound) {
-		this.compound = compound;
+	public void setIviveParameters(IVIVEParameters iviveParameters) {
+		this.iviveParameters = iviveParameters;
 	}
-
-	public List<Model> getModels() {
-		return models;
-	}
-
-	public void setModels(List<Model> models) {
-		this.models = models;
-	}
-	
-	
 }

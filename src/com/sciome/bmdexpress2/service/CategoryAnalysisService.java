@@ -18,6 +18,8 @@ import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryMapTool;
 import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 import com.sciome.commons.math.httk.calc.calc_mc_oral_equiv;
@@ -40,8 +42,8 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		categoryAnalysisResults.setBmdResult(bmdResult);
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
-		if(params.getModels() != null && !params.getModels().isEmpty())
-			calculateIVIVE(categoryAnalysisResults, params);
+		if(params.getIviveParameters().getModels() != null && !params.getIviveParameters().getModels().isEmpty())
+			calculateIVIVE(categoryAnalysisResults, params.getIviveParameters());
 		
 		long endTime = System.currentTimeMillis();
 
@@ -51,25 +53,87 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		return categoryAnalysisResults;
 	}
 
-	private void calculateIVIVE(CategoryAnalysisResults results, CategoryAnalysisParameters params) {
+	private void calculateIVIVE(CategoryAnalysisResults results, IVIVEParameters params) {
 		List<List<Double>> concentrations = new ArrayList<List<Double>>();
 		for(CategoryAnalysisResult catResult : results.getCategoryAnalsyisResults()) {
 			List<Double> rowConcentrations = new ArrayList<Double>();
 			
-			rowConcentrations.add(catResult.getBmdMean());
-			rowConcentrations.add(catResult.getBmdlMean());
-			rowConcentrations.add(catResult.getBmduMean());
-			rowConcentrations.add(catResult.getBmdMedian());
-			rowConcentrations.add(catResult.getBmdlMedian());
-			rowConcentrations.add(catResult.getBmduMedian());
-			rowConcentrations.add(catResult.getBmdMinimum());
-			rowConcentrations.add(catResult.getBmdlMinimum());
-			rowConcentrations.add(catResult.getBmduMinimum());
+			catResult.calculate5and10Percentiles();
+			
+			switch(params.getUnits()) {
+				case nM:
+					rowConcentrations.add(catResult.getBmdMean() * 1e3);
+					rowConcentrations.add(catResult.getBmdlMean() * 1e3);
+					rowConcentrations.add(catResult.getBmduMean() * 1e3);
+					rowConcentrations.add(catResult.getBmdMedian() * 1e3);
+					rowConcentrations.add(catResult.getBmdlMedian() * 1e3);
+					rowConcentrations.add(catResult.getBmduMedian() * 1e3);
+					rowConcentrations.add(catResult.getBmdMinimum() * 1e3);
+					rowConcentrations.add(catResult.getBmdlMinimum() * 1e3);
+					rowConcentrations.add(catResult.getBmduMinimum() * 1e3);
+					rowConcentrations.add(catResult.getBmdFifthPercentile() * 1e3);
+					rowConcentrations.add(catResult.getBmdlFifthPercentile() * 1e3);
+					rowConcentrations.add(catResult.getBmduFifthPercentile() * 1e3);
+					rowConcentrations.add(catResult.getBmdTenthPercentile() * 1e3);
+					rowConcentrations.add(catResult.getBmdlTenthPercentile() * 1e3);
+					rowConcentrations.add(catResult.getBmduTenthPercentile() * 1e3);
+					break;
+				case pM:
+					rowConcentrations.add(catResult.getBmdMean() * 1e6);
+					rowConcentrations.add(catResult.getBmdlMean() * 1e6);
+					rowConcentrations.add(catResult.getBmduMean() * 1e6);
+					rowConcentrations.add(catResult.getBmdMedian() * 1e6);
+					rowConcentrations.add(catResult.getBmdlMedian() * 1e6);
+					rowConcentrations.add(catResult.getBmduMedian() * 1e6);
+					rowConcentrations.add(catResult.getBmdMinimum() * 1e6);
+					rowConcentrations.add(catResult.getBmdlMinimum() * 1e6);
+					rowConcentrations.add(catResult.getBmduMinimum() * 1e6);
+					rowConcentrations.add(catResult.getBmdFifthPercentile() * 1e6);
+					rowConcentrations.add(catResult.getBmdlFifthPercentile() * 1e6);
+					rowConcentrations.add(catResult.getBmduFifthPercentile() * 1e6);
+					rowConcentrations.add(catResult.getBmdTenthPercentile() * 1e6);
+					rowConcentrations.add(catResult.getBmdlTenthPercentile() * 1e6);
+					rowConcentrations.add(catResult.getBmduTenthPercentile() * 1e6);
+					break;
+				case uM:
+					rowConcentrations.add(catResult.getBmdMean());
+					rowConcentrations.add(catResult.getBmdlMean());
+					rowConcentrations.add(catResult.getBmduMean());
+					rowConcentrations.add(catResult.getBmdMedian());
+					rowConcentrations.add(catResult.getBmdlMedian());
+					rowConcentrations.add(catResult.getBmduMedian());
+					rowConcentrations.add(catResult.getBmdMinimum());
+					rowConcentrations.add(catResult.getBmdlMinimum());
+					rowConcentrations.add(catResult.getBmduMinimum());
+					rowConcentrations.add(catResult.getBmdFifthPercentile());
+					rowConcentrations.add(catResult.getBmdlFifthPercentile());
+					rowConcentrations.add(catResult.getBmduFifthPercentile());
+					rowConcentrations.add(catResult.getBmdTenthPercentile());
+					rowConcentrations.add(catResult.getBmdlTenthPercentile());
+					rowConcentrations.add(catResult.getBmduTenthPercentile());
+					break;
+				default:
+					rowConcentrations.add(catResult.getBmdlMean());
+					rowConcentrations.add(catResult.getBmduMean());
+					rowConcentrations.add(catResult.getBmdMedian());
+					rowConcentrations.add(catResult.getBmdlMedian());
+					rowConcentrations.add(catResult.getBmduMedian());
+					rowConcentrations.add(catResult.getBmdMinimum());
+					rowConcentrations.add(catResult.getBmdlMinimum());
+					rowConcentrations.add(catResult.getBmduMinimum());
+					rowConcentrations.add(catResult.getBmdFifthPercentile());
+					rowConcentrations.add(catResult.getBmdlFifthPercentile());
+					rowConcentrations.add(catResult.getBmduFifthPercentile());
+					rowConcentrations.add(catResult.getBmdTenthPercentile());
+					rowConcentrations.add(catResult.getBmdlTenthPercentile());
+					rowConcentrations.add(catResult.getBmduTenthPercentile());
+					break;
+			}
 			
 			concentrations.add(rowConcentrations);
 		}
 		
-		Map<Model, List<List<Double>>> doses = calc_mc_oral_equiv.calcMultiple(concentrations, params.getModels(), params.getCompound(), .95, "Human", Units.MGPERL, Units.MOL, true);
+		Map<Model, List<List<Double>>> doses = calc_mc_oral_equiv.calcMultiple(concentrations, params.getModels(), params.getCompound(), .95, "Human", Units.UM, Units.MOL, true);
 		
 		for(int i = 0; i < results.getCategoryAnalsyisResults().size(); i++) {
 			List<IVIVEResult> iviveResults = new ArrayList<IVIVEResult>();
@@ -94,6 +158,12 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 				result.setBmdMinimumDose(doses.get(model).get(i).get(6));
 				result.setBmdlMinimumDose(doses.get(model).get(i).get(7));
 				result.setBmduMinimumDose(doses.get(model).get(i).get(8));
+				result.setBmdFifthPercentile(doses.get(model).get(i).get(9));
+				result.setBmdlFifthPercentile(doses.get(model).get(i).get(10));
+				result.setBmduFifthPercentile(doses.get(model).get(i).get(11));
+				result.setBmdTenthPercentile(doses.get(model).get(i).get(12));
+				result.setBmdlTenthPercentile(doses.get(model).get(i).get(13));
+				result.setBmduTenthPercentile(doses.get(model).get(i).get(14));
 				
 				iviveResults.add(result);
 			}

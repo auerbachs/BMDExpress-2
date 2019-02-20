@@ -20,6 +20,14 @@ public abstract class IVIVEResult implements Serializable {
 	private Double bmdlMinimumDose;
 	private Double bmduMinimumDose;
 	
+	private Double bmdFifthPercentile;
+	private Double bmdlFifthPercentile;
+	private Double bmduFifthPercentile;
+	
+	private Double bmdTenthPercentile;
+	private Double bmdlTenthPercentile;
+	private Double bmduTenthPercentile;
+	
 	public Double getBmdMedianDose() {
 		return bmdMedianDose;
 	}
@@ -74,6 +82,44 @@ public abstract class IVIVEResult implements Serializable {
 	public void setBmduMinimumDose(Double bmduMinimumDose) {
 		this.bmduMinimumDose = bmduMinimumDose;
 	}
-	
+	public Double getBmdFifthPercentile() {
+		return bmdFifthPercentile;
+	}
+	public void setBmdFifthPercentile(Double bmdFifthPercentile) {
+		this.bmdFifthPercentile = bmdFifthPercentile;
+	}
+	public Double getBmdlFifthPercentile() {
+		return bmdlFifthPercentile;
+	}
+	public void setBmdlFifthPercentile(Double bmdlFifthPercentile) {
+		this.bmdlFifthPercentile = bmdlFifthPercentile;
+	}
+	public Double getBmduFifthPercentile() {
+		return bmduFifthPercentile;
+	}
+	public void setBmduFifthPercentile(Double bmduFifthPercentile) {
+		this.bmduFifthPercentile = bmduFifthPercentile;
+	}
+	public Double getBmdTenthPercentile() {
+		return bmdTenthPercentile;
+	}
+	public void setBmdTenthPercentile(Double bmdTenthPercentile) {
+		this.bmdTenthPercentile = bmdTenthPercentile;
+	}
+	public Double getBmdlTenthPercentile() {
+		return bmdlTenthPercentile;
+	}
+	public void setBmdlTenthPercentile(Double bmdlTenthPercentile) {
+		this.bmdlTenthPercentile = bmdlTenthPercentile;
+	}
+	public Double getBmduTenthPercentile() {
+		return bmduTenthPercentile;
+	}
+	public void setBmduTenthPercentile(Double bmduTenthPercentile) {
+		this.bmduTenthPercentile = bmduTenthPercentile;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	public abstract String getName();
 }
