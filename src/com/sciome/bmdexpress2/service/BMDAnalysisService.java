@@ -2,7 +2,9 @@ package com.sciome.bmdexpress2.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.math3.util.Precision;
 
@@ -74,18 +76,25 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			doseVector.add(treatments.get(i).getDose());
 		}
 
-		// Calculate and set wAUC values
-		float currBMR = (float) inputParameters.getBmrLevel();
-		List<Float> wAUCList = new ArrayList<Float>();
-		for (int i = 0; i < responses.size(); i++)
-		{
-			wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), currBMR));
-		}
-		bMDResults.setwAUC(wAUCList);
+		Set<String> doseGroups = new HashSet<>();
+		for (Float dose : doseVector)
+			doseGroups.add(dose.toString());
 
-		// Calculate and set log 2 wAUC values
-		List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
-		bMDResults.setLogwAUC(logwAUCList);
+		// Calculate and set wAUC values
+		if (doseGroups.size() > 2)
+		{
+			float currBMR = (float) inputParameters.getBmrLevel();
+			List<Float> wAUCList = new ArrayList<Float>();
+			for (int i = 0; i < responses.size(); i++)
+			{
+				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), currBMR));
+			}
+			bMDResults.setwAUC(wAUCList);
+
+			// Calculate and set log 2 wAUC values
+			List<Float> logwAUCList = CurvePProcessor.logwAUC(wAUCList);
+			bMDResults.setLogwAUC(logwAUCList);
+		}
 
 		// clean up any leftovers from this process
 		bMDSTool.cleanUp();
