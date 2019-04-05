@@ -15,24 +15,27 @@ public abstract class CategoryConfig
 	private String	inputName;
 
 	// name of output for the analysis
-	private String	outputName;
+	private String		outputName;
 
-	private Boolean	removePromiscuousProbes;
-	private Boolean	removeBMDGreaterHighDose;
+	private Boolean		removePromiscuousProbes;
+	private Boolean		removeBMDGreaterHighDose;
 
-	private Double	bmdPValueCutoff;
-	private Double	bmdBMDLRatioMin;
-	private Double	bmduBMDRatioMin;
-	private Double	bmduBMDLRatioMin;
-	private Double	nFoldBelowLowestDose;
-	private Double	maxFoldChange;
-	private Double	prefilterPValueMin;
-	private Double	prefilterAdjustedPValueMin;
+	private Double		bmdPValueCutoff;
+	private Double		bmdBMDLRatioMin;
+	private Double		bmduBMDRatioMin;
+	private Double		bmduBMDLRatioMin;
+	private Double		nFoldBelowLowestDose;
+	private Double		maxFoldChange;
+	private Double		prefilterPValueMin;
+	private Double		prefilterAdjustedPValueMin;
 
-	private Boolean	identifyConflictingProbeSets;
-	private Double	correlationCutoffForConflictingProbeSets;
+	private Boolean		identifyConflictingProbeSets;
+	private Double		correlationCutoffForConflictingProbeSets;
 
-	private Boolean	deduplicateGeneSets	= false;
+	private Boolean		deduplicateGeneSets	= false;
+	
+	private Boolean 	computeIVIVE;
+	private IVIVEConfig iviveConfig;
 
 	public String getInputName()
 	{
@@ -184,4 +187,19 @@ public abstract class CategoryConfig
 		this.deduplicateGeneSets = deduplicateGeneSets;
 	}
 
+	public Boolean getComputeIVIVE() {
+		return computeIVIVE;
+	}
+
+	public void setComputeIVIVE(Boolean computeIVIVE) {
+		this.computeIVIVE = computeIVIVE;
+	}
+
+	public IVIVEConfig getIviveConfig() {
+		return iviveConfig;
+	}
+
+	public void setIviveConfig(IVIVEConfig iviveConfig) {
+		this.iviveConfig = iviveConfig;
+	}
 }

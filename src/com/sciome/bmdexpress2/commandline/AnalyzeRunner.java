@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -25,6 +26,7 @@ import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
 import com.sciome.bmdexpress2.commandline.config.category.DefinedConfig;
 import com.sciome.bmdexpress2.commandline.config.category.GOConfig;
 import com.sciome.bmdexpress2.commandline.config.category.GeneLevelConfig;
+import com.sciome.bmdexpress2.commandline.config.category.IVIVEConfig;
 import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.nonparametric.NonParametricConfig;
@@ -57,8 +59,13 @@ import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
+import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
+import com.sciome.commons.math.httk.model.Compound;
+import com.sciome.commons.math.httk.model.CompoundTable;
+import com.sciome.commons.math.httk.model.InVitroData;
 
 /*
  * When command line is in "analyze" mode, use this class to run the different analyses
@@ -305,6 +312,63 @@ public class AnalyzeRunner
 		else
 			params.setDeduplicateGeneSets(catConfig.getDeduplicateGeneSets());
 
+		//Set IVIVE parameters
+		if(catConfig.getComputeIVIVE()) {
+			IVIVEConfig config = catConfig.getIviveConfig();
+			
+			IVIVEParameters iviveParameters = new IVIVEParameters();
+			//Set compound
+			Compound compound = null;
+			if(config.getUseAutoPopulate()) {
+				//Initialize InVitroData with clint and fub
+				InVitroData data = new InVitroData();
+				data.setParam("Clint",  config.getCLint());
+				data.setParam("Funbound.plasma",  config.getFractionUnboundPlamsa());
+				HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
+				map.put("Human", data);
+				
+				HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
+				
+				compound = new Compound(config.getCompoundName(),
+										config.getCompoundCASRN(),
+										config.getCompoundSMILES(),
+										config.getLogP(),
+										config.getMw(),
+										0.0,
+										config.getPkaAcceptor(),
+										config.getPkaDonor(),
+										map,
+										rBlood2Plasma);
+			} else {
+				CompoundTable table = CompoundTable.getInstance();
+				table.loadDefault();
+				if(config.getCompoundName() != null) {
+					compound = table.getCompoundByName(config.getCompoundName());
+				} else if(config.getCompoundCASRN() != null) {
+					compound = table.getCompoundByCAS(config.getCompoundCASRN());
+				} else if(config.getCompoundSMILES() != null) {
+					compound = table.getCompoundBySMILES(config.getCompoundSMILES());
+				}
+			}
+			iviveParameters.setCompound(compound);
+			
+			//Set models
+			List<Model> models = new ArrayList<Model>();
+			if(config.getOneCompartment())
+				models.add(Model.ONECOMP);
+			if(config.getPbtk())
+				models.add(Model.PBTK);
+			if(config.getThreeCompartment())
+				models.add(Model.THREECOMP);
+			if(config.getThreeCompartmentSS())
+				models.add(Model.THREECOMPSS);
+			iviveParameters.setModels(models);
+			
+			iviveParameters.setUnits(config.getDoseUnits());
+			
+			params.setIviveParameters(iviveParameters);
+		}
+		
 		if (catConfig instanceof DefinedConfig)
 		{
 			DefinedCategoryFileParameters probeFileParameters = new DefinedCategoryFileParameters();
@@ -344,7 +408,7 @@ public class AnalyzeRunner
 				params.setGoTermIdx(3);
 
 		}
-
+		
 		for (BMDResult bmdResult : bmdResultsToRun)
 		{
 			CategoryAnalysisResults catResults = new CategoryAnalysisRunner().runCategoryAnalysis(bmdResult,

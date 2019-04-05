@@ -627,7 +627,8 @@ public class PrefilterService implements IPrefilterService
 
 	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest, SimpleProgressUpdater updater)
 	{
-		updater.setProgress(0);
+		if(updater != null)
+			updater.setProgress(0);
 		
 		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
@@ -701,7 +702,8 @@ public class PrefilterService implements IPrefilterService
 								pValues.add(Float.NaN);
 						}
 					} else {
-						updater.setMessage("Dunnett's Test: " + index + "/" + prefilterResults.getPrefilterResults().size());
+						if(updater != null)
+							updater.setMessage("Dunnett's Test: " + index + "/" + prefilterResults.getPrefilterResults().size());
 						//Use Dunnett's test to calculate p values
 						double[][] doses = new double[doseGroups.size() - 1][];
 						for (int j = 1; j < doseGroups.size(); j++)
