@@ -579,12 +579,13 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			ArrayList<Double> pkaDonors = new ArrayList<Double>();
 			ArrayList<Double> pkaAcceptors = new ArrayList<Double>();
 			Scanner scanner = new Scanner(pKaDonorTextField.getText());
-			scanner.useDelimiter(",| ");
+			scanner.useDelimiter(", |,| ");
 			while(scanner.hasNextDouble()) {
 				pkaDonors.add(scanner.nextDouble());
 			}
 			scanner.close();
 			scanner = new Scanner(pKaAcceptorTextField.getText());
+			scanner.useDelimiter(", |,| ");
 			while(scanner.hasNextDouble()) {
 				pkaAcceptors.add(scanner.nextDouble());
 			}
@@ -601,7 +602,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			
 			IVIVEParameters parameters = new IVIVEParameters();
 			
-			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, 0.0, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
+			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, null, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
 			
 			//Set params with
 			List<Model> models = new ArrayList<Model>();
