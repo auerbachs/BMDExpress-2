@@ -44,7 +44,16 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		if (params.getIviveParameters() != null && params.getIviveParameters().getModels() != null
 				&& !params.getIviveParameters().getModels().isEmpty()) {
 			calculateIVIVE(categoryAnalysisResults, params.getIviveParameters());
-			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound: " + params.getIviveParameters().getCompound().getName());
+			String species = params.getIviveParameters().getSpecies();
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Name: " + params.getIviveParameters().getCompound().getName());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CASRN: " + params.getIviveParameters().getCompound().getCAS());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound SMILES: " + params.getIviveParameters().getCompound().getSMILES());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound MW: " + params.getIviveParameters().getCompound().getMW());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound LogP: " + params.getIviveParameters().getCompound().getLogP());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Donor: " + params.getIviveParameters().getCompound().getpKaDonors());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Acceptor: " + params.getIviveParameters().getCompound().getpKaAcceptors());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Clint"));
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Funbound.plasma"));
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Species: " + params.getIviveParameters().getSpecies());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Quantile: " + params.getIviveParameters().getQuantile());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Units: " + params.getIviveParameters().getDoseUnits());
