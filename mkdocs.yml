@@ -1,11 +1,11 @@
 site_name: BMDExpress-2
 nav:
-    - 'Home': 'Home.md'
-    - 'Overview of the Main View': 'Overview-of-the-Main-View.md'
-    - 'How to Use the Application': 'How-to-Use-the-Application.md'
-    - 'Statistical and Fold Change Prefiltering': 'Statistical-and-Fold-Change-Prefiltering.md'
-    - 'Benchmark Dose Analysis': 'Benchmark-Dose-Analysis.md'
-    - 'Functional Classifications': 'Functional-Classifications.md'
-    - 'Additional Information': 'Additional-Information.md'
-    - 'Command Line': 'Command-Line.md'
+    - 'Home': 'index.md'
+    - 'Overview of the Main View': 'overview-of-the-main-view.md'
+    - 'How to Use the Application': 'how-to-use-the-application.md'
+    - 'Statistical and Fold Change Prefiltering': 'statistical-and-fold-change-prefiltering.md'
+    - 'Benchmark Dose Analysis': 'benchmark-dose-analysis.md'
+    - 'Functional Classifications': 'functional-classifications.md'
+    - 'Additional Information': 'additional-information.md'
+    - 'Command Line': 'command-line.md'
 theme: readthedocs

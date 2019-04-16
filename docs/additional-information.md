@@ -1,12 +1,15 @@
+Additional Information
+======================
+
 Example Data Sets
-===================================
+-----------------
 
--   [Example `.bm2` file](https://github.com/auerbachs/BMDExpress-2/blob/master/Example%20Data%20version%202.2.zip)
+- [Example `.bm2` file](https://github.com/auerbachs/BMDExpress-2/blob/master/Example%20Data%20version%202.2.zip)
 
--   [Example Expression Data File](https://github.com/auerbachs/BMDExpress-2/blob/master/example%20data%20files.zip)
+- [Example Expression Data File](https://github.com/auerbachs/BMDExpress-2/blob/master/example%20data%20files.zip)
 
 Supported Microarrays and Next Generation Sequencing Platforms
-===================================
+--------------------------------------------------------------
 
 <table>
 <colgroup>
@@ -297,21 +300,19 @@ Supported Microarrays and Next Generation Sequencing Platforms
 </tbody>
 </table>
 
-
-
 Incorporated Software/Databases
-===============================
+-------------------------------
 
--   [JFreeChart](http://www.jfree.org/jfreechart/). [LGPL license](http://www.gnu.org/licenses/lgpl.html).
-    -   JFreeChart Copyright © 2000-2009 by Object Refinery Limited and Contributors.
--   [Reactome Pathway Database](http://www.reactome.org/). \[Creative Common Attribution 4.0 International License\] (http://www.reactome.org/pages/about/license-agreement/).
--   [Gene Ontology](http://www.geneontology.org/). \[Creative Commons Attribution 4.0 Unported License\] (http://www.geneontology.org/page/use-and-license).
--   [DONLP2 optimizer](http://www.mathematik.tu-darmstadt.de/fbereiche/numerik/staff/spellucci/DONLP2/) - DONLP2 and DONLP2_INTV_DYN -- Copyright by P. Spellucci. DONLP2 is restricted to non-commercial use by the author's copyright.
+- [JFreeChart](http://www.jfree.org/jfreechart/). [LGPL license](http://www.gnu.org/licenses/lgpl.html).
+    - JFreeChart Copyright © 2000-2009 by Object Refinery Limited and Contributors.
+- [Reactome Pathway Database](http://www.reactome.org/). \[Creative Common Attribution 4.0 International License\](http://www.reactome.org/pages/about/license-agreement/).
+- [Gene Ontology](http://www.geneontology.org/). \[Creative Commons Attribution 4.0 Unported License\](http://www.geneontology.org/page/use-and-license).
+- [DONLP2 optimizer](http://www.mathematik.tu-darmstadt.de/fbereiche/numerik/staff/spellucci/DONLP2/) - DONLP2 and DONLP2_INTV_DYN -- Copyright by P. Spellucci. DONLP2 is restricted to non-commercial use by the author's copyright.
 
--  [ install4j](https://www.ej-technologies.com/products/install4j/overview.html) -- BMDExpress 2 installation packages are generated with install4j's multi-platform installer builder.
+- [install4j](https://www.ej-technologies.com/products/install4j/overview.html) -- BMDExpress 2 installation packages are generated with install4j's multi-platform installer builder.
 
 Citations
-=========
+---------
 
 [1] Fitting of data to the statistical models is performed using source code provided by the U.S. Environmental Protection Agency’s Benchmark Dose Software (BMDS). For more information about the EPA’s BMDS, go to the EPA’s web site.
 
@@ -319,6 +320,6 @@ Citations
 
 [3] Thomas, R.S., et al., A method to integrate benchmark dose estimates with genomic data to assess the functional effects of chemical exposure. Toxicol Sci, 2007 98(1) pp. 240-8.
 
-[4] Williams DA. A test for differences between treatment means when several dose levels are compared with a zero dose control. Biometrics. 1971 27(1) pp. 103-117. 
+[4] Williams DA. A test for differences between treatment means when several dose levels are compared with a zero dose control. Biometrics. 1971 27(1) pp. 103-117.
 
 [5] Peddada S, Harris S, Zajd J, and Harvey E., ORIOGEN: order restricted inference for ordered gene expression data. Bioinformatics. 2005 21(20) pp. 3933-4.

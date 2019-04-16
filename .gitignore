@@ -5,3 +5,5 @@ lib/.DS_Store
 /.project
 /target/
 bin/
+.markdownlint.json
+.python-version
