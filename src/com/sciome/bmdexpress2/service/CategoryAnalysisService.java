@@ -42,8 +42,14 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
 		if (params.getIviveParameters() != null && params.getIviveParameters().getModels() != null
-				&& !params.getIviveParameters().getModels().isEmpty())
+				&& !params.getIviveParameters().getModels().isEmpty()) {
 			calculateIVIVE(categoryAnalysisResults, params.getIviveParameters());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound: " + params.getIviveParameters().getCompound().getName());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Species: " + params.getIviveParameters().getSpecies());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Quantile: " + params.getIviveParameters().getQuantile());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Units: " + params.getIviveParameters().getDoseUnits());
+			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getOutputUnits());
+		}
 
 		long endTime = System.currentTimeMillis();
 
@@ -62,7 +68,7 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 
 			catResult.calculate5and10Percentiles();
 
-			switch (params.getUnits())
+			switch (params.getDoseUnits())
 			{
 				case nM:
 					rowConcentrations
@@ -179,7 +185,7 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		}
 
 		Map<Model, List<List<Double>>> doses = calc_mc_oral_equiv.calcMultiple(concentrations,
-				params.getModels(), params.getCompound(), .95, "Human", Units.UM, Units.MOL, true);
+				params.getModels(), params.getCompound(), params.getQuantile(), params.getSpecies(), Units.UM, params.getOutputUnits(), true);
 
 		for (int i = 0; i < results.getCategoryAnalsyisResults().size(); i++)
 		{

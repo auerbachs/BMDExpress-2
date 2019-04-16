@@ -325,7 +325,7 @@ public class AnalyzeRunner
 				data.setParam("Clint",  config.getCLint());
 				data.setParam("Funbound.plasma",  config.getFractionUnboundPlamsa());
 				HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
-				map.put("Human", data);
+				map.put(config.getSpecies(), data);
 				
 				HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
 				
@@ -364,7 +364,11 @@ public class AnalyzeRunner
 				models.add(Model.THREECOMPSS);
 			iviveParameters.setModels(models);
 			
-			iviveParameters.setUnits(config.getDoseUnits());
+			iviveParameters.setDoseUnits(config.getDoseUnits());
+			iviveParameters.setOutputUnits(config.getOutputUnits());
+			iviveParameters.setQuantile(config.getQuantile());
+			iviveParameters.setSpecies(config.getSpecies());
+			
 			
 			params.setIviveParameters(iviveParameters);
 		}

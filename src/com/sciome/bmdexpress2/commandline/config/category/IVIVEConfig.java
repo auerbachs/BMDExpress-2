@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.commandline.config.category;
 import java.util.ArrayList;
 
 import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
+import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 
 public class IVIVEConfig {
 	private Boolean oneCompartment;
@@ -15,6 +16,7 @@ public class IVIVEConfig {
 	private String compoundName;
 	private String compoundCASRN;
 	private String compoundSMILES;
+	private String species;
 	
 	private Double mw;
 	private Double logP;
@@ -22,7 +24,10 @@ public class IVIVEConfig {
 	private ArrayList<Double> pkaAcceptor;
 	private Double CLint;
 	private Double fractionUnboundPlamsa;
+	private Double quantile;
+	
 	private DoseUnits doseUnits;
+	private Units outputUnits;
 	
 	public Boolean getOneCompartment() {
 		return oneCompartment;
@@ -113,5 +118,23 @@ public class IVIVEConfig {
 	}
 	public void setDoseUnits(DoseUnits doseUnits) {
 		this.doseUnits = doseUnits;
+	}
+	public String getSpecies() {
+		return species;
+	}
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+	public Double getQuantile() {
+		return quantile;
+	}
+	public void setQuantile(Double quantile) {
+		this.quantile = quantile;
+	}
+	public Units getOutputUnits() {
+		return outputUnits;
+	}
+	public void setOutputUnits(Units outputUnits) {
+		this.outputUnits = outputUnits;
 	}
 }

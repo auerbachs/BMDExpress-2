@@ -24,6 +24,7 @@ import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFilesTool;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
+import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 import com.sciome.commons.math.httk.model.Compound;
 import com.sciome.commons.math.httk.model.CompoundTable;
 import com.sciome.commons.math.httk.model.InVitroData;
@@ -196,7 +197,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private TextField						fubTextField;
 	@FXML
+	private TextField						quantileTextField;
+	@FXML
 	private ComboBox						doseUnitsComboBox;
+	@FXML
+	private ComboBox						outputUnitsComboBox;
+	@FXML
+	private ComboBox						speciesComboBox;
+	
 
 	private CategoryInput					input;
 
@@ -237,14 +245,21 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	public void handle_start(ActionEvent event)
 	{
 		CategoryAnalysisParameters params = null;
+
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Invalid Input");
+		alert.setHeaderText(null);
 		try {
 			params = this.gatherParameters();
 		} catch(NumberFormatException e) {
 			//Otherwise give user a message
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Invalid Input");
-			alert.setHeaderText(null);
 			alert.setContentText("Invalid input fields");
+			alert.showAndWait();
+		} catch(IllegalArgumentException e) {
+			if(e.getMessage() != null)
+				alert.setContentText(e.getMessage());
+			else
+				alert.setContentText("Invalid input fields");
 			alert.showAndWait();
 		}
 		
@@ -310,6 +325,16 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		}
 		
 		if(compound != null) {
+			String species = (String)speciesComboBox.getSelectionModel().getSelectedItem();
+			if(compound.getInVitroParam(species, "Clint") == null || compound.getInVitroParam(species, "Funbound.plasma") == null) {
+				species = "Human";
+				speciesComboBox.getSelectionModel().select(0);
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Compound Data");
+				alert.setHeaderText(null);
+				alert.setContentText("Compound data for species not found. Human values were used for CLint and Fup");
+				alert.showAndWait();
+			}
 			//If we got a compound fill in the fields
 			nameTextField.setText(compound.getName());
 			casrnTextField.setText(compound.getCAS());
@@ -326,8 +351,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			}
 			pKaDonorTextField.setText(pkaDonorString);
 			pKaAcceptorTextField.setText(pkaAcceptorString);
-			clintTextField.setText("" + compound.getInVitroParam("Human", "Clint"));
-			fubTextField.setText("" + compound.getInVitroParam("Human", "Funbound.plasma"));
+			if(compound.getInVitroParam(species, "Clint.pValue") == null || compound.getInVitroParam(species, "Clint.pValue") < .05)
+				clintTextField.setText("" + compound.getInVitroParam(species, "Clint"));
+			else
+				clintTextField.setText("" + 0.0);
+			
+			fubTextField.setText("" + compound.getInVitroParam(species, "Funbound.plasma"));
 		} else {
 			//Otherwise give user a message
 			Alert alert = new Alert(AlertType.INFORMATION);
@@ -482,10 +511,23 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			}
 		});
 		
-		//Initialize Dose Units Combo box fields
+		//Initialize quantile text field
+		quantileTextField.setText("0.95");
+		
+		//Initialize Combo box fields
 		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
 		doseUnitsComboBox.getSelectionModel().select(0);
+
+		outputUnitsComboBox.getItems().add(Units.MG);
+		outputUnitsComboBox.getItems().add(Units.MOL);
+		outputUnitsComboBox.getSelectionModel().select(0);
 		
+		speciesComboBox.getItems().add("Human");
+		speciesComboBox.getItems().add("Rat");
+		speciesComboBox.getItems().add("Mouse");
+		speciesComboBox.getItems().add("Dog");
+		speciesComboBox.getItems().add("Rabbit");
+		speciesComboBox.getSelectionModel().select(0);
 	}
 
 	@Override
@@ -596,7 +638,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			data.setParam("Clint",  Double.valueOf(clintTextField.getText()));
 			data.setParam("Funbound.plasma",  Double.valueOf(fubTextField.getText()));
 			HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
-			map.put("Human", data);
+			map.put((String)speciesComboBox.getSelectionModel().getSelectedItem(), data);
 			
 			HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
 			
@@ -616,8 +658,15 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				models.add(Model.THREECOMPSS);
 			
 			parameters.setModels(models);
-			parameters.setUnits((DoseUnits)doseUnitsComboBox.getSelectionModel().getSelectedItem());
+			double quantile = Double.valueOf(quantileTextField.getText());
+			if(quantile < 0 || quantile > 1)
+				throw new IllegalArgumentException("Quantile must be between 0 and 1");
+			else
+				parameters.setQuantile(quantile);
 			
+			parameters.setDoseUnits((DoseUnits)doseUnitsComboBox.getSelectionModel().getSelectedItem());
+			parameters.setOutputUnits((Units)outputUnitsComboBox.getSelectionModel().getSelectedItem());
+			parameters.setSpecies((String)speciesComboBox.getSelectionModel().getSelectedItem());
 			params.setIviveParameters(parameters);
 		}
 		
@@ -638,7 +687,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		pKaAcceptorTextField.setDisable(disable);
 		clintTextField.setDisable(disable);
 		fubTextField.setDisable(disable);
+		quantileTextField.setDisable(disable);
 		doseUnitsComboBox.setDisable(disable);
+		outputUnitsComboBox.setDisable(disable);
+		speciesComboBox.setDisable(disable);
 	}
 	
 	private boolean checkIVIVE() {

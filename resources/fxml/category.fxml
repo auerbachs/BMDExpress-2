@@ -209,9 +209,23 @@
                                                       <Insets top="12.5" />
                                                    </padding>
                                                 </HBox>
-                                                <Button fx:id="autoPopulateButton" mnemonicParsing="false" onAction="#handle_auto_populate" prefHeight="30.0" prefWidth="150.0" text="Auto Populate">
+                                                <HBox prefHeight="50.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Label prefHeight="30.0" prefWidth="50.0" text="Species">
+                                                         <HBox.margin>
+                                                            <Insets left="225.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <ComboBox fx:id="speciesComboBox" prefHeight="30.0" prefWidth="150.0">
+                                                         <HBox.margin>
+                                                            <Insets right="225.0" />
+                                                         </HBox.margin>
+                                                      </ComboBox>
+                                                   </children>
+                                                </HBox>
+                                                <Button fx:id="autoPopulateButton" mnemonicParsing="false" onAction="#handle_auto_populate" prefHeight="30.0" prefWidth="200.0" text="Auto Populate">
                                                    <VBox.margin>
-                                                      <Insets bottom="12.5" left="250.0" right="250.0" />
+                                                      <Insets bottom="12.5" left="225.0" right="225.0" />
                                                    </VBox.margin>
                                                 </Button>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
@@ -226,6 +240,7 @@
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
@@ -257,8 +272,12 @@
                                                          </font></Label>
                                                       <Label text="LogP  " GridPane.rowIndex="4" />
                                                       <TextField fx:id="logPTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                      <Label text="Dose Units  " GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                                      <ComboBox fx:id="doseUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                      <Label text="Quantile  " GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                      <Label text="Dose Units  " GridPane.rowIndex="5" />
+                                                      <Label text="Output Units  " GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                                      <ComboBox fx:id="doseUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                      <ComboBox fx:id="outputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                                      <TextField fx:id="quantileTextField" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                                                    </children>
                                                 </GridPane>
                                              </children>
