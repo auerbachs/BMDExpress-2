@@ -163,8 +163,8 @@
 		<!-- sciome commons math functions-->
          <dependency>
          	<groupId>sciome-commons</groupId>
-         	<artifactId>math</artifactId>
-         	<version>1.04.0114</version>
+  			<artifactId>math</artifactId>
+ 	 		<version>1.04.0118</version>
          </dependency>
 	</dependencies>	
   

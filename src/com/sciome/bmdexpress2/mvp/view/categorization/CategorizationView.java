@@ -313,7 +313,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	
 	public void handle_auto_populate(ActionEvent event) {
 		CompoundTable table = CompoundTable.getInstance();
-		table.loadDefault();
+		table.loadCombined();
 		
 		Compound compound = null;
 		if(!nameAutoPopulate.getText().equals("")) {
@@ -326,13 +326,29 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		
 		if(compound != null) {
 			String species = (String)speciesComboBox.getSelectionModel().getSelectedItem();
-			if(compound.getInVitroParam(species, "Clint") == null || compound.getInVitroParam(species, "Funbound.plasma") == null) {
-				species = "Human";
-				speciesComboBox.getSelectionModel().select(0);
+			Double clint = compound.getInVitroParam(species, "Clint", false);
+			Double fup = compound.getInVitroParam(species, "Funbound.plasma", false);
+			if(clint == null && fup == null) {
+				clint = compound.getInVitroParam("Human", "Clint", false);
+				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
 				alert.setHeaderText(null);
 				alert.setContentText("Compound data for species not found. Human values were used for CLint and Fup");
+				alert.showAndWait();
+			} else if(clint == null) {
+				clint = compound.getInVitroParam("Human", "Clint", false);
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Compound Data");
+				alert.setHeaderText(null);
+				alert.setContentText("Some compound data was not found. Human values were used for Clint");
+				alert.showAndWait();
+			} else if(fup == null) {
+				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Compound Data");
+				alert.setHeaderText(null);
+				alert.setContentText("Some compound data was not found. Human values were used for Fup");
 				alert.showAndWait();
 			}
 			//If we got a compound fill in the fields
@@ -352,11 +368,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			pKaDonorTextField.setText(pkaDonorString);
 			pKaAcceptorTextField.setText(pkaAcceptorString);
 			if(compound.getInVitroParam(species, "Clint.pValue") == null || compound.getInVitroParam(species, "Clint.pValue") < .05)
-				clintTextField.setText("" + compound.getInVitroParam(species, "Clint"));
+				clintTextField.setText("" + clint);
 			else
 				clintTextField.setText("" + 0.0);
 			
-			fubTextField.setText("" + compound.getInVitroParam(species, "Funbound.plasma"));
+			fubTextField.setText("" + fup);
 		} else {
 			//Otherwise give user a message
 			Alert alert = new Alert(AlertType.INFORMATION);
@@ -508,6 +524,23 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				casrnAutoPopulate.setText("");
 				nameAutoPopulate.setText("");
+			}
+		});
+		speciesComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if(newValue.equals("Human")) {
+					oneCompartmentCheckBox.setDisable(false);
+					threeCompartmentCheckBox.setDisable(false);
+					pbtkCheckBox.setDisable(false);
+				} else {
+					oneCompartmentCheckBox.setSelected(false);
+					threeCompartmentCheckBox.setSelected(false);
+					pbtkCheckBox.setSelected(false);
+					oneCompartmentCheckBox.setDisable(true);
+					threeCompartmentCheckBox.setDisable(true);
+					pbtkCheckBox.setDisable(true);
+				}
 			}
 		});
 		
