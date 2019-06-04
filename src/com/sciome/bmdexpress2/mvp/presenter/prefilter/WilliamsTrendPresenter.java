@@ -67,7 +67,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 							getService().start();
 							resultList[threadCount] = getService().williamsTrendAnalysis(pData, pCutOff, multipleTestingCorrection,
 									filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange,
-									updater, tTest);
+									"1", updater, tTest);
 							//Once the method is finished, set progress to 1
 							updater.setProgress(1);
 						}
@@ -157,7 +157,7 @@ public class WilliamsTrendPresenter extends ServicePresenterBase<IWilliamsTrendV
 				{
 					getService().start();
 					WilliamsTrendResults williamsTrendResults = getService().williamsTrendAnalysis(processableData, pCutOff, multipleTestingCorrection,
-							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, me, tTest);
+							filterOutControlGenes, useFoldFilter, foldFilterValue, numberOfPermutations, loelPValue, loelFoldChange, "1", me, tTest);
 					
 					// post the new williams object to the event bus so folks can do the right thing.
 					if(williamsTrendResults != null && running) {

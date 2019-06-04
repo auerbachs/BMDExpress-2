@@ -53,7 +53,7 @@ public class PrefilterService implements IPrefilterService
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
-			SimpleProgressUpdater updater, boolean tTest)
+			String numThreads, SimpleProgressUpdater updater, boolean tTest)
 	{
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -100,15 +100,17 @@ public class PrefilterService implements IPrefilterService
 			doseVector[i] = treatments.get(i).getDose();
 		}
 		
-		updater.setMessage("Williams Trend");
+		if(updater != null)
+			updater.setMessage("Williams Trend");
 		
 		WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
 				MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
-				updater);
+				Integer.valueOf(numThreads), updater);
 
 		if (result == null)
 		{
-			updater.setProgress(0);
+			if(updater != null)
+				updater.setProgress(0);
 			return null;
 		}
 
@@ -357,7 +359,8 @@ public class PrefilterService implements IPrefilterService
 
 		if (result == null)
 		{
-			updater.setProgress(0);
+			if(updater != null)
+				updater.setProgress(0);
 			return null;
 		}
 

@@ -691,6 +691,8 @@ public class AnalyzeRunner
 				stdoutInfo = "One-way ANOVA on " + preFilterConfig.getInputName();
 			else
 				stdoutInfo = "One-way ANOVA";
+
+			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
@@ -710,6 +712,8 @@ public class AnalyzeRunner
 				stdoutInfo = "Williams Trend Test on " + preFilterConfig.getInputName();
 			else
 				stdoutInfo = "Williams Trend Test";
+			
+			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
@@ -719,7 +723,7 @@ public class AnalyzeRunner
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
 						String.valueOf(preFilterConfig.getpValueLoel()),
 						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						preFilterConfig.gettTest(), project));
+						((WilliamsConfig) preFilterConfig).getNumberOfThreads(), preFilterConfig.gettTest(), project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)
@@ -730,6 +734,8 @@ public class AnalyzeRunner
 				stdoutInfo = "Oriogen on " + preFilterConfig.getInputName();
 			else
 				stdoutInfo = "Oriogen";
+			
+			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
@@ -745,8 +751,7 @@ public class AnalyzeRunner
 						preFilterConfig.gettTest(), project));
 			}
 		}
-		System.out.println(stdoutInfo);
-
+		System.out.println("Finished " + stdoutInfo);
 	}
 
 	private void doExpressionConfig(ExpressionDataConfig expressionConfig)

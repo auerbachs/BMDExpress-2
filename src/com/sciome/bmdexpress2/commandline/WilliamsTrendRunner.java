@@ -10,12 +10,12 @@ public class WilliamsTrendRunner
 	public WilliamsTrendResults runWilliamsTrendFilter(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numPermutations, String pValueLoel, String foldChangeLoel,
-			String outputName, boolean tTest, BMDProject project)
+			String outputName, String numThreads, boolean tTest, BMDProject project)
 	{
 		PrefilterService service = new PrefilterService();
 		WilliamsTrendResults results = service.williamsTrendAnalysis(processableData, pCutOff,
 				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue,
-				pValueLoel, foldChangeLoel, numPermutations, null, tTest);
+				numPermutations, pValueLoel, foldChangeLoel, numThreads, null, tTest);
 
 		if (outputName != null)
 			results.setName(outputName);

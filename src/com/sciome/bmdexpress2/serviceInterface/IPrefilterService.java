@@ -10,7 +10,7 @@ public interface IPrefilterService {
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
 			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
-			SimpleProgressUpdater updater, boolean tTest);
+			String numThreads, SimpleProgressUpdater updater, boolean tTest);
 	
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 

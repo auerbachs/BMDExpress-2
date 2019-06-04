@@ -158,6 +158,7 @@ public class BMDExpressCommandLine
 		}
 		catch (Exception exp)
 		{
+			exp.printStackTrace();
 			System.out.println("Error:" + exp.getMessage());
 			printHelp();
 		}
