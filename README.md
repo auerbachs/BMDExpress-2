@@ -12,9 +12,9 @@ Jason Phillips (jason.phillips@sciome.com) was the software engineer on BMDExpre
 
 The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) that was originally released in 2007. (https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-8-387).
 
-[BMDExpress 1.0 is available here.](https://sourceforge.net/projects/bmdexpress/)
+[BMDExpress 1.0 sourceforge project site](https://sourceforge.net/projects/bmdexpress/)
 
-[Details on the US EPA BMDS software can be found here.](https://www.epa.gov/bmds)
+[US EPA BMDS software website](https://www.epa.gov/bmds)
 
 [BMDExpress 2 installation packages are generated with a multi-platform installer builder from install4j.](https://www.ej-technologies.com/products/install4j/overview.html)
 
