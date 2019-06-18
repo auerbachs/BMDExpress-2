@@ -8,7 +8,7 @@ BMDExpress-2
 ==============
 Software uses the US EPA dose-response models from the BMDS software to analyze high dimensional dose-response data, in particular gene expression data. The outputs of the software are gene and gene set level benchmark dose values.
 
-Jason Phillips (jason.phillips@sciome.com) was the software engineer on BMDExpress 2 and Dan Svoboda (daniel.svoboda@sciome.com) was the primary design engineer. Scott Auerbach (auerbachs@niehs.nih.gov) led the project team.
+Jason Phillips (jason.phillips@sciome.com) is the software engineer on BMDExpress 2, Dan Svoboda (daniel.svoboda@sciome.com) is the primary design engineer, and Scott Auerbach (auerbachs@niehs.nih.gov) leads the project team.
 
 The software is derivation of efforts by Longlong Yang (longlong.yang@nih.gov) that was originally released in 2007. (https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-8-387).
 
