@@ -1,13 +1,12 @@
 package com.sciome.bmdexpress2.mvp.presenter.prefilter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
@@ -19,10 +18,10 @@ import com.sciome.commons.interfaces.SimpleProgressUpdater;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefilterService> implements SimpleProgressUpdater {
+public class OriogenPresenter extends ServicePresenterBase<IPrefilterView, IPrefilterService> implements SimpleProgressUpdater {
 	private volatile boolean running = false;
 	
-	public OriogenPresenter(IOriogenView view, IPrefilterService service, BMDExpressEventBus eventBus)
+	public OriogenPresenter(IPrefilterView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 	}
@@ -34,7 +33,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 
 			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter, 
 			String foldFilterValue, String loelPValue, String loelFoldChange, 
-			boolean tTest)
+			String numThreads, boolean tTest)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -44,27 +43,22 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 				running = true;
 				try
 				{
-					List<OriogenResults> resultList = new ArrayList<OriogenResults>();
 					for(int i = 0; i < processableData.size(); i++) {
 						if(running) {
-							setMessage((i + 1) + "/" + processableData.size());
+							setDatasetLabel((i + 1) + "/" + processableData.size());
 
 							//Set cancel to be false in case the service was cancelled before
 							getService().start();
-							resultList.add(getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
-									initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
-									loelPValue, loelFoldChange, me, tTest));
+							OriogenResults result = getService().oriogenAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection,
+									initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, 
+									Double.valueOf(foldFilterValue), Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
+									Integer.valueOf(numThreads), me, tTest);
 							me.setProgress(0);
+							Platform.runLater(() ->
+							{
+								getEventBus().post(new OriogenDataLoadedEvent(result));
+							});
 						}
-					}
-					// post the new oriogen object to the event bus so folks can do the right thing.
-					if(resultList != null && resultList.size() > 0 && running) {
-						Platform.runLater(() ->
-						{
-							for(int i = 0; i < resultList.size(); i++) {
-								getEventBus().post(new OriogenDataLoadedEvent(resultList.get(i)));
-							}
-						});
 					}
 				}
 				catch (Exception exception)
@@ -94,7 +88,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	 */
 	public void performOriogen(IStatModelProcessable processableData, double pCutOff, boolean multipleTestingCorrection, int initialBootstraps,
 			int maxBootstraps, float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue, 
-			String loelFoldChange, boolean tTest)
+			String loelFoldChange, String numThreads, boolean tTest)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -107,8 +101,9 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 					//Set cancel to be false in case the service was cancelled before
 					getService().start();
 					OriogenResults oriogenResults = getService().oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
-							initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, foldFilterValue, 
-							loelPValue, loelFoldChange, me, tTest);
+							initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter, 
+							Double.valueOf(foldFilterValue), Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
+							Integer.valueOf(numThreads), me, tTest);
 					
 					// post the new oriogen object to the event bus so folks can do the right thing.
 					if(oriogenResults != null && running) {
@@ -146,6 +141,7 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 	
 	public void cancel() {
 		setMessage("");
+		setDatasetLabel("");
 		setProgress(0.0);
 		running = false;
 		getService().cancel();
@@ -161,11 +157,22 @@ public class OriogenPresenter extends ServicePresenterBase<IOriogenView, IPrefil
 		}
 	}
 	
+	@Override
 	public void setMessage(String message) {
 		if(running) {
 			Platform.runLater(() ->
 			{
 				getView().updateMessage(message);
+			});
+		}
+	}
+	
+	public void setDatasetLabel(String message) {
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateDatasetLabel(message);
+	
 			});
 		}
 	}

@@ -8,7 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.WilliamsTrendPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IWilliamsTrendView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -28,7 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
-public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTrendView, Initializable
+public class WilliamsTrendView extends BMDExpressViewBase implements IPrefilterView, Initializable
 {
 	@FXML
 	private ComboBox					expressionDataComboBox;
@@ -49,6 +49,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	@FXML
 	private Label						williamsProgressMessage;
 	@FXML
+	private Label						datasetsCompletedLabel;
+	@FXML
 	private Button						startButton;
 	@FXML
 	private Button						saveSettingsButton;
@@ -58,6 +60,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	private TextField					pValueLoelTextField;
 	@FXML
 	private TextField					foldChangeLoelTextField;
+	@FXML
+	private TextField					numberOfThreadsTextField;
 	@FXML
 	private RadioButton					dunnettsRadioButton;
 	@FXML
@@ -136,6 +140,7 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
+		numberOfThreadsTextField.setText("" + input.getNumThreads());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -154,7 +159,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 				presenter.performWilliamsTrend(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
 						foldChangeValueTextField.getText(), numberOfPermutationsComboBox.getEditor().getText(),
-						pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+						pValueLoelTextField.getText(), foldChangeLoelTextField.getText(),
+						numberOfThreadsTextField.getText(), tRadioButton.isSelected());
 			}
 			else
 			{
@@ -163,7 +169,8 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 						pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
 						useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
 						numberOfPermutationsComboBox.getEditor().getText(), pValueLoelTextField.getText(),
-						foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+						foldChangeLoelTextField.getText(), numberOfThreadsTextField.getText(),
+						tRadioButton.isSelected());
 			}
 			startButton.setDisable(true);
 		}
@@ -188,6 +195,7 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
 		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));
 		input.setLoelPValue(Double.parseDouble(this.pValueLoelTextField.getText()));
+		input.setNumThreads(Integer.parseInt(this.numberOfThreadsTextField.getText()));
 		
 		input.setNumPermutations(Double.parseDouble(this.numberOfPermutationsComboBox.getEditor().getText()));
 		
@@ -238,6 +246,11 @@ public class WilliamsTrendView extends BMDExpressViewBase implements IWilliamsTr
 	@Override
 	public void updateMessage(String message) {
 		williamsProgressMessage.setText(message);
+	}
+	
+	@Override
+	public void updateDatasetLabel(String message) {
+		datasetsCompletedLabel.setText(message);
 	}
 	
 	@Override

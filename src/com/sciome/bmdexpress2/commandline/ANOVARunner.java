@@ -12,13 +12,13 @@ public class ANOVARunner
 {
 	public OneWayANOVAResults runANOVAFilter(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String pValueLoel, String foldChangeLoel, String outputName,
-			boolean tTest, BMDProject project)
+			double foldFilterValue, double pValueLoel, double foldChangeLoel, String outputName,
+			int numThreads, boolean tTest, BMDProject project)
 	{
 		PrefilterService service = new PrefilterService();
 		OneWayANOVAResults results = service.oneWayANOVAAnalysis(processableData, pCutOff,
 				multipleTestingCorrection, filterOutControlGenes, useFoldFilter, foldFilterValue,
-				pValueLoel, foldChangeLoel, null, tTest);
+				pValueLoel, foldChangeLoel, numThreads, null, tTest);
 
 		if (outputName != null)
 			results.setName(outputName);

@@ -1,22 +1,13 @@
 package com.sciome.bmdexpress2.commandline.config.prefilter;
 
 public class WilliamsConfig extends PrefilterConfig {
-	private String numberOfPermutations;
-	private String numberOfThreads			= "1";
+	private Integer numberOfPermutations;
 
-	public String getNumberOfPermutations() {
+	public Integer getNumberOfPermutations() {
 		return numberOfPermutations;
 	}
 
-	public void setNumberOfPermutations(String numberOfPermutations) {
+	public void setNumberOfPermutations(Integer numberOfPermutations) {
 		this.numberOfPermutations = numberOfPermutations;
-	}
-
-	public String getNumberOfThreads() {
-		return numberOfThreads;
-	}
-
-	public void setNumberOfThreads(String numberOfThreads) {
-		this.numberOfThreads = numberOfThreads;
 	}
 }

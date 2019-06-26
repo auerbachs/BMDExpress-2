@@ -28,6 +28,8 @@ public abstract class PrefilterConfig
 	private Double	foldChangeLoel;
 	private Double	pValueLoel;
 	
+	private Integer numberOfThreads					= 1;
+	
 	private Boolean	tTest							= false;
 
 	public String getInputName()
@@ -126,5 +128,13 @@ public abstract class PrefilterConfig
 
 	public void settTest(Boolean tTest) {
 		this.tTest = tTest;
+	}
+
+	public Integer getNumberOfThreads() {
+		return numberOfThreads;
+	}
+
+	public void setNumberOfThreads(Integer numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
 	}
 }

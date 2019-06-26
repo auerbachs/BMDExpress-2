@@ -42,6 +42,8 @@ import com.sciome.commons.math.williams.WilliamsTrendTestUtil;
 
 public class PrefilterService implements IPrefilterService
 {
+	private static final int DEFAULT_NUM_THREADS = 4;
+	
 	private WilliamsTrendTestUtil	williamsUtil	= new WilliamsTrendTestUtil();
 	private OriogenUtil				oriogenUtil		= new OriogenUtil();
 	private boolean					cancel			= false;
@@ -52,8 +54,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange,
-			String numThreads, SimpleProgressUpdater updater, boolean tTest)
+			double foldFilterValue, int numberOfPermutations, double loelPValue, double loelFoldChange,
+			int numThreads, SimpleProgressUpdater updater, boolean tTest)
 	{
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -172,9 +174,9 @@ public class PrefilterService implements IPrefilterService
 		williamsTrendResults.setDoseResponseExperiement(doseResponseExperiment);
 		williamsTrendResults.setWilliamsTrendResults(williamsTrendResultList);
 
-		performFoldFilter(williamsTrendResults, processableData, Float.valueOf(foldFilterValue),
+		performFoldFilter(williamsTrendResults, processableData, foldFilterValue,
 				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(williamsTrendResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
+		performNoelLoel(williamsTrendResults, loelPValue, loelFoldChange, tTest, numThreads, updater);
 		
 		if(cancel) {
 			return null;
@@ -231,9 +233,9 @@ public class PrefilterService implements IPrefilterService
 	 */
 	@Override
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
-			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, float s0Adjustment,
-			boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue, String loelPValue,
-			String loelFoldChange, SimpleProgressUpdater updater, boolean tTest)
+			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, double s0Adjustment,
+			boolean filterOutControlGenes, boolean useFoldFilter, double foldFilterValue, double loelPValue,
+			double loelFoldChange, int numThreads, SimpleProgressUpdater updater, boolean tTest)
 	{
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -423,9 +425,8 @@ public class PrefilterService implements IPrefilterService
 		oriogenResults.setDoseResponseExperiement(doseResponseExperiment);
 		oriogenResults.setOriogenResults(oriogenResultList);
 
-		performFoldFilter(oriogenResults, processableData, Float.valueOf(foldFilterValue),
-				isLogTransformation, baseValue, useFoldFilter);
-		performNoelLoel(oriogenResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
+		performFoldFilter(oriogenResults, processableData, foldFilterValue, isLogTransformation, baseValue, useFoldFilter);
+		performNoelLoel(oriogenResults, loelPValue, loelFoldChange, tTest, DEFAULT_NUM_THREADS, updater);
 
 		if (multipleTestingCorrection)
 		{
@@ -462,8 +463,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater, 
-			boolean tTest)
+			double foldFilterValue, double loelPValue, double loelFoldChange, int numThreads,
+			SimpleProgressUpdater updater, boolean tTest)
 	{
 		DecimalFormat df = new DecimalFormat("#.####");
 
@@ -544,9 +545,9 @@ public class PrefilterService implements IPrefilterService
 		oneWayResults.setDoseResponseExperiement(doseResponseExperiment);
 		oneWayResults.setOneWayANOVAResults(oneWayResultList);
 
-		performFoldFilter(oneWayResults, processableData, Float.valueOf(foldFilterValue), isLogTransformation,
+		performFoldFilter(oneWayResults, processableData, foldFilterValue, isLogTransformation,
 				baseValue, useFoldFilter);
-		performNoelLoel(oneWayResults, Float.valueOf(loelPValue), Float.valueOf(loelFoldChange), tTest, updater);
+		performNoelLoel(oneWayResults, loelPValue, loelFoldChange, tTest, DEFAULT_NUM_THREADS, updater);
 
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
 
@@ -604,7 +605,7 @@ public class PrefilterService implements IPrefilterService
 	}
 
 	private void performFoldFilter(PrefilterResults prefilterResults, IStatModelProcessable processableData,
-			Float foldFilterValue, boolean isLogTransformation, double baseValue, boolean useFoldFilter)
+			double foldFilterValue, boolean isLogTransformation, double baseValue, boolean useFoldFilter)
 	{
 		int resultSize = prefilterResults.getPrefilterResults().size();
 
@@ -628,7 +629,7 @@ public class PrefilterService implements IPrefilterService
 		}
 	}
 
-	private void performNoelLoel(PrefilterResults prefilterResults, Float pValue, Float foldFilterValue, boolean tTest, SimpleProgressUpdater updater)
+	private void performNoelLoel(PrefilterResults prefilterResults, double pValue, double foldFilterValue, boolean tTest, int numThreads, SimpleProgressUpdater updater)
 	{
 		if(updater != null)
 			updater.setProgress(0);
@@ -669,7 +670,7 @@ public class PrefilterService implements IPrefilterService
 		TTest test = new TTest();
 		DunnettsTest dunnetts = new DunnettsTest();
 
-		executor = Executors.newFixedThreadPool(4);
+		executor = Executors.newFixedThreadPool(numThreads);
 		// Loop through the probes
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
@@ -744,7 +745,6 @@ public class PrefilterService implements IPrefilterService
 					}
 					if(updater != null) {
 						double progress = index / (double)prefilterResults.getPrefilterResults().size();
-						System.out.println(progress);
 						updater.setProgress(progress);
 					}
 		        }

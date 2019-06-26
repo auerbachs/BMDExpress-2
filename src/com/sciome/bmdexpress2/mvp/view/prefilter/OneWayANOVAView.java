@@ -8,7 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OneWayANOVAPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -17,8 +17,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -28,7 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
-public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAView, Initializable
+public class OneWayANOVAView extends BMDExpressViewBase implements IPrefilterView, Initializable
 {
 
 	@FXML
@@ -48,6 +48,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	@FXML
 	private TextField					foldChangeLoelTextField;
 	@FXML
+	private TextField					numberOfThreadsTextField;
+	@FXML
 	private RadioButton					dunnettsRadioButton;
 	@FXML
 	private RadioButton					tRadioButton;
@@ -55,6 +57,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	private ProgressBar					oneWayProgressBar;
 	@FXML
 	private Label						oneWayProgressMessage;
+	@FXML
+	private Label						datasetsCompletedLabel;
 	@FXML
 	private Button						startButton;
 	@FXML
@@ -129,6 +133,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
+		numberOfThreadsTextField.setText("" + input.getNumThreads());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -147,7 +152,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 			presenter.performOneWayANOVA(processableData, pCutOff, benAndHochCheckBox.isSelected(),
 					filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
 					foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
-					foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+					foldChangeLoelTextField.getText(), numberOfThreadsTextField.getText(),
+					tRadioButton.isSelected());
 		}
 		else
 		{
@@ -155,7 +161,8 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 					(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 					pCutOff, benAndHochCheckBox.isSelected(), filterControlGenesCheckBox.isSelected(),
 					useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
-					pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+					pValueLoelTextField.getText(), foldChangeLoelTextField.getText(), 
+					numberOfThreadsTextField.getText(), tRadioButton.isSelected());
 		}
 		startButton.setDisable(true);
 	}
@@ -179,6 +186,7 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
 		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));
 		input.setLoelPValue(Double.parseDouble(this.pValueLoelTextField.getText()));
+		input.setNumThreads(Integer.parseInt(this.numberOfThreadsTextField.getText()));
 
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
@@ -216,6 +224,11 @@ public class OneWayANOVAView extends BMDExpressViewBase implements IOneWayANOVAV
 	@Override
 	public void updateProgress(double progress) {
 		oneWayProgressBar.setProgress(progress);
+	}
+
+	@Override
+	public void updateDatasetLabel(String message) {
+		datasetsCompletedLabel.setText(message);
 	}
 	
 	@Override

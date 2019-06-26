@@ -8,7 +8,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
 import com.sciome.bmdexpress2.mvp.presenter.prefilter.OriogenPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOriogenView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -25,10 +26,9 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
-public class OriogenView extends BMDExpressViewBase implements IOriogenView, Initializable{
+public class OriogenView extends BMDExpressViewBase implements IPrefilterView, Initializable{
 
 	@FXML
 	private ComboBox					expressionDataComboBox;
@@ -53,6 +53,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	@FXML
 	private Label						oriogenProgressMessage;
 	@FXML
+	private Label						datasetsCompletedLabel;
+	@FXML
 	private Button						startButton;
 	@FXML
 	private Button						saveSettingsButton;
@@ -62,6 +64,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	private TextField					pValueLoelTextField;
 	@FXML
 	private TextField					foldChangeLoelTextField;
+	@FXML
+	private TextField					numberOfThreadsTextField;
 	@FXML
 	private RadioButton					dunnettsRadioButton;
 	@FXML
@@ -148,7 +152,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		foldChangeValueTextField.setText("" + input.getFoldChangeValue());
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
-		
+		numberOfThreadsTextField.setText("" + input.getNumThreads());
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
@@ -171,7 +175,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 						initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(),
 						foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
-						foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+						foldChangeLoelTextField.getText(), numberOfThreadsTextField.getText(),
+						tRadioButton.isSelected());
 			}
 			else
 			{
@@ -180,7 +185,8 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 						pCutOff, benAndHochCheckBox.isSelected(), initialBootstraps, maxBootstraps, s0Adjustment,
 						filterControlGenesCheckBox.isSelected(), useFoldChangeCheckBox.isSelected(), 
 						foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
-						foldChangeLoelTextField.getText(), tRadioButton.isSelected());
+						foldChangeLoelTextField.getText(), numberOfThreadsTextField.getText(),
+						tRadioButton.isSelected());
 			}
 			startButton.setDisable(true);
 		}
@@ -205,6 +211,7 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 		input.setFoldChangeValue(Double.parseDouble(this.foldChangeValueTextField.getText()));
 		input.setLoelFoldChangeValue(Double.parseDouble(this.foldChangeLoelTextField.getText()));
 		input.setLoelPValue(Double.parseDouble(this.pValueLoelTextField.getText()));
+		input.setNumThreads(Integer.parseInt(this.numberOfThreadsTextField.getText()));
 		
 		input.setNumInitialBootstraps(Integer.parseInt(this.initialBootstrapComboBox.getEditor().getText()));
 		input.setNumMaximumBootstraps(Integer.parseInt(this.maxBootstrapComboBox.getEditor().getText()));
@@ -251,6 +258,11 @@ public class OriogenView extends BMDExpressViewBase implements IOriogenView, Ini
 	@Override
 	public void updateProgress(double progress) {
 		oriogenProgressBar.setProgress(progress);
+	}
+	
+	@Override
+	public void updateDatasetLabel(String message) {
+		datasetsCompletedLabel.setText(message);
 	}
 	
 	@Override

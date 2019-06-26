@@ -698,10 +698,9 @@ public class AnalyzeRunner
 				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()),
-						String.valueOf(preFilterConfig.getpValueLoel()),
-						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						preFilterConfig.gettTest(), project));
+						preFilterConfig.getFoldChange(), preFilterConfig.getpValueLoel(),
+						preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
+						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
 			}
 		}
 		else if (preFilterConfig instanceof WilliamsConfig)
@@ -719,11 +718,9 @@ public class AnalyzeRunner
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()),
-						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
-						String.valueOf(preFilterConfig.getpValueLoel()),
-						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						((WilliamsConfig) preFilterConfig).getNumberOfThreads(), preFilterConfig.gettTest(), project));
+						preFilterConfig.getFoldChange(), ((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
+						preFilterConfig.getpValueLoel(), preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
+						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)
@@ -740,15 +737,15 @@ public class AnalyzeRunner
 			{
 				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
-						((OriogenConfig) preFilterConfig).isMpc(),
+						((OriogenConfig) preFilterConfig).getMpc(),
 						((OriogenConfig) preFilterConfig).getInitialBootstraps(),
 						((OriogenConfig) preFilterConfig).getMaxBootstraps(),
 						((OriogenConfig) preFilterConfig).getS0Adjustment(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						String.valueOf(preFilterConfig.getFoldChange()),
-						String.valueOf(preFilterConfig.getpValueLoel()),
-						String.valueOf(preFilterConfig.getFoldChangeLoel()), preFilterConfig.getOutputName(),
-						preFilterConfig.gettTest(), project));
+						preFilterConfig.getFoldChange(),
+						preFilterConfig.getpValueLoel(),
+						preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
+						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
 			}
 		}
 		System.out.println("Finished " + stdoutInfo);

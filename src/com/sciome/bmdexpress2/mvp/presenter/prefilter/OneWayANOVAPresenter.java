@@ -6,13 +6,11 @@ import java.util.List;
 import com.google.common.eventbus.Subscribe;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
-import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
-import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IOneWayANOVAView;
+import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataLoadedEvent;
-import com.sciome.bmdexpress2.shared.eventbus.analysis.OriogenDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
@@ -22,11 +20,11 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 //Soure
-public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView, IPrefilterService>  implements SimpleProgressUpdater 
+public class OneWayANOVAPresenter extends ServicePresenterBase<IPrefilterView, IPrefilterService>  implements SimpleProgressUpdater 
 {
 	private volatile boolean running = false;
 	
-	public OneWayANOVAPresenter(IOneWayANOVAView view, IPrefilterService service, BMDExpressEventBus eventBus)
+	public OneWayANOVAPresenter(IPrefilterView view, IPrefilterService service, BMDExpressEventBus eventBus)
 	{
 		super(view, service, eventBus);
 	}
@@ -36,7 +34,8 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 	 */
 	public void performOneWayANOVA(List<IStatModelProcessable> processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String loelPValue, String loelFoldChange, String foldFilterValue, boolean tTest)
+			String loelPValue, String loelFoldChange, String foldFilterValue, String numThreads,
+			boolean tTest)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -46,30 +45,24 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 				running = true;
 				try
 				{
-					List<OneWayANOVAResults> resultList = new ArrayList<OneWayANOVAResults>();
 					for (int i = 0; i < processableData.size(); i++) {
 						if(running) {
-							setMessage((i + 1) + "/" + processableData.size());
+							setDatasetLabel((i + 1) + "/" + processableData.size());
 
 							//Set cancel to be false in case the service was cancelled before
 							getService().start();
-							resultList.add(getService().oneWayANOVAAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection, 
-									filterOutControlGenes, useFoldFilter, foldFilterValue,
-									loelPValue, loelFoldChange, me, tTest));
+							OneWayANOVAResults result = getService().oneWayANOVAAnalysis(processableData.get(i), pCutOff, multipleTestingCorrection, 
+									filterOutControlGenes, useFoldFilter, Double.valueOf(foldFilterValue), Double.valueOf(loelPValue), 
+									Double.valueOf(loelFoldChange), Integer.valueOf(numThreads), me, tTest);
 							me.setProgress(0);
+
+							Platform.runLater(() ->
+							{
+								getEventBus().post(new OneWayANOVADataLoadedEvent(result));
+							});
 						}
 					}
-					// post the new oneway object to the event bus so folks can do the right thing.
-					if(resultList != null && running) {
-						Platform.runLater(() ->
-						{
-							for(int i = 0; i < resultList.size(); i++) {
-								getEventBus().post(new OneWayANOVADataLoadedEvent(resultList.get(i)));
-							}
-						});
-					}
-				} catch (Exception e)
-				{
+				} catch (Exception e) {
 					Platform.runLater(() ->
 					{
 						getEventBus().post(new ShowErrorEvent(e.toString()));
@@ -96,7 +89,8 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 	 */
 	public void performOneWayANOVA(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, boolean tTest)
+			String foldFilterValue, String loelPValue, String loelFoldChange, String numThreads,
+			boolean tTest)
 	{
 		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
@@ -109,8 +103,9 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 					//Set cancel to be false in case the service was cancelled before
 					getService().start();
 					OneWayANOVAResults oneWayResults = getService().oneWayANOVAAnalysis(processableData, pCutOff, multipleTestingCorrection, 
-																		filterOutControlGenes, useFoldFilter, foldFilterValue,
-																		loelPValue, loelFoldChange, me, tTest);
+																		filterOutControlGenes, useFoldFilter, Double.valueOf(foldFilterValue),
+																		Double.valueOf(loelPValue), Double.valueOf(loelFoldChange), 
+																		Integer.valueOf(numThreads), me, tTest);
 
 					// post the new oneway object to the event bus so folks can do the right thing.
 					if(oneWayResults != null && running) {
@@ -147,6 +142,7 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 
 	public void cancel() {
 		setMessage("");
+		setDatasetLabel("");
 		setProgress(0.0);
 		running = false;
 		getService().cancel();
@@ -171,6 +167,17 @@ public class OneWayANOVAPresenter extends ServicePresenterBase<IOneWayANOVAView,
 			});
 		}
 	}
+	
+	public void setDatasetLabel(String message) {
+		if(running) {
+			Platform.runLater(() ->
+			{
+				getView().updateDatasetLabel(message);
+	
+			});
+		}
+	}
+	
 	
 	@Subscribe
 	public void onProjectLoadedEvent(BMDProjectLoadedEvent event)

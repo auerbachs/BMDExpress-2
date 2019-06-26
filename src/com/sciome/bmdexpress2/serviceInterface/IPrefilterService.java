@@ -9,19 +9,19 @@ import com.sciome.commons.interfaces.SimpleProgressUpdater;
 public interface IPrefilterService {
 	public WilliamsTrendResults williamsTrendAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String numberOfPermutations, String loelPValue, String loelFoldChange, 
-			String numThreads, SimpleProgressUpdater updater, boolean tTest);
+			double foldFilterValue, int numberOfPermutations, double loelPValue, double loelFoldChange, 
+			int numThreads, SimpleProgressUpdater updater, boolean tTest);
 	
 	public OriogenResults oriogenAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, int initialBootstraps, int maxBootstraps, 
-			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, 
+			double s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter,
+			double foldFilterValue, double loelPValue, double loelFoldChange, int numThreads,
 			SimpleProgressUpdater updater, boolean tTest);
 	
 	public OneWayANOVAResults oneWayANOVAAnalysis(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean filterOutControlGenes, boolean useFoldFilter,
-			String foldFilterValue, String loelPValue, String loelFoldChange, SimpleProgressUpdater updater, 
-			boolean tTest);
+			double foldFilterValue, double loelPValue, double loelFoldChange, int numThreads,
+			SimpleProgressUpdater updater, boolean tTest);
 	
 	public void cancel();
 	public void start();

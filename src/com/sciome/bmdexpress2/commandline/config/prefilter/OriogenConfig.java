@@ -1,35 +1,33 @@
 package com.sciome.bmdexpress2.commandline.config.prefilter;
 
 public class OriogenConfig extends PrefilterConfig{
-	private boolean mpc;
-	private int initialBootstraps;
-	private int maxBootstraps;
-	private float s0Adjustment;
+	private Boolean mpc;
+	private Integer initialBootstraps;
+	private Integer maxBootstraps;
+	private Double s0Adjustment;
 	
-	public boolean isMpc() {
+	public Boolean getMpc() {
 		return mpc;
 	}
-	public void setMpc(boolean mpc) {
+	public void setMpc(Boolean mpc) {
 		this.mpc = mpc;
 	}
-	public int getInitialBootstraps() {
+	public Integer getInitialBootstraps() {
 		return initialBootstraps;
 	}
-	public void setInitialBootstraps(int initialBootstraps) {
+	public void setInitialBootstraps(Integer initialBootstraps) {
 		this.initialBootstraps = initialBootstraps;
 	}
-	public int getMaxBootstraps() {
+	public Integer getMaxBootstraps() {
 		return maxBootstraps;
 	}
-	public void setMaxBootstraps(int maxBootstraps) {
+	public void setMaxBootstraps(Integer maxBootstraps) {
 		this.maxBootstraps = maxBootstraps;
 	}
-	public float getS0Adjustment() {
+	public Double getS0Adjustment() {
 		return s0Adjustment;
 	}
-	public void setS0Adjustment(float s0Adjustment) {
+	public void setS0Adjustment(Double s0Adjustment) {
 		this.s0Adjustment = s0Adjustment;
 	}
-	
-	
 }

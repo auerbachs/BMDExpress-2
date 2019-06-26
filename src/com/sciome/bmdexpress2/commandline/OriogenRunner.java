@@ -10,13 +10,14 @@ public class OriogenRunner
 
 	public OriogenResults runOriogenFilter(IStatModelProcessable processableData, double pCutOff,
 			boolean multipleTestingCorrection, boolean mpc, int initialBootstraps, int maxBootstraps,
-			float s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter, String foldFilterValue,
-			String pValueLoel, String foldChangeLoel, String outputName, boolean tTest, BMDProject project)
+			double s0Adjustment, boolean filterOutControlGenes, boolean useFoldFilter, double foldFilterValue,
+			double pValueLoel, double foldChangeLoel, String outputName, int numThreads, boolean tTest,
+			BMDProject project)
 	{
 		PrefilterService service = new PrefilterService();
 		OriogenResults results = service.oriogenAnalysis(processableData, pCutOff, multipleTestingCorrection,
 				initialBootstraps, maxBootstraps, s0Adjustment, filterOutControlGenes, useFoldFilter,
-				foldFilterValue, pValueLoel, foldChangeLoel, null, tTest);
+				foldFilterValue, pValueLoel, foldChangeLoel, numThreads, null, tTest);
 
 		if (outputName != null)
 			results.setName(outputName);
