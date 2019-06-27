@@ -21,10 +21,12 @@ import org.controlsfx.control.textfield.TextFields;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
 import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDExpressDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
+import com.sciome.bmdexpress2.service.ProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.TableViewCache;
 import com.sciome.filter.DataFilter;
@@ -90,16 +92,17 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected Button											toggleColumns;
 	protected Node												dataVisualizationNode;
 
-	private final String										EXPORT_DATA		= "Export";
-	private final String										MARK_DATA	 	= "Mark Data";
-	private final String										HIDE_TABLE		= "Hide Table";
-	private final String										SHOW_TABLE		= "Show Table";
-	private final String										HIDE_FILTER		= "Hide Filter";
-	private final String										SHOW_FILTER		= "Show Filter";
-	private final String										HIDE_CHART		= "Hide Charts";
-	private final String										SHOW_CHART		= "Show Charts";
-	private final String										APPLY_FILTER	= "Apply Filter";
-	private final String										TOGGLE_COLUMNS	= "Toggle Columns";
+	private final String										EXPORT_DATA					= "Export";
+	private final String										EXPORT_FILTERED_DATA		= "Export Filtered Data";
+	private final String										MARK_DATA	 				= "Mark Data";
+	private final String										HIDE_TABLE					= "Hide Table";
+	private final String										SHOW_TABLE					= "Show Table";
+	private final String										HIDE_FILTER					= "Hide Filter";
+	private final String										SHOW_FILTER					= "Show Filter";
+	private final String										HIDE_CHART					= "Hide Charts";
+	private final String										SHOW_CHART					= "Show Charts";
+	private final String										APPLY_FILTER				= "Apply Filter";
+	private final String										TOGGLE_COLUMNS				= "Toggle Columns";
 								
 	private FilteredList<BMDExpressAnalysisRow>					filteredData;
 	private BMDExpressAnalysisDataSet							analysisDataSet;
@@ -152,8 +155,6 @@ public abstract class BMDExpressDataView<T> extends VBox
 			splitPane.getItems().add(splitPaneMain);
 			hideFilter = new Button(SHOW_FILTER);
 			markData = new Button(MARK_DATA);
-			exportData = new Button(EXPORT_DATA);
-			exportData.setTooltip(new Tooltip("Exports all selected datasets with filters applied"));
 
 			defaultDPack = BMDExpressProperties.getInstance().getDataFilterPackMap(filterableClass.getName());
 			// initialize the data filters in this data filter pack. If they were deserialized from disk
@@ -191,6 +192,13 @@ public abstract class BMDExpressDataView<T> extends VBox
 			totalItemsLabel = new Label("");
 			enableFilterCheckBox = new CheckBox(APPLY_FILTER);
 			enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
+			if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment)) {
+				exportData = new Button(EXPORT_FILTERED_DATA);
+				exportData.setTooltip(new Tooltip("Exports all selected datasets with filters applied"));
+			} else {
+				exportData = new Button(EXPORT_DATA);
+				exportData.setTooltip(new Tooltip("Exports all selected datasets"));
+			}
 
 			topHBox.getChildren().add(totalItemsLabel);
 			topHBox.getChildren().add(enableFilterCheckBox);
@@ -209,6 +217,17 @@ public abstract class BMDExpressDataView<T> extends VBox
 			SplitPane.setResizableWithParent(filtrationNode, true);
 			splitPane.setDividerPosition(0, .7);
 
+			enableFilterCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+				@Override
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+					if(newValue) {
+						exportData.setText(EXPORT_FILTERED_DATA);
+					} else {
+						exportData.setText(EXPORT_DATA);
+					}
+				}
+			});
+			
 			exportData.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -897,7 +916,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 	{
 		StringBuilder builder = new StringBuilder();
 		builder.append(bmdAnalysisDataSet.getName());
-		if(enableFilterCheckBox.isSelected())
+		//Dose response experiments can't be filtered
+		if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
 			builder.append("_filtered");
 		builder.append(".txt");
 		
@@ -906,7 +926,10 @@ public abstract class BMDExpressDataView<T> extends VBox
 		if (selectedFile == null)
 			return;
 		
-		presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile, filtrationNode.getFilterDataPack());
+		if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
+			presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile, filtrationNode.getFilterDataPack());
+		else
+			presenter.exportResults(bmdAnalysisDataSet, selectedFile);
 	}
 	
 	//This is copied from ProjectNavigationView (might be a better way)

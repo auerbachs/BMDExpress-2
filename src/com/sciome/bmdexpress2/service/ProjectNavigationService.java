@@ -33,10 +33,13 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
+import com.sciome.filter.DataFilter;
+import com.sciome.filter.DataFilterPack;
+import com.sciome.filter.DataFilterType;
 
 import javafx.collections.transformation.FilteredList;
 
-public class ProjectNavigationService implements IProjectNavigationService{
+public class ProjectNavigationService implements IProjectNavigationService {
 
 	private final int	MAX_FILES_FOR_MULTI_EXPORT	= 10;
 	
@@ -179,7 +182,7 @@ public class ProjectNavigationService implements IProjectNavigationService{
 							writer.write("Analysis\t");
 							writer.write(String.join("\t", header) + "\n");
 						}
-						writer.write(exportBMDExpressAnalysisDataSet(dataSet, true));
+						writer.write(getRowsToWrite(dataSet.getAnalysisRows(), dataSet.getName()));
 					}
 					else if (dataSet instanceof DoseResponseExperiment)
 					{
@@ -214,7 +217,7 @@ public class ProjectNavigationService implements IProjectNavigationService{
 			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()));
 			writer.write("\n\n");
 			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
-			writer.write(exportBMDExpressAnalysisDataSet(bmdResults, false));
+			writer.write(getRowsToWrite(bmdResults.getAnalysisRows(), null));
 			writer.close();
 		}
 		catch (IOException e)
@@ -223,17 +226,33 @@ public class ProjectNavigationService implements IProjectNavigationService{
 		}
 	}
 	
-	private String exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, boolean prepend)
+	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
 	{
-		StringBuffer sb = new StringBuffer();
-
-		for (BMDExpressAnalysisRow result : bmdResults.getAnalysisRows())
+		StringBuilder filterInformation = new StringBuilder();
+		filterInformation.append("Filter information: \n");
+		for(DataFilter filter : pack.getDataFilters())
 		{
-			if (prepend)
-				sb.append(bmdResults.getName() + "\t");
-			sb.append(joinRowData(result.getRow(), "\t") + "\n");
+			System.out.println(filter.getKey());
+			if(filter.getDataFilterType().equals(DataFilterType.CONTAINS) || filter.getDataFilterType().equals(DataFilterType.BETWEEN))
+				filterInformation.append(filter.toString() + "\n");
+			else
+				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " " + filter.getValues().get(0) + "\n");
 		}
-		return sb.toString();
+		filterInformation.append("\n");
+		
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
+			writer.write(filterInformation.toString());
+			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n\n");
+			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
+			writer.write(getRowsToWrite(filteredResults, null));
+			writer.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void exportDoseResponseExperiment(DoseResponseExperiment doseResponseExperiment, File selectedFile)
@@ -420,6 +439,25 @@ public class ProjectNavigationService implements IProjectNavigationService{
 			matrixData = new Object[0][];
 		}
 		return matrixData;
+	}
+	
+	/**
+	 * Creates a string using a list of rows from a data set
+	 * @param rows The list of rows to write
+	 * @param prependName A name to prepend to each of the rows
+	 * @return A string with the data from the rows
+	 */
+	private String getRowsToWrite(List<BMDExpressAnalysisRow> rows, String prependName)
+	{
+		StringBuffer sb = new StringBuffer();
+
+		for (BMDExpressAnalysisRow result : rows)
+		{
+			if (prependName != null)
+				sb.append(prependName + "\t");
+			sb.append(joinRowData(result.getRow(), "\t") + "\n");
+		}
+		return sb.toString();
 	}
 	
 	private String joinRowData(List<Object> datas, String delimiter)

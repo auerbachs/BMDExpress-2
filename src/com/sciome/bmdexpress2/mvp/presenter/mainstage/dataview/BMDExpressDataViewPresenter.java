@@ -1,34 +1,26 @@
 package com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisDataSet;
 import com.sciome.bmdexpress2.mvp.model.BMDExpressAnalysisRow;
-import com.sciome.bmdexpress2.mvp.presenter.presenterbases.PresenterBase;
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
+import com.sciome.bmdexpress2.mvp.presenter.presenterbases.ServicePresenterBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
+import com.sciome.bmdexpress2.serviceInterface.IProjectNavigationService;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.visualizations.ShowBMDAnalysisDataSetVisualizationsEvent;
-import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
-import com.sciome.filter.DataFilterType;
 
 import javafx.collections.transformation.FilteredList;
 
-public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDExpressDataView>
+public abstract class BMDExpressDataViewPresenter<T> extends ServicePresenterBase<IBMDExpressDataView, IProjectNavigationService>
 {
-	public BMDExpressDataViewPresenter(IBMDExpressDataView view, BMDExpressEventBus eventBus)
+	public BMDExpressDataViewPresenter(IBMDExpressDataView view, IProjectNavigationService service, BMDExpressEventBus eventBus)
 	{
-		super(view, eventBus);
-		init();
-	}
-
-	private void init()
-	{
+		super(view, service, eventBus);
 	}
 
 	public void showVisualizations(BMDExpressAnalysisDataSet dataSet)
@@ -38,69 +30,17 @@ public abstract class BMDExpressDataViewPresenter<T> extends PresenterBase<IBMDE
 		getEventBus().post(new ShowBMDAnalysisDataSetVisualizationsEvent(results));
 	}
 	
-	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
-	{
-		StringBuilder filterInformation = new StringBuilder();
-		filterInformation.append("Filter information: \n");
-		for(DataFilter filter : pack.getDataFilters())
-		{
-			System.out.println(filter.getKey());
-			if(filter.getDataFilterType().equals(DataFilterType.CONTAINS) || filter.getDataFilterType().equals(DataFilterType.BETWEEN))
-				filterInformation.append(filter.toString() + "\n");
-			else
-				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " " + filter.getValues().get(0) + "\n");
-		}
-		filterInformation.append("\n");
-		
-		try
-		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
-			writer.write(filterInformation.toString());
-			writer.write(String.join("\n", bmdResults.getAnalysisInfo().getNotes()) + "\n\n");
-			writer.write(String.join("\t", bmdResults.getColumnHeader()) + "\n");
-			writer.write(exportFilteredBMDExpressAnalysisDataSet(filteredResults));
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+	public void exportResults(BMDExpressAnalysisDataSet bmdResults, File selectedFile) {
+		//Dose response experiments can't be filtered so use exporting from project navigation service instead
+		if(bmdResults instanceof DoseResponseExperiment) {
+			getService().exportDoseResponseExperiment((DoseResponseExperiment)bmdResults, selectedFile);
+		} else {
+			getService().exportBMDExpressAnalysisDataSet(bmdResults, selectedFile);
 		}
 	}
 	
-	//This method is copied from ProjectNavigationView (might be a better way)
-	private String exportFilteredBMDExpressAnalysisDataSet(FilteredList<BMDExpressAnalysisRow> filteredResults)
+	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
 	{
-		StringBuffer sb = new StringBuffer();
-
-		for (BMDExpressAnalysisRow result : filteredResults)
-		{
-			sb.append(joinRowData(result.getRow(), "\t") + "\n");
-		}
-		return sb.toString();
-	}
-
-	//This method is copied from ProjectNavigationView (might be a better way)
-	private String joinRowData(List<Object> datas, String delimiter)
-	{
-		StringBuffer bf = new StringBuffer();
-		int i = 0;
-		if (datas == null)
-		{
-			return "";
-		}
-		for (Object data : datas)
-		{
-			if (data != null)
-			{
-				bf.append(data);
-			}
-
-			if (i < datas.size())
-			{
-				bf.append(delimiter);
-			}
-		}
-
-		return bf.toString();
+		getService().exportFilteredResults(bmdResults, filteredResults, selectedFile, pack);
 	}
 }
