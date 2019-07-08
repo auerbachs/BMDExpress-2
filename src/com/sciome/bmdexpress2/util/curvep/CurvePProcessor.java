@@ -244,6 +244,16 @@ public class CurvePProcessor
 			RS.add(wSD(gResps, cfs));
 		} // for d
 
+		//2019.07 additional check for extremely low SD values (e.g., likely to arise from "degenerate" replicate responses)
+		Float [] sds = RS.toArray(new Float[0]);
+		Float[] csds = TukeyBiWs(sds, 5.0f, 0.00001f);
+		
+		//Arrays.sort(sds); float x = smedian(sds);
+		float x = wMean(sds, csds);
+		for (int d = 0; d < RS.size(); d++)
+		{//checks and replaces those SDs that are below average SD
+			if ( x > RS.get(d)) RS.set(d,  x);
+		}
 		return RS;
 	} // end of calc_WgtSdResponses()
 
@@ -411,11 +421,13 @@ public class CurvePProcessor
 				// e.printStackTrace();
 			}
 
-		if (sdr.get(0) == 0.0)
+		float control_sd = sdr.get(0);
+		
+		if (control_sd == 0.0f)
 			return ulD.get(0);
 
-		float L1 = avr.get(0) - Z_thr * sdr.get(0);
-		float L2 = avr.get(0) + Z_thr * sdr.get(0);
+		float L1 = avr.get(0) - Z_thr * control_sd;
+		float L2 = avr.get(0) + Z_thr * control_sd;
 
 		float P1 = SafeImputeDose(ulD, avr, L1);
 		float P2 = SafeImputeDose(ulD, avr, L2);
@@ -435,20 +447,14 @@ public class CurvePProcessor
 		 * shortcut version that does all auxiliary calculations internally returns a POD estimate for
 		 * appropriate (decreasing and increasing) direction (dir) large number indicates no POD
 		 */
-
-		if (sdr.get(0) == 0.0)
+		float control_sd = sdr.get(0);
+		
+		if (control_sd == 0.0f)
 			return ud.get(0);
+		
 
-		// 05.15.2018 add-on; This is needed when quantile normalizations leads to a degeneracy of the median
-		// for untreated control
-
-		float maxsd = sdr.get(0);
-		for (int x = 1; x < sdr.size(); x++)
-			if (sdr.get(x) > maxsd)
-				maxsd = sdr.get(x);
-
-		float L1 = avr.get(0) - Z_thr * maxsd;
-		float L2 = avr.get(0) + Z_thr * maxsd;
+		float L1 = avr.get(0) - Z_thr * control_sd;
+		float L2 = avr.get(0) + Z_thr * control_sd;
 
 		float P1 = SafeImputeDose(ud, avr, L1);
 		float P2 = SafeImputeDose(ud, avr, L2);
@@ -1207,7 +1213,7 @@ public class CurvePProcessor
 		for (int i = 0; i < responses.size(); i++)
 		{
 
-			if (responses.get(i).getProbe().getId().equals("FIS1_2429"))
+			if (responses.get(i).getProbe().getId().equals("1367733_at"))
 				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 
 			if (responses.get(i).getProbe().getId().equals("FIS1_2429"))
@@ -1217,8 +1223,9 @@ public class CurvePProcessor
 				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9));
 				// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			}
-			if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
-				wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+			
+			//if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
+			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 
 			// if ( responses.get(i).getProbe().getId().equals("1390430_at") )
 			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
