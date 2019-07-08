@@ -104,8 +104,19 @@ public class FilePolyFit extends FileFitBase
 		bf.append(inputParameters.getAppend() + space1);
 		bf.append(inputParameters.getSmooth() + newline);
 
-		bf.append(inputParameters.getBmrType() + space1);
-		bf.append(inputParameters.getBmrLevel() + space1);
+		double bmrLevel = inputParameters.getBmrLevel();
+		int bmrType = inputParameters.getBmrType();
+		if (bmrType == 2)
+		{
+			bmrType = 1;
+			bmrLevel = this.recalculateBMRFactorForRelativeDevaition(inputX, inputY,
+					inputParameters.getBmrLevel());
+
+		}
+
+		bf.append(bmrType + space1);
+		bf.append(bmrLevel + space1);
+
 		bf.append(inputParameters.getConstantVariance() + space1);
 		bf.append(inputParameters.getConfidence() + newline);
 
