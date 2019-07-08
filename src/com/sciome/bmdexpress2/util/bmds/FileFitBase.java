@@ -6,7 +6,12 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.util.FastMath;
 
 public abstract class FileFitBase
 {
@@ -17,6 +22,30 @@ public abstract class FileFitBase
 	{
 		this.killTime = killTime;
 		this.success = true;
+	}
+
+	protected double recalculateBMRFactorForRelativeDevaition(float[] inputx, float[] inputy, double bmrlevel)
+	{
+
+		double newBmrFactor = 0.0;
+		List<Double> firstDoseGroup = new ArrayList<>();
+
+		float currval = inputx[0];
+		for (int i = 0; i < inputx.length; i++)
+		{
+			if (currval != inputx[i])
+				break;
+			firstDoseGroup.add((double) inputy[i]);
+		}
+		double[] arr = firstDoseGroup.stream().mapToDouble(d -> d).toArray();
+
+		StandardDeviation sd2 = new StandardDeviation();
+		double stdval = sd2.evaluate(arr);
+
+		// BMRF-fake = log2(BMRF from GUI) / st.dev,
+		newBmrFactor = FastMath.log(2, bmrlevel + 1.0) / stdval;
+
+		return newBmrFactor;
 	}
 
 	protected void executeModel(String EXE, String fName)

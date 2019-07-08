@@ -115,42 +115,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		this.modelSelectionParameters = modelSelectionParameters;
 		this.modelsToRun = modelsToRun;
 
-		if (tmpFolder != null && !tmpFolder.equals(""))
-		{
-			isCustomTmpFolder = true;
-			String processName = ManagementFactory.getRuntimeMXBean().getName();
-			processName = processName.replace(' ', '_');
-			processName = processName.replace('@', '-');
-
-			String userName = System.getProperty("user.name");
-			if (userName != null)
-				processName = userName + "-" + processName;
-
-			// in the tmp folder, make a special folder based on process id/host name and user name
-			tmpFolder += File.separator + processName;
-			File tmpFolderFile = new File(tmpFolder);
-			if (!tmpFolderFile.exists())
-				tmpFolderFile.mkdirs();
-
-			// now copy over all the lib stuff to the tmp folder to
-			// run executables from local space.
-			BMDExpressProperties.getInstance().copyLibToTmpFoler(tmpFolderFile + File.separator + "lib/");
-
-		}
-		this.tmpFolder = tmpFolder;
-
-		bmdResults.setName(processableData.toString() + "_BMD");
-		// create an array of doubles for the doses for the old code to user.
-		doses = new float[treatments.size()];
-		for (int i = 0; i < treatments.size(); i++)
-		{
-			doses[i] = treatments.get(i).getDose();
-		}
-
-		checkDoses();
-		checkOptions();
-		flagDose = lowPDose * flagRatio;
-
 		analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
@@ -215,6 +179,42 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				+ modelSelectionParameters.getBestModelSelectionBMDLandBMDU());
 
 		analysisInfo.setNotes(notes);
+
+		if (tmpFolder != null && !tmpFolder.equals(""))
+		{
+			isCustomTmpFolder = true;
+			String processName = ManagementFactory.getRuntimeMXBean().getName();
+			processName = processName.replace(' ', '_');
+			processName = processName.replace('@', '-');
+
+			String userName = System.getProperty("user.name");
+			if (userName != null)
+				processName = userName + "-" + processName;
+
+			// in the tmp folder, make a special folder based on process id/host name and user name
+			tmpFolder += File.separator + processName;
+			File tmpFolderFile = new File(tmpFolder);
+			if (!tmpFolderFile.exists())
+				tmpFolderFile.mkdirs();
+
+			// now copy over all the lib stuff to the tmp folder to
+			// run executables from local space.
+			BMDExpressProperties.getInstance().copyLibToTmpFoler(tmpFolderFile + File.separator + "lib/");
+
+		}
+		this.tmpFolder = tmpFolder;
+
+		bmdResults.setName(processableData.toString() + "_BMD");
+		// create an array of doubles for the doses for the old code to user.
+		doses = new float[treatments.size()];
+		for (int i = 0; i < treatments.size(); i++)
+		{
+			doses[i] = treatments.get(i).getDose();
+		}
+
+		checkDoses();
+		checkOptions();
+		flagDose = lowPDose * flagRatio;
 
 	}
 
