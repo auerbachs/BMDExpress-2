@@ -423,7 +423,7 @@ public class CurvePProcessor
 
 		float control_sd = sdr.get(0);
 		
-		if (control_sd == 0.0f)
+		if (control_sd == 0.0f) //should not happen anymore, due to handling inside calc_WgtSdResponses()
 			return ulD.get(0);
 
 		float L1 = avr.get(0) - Z_thr * control_sd;
@@ -435,6 +435,7 @@ public class CurvePProcessor
 		// picks appropriate POD depending on the overall direction (judged by AUC)
 		if (AUC < 0)
 			return P1;
+		
 		if (AUC > 0)
 			return P2;
 
