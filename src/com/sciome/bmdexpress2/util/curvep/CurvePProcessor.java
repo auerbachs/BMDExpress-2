@@ -371,6 +371,10 @@ public class CurvePProcessor
 
 				// pick most conservative imputation, considering this could be a degenerate dose-response
 				iD = Math.max(iD, iD2);
+				
+				//2019.07 additional limit for a below-first-dose imputation 
+				//(e.g., for serial dilutions will stop at a dose smaller by one dilution factor than the first dose)
+				iD = Math.max(iD, D.get(1)*2 - D.get(2));				
 			}
 			break;
 		}
