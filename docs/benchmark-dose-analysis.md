@@ -14,7 +14,7 @@ Benchmark dose analysis consists of fitting dose-response data to a collection o
 
 BMDExpress 2 is available for Windows, Mac and Linux operating systems, however BMD results may be slightly different across these operating systems due the floating point calculations employed by the BMDS model executables that are used in BMDExpress. The model executables were originally intended to run on Windows operating systems and are therefore only validated in Windows. Empirical evaluation of the differences across platforms indicate there are minimal changes to the results, however the results from a limited number of probes may change significantly.
 
-### Benchmark Dose Data Options
+### Benchmark Dose Data Options (BMDS/EPA parametric curve fitting)
 
 ![Popup BMD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-bmd.png)
 
@@ -81,11 +81,15 @@ Fitting to the statistical models is performed using methods implemented in the 
 
 After selecting and checking the appropriate data, models, parameters and other options, click `Start`. Computation may take minutes to hours depending on the total number of probe set identifiers and data sets submitted for analysis, the number of models to fit, and your computer’s performance characteristics.
 
+### Benchmark Dose Data Options (Sciome gCurveP)
+
+![Popup BMD gCurveP](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-gcurvep-parameters.png)
+
 ### Benchmark Dose Results
 
 [Video describing Benchmark Dose Analysis results](https://www.youtube.com/watch?v=22pHEniAbKo&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc&index=9)
 
-![Main BMD results](https://github.com/auerbachs/BMDExpress-2.0/blob/master/media/main-bmd-results.png)
+![Main BMD results](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/main-bmd-results.png)
 
 Results are displayed in the bottom half of the window in tabular format.
 
