@@ -31,19 +31,29 @@ public abstract class FileFitBase
 		List<Double> firstDoseGroup = new ArrayList<>();
 
 		float currval = inputx[0];
+		double stdSum = 0.0;
+		int count = 1;
 		for (int i = 0; i < inputx.length; i++)
 		{
 			if (currval != inputx[i])
-				break;
+			{
+				double[] arr = firstDoseGroup.stream().mapToDouble(d -> d).toArray();
+
+				StandardDeviation sd2 = new StandardDeviation();
+				double stdval = sd2.evaluate(arr);
+				stdSum += stdval;
+				firstDoseGroup.clear();
+				count++;
+			}
 			firstDoseGroup.add((double) inputy[i]);
 		}
 		double[] arr = firstDoseGroup.stream().mapToDouble(d -> d).toArray();
-
 		StandardDeviation sd2 = new StandardDeviation();
 		double stdval = sd2.evaluate(arr);
-
-		// BMRF-fake = log2(BMRF from GUI) / st.dev,
-		newBmrFactor = FastMath.log(2, bmrlevel + 1.0) / stdval;
+		stdSum += stdval;
+		double stdAverage = stdSum / count;
+		double stdPooled = Math.sqrt(stdAverage);
+		newBmrFactor = FastMath.log(2, bmrlevel + 1.0) / stdPooled;
 
 		return newBmrFactor;
 	}
