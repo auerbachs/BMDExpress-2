@@ -27,6 +27,8 @@ public abstract class FileFitBase
 	protected double recalculateBMRFactorForRelativeDevaition(float[] inputx, float[] inputy, double bmrlevel)
 	{
 
+		//gui_bmr_type
+		
 		double newBmrFactor = 0.0;
 		List<Double> firstDoseGroup = new ArrayList<>();
 
@@ -55,6 +57,16 @@ public abstract class FileFitBase
 		double stdPooled = Math.sqrt(stdAverage);
 		newBmrFactor = FastMath.log(2, bmrlevel + 1.0) / stdPooled;
 
+		//we calculate BMR and store it inside BMRF to be supplied as "single point" option into both EPA BMDS and gcurvep
+		//if (gui_bmr_type == "st.dev type") newBmrFactor =  average_control_response + bmrlevel * stdPooled;
+		
+	//	if (gui_bmr_type == "relartive deviation") 
+	////	{
+	//		newBmrFactor =  average_control_response * (bmrlevel + 1);
+	//		//if logged, 
+	//		newBmrFactor =  average_control_response  +  FastMath.log(2, bmrlevel + 1.0);
+	//	}
+		
 		return newBmrFactor;
 	}
 
