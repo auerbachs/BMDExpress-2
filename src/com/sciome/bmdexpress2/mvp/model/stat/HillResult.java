@@ -7,12 +7,12 @@ import java.util.List;
 public class HillResult extends StatResult
 {
 
-	private static final long	serialVersionUID	= -527776055122273597L;
+	private static final long serialVersionUID = -527776055122273597L;
 	/**
 	 * GeneId
 	 */
 
-	private short				kFlag;
+	private short kFlag;
 
 	public HillResult()
 	{
@@ -72,6 +72,17 @@ public class HillResult extends StatResult
 	public List<String> getParametersNames()
 	{
 		return new ArrayList<String>(Arrays.asList("intercept", "v-parameter", "n-parameter", "k-parameter"));
+	}
+
+	@Override
+	public double getResponseAt(double dose)
+	{
+		int base = 0;
+		double nom = curveParameters[base + 1] * Math.pow(dose, curveParameters[base + 2]);
+		double denom = Math.pow(curveParameters[base + 3], curveParameters[base + 2])
+				+ Math.pow(dose, curveParameters[base + 2]);
+
+		return curveParameters[base] + nom / denom;
 	}
 
 }

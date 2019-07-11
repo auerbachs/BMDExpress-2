@@ -35,8 +35,8 @@ import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 public class BMDAnalysisService implements IBMDAnalysisService
 {
 
-	BMDSTool	bMDSTool;
-	boolean		cancel	= false;
+	BMDSTool bMDSTool;
+	boolean cancel = false;
 
 	/*
 	 * Run parametric bmd analylsis via epa models on processable data
@@ -84,67 +84,81 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		Set<String> doseGroups = new HashSet<>();
 		for (Float dose : doseVector)
 			doseGroups.add(dose.toString());
-	
-		
+
 		// Calculate and set wAUC values
 		if (doseGroups.size() > 2)
 		{
-			//float currBMR = (float) inputParameters.getBmrLevel();
+			// float currBMR = (float) inputParameters.getBmrLevel();
 			List<Float> wAUCList = new ArrayList<Float>();
 			for (int i = 0; i < responses.size(); i++)
 			{
-						
+
 				StatResult stat = bMDResults.getProbeStatResults().get(i).getBestStatResult();
-				
-				if(stat == null) 
+
+				if (stat == null)
 				{
-					wAUCList.add( 0.0f );	
+					wAUCList.add(0.0f);
 					continue;
 				}
 
-				//below, wAUC metric is calculated based on parametric curves, as such, values will differ from gcurvep-based estimates
-				List<Float> udoses = CurvePProcessor.CollapseDoses( doseVector );
+				// below, wAUC metric is calculated based on parametric curves, as such, values will differ
+				// from gcurvep-based estimates
+				List<Float> udoses = CurvePProcessor.CollapseDoses(doseVector);
 				List<Float> logudoses = new ArrayList<Float>();
-				try {
+				try
+				{
 					logudoses = CurvePProcessor.logBaseDoses(udoses, -24);
-				} catch (Exception e) {
+				}
+				catch (Exception e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				/*						
-				String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId(); 
-				if (CurrID.equals("1367733_at"))		
-				{
-					List<Float> uu = CurvePProcessor.CollapseDoses( doseVector );
-					int ll = uu.size();
-					CurrID = Integer.toString(ll);
-				}				
-				*/
-				  
-				int type = -1; //unknown parametric curve type
-				
-				if(stat instanceof PolyResult) type = 0;
-				//if(stat instanceof LogarithmicResult) type = 10; //reserved for future
-				if(stat instanceof PowerResult) type = 20;
-				if(stat instanceof HillResult) type = 30;
-				if(stat instanceof ExponentialResult)
+
+				/*
+				 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId();
+				 * if (CurrID.equals("1367733_at"))
+				 * {
+				 * List<Float> uu = CurvePProcessor.CollapseDoses( doseVector );
+				 * int ll = uu.size();
+				 * CurrID = Integer.toString(ll);
+				 * }
+				 */
+
+				int type = -1; // unknown parametric curve type
+
+				if (stat instanceof PolyResult)
+					type = 0;
+				// if(stat instanceof LogarithmicResult) type = 10; //reserved for future
+				if (stat instanceof PowerResult)
+					type = 20;
+				if (stat instanceof HillResult)
+					type = 30;
+				if (stat instanceof ExponentialResult)
 					type = 40 + ((ExponentialResult) stat).getOption();
-				
-				
+
 				List<Float> coffs = new ArrayList<Float>();
-				double [] dcoffs= stat.getCurveParameters();
+				double[] dcoffs = stat.getCurveParameters();
 				for (int nn = 0; nn < dcoffs.length; nn++)
 				{
-					coffs.add( (float) dcoffs[nn]);					
+					coffs.add((float) dcoffs[nn]);
 				}
-				float aucv1 = CurvePProcessor.intg_log_AUC( udoses, coffs, type, -24, 1000); //better implement and use getResponseAt() inside StatResult class instead of exporting & re0importing model pars
-				//*/
-				
-				float aucv = CurvePProcessor.calc_AUC( logudoses, CurvePProcessor.calc_WgtAvResponses(doseVector, numericMatrix.get(i)) );
-				float ww = CurvePProcessor.calc_wAUC ( aucv, (float)Math.log10( stat.getBMD() ), logudoses);
-				wAUCList.add( ww );					
-				
+				float aucv = CurvePProcessor.intg_log_AUC(udoses, stat, type, -24, 1000); // better implement
+																							// and use
+																							// getResponseAt()
+																							// inside
+																							// StatResult
+																							// class instead
+																							// of exporting &
+																							// re0importing
+																							// model pars
+				// */
+
+				// float aucv = CurvePProcessor.calc_AUC( logudoses,
+				// CurvePProcessor.calc_WgtAvResponses(doseVector, numericMatrix.get(i)) );
+				float ww = CurvePProcessor.calc_wAUC(aucv, (float) Math.log10(stat.getBMD()), logudoses);
+				wAUCList.add(ww);
+
 			}
 			bMDResults.setwAUC(wAUCList);
 
@@ -202,14 +216,14 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 		/* do the gcurvep processing here! */
 		/*
-		String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId(); 
-		if (CurrID.equals("1370387_at"))
-		{ //dbg
-			int dd = 0;
-			CurrID = Integer.toString(dd);
-		}//*/
-		
-		
+		 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId();
+		 * if (CurrID.equals("1370387_at"))
+		 * { //dbg
+		 * int dd = 0;
+		 * CurrID = Integer.toString(dd);
+		 * }//
+		 */
+
 		List<ProbeStatResult> probeStatResults = new ArrayList<>();
 		for (int i = 0; i < responses.size(); i++)
 		{
@@ -286,8 +300,8 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				mono = 1;
 			}
 			// if all converge, and there is a pvalue != 0.0
-			else if (Math.abs(valuesMinus.get(2).doubleValue()) > Math.abs(valuesPlus.get(2).doubleValue()) )
-			{//..choose the direction with largest absolute AUC
+			else if (Math.abs(valuesMinus.get(2).doubleValue()) > Math.abs(valuesPlus.get(2).doubleValue()))
+			{// ..choose the direction with largest absolute AUC
 				mono = -1;
 				values = valuesMinus;
 				correctedPoints = correctedPointsMinus;

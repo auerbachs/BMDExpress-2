@@ -58,4 +58,11 @@ public class PowerResult extends StatResult
 		return new ArrayList<String>(Arrays.asList("control", "slope", "power"));
 	}
 
+	@Override
+	public double getResponseAt(double dose)
+	{
+		int base = 0;
+		return curveParameters[base] + curveParameters[base + 1] * Math.pow(dose, curveParameters[base + 2]);
+	}
+
 }

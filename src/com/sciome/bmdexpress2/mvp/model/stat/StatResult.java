@@ -28,20 +28,20 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -97859231381250568L;
+	private static final long serialVersionUID = -97859231381250568L;
 
-	private double				BMD;
-	private double				BMDL;
-	private double				BMDU;
-	private double				fitPValue;
-	private double				fitLogLikelihood;
-	private double				AIC;
-	private short				adverseDirection;
-	private String				success;
+	private double BMD;
+	private double BMDL;
+	private double BMDU;
+	private double fitPValue;
+	private double fitLogLikelihood;
+	private double AIC;
+	private short adverseDirection;
+	private String success;
 
-	public double[]				curveParameters;
+	public double[] curveParameters;
 
-	private Long				id;
+	private Long id;
 
 	@JsonIgnore
 	public String getModel()
@@ -199,6 +199,8 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 			return Double.NaN;
 		return BMDU / BMD;
 	}
+
+	public abstract double getResponseAt(double d);
 
 	@JsonIgnore
 	public abstract List<String> getColumnNames();

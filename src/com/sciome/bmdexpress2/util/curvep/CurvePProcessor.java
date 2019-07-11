@@ -9,6 +9,7 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
+import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 
 public class CurvePProcessor
 {
@@ -244,15 +245,17 @@ public class CurvePProcessor
 			RS.add(wSD(gResps, cfs));
 		} // for d
 
-		//2019.07 additional check for extremely low SD values (e.g., likely to arise from "degenerate" replicate responses)
-		Float [] sds = RS.toArray(new Float[0]);
+		// 2019.07 additional check for extremely low SD values (e.g., likely to arise from "degenerate"
+		// replicate responses)
+		Float[] sds = RS.toArray(new Float[0]);
 		Float[] csds = TukeyBiWs(sds, 5.0f, 0.00001f);
-		
-		//Arrays.sort(sds); float x = smedian(sds);
+
+		// Arrays.sort(sds); float x = smedian(sds);
 		float x = wMean(sds, csds);
 		for (int d = 0; d < RS.size(); d++)
-		{//checks and replaces those SDs that are below average SD
-			if ( x > RS.get(d)) RS.set(d,  x);
+		{// checks and replaces those SDs that are below average SD
+			if (x > RS.get(d))
+				RS.set(d, x);
 		}
 		return RS;
 	} // end of calc_WgtSdResponses()
@@ -288,7 +291,7 @@ public class CurvePProcessor
 
 		if (fDoseRedo)
 		{
-			float Fixer = (float) FirstDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
+			float Fixer = FirstDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
 
 			if (FirstDoseBaseFix == 0)
 				Fixer = 2 * NewD.get(1) - NewD.get(2);
@@ -381,10 +384,11 @@ public class CurvePProcessor
 
 				// pick most conservative imputation, considering this could be a degenerate dose-response
 				iD = Math.max(iD, iD2);
-				
-				//2019.07 additional limit for a below-first-dose imputation 
-				//(e.g., for serial dilutions will stop at a dose smaller by one dilution factor than the first dose)
-				iD = Math.max(iD, D.get(1)*2 - D.get(2));				
+
+				// 2019.07 additional limit for a below-first-dose imputation
+				// (e.g., for serial dilutions will stop at a dose smaller by one dilution factor than the
+				// first dose)
+				iD = Math.max(iD, D.get(1) * 2 - D.get(2));
 			}
 			break;
 		}
@@ -422,8 +426,8 @@ public class CurvePProcessor
 			}
 
 		float control_sd = sdr.get(0);
-		
-		if (control_sd == 0.0f) //should not happen anymore, due to handling inside calc_WgtSdResponses()
+
+		if (control_sd == 0.0f) // should not happen anymore, due to handling inside calc_WgtSdResponses()
 			return ulD.get(0);
 
 		float L1 = avr.get(0) - Z_thr * control_sd;
@@ -435,7 +439,7 @@ public class CurvePProcessor
 		// picks appropriate POD depending on the overall direction (judged by AUC)
 		if (AUC < 0)
 			return P1;
-		
+
 		if (AUC > 0)
 			return P2;
 
@@ -449,10 +453,9 @@ public class CurvePProcessor
 		 * appropriate (decreasing and increasing) direction (dir) large number indicates no POD
 		 */
 		float control_sd = sdr.get(0);
-		
+
 		if (control_sd == 0.0f)
 			return ud.get(0);
-		
 
 		float L1 = avr.get(0) - Z_thr * control_sd;
 		float L2 = avr.get(0) + Z_thr * control_sd;
@@ -559,7 +562,7 @@ public class CurvePProcessor
 		return rBase;
 	} // end of parametric_val()
 
-	public static float intg_log_AUC(List<Float> D, List<Float> P, int type, int log0fix, int npoints)
+	public static float intg_log_AUC(List<Float> D, StatResult statResult, int type, int log0fix, int npoints)
 	/*
 	 * log10-integrates several curve types to calculate AUC, P contains curve coefficients, type defines
 	 * math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
@@ -587,7 +590,7 @@ public class CurvePProcessor
 		float hiD = luD.get(luD.size() - 1), loD = luD.get(1);
 
 		estD.add(luD.get(0));
-		estR.add(parametric_val(0.0f, P, type));
+		estR.add((float) statResult.getResponseAt(0.0));
 
 		float stepD = (hiD - loD) / nscan;
 
@@ -596,7 +599,7 @@ public class CurvePProcessor
 			float startD = loD + p * stepD;
 
 			estD.add(startD);
-			estR.add(parametric_val((float) Math.pow(10, startD), P, type));
+			estR.add((float) statResult.getResponseAt(Math.pow(10, startD)));
 		}
 
 		return calc_AUC(estD, estR);
@@ -1005,20 +1008,23 @@ public class CurvePProcessor
 
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
-		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);		
+		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
 		Float mywAUC = calc_wAUC(myAUC, myPOD, luD);
 
 		// normally, this very function is called only when significant response is detected,
 		// so the below signal-estimates should not be near-0
-		float asis_sgnl = Math.abs( get_dr_signal(avR) ), corr_sgnl = Math.abs( get_dr_signal(xx_avR) );
+		float asis_sgnl = Math.abs(get_dr_signal(avR)), corr_sgnl = Math.abs(get_dr_signal(xx_avR));
 		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);
-		if (!Float.isFinite(fit_score)) fit_score = -1.0f;
-		if (nfixed == 0) fit_score = 1.0f;
-		
-		if (myPOD > luD.get(luD.size()-1)) myPOD  = Float.NaN; //luD.get(luD.size()-1); //fixes NA PODs
-		
+		if (!Float.isFinite(fit_score))
+			fit_score = -1.0f;
+		if (nfixed == 0)
+			fit_score = 1.0f;
+
+		if (myPOD > luD.get(luD.size() - 1))
+			myPOD = Float.NaN; // luD.get(luD.size()-1); //fixes NA PODs
+
 		List<Float> metrics = new ArrayList<Float>(); // results
-		if (p * (float) nboot < 1.0f) // skip bootstrap
+		if (p * nboot < 1.0f) // skip bootstrap
 		{
 			metrics.add(fit_score);
 
@@ -1052,10 +1058,10 @@ public class CurvePProcessor
 			monotonize(allD, curr_dr, dr1, mono);
 			xx_avR = calc_WgtAvResponses(allD, dr1);
 
-			float cbAUC  = calc_AUC(luD, xx_avR);
-			float cbPOD  = calc_POD(luD, xx_avR, sdR, BMR, mono);
-			float cbwAUC = calc_wAUC(cbAUC, cbPOD, luD);			
-			
+			float cbAUC = calc_AUC(luD, xx_avR);
+			float cbPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+			float cbwAUC = calc_wAUC(cbAUC, cbPOD, luD);
+
 			bAUC.add(cbAUC);
 			bPOD.add(cbPOD);
 			bwAUC.add(cbwAUC);
@@ -1073,11 +1079,14 @@ public class CurvePProcessor
 		//-------------------------- */
 
 		// update fitness based on non-parametric calculations
-		double corr_median = Math.abs( bFit.get( (bFit.size() >> 1) ) );
-		float fit_score2 = Math.min(asis_sgnl, (float)corr_median) / Math.max(asis_sgnl, (float)corr_median);
-		if (!Float.isFinite(fit_score2))	fit_score2 = -1.0f;
+		double corr_median = Math.abs(bFit.get((bFit.size() >> 1)));
+		float fit_score2 = Math.min(asis_sgnl, (float) corr_median)
+				/ Math.max(asis_sgnl, (float) corr_median);
+		if (!Float.isFinite(fit_score2))
+			fit_score2 = -1.0f;
 		fit_score = Math.max(fit_score2, fit_score);
-		if (nfixed == 0) fit_score = 1.0f; //if nothing was fixed, set to perfect fit
+		if (nfixed == 0)
+			fit_score = 1.0f; // if nothing was fixed, set to perfect fit
 		// --------------------------
 
 		// ascending sort
@@ -1085,22 +1094,24 @@ public class CurvePProcessor
 		Collections.sort(bPOD);
 		Collections.sort(bwAUC);
 
-		int rank = (int) Math.round(p * nboot);
+		int rank = Math.round(p * nboot);
 		int lrank = nboot - rank;
 		rank--;
 
-		metrics.add((float) fit_score);
+		metrics.add(fit_score);
 
 		metrics.add(bAUC.get(rank));
 		metrics.add(myAUC);
 		metrics.add(bAUC.get(lrank));
 
 		float PODL = bPOD.get(rank), PODU = bPOD.get(lrank);
-		if (PODL > luD.get(luD.size()-1)) PODL  = Float.NaN;
-		if (PODU > luD.get(luD.size()-1)) PODU  = Float.NaN;
-		
+		if (PODL > luD.get(luD.size() - 1))
+			PODL = Float.NaN;
+		if (PODU > luD.get(luD.size() - 1))
+			PODU = Float.NaN;
+
 		metrics.add(PODL);
-		metrics.add(myPOD); //myPOD was checked and fixed earlier, if invalid
+		metrics.add(myPOD); // myPOD was checked and fixed earlier, if invalid
 		metrics.add(PODU);
 
 		metrics.add(bwAUC.get(rank));
@@ -1224,9 +1235,9 @@ public class CurvePProcessor
 				System.out.printf("wAUC = %f[%f - %f]%n", rr.get(8), rr.get(7), rr.get(9));
 				// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			}
-			
-			//if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
-			//	wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
+
+			// if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
+			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 
 			// if ( responses.get(i).getProbe().getId().equals("1390430_at") )
 			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));

@@ -10,9 +10,9 @@ public class PolyResult extends StatResult
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -8080785183059201658L;
+	private static final long serialVersionUID = -8080785183059201658L;
 
-	private int					degree;
+	private int degree;
 
 	public PolyResult()
 	{
@@ -89,6 +89,38 @@ public class PolyResult extends StatResult
 			parameters.add("beta_" + i);
 		}
 		return parameters;
+	}
+
+	@Override
+	public double getResponseAt(double d)
+	{
+		return polyFunction(d, degree);
+	}
+
+	/**
+	 * Polynomial dynamic degree function
+	 */
+	private double polyFunction(double dose, int degree)
+	{
+		int base = 0;
+		int start = base + 1;
+
+		return curveParameters[base] + polyValue(dose, start, 1, degree);
+	}
+
+	/**
+	 * Recursive function
+	 */
+	private double polyValue(double dose, int index, int cur, int max)
+	{
+		if (cur == max)
+		{
+			return curveParameters[index] * Math.pow(dose, max);
+		}
+		else
+		{
+			return curveParameters[index] * Math.pow(dose, cur) + polyValue(dose, index + 1, cur + 1, max);
+		}
 	}
 
 }

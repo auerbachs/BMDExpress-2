@@ -7,12 +7,12 @@ import java.util.List;
 public class ExponentialResult extends StatResult
 {
 
-	private static final long	serialVersionUID	= -527776055122273597L;
+	private static final long serialVersionUID = -527776055122273597L;
 
 	/**
 	 * 
 	 */
-	private int					option;
+	private int option;
 
 	public ExponentialResult()
 	{
@@ -102,6 +102,76 @@ public class ExponentialResult extends StatResult
 		}
 		else
 			return new ArrayList<>();
+	}
+
+	@Override
+	public double getResponseAt(double d)
+	{
+		if (option == 2)
+		{
+			return exp2Function(0, d);
+		}
+		else if (option == 3)
+		{
+			return exp3Function(0, d);
+		}
+		else if (option == 4)
+		{
+			return exp4Function(0, d);
+		}
+		else if (option == 5)
+		{
+			return exp5Function(0, d);
+		}
+		return 0.0;
+	}
+
+	/**
+	 * Exp functioin
+	 */
+	private double exp2Function(int base, double dose)
+	{
+		double a = curveParameters[base + 1];
+		double b = curveParameters[base + 2];
+
+		return a * Math.exp(curveParameters[base] * b * dose);
+	}
+
+	/**
+	 * Exp functioin
+	 */
+	private double exp3Function(int base, double dose)
+	{
+		double a = curveParameters[base + 1];
+		double b = curveParameters[base + 2];
+		double d = curveParameters[base + 3];
+
+		double expvalue = Math.pow(b * dose, d);
+		return a * Math.exp(curveParameters[base] * expvalue);
+	}
+
+	/**
+	 * Exp functioin
+	 */
+	private double exp4Function(int base, double dose)
+	{
+		double a = curveParameters[base + 1];
+		double b = curveParameters[base + 2];
+		double c = curveParameters[base + 3];
+		return a * (c - (c - 1) * Math.exp(-b * dose));
+	}
+
+	/**
+	 * Exp functioin
+	 */
+	private double exp5Function(int base, double dose)
+	{
+		double a = curveParameters[base + 1];
+		double b = curveParameters[base + 2];
+		double c = curveParameters[base + 3];
+		double d = curveParameters[base + 4];
+		double expvalue = Math.pow(b * dose, d);
+		return a * (c - (c - 1) * Math.exp(-expvalue));
 	}
 
 }

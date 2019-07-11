@@ -10,15 +10,15 @@ public class GCurvePResult extends StatResult
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 2275549172312801367L;
+	private static final long serialVersionUID = 2275549172312801367L;
 
-	private double				BMDauc;
-	private double				BMDLauc;
-	private double				BMDUauc;
-	private double				BMDwAuc;
-	private double				BMDLwAuc;
-	private double				BMDUwAuc;
-	private List<Float>			correctedDoseResponseValues;
+	private double BMDauc;
+	private double BMDLauc;
+	private double BMDUauc;
+	private double BMDwAuc;
+	private double BMDLwAuc;
+	private double BMDUwAuc;
+	private List<Float> correctedDoseResponseValues;
 
 	public GCurvePResult()
 	{
@@ -127,6 +127,14 @@ public class GCurvePResult extends StatResult
 	public void setCorrectedDoseResponseValues(List<Float> correctedDoseResponseValues)
 	{
 		this.correctedDoseResponseValues = correctedDoseResponseValues;
+	}
+
+	@Override
+	public double getResponseAt(double d)
+	{
+
+		// TODO Auto-generated method stub
+		return -9999;
 	}
 
 }
