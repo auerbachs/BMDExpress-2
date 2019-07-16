@@ -22,6 +22,10 @@ BMDExpress 2 is available for Windows, Mac and Linux operating systems, however 
 
 ![Popup BMD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-bmd.png)
 
+#### Data Options
+
+Lists expression data and any pre-filtering in the current workflow.
+
 #### Continuous Models
 
 Choose model(s) for curve fitting. Some of the models will be selected by default. The number of polynomial models available is automatically determined by the unique number of doses comprising the dose-response data. Any single model or combination of models may be chosen.
@@ -90,10 +94,23 @@ After selecting and checking the appropriate data, models, parameters and other 
 ### Benchmark Dose Data Options (Sciome GCurveP)
 Statistical outliers in the dose-response data can result in a non-monatonic curve fit. For some users, this will be an unrealistic outcome. GCurveP finds outliers, and blah blah. Then a curve is fit yada yada data points. Finally, blah blah area under curve, yada yada. Results consist of blah yada blah.
 
-- **Maximum Iterations:** A convergence criterion for the model.
 ![Popup BMD GCurveP](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-gcurvep-parameters.png)
 
+#### Data Options
 
+Lists expression data and any pre-filtering in the current workflow.
+
+#### Parameters
+
+- **BMR Factor:** A convergence criterion for the model.
+
+- **Bootstraps:**
+
+- **pValue Confidence Interval:**
+
+#### Multiple Threads
+
+- **Number of Threads:** Not yet implemented.
 
 ### Benchmark Dose Results
 
