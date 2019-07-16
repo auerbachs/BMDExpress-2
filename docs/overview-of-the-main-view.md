@@ -30,7 +30,7 @@ Main Toolbar
 
 ![Select tool menu](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/select-tool-menu.png)
 
-- **Prefilter:** [Reduce the number of data items for BMD computation, based on statistical significance of a response to increasing dose.](statistical-and-fold-change-prefiltering.md)
+- **Prefilter:** [Reduce the number of data items for BMD computation based on statistical significance of a response to increasing dose.](statistical-and-fold-change-prefiltering.md)
 - **Benchmark Dose Analysis:** [Configure and execute benchmark dose computation.](benchmark-dose-analysis.md)
 - **Category Analysis:** Configure and execute functional classification based on [GO terms](functional-classifications.md), [Reactome categories.](functional-classifications.md), or [user-defined gene categories.](functional-classifications.md#defined-category-analysis)
 
@@ -46,18 +46,21 @@ Main Toolbar
 Data Selection Area
 ---------
 
-The *Data Selection Area* is used to navigate among the various analyses that have been performed in the current project. The dropdown is for choosing a data view; imported data, filtered data, benchmark analyses, and categorical analyses. Within a data view, ticking boxes next to the experiment name causes the charts and results table to update, displaying the selected data set(s). Metadata for the highlighted row in the experiment list is displayed in the metadata panel at the bottom left.
+The *Data Selection Area* is used to navigate among the various analyses that have been performed in the current project. The dropdown is for choosing a data view; imported data, filtered data, benchmark analyses, and categorical analyses. Metadata for the highlighted row in the experiment list is displayed in the metadata panel at the bottom left.
 
 ![Popup choose data view](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-choose-data-view.png)
 
 ### Data Selection Area Additional Functions
 
-By right-clicking on an individual analysis, the user can choose to `Rename`, `Remove` or `Export` the analysis, `Export Best Models`, open the `Spreadsheet View`, or `Re-select Best models`. 
+By right-clicking on an individual analysis, the user can choose to `Rename`, `Remove` or `Export` the analysis, or open the `Spreadsheet View`. When the data view is `Benchmark Dose Analysis`, `Export Best Models` and `Re-select Best models` are additional options.
+
+Within a data view, ticking boxes next to the experiment name causes the charts and results table to update, displaying the selected data set(s). 
+
 ![Select export](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/select-export.png)
 
 ### Exporting Analyses
 
-Right-click on an individual data set, then click `Export` to export the analysis to a tab-separated text file. Batch-export multiple analyses by multi-selecting analyses, then `Right-click` and choose `Export`.
+Right-click on an individual data set, then click `Export` to export the analysis to a tab-separated text file. Batch-export multiple analyses by multi-selecting analyses, then `Right-click` and choose `Export`. `Export Best Models` limits the data exported to that of the best model from BMDS analysis.
 
 ### Spreadsheet View
 
