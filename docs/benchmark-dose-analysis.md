@@ -178,7 +178,7 @@ You can switch between different probes/probe sets inside of the individual curv
 
 All properties of the curve can be altered in the *Properties Menu*.
 
-![Popup curve properties](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-properties.PNG)
+![Popup curve properties](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-properties.png)
 
 Inside the Chart Editor for the plot, there are a variety of parameters that can be changed to alter the appearance of the plot.
 
