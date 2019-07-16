@@ -32,9 +32,7 @@ Main Toolbar
 
 - **Prefilter:** [Reduce the number of data items for BMD computation, based on statistical significance of a response to increasing dose.](statistical-and-fold-change-prefiltering.md)
 - **Benchmark Dose Analysis:** [Configure and execute benchmark dose computation.](benchmark-dose-analysis.md)
-- **Gene Ontology Analysis:** [Configure and execute functional classification based on GO terms.](functional-classifications.md)
-- **Signaling Pathway Analysis:** [Configure and execute functional classification based on Reactome categories.](functional-classifications.md)
-- **Defined Category Analysis:** [Configure and execute functional classification based on user-defined gene categories.](functional-classifications.md#defined-category-analysis)
+- **Category Analysis:** Configure and execute functional classification based on [GO terms](functional-classifications.md), [Reactome categories.](functional-classifications.md), or [user-defined gene categories.](functional-classifications.md#defined-category-analysis)
 
 ### Help
 
@@ -50,11 +48,12 @@ Data Selection Area
 
 The *Data Selection Area* is used to navigate among the various analyses that have been performed in the current project. The dropdown is for choosing a data view; imported data, filtered data, benchmark analyses, and categorical analyses. Within a data view, ticking boxes next to the experiment name causes the charts and results table to update, displaying the selected data set(s). Metadata for the highlighted row in the experiment list is displayed in the metadata panel at the bottom left.
 
+![Popup choose data view](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-choose-data-view.png)
+
 ### Data Selection Area Additional Functions
 
+By right-clicking on an individual analysis, the user can choose to `Rename`, `Remove` or `Export` the analysis, `Export Best Models`, open the `Spreadsheet View`, or `Re-select Best models`. 
 ![Select export](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/select-export.png)
-
-By right-clicking on an individual analysis, you can choose to `Rename`, `Remove`, or `export` the analysis.
 
 ### Exporting Analyses
 
