@@ -186,7 +186,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 	}
 
 	/*
-	 * Run GcurveP on the processable data given
+	 * Run GcurveP on the proccessable data given
 	 * 
 	 */
 	@Override
@@ -238,16 +238,26 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			List<Float> correctedPointsPlus = new ArrayList<>();
 			List<Float> correctedPointsNeutral = new ArrayList<>();
 
+			/*
+			 * Supply BMR directly into CurveP calls! 07.16.2019
+			 */
+			
+			float control_signal = CurvePProcessor.get_baseline_response(doseVector, numericMatrix.get(i));
+			float control_SD = CurvePProcessor.get_baseline_SD(doseVector, numericMatrix.get(i));
+			
+			float BMR_neg = CurvePProcessor.calc_PODR_bySD(control_signal, control_SD, -inputParameters.getBMR());
+			float BMR_poz = CurvePProcessor.calc_PODR_bySD(control_signal, control_SD, inputParameters.getBMR());
+			
 			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPointsMinus, inputParameters.getBMR(), -1, inputParameters.getBootStraps(),
+					correctedPointsMinus, BMR_neg, -1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 
 			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPointsPlus, inputParameters.getBMR(), 1, inputParameters.getBootStraps(),
+					correctedPointsPlus, BMR_poz, 1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 
 			List<Float> valuesNeutral = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPointsNeutral, inputParameters.getBMR(), 0, inputParameters.getBootStraps(),
+					correctedPointsNeutral, BMR_poz, 0, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 
 			List<Float> values = valuesPlus;

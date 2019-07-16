@@ -396,18 +396,70 @@ public class CurvePProcessor
 		return iD;
 	} // end of SafeImputeDose()
 
-	public static float calc_POD(List<Float> allD, List<Float> allR, float Z_thr, boolean UseLog, float AUC)
+	public static float get_baseline_response(List<Float> allD, List<Float> allR)
+	{// calculates and returns the response (signal) value for the control group
+		
+		List<Float> avr = calc_WgtAvResponses(allD, allR);
+		return avr.get(0);
+	}
+	
+	public static float get_baseline_SD(List<Float> allD, List<Float> allR)
+	{
+		/* calculates and returns the standard deviation for the control group, which is based on
+		 * weighted average of control group replicates or on the pulled variance (whichever is larger)
+		 */
+		
+		List<Float> sdr = calc_WgtSdResponses(allD, allR);
+		return sdr.get(0);
+	}
+	
+	public static float calc_PODR_bySD(List<Float> allD, List<Float> allR, float Z_thr)
+	{
+		/* calculates point of departure (POD) response, based on supplied dose-response data
+		 * the signal direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward) 
+		 */
+		
+		float b = get_baseline_response(allD, allR), bs = get_baseline_SD(allD, allR);				
+		return (b + Z_thr * bs);
+	}
+
+	public static float calc_PODR_bySD(float base, float base_sd, float Z_thr)
+	{
+		/* calculates point of departure (POD) response, based on supplied baseline and its st.dev
+		 * the signal direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward) 
+		 */						
+		return (base + Z_thr * base_sd);
+	}
+	
+	public static float calc_PODR_byFoldChange(List<Float> allD, List<Float> allR, float fold_thr)
+	{
+		/* calculates point of departure (POD) response, based on supplied dose-response data and fold change
+		 * curve direction should be supplied by fold_thr (0..1 for downward trend, >1 for upward trend) */
+				
+		float b = get_baseline_response(allD, allR);		
+		if (fold_thr < 0.0f) return b;
+		return (b * fold_thr);
+	}
+
+	public static float calc_PODR_byFoldChange(float b, float fold_thr)
+	{
+		/* calculates point of departure (POD) response, based on supplied baseline signal and fold change threshold (fold_thr)
+		 * curve direction should be supplied by fold_thr (0..1 for downward trend, >1 for upward trend) */
+
+		if (fold_thr < 0.0f) return b;
+		return (b * fold_thr);
+	}
+	
+	public static float calc_POD(List<Float> allD, List<Float> allR, float BMR, boolean UseLog)
 	{
 		/*
-		 * autonomous version that does all auxiliary calculations internally returns a POD estimate based on
-		 * curve signal (AUC value)
+		 * autonomous version that does all needed auxiliary calculations (good for external use)
+		 * returns a POD estimate based on supplied response level L
 		 * 
-		 * allD - all doses, allR - all responses (for all replicates in all dose groups) Z_thr - Z-score
-		 * threshold to calculate POD response level (both directions will be checked if AUC == 0) UseLog - if
-		 * on, the doses will be log-transformed
+		 * allD - all doses, allR - all responses (for all replicates in all dose groups) 
+		 * UseLog - if on, the doses will be log-transformed
 		 */
 
-		List<Float> sdr = calc_WgtSdResponses(allD, allR);
 		List<Float> avr = calc_WgtAvResponses(allD, allR);
 		List<Float> uD = CollapseDoses(allD), ulD;
 
@@ -425,52 +477,19 @@ public class CurvePProcessor
 				// e.printStackTrace();
 			}
 
-		float control_sd = sdr.get(0);
+		return SafeImputeDose(ulD, avr, BMR);
+}
 
-		if (control_sd == 0.0f) // should not happen anymore, due to handling inside calc_WgtSdResponses()
-			return ulD.get(0);
-
-		float L1 = avr.get(0) - Z_thr * control_sd;
-		float L2 = avr.get(0) + Z_thr * control_sd;
-
-		float P1 = SafeImputeDose(ulD, avr, L1);
-		float P2 = SafeImputeDose(ulD, avr, L2);
-
-		// picks appropriate POD depending on the overall direction (judged by AUC)
-		if (AUC < 0)
-			return P1;
-
-		if (AUC > 0)
-			return P2;
-
-		return Math.min(P1, P2); // only for AUC == 0 cases
-	}
-
-	public static float calc_POD(List<Float> ud, List<Float> avr, List<Float> sdr, float Z_thr, float dir)
+	public static float calc_POD(List<Float> ud, List<Float> avr, float BMR)
 	{
 		/*
-		 * shortcut version that does all auxiliary calculations internally returns a POD estimate for
-		 * appropriate (decreasing and increasing) direction (dir) large number indicates no POD
+		 * shortcut version, skips some auxiliary calculations; returns a POD estimate for
+		 * supplied response level, if number larger than highest dose is returned, it indicates no POD can be estimated
 		 */
-		float control_sd = sdr.get(0);
 
-		if (control_sd == 0.0f)
-			return ud.get(0);
-
-		float L1 = avr.get(0) - Z_thr * control_sd;
-		float L2 = avr.get(0) + Z_thr * control_sd;
-
-		float P1 = SafeImputeDose(ud, avr, L1);
-		float P2 = SafeImputeDose(ud, avr, L2);
-
-		// picks appropriate POD depending on the overall direction (judged by AUC)
-		if (dir < 0)
-			return P1;
-		if (dir > 0)
-			return P2;
-
-		return Math.min(P1, P2); // only for AUC == 0 cases
+		return SafeImputeDose(ud, avr, BMR);		
 	}
+	
 
 	public static float calc_AUC(List<Float> D, List<Float> R)
 	/*
@@ -520,6 +539,7 @@ public class CurvePProcessor
 
 	public static float parametric_val(float D0, List<Float> P, int type)
 	/*
+	 * deprecated, there is a StatgetResponseAt() in StatResult class which stores parametric
 	 * calculates response at D0 dose based on parametric curve model, P contains curve coefficients, type
 	 * defines math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
 	 */
@@ -939,9 +959,9 @@ public class CurvePProcessor
 
 	public static float get_dr_signal(List<Float> r)
 	{// r is array of single-value responses (one per dose, such as averaged curve, etc.)
-		int n = r.size();
+		int n = r.size() - 1;
 		float base = r.get(0), sig = 0.0f;
-		for (int i = 1; i < n; i++)
+		for (int i = 1; i <= n; i++)
 			sig += r.get(i) - base;
 
 		return sig / n; // returns averaged signal relative to control (0-element)
@@ -1008,7 +1028,7 @@ public class CurvePProcessor
 
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
-		Float myPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+		Float myPOD = calc_POD(luD, xx_avR, BMR);
 		Float mywAUC = calc_wAUC(myAUC, myPOD, luD);
 
 		// normally, this very function is called only when significant response is detected,
@@ -1059,7 +1079,7 @@ public class CurvePProcessor
 			xx_avR = calc_WgtAvResponses(allD, dr1);
 
 			float cbAUC = calc_AUC(luD, xx_avR);
-			float cbPOD = calc_POD(luD, xx_avR, sdR, BMR, mono);
+			float cbPOD = calc_POD(luD, xx_avR, BMR);
 			float cbwAUC = calc_wAUC(cbAUC, cbPOD, luD);
 
 			bAUC.add(cbAUC);
@@ -1132,7 +1152,7 @@ public class CurvePProcessor
 		{
 			luD = logBaseDoses(unqD, -24);
 			Float myAUC = calc_AUC(luD, avR);
-			Float myPOD = calc_POD(luD, avR, sdR, BMR, myAUC);
+			Float myPOD = calc_POD(luD, avR, BMR);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
@@ -1186,8 +1206,9 @@ public class CurvePProcessor
 		try
 		{
 			luD = logBaseDoses(unqD, -24);
-			Float myAUC = calc_AUC(luD, avR);
-			Float myPOD = calc_POD(allD, allR, 1.34f, true, myAUC);
+			Float myAUC = calc_AUC(luD, avR), v;
+			if (myAUC < 0) v = calc_PODR_bySD(allD, allR, -1.34f); else v = calc_PODR_bySD(allD, allR, 1.34f);
+			Float myPOD = calc_POD(allD, allR, v, true);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
@@ -1199,7 +1220,7 @@ public class CurvePProcessor
 			System.out.println("problems with calculations");
 		}
 
-		System.out.println("Happy Christmas, you dirty animal... And Hapy New Year!");
+		System.out.println("Mery Christmas, you dirty animal... And Hapy New Year!");
 
 	}
 
@@ -1236,17 +1257,6 @@ public class CurvePProcessor
 				// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 			}
 
-			// if (responses.get(i).getProbe().getId().equals("ATAD5_21054"))
-			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-
-			// if ( responses.get(i).getProbe().getId().equals("1390430_at") )
-			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-
-			// if ( responses.get(i).getProbe().getId().equals("1387874_at") )
-			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
-
-			// if ( responses.get(i).getProbe().getId().equals("1371076_at") ) //i == 3681
-			// wAUCList.add(CurvePProcessor.curveP(doseVector, numericMatrix.get(i), 1.34f));
 		}
 	}
 
