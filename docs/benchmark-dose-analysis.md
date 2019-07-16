@@ -168,7 +168,7 @@ The *Mean & Standard Deviation* checkbox changes the points in the curve to refl
 
 ![Popup curve mean SD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-mean-sd.png)
 
-You can also change the scale of the axis using the *Logarithmic Dose Axis* checkbox.
+You can also change the scale of the axis to linear by unchecking the *Logarithmic Dose Axis* checkbox.
 
 ![Popup curve log](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-log.png)
 
