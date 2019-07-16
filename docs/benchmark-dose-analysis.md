@@ -4,11 +4,15 @@ Benchmark Dose Analysis
 Introduction
 ------------
 
-Benchmark dose analysis consists of fitting dose-response data to a collection of parameterized equations (models), followed by choosing the model that best describes the data while minimizing complexity. To perform BMD computations, select complete or filtered data set(s) from the *Data Selection Area*, and click `Tools > Benchmark Dose Analysis`.
+Benchmark dose analysis consists of fitting dose-response data to a collection of parameterized equations (models), followed by choosing the model that best describes the data while minimizing complexity. Alternatively, non-parametric (GCurveP) modelling may be performed.
+
+To perform BMD computations, select complete or filtered data set(s) from the *Data Selection Area*, and click `Tools > Benchmark Dose Analysis`. Then choose either `EPA BMDS Models (Parametric)`, or `Sciome GCurveP (Non-parametric)`.
 
 [Video describing Benchmark Dose Analysis setup](https://www.youtube.com/watch?v=Ke-Bri5b2Rc&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc&index=8)
 
-[Document describing model inputs and outputs, and of the best model selection work flow](https://github.com/auerbachs/BMDExpress-2.0/blob/master/BMDExpress2-%20running%20BMDS%20models.pdf)
+[Document describing model inputs and outputs, and of the best model selection work flow](https://github.com/auerbachs/BMDExpress-2.0/blob/readthedocs/BMDExpress2-%20running%20BMDS%20models.pdf)
+
+[Document describing GCurveP method and work flow](https://github.com/auerbachs/BMDExpress-2.0/blob/readthedocs/BMDExpress2-%20running%20GCurveP%20models.pdf)
 
 ### **IMPORTANT:**
 
@@ -16,7 +20,7 @@ BMDExpress 2 is available for Windows, Mac and Linux operating systems, however 
 
 ### Benchmark Dose Data Options (BMDS/EPA parametric curve fitting)
 
-![Popup BMD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-bmd.png)
+![Popup BMD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-bmd.png)
 
 #### Continuous Models
 
@@ -51,14 +55,16 @@ Fitting to the statistical models is performed using methods implemented in the 
 
 - **Maximum Iterations:** A convergence criterion for the model.
 - **Confidence Level:** The statistical lower confidence limit applied to the BMD estimated by the model. The resultant lower bound on the BMD is the benchmark dose lower confidence limit (BMDL). 
+- **Constant Variance:** When selected an assumption of constant variance is used in the modeling.
+- **BMR Type:** Standard deviation or relative deviation. 
+- **BMR Factor:** Also called the benchmark response or critical effect size in some publications, the number of standard deviations at which the BMD is defined. The BMR is defined relative to the response at control. Since both the response at control and the standard deviation used to calculate the BMR are parameters estimated as part of the curve fit, the BMR may change when the model used to fit the data changes. The recommended default BMR factor is 1 (equivalent to 1 standard deviation), consistent with EPA recommendations for continuous data. 
 - **Restrict Power:** The parameter “Restrict Power” is only applied to Power model. It allows the user to restrict the power parameter to be >= 1. The default setting is restricting the power to >= 1.
     - **Note:** For all exponential models and the Hill model power is restricted to be >= 1. For the linear and poly models power is a fixed value defined by the degree of the polynomial.
-- **Constant Variance:** When selected an assumption of constant variance is used in the modeling.
-- **BMR Factor:** Also called the benchmark response or critical effect size in some publications, the number of standard deviations at which the BMD is defined. The BMR is defined relative to the response at control. Since both the response at control and the standard deviation used to calculate the BMR are parameters estimated as part of the curve fit, the BMR may change when the model used to fit the data changes. The recommended default BMR factor is 1 (equivalent to 1 standard deviation), consistent with EPA recommendations for continuous data. 
 
 #### Model Selection
 
-- **Best Poly Model Test**
+- **BMDL and BMDU:** Statistical lower and upper bounds on the computed benchmark dose. Choose whether to compute, and whether to include in best model selection criteria.
+- **Best Poly Model Test:**
     - *Nested Chi Square:* A nested likelihood ratio test is used to select among the linear and polynomial (2° polynomial, 3° polynomial, etc.) models followed by an Akaike information criterion (AIC) comparison (i.e., the model with the lowest AIC is selected) among the best nested model, the Hill model and the power model.
     - *Lowest AIC:* A completely AIC-based selection process is performed.
 - ***P*-Value Cutoff:** Statistical threshold for the Nested Chi Square test when selecting the best linear/poly model
@@ -81,23 +87,27 @@ Fitting to the statistical models is performed using methods implemented in the 
 
 After selecting and checking the appropriate data, models, parameters and other options, click `Start`. Computation may take minutes to hours depending on the total number of probe set identifiers and data sets submitted for analysis, the number of models to fit, and your computer’s performance characteristics.
 
-### Benchmark Dose Data Options (Sciome gCurveP)
+### Benchmark Dose Data Options (Sciome GCurveP)
+Statistical outliers in the dose-response data can result in a non-monatonic curve fit. For some users, this will be an unrealistic outcome. GCurveP finds outliers, and blah blah. Then a curve is fit yada yada data points. Finally, blah blah area under curve, yada yada. Results consist of blah yada blah.
 
-![Popup BMD gCurveP](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-gcurvep-parameters.png)
+- **Maximum Iterations:** A convergence criterion for the model.
+![Popup BMD GCurveP](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-gcurvep-parameters.png)
+
+
 
 ### Benchmark Dose Results
 
 [Video describing Benchmark Dose Analysis results](https://www.youtube.com/watch?v=22pHEniAbKo&list=PLX2Rd5DjtiTeR84Z4wRSUmKYMoAbilZEc&index=9)
 
-![Main BMD results](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/main-bmd-results.png)
+![Main BMD results](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/main-bmd-results.png)
 
-Results are displayed in the bottom half of the window in tabular format.
+Results are tabulated in the bottom half of the window:
 
 - **Probe ID:** Unique identifier for probe/probe set ID.
 - **Genes:** All genes included in probe/probe set.
 - **Gene Symbols:** Gene symbols included in probe/probe set.
 
-For each model that is selected in the [options](#benchmark-dose-data-options), there will also be a corresponding column for:
+When BMDS is used for curve fitting, there are columns for the "Best" model, and the other models that were computed:
 
 - **BMD:** Benchmark dose
 - **BMDL:** Lower bound of the 95% confidence interval of the benchmark dose
@@ -106,38 +116,52 @@ For each model that is selected in the [options](#benchmark-dose-data-options), 
 - **fitLogLikelihood:** A value calculated using the log of the likelihood given the model, used in calculating the AIC. The value is used to compare between different model fits to the same feature. 
 - **AIC:** Akaike Information Criterion. Given a set of dose-response models for a probe set/gene the AIC estimates the quality of each model relative to the other models. In most cases with BMDExpress the model with the lowest AIC is selected as the "best model".
 - **adverseDirection:** Direction of the dose-response (i.e., up- or down-regulation) as identified by the software
-- **BMD/BMDL:** Ratio of the BMD to the BMDL for gene/probe set
+- **BMD/BMDL Ratio**
+- **BMDU/BMDL Ratio**
+- **BMDU/BMD Ratio**
+- **Prefilter P-Value:** statistical cutoff in probe selection step
+- **Prefilter Adjusted P-Value:** statistical cutoff in probe selection step, with adjustment applied
+- **Max Fold Change:** maximum fold change of all probes selected for BMD computation
+- **Max Fold Change Absolute Value**
+- **NOTEL:** No Observed Toxic Effect Level; highest dose that does not cause toxicity.
+- **LOTEL:** Lowest Observable Toxic Effect Level; lowest dose resulting in toxicity.
+- **FC Dose Level** _\<n\>_**:** fold change at each dose level _n_
 - **Flagged:** Value = "1" indicates that the Hill model was flagged for that probe or gene based on the setting selected in the BMD analysis set up. "0" indicates the Hill model was not flagged
 - For each model fit to the data, specific parameters for each probe set/gene are reported. This is done to allow the user to recapitulate the model equations.
 - There is also a corresponding set of columns for the "Best" fit model (i.e., BMD, BMDL, BMDU, fitPValue, fitLogLikeihood, AIC, BMD/BMDL, BMDU/BMDL, Prefilter P-value, Prefilter Adjusted P-value, Max Fold Change, Max Fold Change Absolute value),
 - **FC Dose Level _n_:** Fold change at dose _n_.
 - For a more detailed definition of terms please refer to the [EPA BMDS User Guide](https://www.epa.gov/sites/production/files/2015-11/documents/bmds_manual.pdf)
 
+In the case of GCurveP, there are columns similar to the BMDS models, plus GCurveP-specific results:
+
+- **fitValue:** some description from alex
+- **Excecution Complete:** true or false; indicates whether computation completed under the selected initial conditions
+
 #### Curve Viewer
 
 Each probeset ID is a hyperlink to a separate window that displays a plot of the corresponding dose response behavior and model fit curves.
 
-![Popup curve](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve.png)
+![Popup curve](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve.png)
 
 The curve that is shown initially is the one  with the best fit [as described in the introduction](index.md#basic-workflow), but you can view the fit of other models by using the *Model Name* dropdown menu.
 
-![Popup curve model](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve-model.png)
+![Popup curve model](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-model.png)
 
 The *Mean & Standard Deviation* checkbox changes the points in the curve to reflect the mean and standard deviation of each dose.
 
-![Popup curve mean SD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve-mean-sd.png)
+![Popup curve mean SD](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-mean-sd.png)
 
 You can also change the scale of the axis using the *Logarithmic Dose Axis* checkbox.
 
-![Popup curve log](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve-log.png)
+![Popup curve log](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-log.png)
 
 You can switch between different probes/probe sets inside of the individual curve viewer using the *ID* dropdown, however it is usually faster to close the popup and double-click on a different probe/probe set in the results table.
 
-![Popup curve ID](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve-id.png)
+![Popup curve ID](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-id.png)
 
 All properties of the curve can be altered in the *Properties Menu*.
 
-![Popup curve properties](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/popup-curve-properties.png)
+![Popup curve properties](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/popup-curve-properties.png)
 
 Inside the properties menu for the plot, there are a variety of parameters that can be changed to alter the appearance of the plot.
 
@@ -183,13 +207,13 @@ The default visualizations are:
 
 - **BMDS Model Counts**
 
-    ![BMDS model counts](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/bmd-charts/bmds-model-counts.png)
+    ![BMDS model counts](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/bmd-charts/bmds-model-counts.png)
 - **Best BMD Vs. Best BMDL**
 
-    ![Best BMD Best BMDL](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/bmd-charts/best-bmd-best-bmdl.png)
+    ![Best BMD Best BMDL](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/bmd-charts/best-bmd-best-bmdl.png)
 - **Best BMD Histogram**
 
-    ![Best BMD Histogram](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/bmd-charts/best-bmd-histogram.png)
+    ![Best BMD Histogram](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/bmd-charts/best-bmd-histogram.png)
 
 Additional visualizations are available by making a selection in the `Select Graph View` dropdown list.
 
@@ -210,4 +234,4 @@ There is a filter available for every column in the BMD results table. Some part
 - **Gene ID:** Filter by gene IDs.
 - **Gene Symbols:** Filter by gene symbols.
 
-![Main BMD Results Filters Added](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/master/media/main-bmd-results-filters-added.png)
+![Main BMD Results Filters Added](https://raw.githubusercontent.com/auerbachs/BMDExpress-2.0/readthedocs/media/main-bmd-results-filters-added.png)
