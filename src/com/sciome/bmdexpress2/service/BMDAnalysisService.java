@@ -236,7 +236,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			}
 			List<Float> correctedPointsMinus = new ArrayList<>();
 			List<Float> correctedPointsPlus = new ArrayList<>();
-			List<Float> correctedPointsNeutral = new ArrayList<>();
+			//List<Float> correctedPointsNeutral = new ArrayList<>();
 
 			/*
 			 * Supply BMR directly into CurveP calls! 07.16.2019
@@ -256,9 +256,6 @@ public class BMDAnalysisService implements IBMDAnalysisService
 					correctedPointsPlus, BMR_poz, 1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
 
-			List<Float> valuesNeutral = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
-					correctedPointsNeutral, BMR_poz, 0, inputParameters.getBootStraps(),
-					inputParameters.getpValueCutoff());
 
 			List<Float> values = valuesPlus;
 			List<Float> correctedPoints = correctedPointsPlus;
@@ -276,12 +273,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 					&& !Double.isNaN(valuesPlus.get(5).doubleValue())
 					&& !Double.isNaN(valuesPlus.get(4).doubleValue())
 					&& !Double.isNaN(valuesPlus.get(6).doubleValue());
-			boolean allgoodneutral = Double.isFinite(valuesNeutral.get(5).doubleValue())
-					&& Double.isFinite(valuesNeutral.get(4).doubleValue())
-					&& Double.isFinite(valuesNeutral.get(6).doubleValue())
-					&& !Double.isNaN(valuesNeutral.get(5).doubleValue())
-					&& !Double.isNaN(valuesNeutral.get(4).doubleValue())
-					&& !Double.isNaN(valuesNeutral.get(6).doubleValue());
+
 
 			// first choose the direction where fitpvalue is not 0.0
 			if (valuesMinus.get(0).doubleValue() == 0.0 && valuesPlus.get(0).doubleValue() != 0.0)
@@ -310,8 +302,8 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				mono = 1;
 			}
 			// if all converge, and there is a pvalue != 0.0
-			else if (Math.abs(valuesMinus.get(2).doubleValue()) > Math.abs(valuesPlus.get(2).doubleValue()))
-			{// ..choose the direction with largest absolute AUC
+			else if ( -valuesMinus.get(2).doubleValue() > valuesPlus.get(2).doubleValue() )
+			{// ..choose the direction with largest AUC
 				mono = -1;
 				values = valuesMinus;
 				correctedPoints = correctedPointsMinus;
