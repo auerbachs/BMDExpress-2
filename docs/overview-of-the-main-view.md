@@ -64,7 +64,6 @@ Right-click on an individual data set, then click `Export` to export the analysi
 
 ### Spreadsheet View
 
-`TODO: Update these links and this section`
 
 Right-click on an individual data set in either [One-way ANOVA](one-way-anova), [Williams Trend](williams-trend), [Oriogen](oriogen), [Benchmark Dose Analysis](benchmark-dose-analysis.md), or [Functional Classification](functional-classifications.md) sections, and select `Spreadsheet View`.
 
@@ -86,6 +85,7 @@ Toggles Panel
 - **Hide/Show Filter:** Hides and shows the [filter panel](#filters-panel) on the right side of the window.
 - **Hide/Show Table:** Hides and shows the [results table](#results-table) at the bottom of the window.
 - **Hide/Show Charts:** Hides and shows the [charts](#charts) in the center of the window.
+- **Toggle Columns:** Opens a window for choosing which columns to display/hide in the table.
 
 Visualizations Panel
 --------------------
@@ -112,9 +112,7 @@ Results Table
 
 The columns of the results table differ based on the current analysis.
 
-- [One-way ANOVA Results](One-way-ANOVA#one-way-anova-results)
-- [Williams Results](Williams-Trend-Test#williams-results)
-- [Oriogen Results](Oriogen#oriogen-results)
+- [Pre-filter Results](Statistical-and-fold-change-prefiltering#Prefilter-results)
 - [Benchmark Dose Results](benchmark-dose-analysis.md#benchmark-dose-results)
 - [Functional Classification Results](functional-classifications.md#functional-classification-results)
 
@@ -129,9 +127,7 @@ The central panel containing all visualizations for selected analyses.
 
 The available visualizations differ for each analysis type:
 
-- [One-way ANOVA Visualizations](One-way-ANOVA#one-way-anova-visualizations)
-- [Williams Trend Test Visualizations](Williams-Trend-Test#williams-trend-test-visualizations)
-- [Oriogen Visualizations](Oriogen#oriogen-visualizations)
+- [Pre-filter Visualizations](Statistical-and-fold-change-prefiltering#Prefilter-visualizations)
 - [Benchmark Dose Visualizations](benchmark-dose-analysis.md#benchmark-dose-visualizations)
 - [Functional Classification Visualizations](functional-classifications.md#functional-classification-visualizations)
 
