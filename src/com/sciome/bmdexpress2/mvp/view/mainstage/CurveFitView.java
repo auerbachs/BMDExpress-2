@@ -50,6 +50,7 @@ import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.ICurveFitView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.NumberManager;
+import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
 import com.sciome.bmdexpress2.util.prefilter.OnewayAnova;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.BMDoseModel;
 import com.sciome.charts.jfree.CustomJFreeLogAxis;
@@ -1139,13 +1140,28 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		XYPlot plot = (XYPlot) chart.getPlot();
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
-		List<Float> correctedValues = ((GCurvePResult) theStatResult).getCorrectedDoseResponseValues();
-		double[] responses = new double[correctedValues.size()];
-		for (int i = 0; i < correctedValues.size(); i++)
-			responses[i] = correctedValues.get(i).doubleValue();
+
+		GCurvePResult gcurvePResult = (GCurvePResult) theStatResult;
+		// get the corrected dose response values
+		List<Float> correctedValues = gcurvePResult.getCorrectedDoseResponseOffsetValues();
+		List<Float> doseResponseValues = new ArrayList<>();
+		for (double value : this.probeResponseMap.get(probe))
+			doseResponseValues.add((float) value);
+
+		List<Float> doseList = new ArrayList<>();
+		for (int i = 0; i < doses.length; i++)
+			doseList.add((float) doses[i]);
+
+		List<Float> weightedMeans = CurvePProcessor.calc_WgtAvResponses(doseList, doseResponseValues);
+		List<Float> weightedStdDev = CurvePProcessor.calc_WgtSdResponses(doseList, doseResponseValues);
+
+		double[] responses = new double[doseResponseValues.size()];
+		for (int i = 0; i < doseResponseValues.size(); i++)
+			responses[i] = doseResponseValues.get(i).doubleValue();
 
 		lastDose = doses[0];
 		holder = 0;
+		int doseIndex = 0;
 		for (counter = 0; counter < doses.length; counter++)
 		{
 			if (lastDose != doses[counter])
@@ -1159,9 +1175,10 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 					dr[(counter2 - holder)] = responses[counter2];
 				}
 				// get mean and std dev
-				mean = org.jfree.data.statistics.Statistics.calculateMean(dr);
-				stdD = org.jfree.data.statistics.Statistics.getStdDev(dr);
-				median = org.jfree.data.statistics.Statistics.calculateMedian(Arrays.asList(dr));
+				mean = weightedMeans.get(doseIndex) - correctedValues.get(counter - 1);
+				stdD = weightedStdDev.get(doseIndex);
+				median = org.jfree.data.statistics.Statistics.calculateMedian(Arrays.asList(dr))
+						- correctedValues.get(counter - 1);
 
 				meanPlusSD.add(maskDose(lastDose), mean + stdD);
 				meanMinusSD.add(maskDose(lastDose), mean - stdD);
@@ -1169,6 +1186,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				medianSeries.add(maskDose(lastDose), median);
 				lastDose = doses[counter];
 				holder = counter;
+				doseIndex++;
 			}
 		}
 		// Run in the last data set
@@ -1177,9 +1195,10 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		for (counter2 = holder; counter2 < counter; counter2++)
 			dr[(counter2 - holder)] = responses[counter2];
 		// get mean and std dev
-		mean = org.jfree.data.statistics.Statistics.calculateMean(dr);
-		stdD = org.jfree.data.statistics.Statistics.getStdDev(dr);
-		median = org.jfree.data.statistics.Statistics.calculateMedian(Arrays.asList(dr));
+		mean = weightedMeans.get(doseIndex) - correctedValues.get(counter - 1);
+		stdD = weightedStdDev.get(doseIndex);
+		median = org.jfree.data.statistics.Statistics.calculateMedian(Arrays.asList(dr))
+				- correctedValues.get(counter - 1);
 		meanPlusSD.add(maskDose(lastDose), mean + stdD);
 		meanMinusSD.add(maskDose(lastDose), mean - stdD);
 		meanSeries.add(maskDose(lastDose), mean);
@@ -1236,41 +1255,59 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// Set up BMD and BMDL and BMDU
 		if (parameters[0] >= minDose && parameters[0] <= maxDose)
 		{
-			bmdSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			if (gcurvePResult.getBmr() != 0.0)
+				bmdSeries.add(maskDose(parameters[0]), gcurvePResult.getBmr());
+			else
+				bmdSeries.add(maskDose(parameters[0]),
+						getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmdSeries.add(maskDose(parameters[0]), LOW - .01);
 		}
 
 		double smallestDose = 0.0;
+		double bmrValue = gcurvePResult.getBmr();
 		if (logDosesCheckBox.isSelected())
 			smallestDose = logZeroDose;
 		else
 			smallestDose = minDose;
 
-		bmdSeries.add(smallestDose, getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+		if (gcurvePResult.getBmr() != 0.0)
+			bmdSeries.add(smallestDose, gcurvePResult.getBmr());
+		else
+			bmdSeries.add(smallestDose, getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		if (parameters[1] >= minDose && parameters[1] <= maxDose)
 		{
-			bmdlSeries.add(maskDose(parameters[1]),
-					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			if (gcurvePResult.getBmr() != 0.0)
+				bmdlSeries.add(maskDose(parameters[1]), gcurvePResult.getBmr());
+			else
+				bmdlSeries.add(maskDose(parameters[1]),
+						getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmdlSeries.add(maskDose(parameters[1]), LOW - .01);
 		}
 		if (parameters[2] >= minDose && parameters[2] <= maxDose && parameters[2] > 0.0)
 		{
-			bmduSeries.add(maskDose(parameters[2]),
-					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+			if (gcurvePResult.getBmr() != 0.0)
+				bmduSeries.add(maskDose(parameters[2]), gcurvePResult.getBmr());
+			else
+				bmduSeries.add(maskDose(parameters[2]),
+						getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 			bmduSeries.add(maskDose(parameters[2]), LOW - .01);
 		}
-		bmduSeries.add(maskDose(parameters[0]), getYFromLineSeries(medianSeries, maskDose(parameters[0])));
+		if (gcurvePResult.getBmr() != 0.0)
+			bmduSeries.add(maskDose(parameters[0]), gcurvePResult.getBmr());
+		else
+			bmduSeries.add(maskDose(parameters[0]),
+					getYFromLineSeries(medianSeries, maskDose(parameters[0])));
 
 		probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
 			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()), getYFromLineSeries(
-					medianSeries, maskDose(probeStatResult.getPrefilterNoel().doubleValue())));
+					meanSeries, maskDose(probeStatResult.getPrefilterNoel().doubleValue())));
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
 			loelSeries.add(maskDose(probeStatResult.getPrefilterLoel().doubleValue()), getYFromLineSeries(
-					medianSeries, maskDose(probeStatResult.getPrefilterLoel().doubleValue())));
+					meanSeries, maskDose(probeStatResult.getPrefilterLoel().doubleValue())));
 
 	}
 

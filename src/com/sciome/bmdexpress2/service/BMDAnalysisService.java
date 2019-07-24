@@ -35,8 +35,8 @@ import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 public class BMDAnalysisService implements IBMDAnalysisService
 {
 
-	BMDSTool bMDSTool;
-	boolean cancel = false;
+	BMDSTool	bMDSTool;
+	boolean		cancel	= false;
 
 	/*
 	 * Run parametric bmd analylsis via epa models on processable data
@@ -116,13 +116,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				}
 
 				/*
-				 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId();
-				 * if (CurrID.equals("1367733_at"))
-				 * {
-				 * List<Float> uu = CurvePProcessor.CollapseDoses( doseVector );
-				 * int ll = uu.size();
-				 * CurrID = Integer.toString(ll);
-				 * }
+				 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId(); if
+				 * (CurrID.equals("1367733_at")) { List<Float> uu = CurvePProcessor.CollapseDoses( doseVector
+				 * ); int ll = uu.size(); CurrID = Integer.toString(ll); }
 				 */
 
 				int type = -1; // unknown parametric curve type
@@ -216,12 +212,8 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 		/* do the gcurvep processing here! */
 		/*
-		 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId();
-		 * if (CurrID.equals("1370387_at"))
-		 * { //dbg
-		 * int dd = 0;
-		 * CurrID = Integer.toString(dd);
-		 * }//
+		 * String CurrID = doseResponseExperiment.getProbeResponses().get(1).getProbe().getId(); if
+		 * (CurrID.equals("1370387_at")) { //dbg int dd = 0; CurrID = Integer.toString(dd); }//
 		 */
 
 		List<ProbeStatResult> probeStatResults = new ArrayList<>();
@@ -236,18 +228,21 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			}
 			List<Float> correctedPointsMinus = new ArrayList<>();
 			List<Float> correctedPointsPlus = new ArrayList<>();
-			//List<Float> correctedPointsNeutral = new ArrayList<>();
+			// List<Float> correctedPointsNeutral = new ArrayList<>();
 
 			/*
 			 * Supply BMR directly into CurveP calls! 07.16.2019
 			 */
-			
-			float control_signal = CurvePProcessor.get_baseline_response(doseVector, numericMatrix.get(i));
-			float control_SD = CurvePProcessor.get_baseline_SD(doseVector, numericMatrix.get(i));
-			
-			float BMR_neg = CurvePProcessor.calc_PODR_bySD(control_signal, control_SD, -inputParameters.getBMR());
-			float BMR_poz = CurvePProcessor.calc_PODR_bySD(control_signal, control_SD, inputParameters.getBMR());
-			
+
+			List<Float> weightedAvgs = CurvePProcessor.calc_WgtAvResponses(doseVector, numericMatrix.get(i));
+			List<Float> weightedStdDeviations = CurvePProcessor.calc_WgtSdResponses(doseVector,
+					numericMatrix.get(i));
+
+			float BMR_neg = CurvePProcessor.calc_PODR_bySD(weightedAvgs.get(0), weightedStdDeviations.get(0),
+					-inputParameters.getBMR());
+			float BMR_poz = CurvePProcessor.calc_PODR_bySD(weightedAvgs.get(0), weightedStdDeviations.get(0),
+					inputParameters.getBMR());
+
 			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsMinus, BMR_neg, -1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
@@ -255,7 +250,6 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsPlus, BMR_poz, 1, inputParameters.getBootStraps(),
 					inputParameters.getpValueCutoff());
-
 
 			List<Float> values = valuesPlus;
 			List<Float> correctedPoints = correctedPointsPlus;
@@ -273,7 +267,6 @@ public class BMDAnalysisService implements IBMDAnalysisService
 					&& !Double.isNaN(valuesPlus.get(5).doubleValue())
 					&& !Double.isNaN(valuesPlus.get(4).doubleValue())
 					&& !Double.isNaN(valuesPlus.get(6).doubleValue());
-
 
 			// first choose the direction where fitpvalue is not 0.0
 			if (valuesMinus.get(0).doubleValue() == 0.0 && valuesPlus.get(0).doubleValue() != 0.0)
@@ -302,18 +295,23 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				mono = 1;
 			}
 			// if all converge, and there is a pvalue != 0.0
-			else if ( -valuesMinus.get(2).doubleValue() > valuesPlus.get(2).doubleValue() )
+			else if (-valuesMinus.get(2).doubleValue() > valuesPlus.get(2).doubleValue())
 			{// ..choose the direction with largest AUC
 				mono = -1;
 				values = valuesMinus;
 				correctedPoints = correctedPointsMinus;
 			}
 
+			List<Float> correctedPointsOffsets = new ArrayList<>();
+
+			for (int j = 0; j < numericMatrix.get(i).size(); j++)
+				correctedPointsOffsets.add(numericMatrix.get(i).get(j) - correctedPoints.get(j));
+
 			ProbeStatResult psR = new ProbeStatResult();
 			GCurvePResult gResult = new GCurvePResult();
 			gResult.setFitPValue(values.get(0).doubleValue());
 			gResult.setAIC(Double.NaN);
-			gResult.setCorrectedDoseResponseValues(correctedPoints);
+			gResult.setCorrectedDoseResponseOffsetValues(correctedPointsOffsets);
 			gResult.setCurveParameters(null);
 			gResult.setFitLogLikelihood(Double.NaN);
 			gResult.setSuccess("true");
@@ -326,6 +324,14 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			gResult.setBMDLwAuc(values.get(7).doubleValue());
 			gResult.setBMDwAuc(values.get(8).doubleValue());
 			gResult.setBMDUwAuc(values.get(9).doubleValue());
+			if (mono > 0)
+				gResult.setBmr(BMR_poz);
+			else
+				gResult.setBmr(BMR_neg);
+
+			gResult.setWeightedAverages(weightedAvgs);
+			gResult.setWeightedStdDeviations(weightedStdDeviations);
+
 			gResult.setAdverseDirection((short) mono);
 			psR.setBestPolyStatResult(null);
 

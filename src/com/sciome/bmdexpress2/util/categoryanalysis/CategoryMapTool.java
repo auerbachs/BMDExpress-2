@@ -51,7 +51,7 @@ import com.sciome.bmdexpress2.util.stat.DosesStat;
 import com.sciome.bmdexpress2.util.stat.FishersExact;
 
 /**
- * The class for GOTermsTool
+ * The class for GOTermsTool reactome.org
  *
  * @version 0.5, 10/12/2005
  * @author Longlong Yang

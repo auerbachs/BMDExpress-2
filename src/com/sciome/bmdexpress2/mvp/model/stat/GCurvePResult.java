@@ -10,15 +10,18 @@ public class GCurvePResult extends StatResult
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2275549172312801367L;
+	private static final long	serialVersionUID	= 2275549172312801367L;
 
-	private double BMDauc;
-	private double BMDLauc;
-	private double BMDUauc;
-	private double BMDwAuc;
-	private double BMDLwAuc;
-	private double BMDUwAuc;
-	private List<Float> correctedDoseResponseValues;
+	private double				BMDauc;
+	private double				BMDLauc;
+	private double				BMDUauc;
+	private double				BMDwAuc;
+	private double				BMDLwAuc;
+	private double				BMDUwAuc;
+	private double				bmr;
+	private List<Float>			correctedDoseResponseOffsetValues;
+	private List<Float>			weightedAverages;
+	private List<Float>			weightedStdDeviations;
 
 	public GCurvePResult()
 	{
@@ -119,14 +122,44 @@ public class GCurvePResult extends StatResult
 		BMDUwAuc = bMDUwAuc;
 	}
 
-	public List<Float> getCorrectedDoseResponseValues()
+	public List<Float> getCorrectedDoseResponseOffsetValues()
 	{
-		return correctedDoseResponseValues;
+		return correctedDoseResponseOffsetValues;
 	}
 
-	public void setCorrectedDoseResponseValues(List<Float> correctedDoseResponseValues)
+	public void setCorrectedDoseResponseOffsetValues(List<Float> correctedDoseResponseValues)
 	{
-		this.correctedDoseResponseValues = correctedDoseResponseValues;
+		this.correctedDoseResponseOffsetValues = correctedDoseResponseValues;
+	}
+
+	public double getBmr()
+	{
+		return bmr;
+	}
+
+	public void setBmr(double bmr)
+	{
+		this.bmr = bmr;
+	}
+
+	public List<Float> getWeightedAverages()
+	{
+		return weightedAverages;
+	}
+
+	public void setWeightedAverages(List<Float> weightedAverages)
+	{
+		this.weightedAverages = weightedAverages;
+	}
+
+	public List<Float> getWeightedStdDeviations()
+	{
+		return weightedStdDeviations;
+	}
+
+	public void setWeightedStdDeviations(List<Float> weightedStdDeviations)
+	{
+		this.weightedStdDeviations = weightedStdDeviations;
 	}
 
 	@Override

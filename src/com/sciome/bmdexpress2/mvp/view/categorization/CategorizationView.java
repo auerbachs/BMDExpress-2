@@ -160,8 +160,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private CheckBox						bmdFilterMaxAdjustedPValueCheckBox;
 	@FXML
 	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
-	
-	//IVIVE
+
+	// IVIVE
 	@FXML
 	private CheckBox						oneCompartmentCheckBox;
 	@FXML
@@ -204,7 +204,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private ComboBox						outputUnitsComboBox;
 	@FXML
 	private ComboBox						speciesComboBox;
-	
 
 	private CategoryInput					input;
 
@@ -249,21 +248,27 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Invalid Input");
 		alert.setHeaderText(null);
-		try {
+		try
+		{
 			params = this.gatherParameters();
-		} catch(NumberFormatException e) {
-			//Otherwise give user a message
+		}
+		catch (NumberFormatException e)
+		{
+			// Otherwise give user a message
 			alert.setContentText("Invalid input fields");
 			alert.showAndWait();
-		} catch(IllegalArgumentException e) {
-			if(e.getMessage() != null)
+		}
+		catch (IllegalArgumentException e)
+		{
+			if (e.getMessage() != null)
 				alert.setContentText(e.getMessage());
 			else
 				alert.setContentText("Invalid input fields");
 			alert.showAndWait();
 		}
-		
-		if (params != null) {
+
+		if (params != null)
+		{
 			startButton.setDisable(true);
 			closeButton.setDisable(true);
 			presenter.startAnalyses(params);
@@ -310,40 +315,53 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		alert.showAndWait();
 	}
-	
-	public void handle_auto_populate(ActionEvent event) {
+
+	public void handle_auto_populate(ActionEvent event)
+	{
 		CompoundTable table = CompoundTable.getInstance();
 		table.loadCombined();
-		
+
 		Compound compound = null;
-		if(!nameAutoPopulate.getText().equals("")) {
+		if (!nameAutoPopulate.getText().equals(""))
+		{
 			compound = table.getCompoundByName(nameAutoPopulate.getText());
-		} else if(!casrnAutoPopulate.getText().equals("")) {
+		}
+		else if (!casrnAutoPopulate.getText().equals(""))
+		{
 			compound = table.getCompoundByCAS(casrnAutoPopulate.getText());
-		} else if(!smilesAutoPopulate.getText().equals("")) {
+		}
+		else if (!smilesAutoPopulate.getText().equals(""))
+		{
 			compound = table.getCompoundBySMILES(smilesAutoPopulate.getText());
 		}
-		
-		if(compound != null) {
-			String species = (String)speciesComboBox.getSelectionModel().getSelectedItem();
+
+		if (compound != null)
+		{
+			String species = (String) speciesComboBox.getSelectionModel().getSelectedItem();
 			Double clint = compound.getInVitroParam(species, "Clint", false);
 			Double fup = compound.getInVitroParam(species, "Funbound.plasma", false);
-			if(clint == null && fup == null) {
+			if (clint == null && fup == null)
+			{
 				clint = compound.getInVitroParam("Human", "Clint", false);
 				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
 				alert.setHeaderText(null);
-				alert.setContentText("Compound data for species not found. Human values were used for CLint and Fup");
+				alert.setContentText(
+						"Compound data for species not found. Human values were used for CLint and Fup");
 				alert.showAndWait();
-			} else if(clint == null) {
+			}
+			else if (clint == null)
+			{
 				clint = compound.getInVitroParam("Human", "Clint", false);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
 				alert.setHeaderText(null);
 				alert.setContentText("Some compound data was not found. Human values were used for Clint");
 				alert.showAndWait();
-			} else if(fup == null) {
+			}
+			else if (fup == null)
+			{
 				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
@@ -351,7 +369,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				alert.setContentText("Some compound data was not found. Human values were used for Fup");
 				alert.showAndWait();
 			}
-			//If we got a compound fill in the fields
+			// If we got a compound fill in the fields
 			nameTextField.setText(compound.getName());
 			casrnTextField.setText(compound.getCAS());
 			smilesTextField.setText(compound.getSMILES());
@@ -359,22 +377,29 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			logPTextField.setText("" + compound.getLogP());
 			String pkaDonorString = "";
 			String pkaAcceptorString = "";
-			if(!compound.getpKaDonors().toString().equals("[]")) {
-				 pkaDonorString = compound.getpKaDonors().toString().substring(1, compound.getpKaDonors().toString().length() - 1);
+			if (!compound.getpKaDonors().toString().equals("[]"))
+			{
+				pkaDonorString = compound.getpKaDonors().toString().substring(1,
+						compound.getpKaDonors().toString().length() - 1);
 			}
-			if(!compound.getpKaAcceptors().toString().equals("[]")) {
-				pkaAcceptorString = compound.getpKaAcceptors().toString().substring(1, compound.getpKaAcceptors().toString().length() - 1);
+			if (!compound.getpKaAcceptors().toString().equals("[]"))
+			{
+				pkaAcceptorString = compound.getpKaAcceptors().toString().substring(1,
+						compound.getpKaAcceptors().toString().length() - 1);
 			}
 			pKaDonorTextField.setText(pkaDonorString);
 			pKaAcceptorTextField.setText(pkaAcceptorString);
-			if(compound.getInVitroParam(species, "Clint.pValue") == null || compound.getInVitroParam(species, "Clint.pValue") < .05)
+			if (compound.getInVitroParam(species, "Clint.pValue") == null
+					|| compound.getInVitroParam(species, "Clint.pValue") < .05)
 				clintTextField.setText("" + clint);
 			else
 				clintTextField.setText("" + 0.0);
-			
+
 			fubTextField.setText("" + fup);
-		} else {
-			//Otherwise give user a message
+		}
+		else
+		{
+			// Otherwise give user a message
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Compound Search");
 			alert.setHeaderText(null);
@@ -393,7 +418,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		if (catAnalysisEnum == CategoryAnalysisEnum.PATHWAY)
 		{
 			selectionLabel.setText("Select Pathway Database:");
-			categoryComboBox.getItems().addAll("REACTOME");
+			categoryComboBox.getItems().addAll("REACTOME", "BioPlanet");
 			categoryComboBox.getSelectionModel().select(0);
 
 			mainVBox.getChildren().remove(probeFileHBox);
@@ -412,12 +437,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			mainVBox.getChildren().remove(selectionHBox);
 		}
 		else if (catAnalysisEnum == CategoryAnalysisEnum.GENE_LEVEL)
-		{	
+		{
 			mainVBox.getChildren().remove(probeFileHBox);
 			mainVBox.getChildren().remove(categoryFileHBox);
 			mainVBox.getChildren().remove(selectionHBox);
 		}
-		
+
 		// Initalize fields using saved settings
 		this.removePromiscuousProbesCheckBox.setSelected(input.isRemovePromiscuousProbes());
 		this.bmdFilter1CheckBox.setSelected(input.isRemoveBMDGreaterThanHighestDose());
@@ -445,95 +470,128 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				.setText("" + input.getCorrelationCutoffForConflictingProbeSets());
 		presenter.initData(bmdResults, catAnalysisEnum);
 
-		//Initialize IVIVE check box listeners
+		// Initialize IVIVE check box listeners
 		toggleIVIVE(true);
-		
-		if(!this.isInVitroCheckBox.isSelected())
+
+		if (!this.isInVitroCheckBox.isSelected())
 			iviveTab.setDisable(true);
-			
+
 		isInVitroCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue)
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (newValue)
 					iviveTab.setDisable(false);
 				else
 					iviveTab.setDisable(true);
 			}
-			
+
 		});
-		
+
 		oneCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (newValue)
+				{
 					toggleIVIVE(false);
-				} else if(!checkIVIVE()) {
+				}
+				else if (!checkIVIVE())
+				{
 					toggleIVIVE(true);
 				}
 			}
 		});
 		pbtkCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (newValue)
+				{
 					toggleIVIVE(false);
-				} else if(!checkIVIVE()) {
+				}
+				else if (!checkIVIVE())
+				{
 					toggleIVIVE(true);
 				}
 			}
 		});
 		threeCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (newValue)
+				{
 					toggleIVIVE(false);
-				} else if(!checkIVIVE()) {
+				}
+				else if (!checkIVIVE())
+				{
 					toggleIVIVE(true);
 				}
 			}
 		});
 		threeCompartmentSSCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue) {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (newValue)
+				{
 					toggleIVIVE(false);
-				} else if(!checkIVIVE()) {
+				}
+				else if (!checkIVIVE())
+				{
 					toggleIVIVE(true);
 				}
 			}
 		});
-		
-		//Initialize Auto populate boxes
+
+		// Initialize Auto populate boxes
 		nameAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue)
+			{
 				casrnAutoPopulate.setText("");
 				smilesAutoPopulate.setText("");
 			}
 		});
 		casrnAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue)
+			{
 				nameAutoPopulate.setText("");
 				smilesAutoPopulate.setText("");
 			}
 		});
 		smilesAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue)
+			{
 				casrnAutoPopulate.setText("");
 				nameAutoPopulate.setText("");
 			}
 		});
 		speciesComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if(newValue.equals("Human")) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue,
+					String newValue)
+			{
+				if (newValue.equals("Human"))
+				{
 					oneCompartmentCheckBox.setDisable(false);
 					threeCompartmentCheckBox.setDisable(false);
 					pbtkCheckBox.setDisable(false);
-				} else {
+				}
+				else
+				{
 					oneCompartmentCheckBox.setSelected(false);
 					threeCompartmentCheckBox.setSelected(false);
 					pbtkCheckBox.setSelected(false);
@@ -543,18 +601,18 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				}
 			}
 		});
-		
-		//Initialize quantile text field
+
+		// Initialize quantile text field
 		quantileTextField.setText("0.95");
-		
-		//Initialize Combo box fields
+
+		// Initialize Combo box fields
 		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
 		doseUnitsComboBox.getSelectionModel().select(0);
 
 		outputUnitsComboBox.getItems().add(Units.MG);
 		outputUnitsComboBox.getItems().add(Units.MOL);
 		outputUnitsComboBox.getSelectionModel().select(0);
-		
+
 		speciesComboBox.getItems().add("Human");
 		speciesComboBox.getItems().add("Rat");
 		speciesComboBox.getItems().add("Mouse");
@@ -643,70 +701,75 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
-		if(isInVitroCheckBox.isSelected() && checkIVIVE()) {
+		if (isInVitroCheckBox.isSelected() && checkIVIVE())
+		{
 			String name = nameTextField.getText();
 			String casrn = casrnTextField.getText();
 			String smiles = smilesTextField.getText();
 			double mw = Double.valueOf(mwTextField.getText());
 			double logP = Double.valueOf(logPTextField.getText());
-			
-			//Read in pka donors and acceptors
+
+			// Read in pka donors and acceptors
 			ArrayList<Double> pkaDonors = new ArrayList<Double>();
 			ArrayList<Double> pkaAcceptors = new ArrayList<Double>();
 			Scanner scanner = new Scanner(pKaDonorTextField.getText());
 			scanner.useDelimiter(", |,| ");
-			while(scanner.hasNextDouble()) {
+			while (scanner.hasNextDouble())
+			{
 				pkaDonors.add(scanner.nextDouble());
 			}
 			scanner.close();
 			scanner = new Scanner(pKaAcceptorTextField.getText());
 			scanner.useDelimiter(", |,| ");
-			while(scanner.hasNextDouble()) {
+			while (scanner.hasNextDouble())
+			{
 				pkaAcceptors.add(scanner.nextDouble());
 			}
 			scanner.close();
-			
-			//Initialize InVitroData with clint and fub
+
+			// Initialize InVitroData with clint and fub
 			InVitroData data = new InVitroData();
-			data.setParam("Clint",  Double.valueOf(clintTextField.getText()));
-			data.setParam("Funbound.plasma",  Double.valueOf(fubTextField.getText()));
+			data.setParam("Clint", Double.valueOf(clintTextField.getText()));
+			data.setParam("Funbound.plasma", Double.valueOf(fubTextField.getText()));
 			HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
-			map.put((String)speciesComboBox.getSelectionModel().getSelectedItem(), data);
-			
+			map.put((String) speciesComboBox.getSelectionModel().getSelectedItem(), data);
+
 			HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
-			
+
 			IVIVEParameters parameters = new IVIVEParameters();
-			
-			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, null, pkaAcceptors, pkaDonors, map, rBlood2Plasma));
-			
-			//Set params with
+
+			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, null, pkaAcceptors, pkaDonors,
+					map, rBlood2Plasma));
+
+			// Set params with
 			List<Model> models = new ArrayList<Model>();
-			if(oneCompartmentCheckBox.isSelected())
+			if (oneCompartmentCheckBox.isSelected())
 				models.add(Model.ONECOMP);
-			if(threeCompartmentCheckBox.isSelected())
+			if (threeCompartmentCheckBox.isSelected())
 				models.add(Model.THREECOMP);
-			if(pbtkCheckBox.isSelected())
+			if (pbtkCheckBox.isSelected())
 				models.add(Model.PBTK);
-			if(threeCompartmentSSCheckBox.isSelected())
+			if (threeCompartmentSSCheckBox.isSelected())
 				models.add(Model.THREECOMPSS);
-			
+
 			parameters.setModels(models);
 			double quantile = Double.valueOf(quantileTextField.getText());
-			if(quantile < 0 || quantile > 1)
+			if (quantile < 0 || quantile > 1)
 				throw new IllegalArgumentException("Quantile must be between 0 and 1");
 			else
 				parameters.setQuantile(quantile);
-			
-			parameters.setDoseUnits((DoseUnits)doseUnitsComboBox.getSelectionModel().getSelectedItem());
-			parameters.setOutputUnits((Units)outputUnitsComboBox.getSelectionModel().getSelectedItem());
-			parameters.setSpecies((String)speciesComboBox.getSelectionModel().getSelectedItem());
+
+			parameters.setDoseUnits((DoseUnits) doseUnitsComboBox.getSelectionModel().getSelectedItem());
+			parameters.setOutputUnits((Units) outputUnitsComboBox.getSelectionModel().getSelectedItem());
+			parameters.setSpecies((String) speciesComboBox.getSelectionModel().getSelectedItem());
 			params.setIviveParameters(parameters);
 		}
-		
+
 		return params;
 	}
-	
-	private void toggleIVIVE(boolean disable) {
+
+	private void toggleIVIVE(boolean disable)
+	{
 		nameAutoPopulate.setDisable(disable);
 		casrnAutoPopulate.setDisable(disable);
 		smilesAutoPopulate.setDisable(disable);
@@ -725,10 +788,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		outputUnitsComboBox.setDisable(disable);
 		speciesComboBox.setDisable(disable);
 	}
-	
-	private boolean checkIVIVE() {
-		return oneCompartmentCheckBox.isSelected() || pbtkCheckBox.isSelected() ||
-				threeCompartmentCheckBox.isSelected() || threeCompartmentSSCheckBox.isSelected();
+
+	private boolean checkIVIVE()
+	{
+		return oneCompartmentCheckBox.isSelected() || pbtkCheckBox.isSelected()
+				|| threeCompartmentCheckBox.isSelected() || threeCompartmentSSCheckBox.isSelected();
 	}
 
 	@Override
