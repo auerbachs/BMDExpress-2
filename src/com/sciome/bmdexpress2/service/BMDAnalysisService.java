@@ -281,7 +281,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				values = valuesMinus;
 				correctedPoints = correctedPointsMinus;
 			}
-			// then after fitpvalue choose the one with convergence on bmdl/bmd/bmdu
+			// then after fit pvalue choose the one with convergence on bmdl/bmd/bmdu
 			else if (allgoodminus && !allgoodplus)
 			{
 				mono = -1;
@@ -294,9 +294,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				correctedPoints = correctedPointsPlus;
 				mono = 1;
 			}
-			// if all converge, and there is a pvalue != 0.0
-			else if (-valuesMinus.get(2).doubleValue() > valuesPlus.get(2).doubleValue())
-			{// ..choose the direction with largest AUC
+			// if all converge, and there is a pvalue != 0.0, pick best fit (fraction of saved signal), as the direction
+			else if (valuesPlus.get(0).doubleValue() < valuesMinus.get(0).doubleValue())			
+			{// ..choose
 				mono = -1;
 				values = valuesMinus;
 				correctedPoints = correctedPointsMinus;
