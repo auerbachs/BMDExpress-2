@@ -259,10 +259,14 @@ public class CurvePProcessor
 	}
 
 
-	public static float calc_PulledMAD(List<Float> allDoses, List<Float> allResponses)
+	public static float calc_PulledMAD(List<Float> allDoses, List<Float> allResponses, boolean doseMeans)
 	{
 		/*
-		 * Calculates pulled median absolute difference from entire dose-response ignoring dose groups with 0-variance
+		 * Calculates pulled median absolute difference 
+		 * from entire dose-response ignoring dose groups with 0-variance
+		 * Prior to pooling, if doseMeans is true, simple average is used for each dose group, 
+		 * when calculating absolute differences for that dose group, otherwise - dose group median is used.
+		 * After pooling, median value is returned
 		 */
 		
 		List<Float> D = CollapseDoses(allDoses);		
@@ -281,17 +285,30 @@ public class CurvePProcessor
 				}
 
 			x /= gR.size();
+			
+			if (!doseMeans)
+			{
+				Float[] v = gR.toArray(new Float[0]);
+				Arrays.sort(v);
+				x = smedian(v);
+			}			
+			
 			for (int bd = 0; bd < gR.size(); bd++) 
 			{
-				float dx = gR.get(bd) - x;
-				if (dx == 0.0f) continue;
+				float dx = Math.abs( gR.get(bd) - x );
+				if (dx < 0.000001f) continue; 	//skip zero differences, likely from degenerate replicate points that are not true measurements but "fill-ins" for missing data
 				RS.add( dx );	
 			}
 		} // for d
 		
+		if (RS.size() == 0) return 0.0f;
+		if (RS.size() == 1) return RS.get(0);
+		
 		Float[] ads = RS.toArray(new Float[0]);
-		return ( MAD(ads, 0.0f, 0.00001f) );		
-	}
+		Arrays.sort(ads);
+		
+		return ( smedian(ads) );		
+	} // end of calc_PulledMAD()
 
 	public static List<Float> calc_WgtSdResponses(List<Float> allDoses, List<Float> allResponses)
 	{
@@ -316,9 +333,8 @@ public class CurvePProcessor
 			float csd = wSD(gResps, cfs);
 			RS.add( csd );			
 		} // for d
-				
-		//float x = calc_PulledSD(allDoses, allResponses); // too large, we should stick with our MAD-based estimates
-		float x = calc_PulledMAD(allDoses, allResponses);
+		
+		float x = calc_PulledMAD(allDoses, allResponses, false);
 		
 		for (int d = 0; d < RS.size(); d++)
 		{// checks and replaces those SDs that are below pulled SD
