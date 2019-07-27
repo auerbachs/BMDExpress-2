@@ -222,6 +222,77 @@ public class CurvePProcessor
 		return R;
 	} // end of calc_WgtAvResponses()
 
+	public static float calc_PulledSD(List<Float> allDoses, List<Float> allResponses)
+	{
+		/*
+		 * Calculates pulled st.dev from entire dose-response ignoring dose groups with 0-variance
+		 */
+		
+		List<Float> D = CollapseDoses(allDoses);		
+		
+		float pullv = 0.0f;
+		int npullv = 0;
+		
+		for (int d = 0; d < D.size(); d++)
+		{
+			float g = D.get(d), x = 0.0f;
+			List<Float> gR = new ArrayList<Float>();
+
+			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
+				if (allDoses.get(ad).floatValue() == g)
+				{
+					gR.add(allResponses.get(ad));
+					x += allResponses.get(ad);
+				}
+
+			x /= gR.size();
+			for (int bd = 0; bd < gR.size(); bd++)
+			{
+				float dx = gR.get(bd) - x;
+				if (dx == 0.0f) continue; //skips 0-variance points - assume those are missing
+				pullv += dx*dx;
+				npullv ++;
+			}		
+		} // for d
+		
+		return (float)Math.sqrt( (double)pullv / (npullv - 1) );		
+	}
+
+
+	public static float calc_PulledMAD(List<Float> allDoses, List<Float> allResponses)
+	{
+		/*
+		 * Calculates pulled median absolute difference from entire dose-response ignoring dose groups with 0-variance
+		 */
+		
+		List<Float> D = CollapseDoses(allDoses);		
+		List<Float> RS = new ArrayList<Float>();
+		
+		for (int d = 0; d < D.size(); d++)
+		{
+			float g = D.get(d), x = 0.0f;
+			List<Float> gR = new ArrayList<Float>();
+
+			for (int ad = allDoses.indexOf(g); ad <= allDoses.lastIndexOf(g); ad++)
+				if (allDoses.get(ad).floatValue() == g)
+				{
+					gR.add(allResponses.get(ad));
+					x += allResponses.get(ad);
+				}
+
+			x /= gR.size();
+			for (int bd = 0; bd < gR.size(); bd++) 
+			{
+				float dx = gR.get(bd) - x;
+				if (dx == 0.0f) continue;
+				RS.add( dx );	
+			}
+		} // for d
+		
+		Float[] ads = RS.toArray(new Float[0]);
+		return ( MAD(ads, 0.0f, 0.00001f) );		
+	}
+
 	public static List<Float> calc_WgtSdResponses(List<Float> allDoses, List<Float> allResponses)
 	{
 		/*
@@ -229,7 +300,7 @@ public class CurvePProcessor
 		 */
 		List<Float> D = CollapseDoses(allDoses);
 		List<Float> RS = new ArrayList<Float>();
-
+				
 		for (int d = 0; d < D.size(); d++)
 		{
 			float g = D.get(d);
@@ -242,18 +313,15 @@ public class CurvePProcessor
 			Float[] gResps = gR.toArray(new Float[0]);
 			Float[] cfs = TukeyBiWs(gResps, 5.0f, 0.00001f);
 
-			RS.add(wSD(gResps, cfs));
+			float csd = wSD(gResps, cfs);
+			RS.add( csd );			
 		} // for d
-
-		// 2019.07 additional check for extremely low SD values (e.g., likely to arise from "degenerate"
-		// replicate responses)
-		Float[] sds = RS.toArray(new Float[0]);
-		Float[] csds = TukeyBiWs(sds, 5.0f, 0.00001f);
-
-		// Arrays.sort(sds); float x = smedian(sds);
-		float x = wMean(sds, csds);
+				
+		//float x = calc_PulledSD(allDoses, allResponses); // too large, we should stick with our MAD-based estimates
+		float x = calc_PulledMAD(allDoses, allResponses);
+		
 		for (int d = 0; d < RS.size(); d++)
-		{// checks and replaces those SDs that are below average SD
+		{// checks and replaces those SDs that are below pulled SD
 			if (x > RS.get(d))
 				RS.set(d, x);
 		}
