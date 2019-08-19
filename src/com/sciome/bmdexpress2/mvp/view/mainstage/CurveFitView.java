@@ -572,6 +572,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 					// make series
 					sh = new XYSeries("Data" + String.valueOf(counter));
+					// sh = new XYSeries("Data");
 					sh.add(maskDose(doses[counter - 1]), mean); // add mean
 					sh.add(maskDose(doses[counter - 1]), (mean + stdD));// add Standard Deviation
 					sh.add(maskDose(doses[counter - 1]), (mean - stdD));
@@ -722,7 +723,6 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmduSeries.add(maskDose(parameters[0]), bmdModel.response(parameters[0]));
 
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
-		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
 		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
 			noelSeries.add(maskDose(probeStatResult.getPrefilterNoel().doubleValue()),
@@ -958,13 +958,18 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// hold the selected combobox item index
 		String modelName = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 
+		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
+		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
+
 		// data series have been added, adds the models
 		seriesSet.addSeries(modelSeries);
 		seriesSet.addSeries(bmdSeries);
 		seriesSet.addSeries(bmdlSeries);
 		seriesSet.addSeries(bmduSeries);
-		seriesSet.addSeries(noelSeries);
-		seriesSet.addSeries(loelSeries);
+		if (probeStatResult != null && probeStatResult.getPrefilterNoel() != null)
+			seriesSet.addSeries(noelSeries);
+		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
+			seriesSet.addSeries(loelSeries);
 		createChart(modelName);
 	}
 
@@ -1133,9 +1138,9 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		XYSeriesCollection medianSeriesSet = new XYSeriesCollection();
 		double lastDose, mean, stdD, median;
 		int holder, counter, counter2;
-		XYSeries meanPlusSD = new XYSeries("Mean + SD Curve");
-		XYSeries meanMinusSD = new XYSeries("Mean - SD Curve ");
-		XYSeries meanSeries = new XYSeries("Mean Curve");
+		XYSeries meanPlusSD = new XYSeries("Weighted Mean + Weighted SD Curve");
+		XYSeries meanMinusSD = new XYSeries("Weighted Mean - Weighted SD Curve ");
+		XYSeries meanSeries = new XYSeries("Weighted Mean Curve");
 		XYSeries medianSeries = new XYSeries("Median Curve");
 		XYPlot plot = (XYPlot) chart.getPlot();
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
