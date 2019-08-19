@@ -120,13 +120,6 @@ public class FilePowerFit extends FileFitBase
 
 		double bmrLevel = inputParameters.getBmrLevel();
 		int bmrType = inputParameters.getBmrType();
-		if (bmrType == 2)
-		{
-			bmrType = 1;
-			bmrLevel = this.recalculateBMRFactorForRelativeDevaition(inputX, inputY,
-					inputParameters.getBmrLevel());
-
-		}
 
 		bf.append(bmrType + space1);
 		bf.append(bmrLevel + space1);

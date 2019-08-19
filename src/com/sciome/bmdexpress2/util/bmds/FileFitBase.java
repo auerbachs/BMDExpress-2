@@ -6,12 +6,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
-
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
-import org.apache.commons.math3.util.FastMath;
 
 public abstract class FileFitBase
 {
@@ -22,52 +17,6 @@ public abstract class FileFitBase
 	{
 		this.killTime = killTime;
 		this.success = true;
-	}
-
-	protected double recalculateBMRFactorForRelativeDevaition(float[] inputx, float[] inputy, double bmrlevel)
-	{
-
-		//gui_bmr_type
-		
-		double newBmrFactor = 0.0;
-		List<Double> firstDoseGroup = new ArrayList<>();
-
-		float currval = inputx[0];
-		double stdSum = 0.0;
-		int count = 1;
-		for (int i = 0; i < inputx.length; i++)
-		{
-			if (currval != inputx[i])
-			{
-				double[] arr = firstDoseGroup.stream().mapToDouble(d -> d).toArray();
-
-				StandardDeviation sd2 = new StandardDeviation();
-				double stdval = sd2.evaluate(arr);
-				stdSum += stdval;
-				firstDoseGroup.clear();
-				count++;
-			}
-			firstDoseGroup.add((double) inputy[i]);
-		}
-		double[] arr = firstDoseGroup.stream().mapToDouble(d -> d).toArray();
-		StandardDeviation sd2 = new StandardDeviation();
-		double stdval = sd2.evaluate(arr);
-		stdSum += stdval;
-		double stdAverage = stdSum / count;
-		double stdPooled = Math.sqrt(stdAverage);
-		newBmrFactor = FastMath.log(2, bmrlevel + 1.0) / stdPooled;
-
-		//we calculate BMR and store it inside BMRF to be supplied as "single point" option into both EPA BMDS and gcurvep
-		//if (gui_bmr_type == "st.dev type") newBmrFactor =  average_control_response + bmrlevel * stdPooled;
-		
-	//	if (gui_bmr_type == "relartive deviation") 
-	////	{
-	//		newBmrFactor =  average_control_response * (bmrlevel + 1);
-	//		//if logged, 
-	//		newBmrFactor =  average_control_response  +  FastMath.log(2, bmrlevel + 1.0);
-	//	}
-		
-		return newBmrFactor;
 	}
 
 	protected void executeModel(String EXE, String fName)

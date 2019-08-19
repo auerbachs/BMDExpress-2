@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
+import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
 import com.sciome.bmdexpress2.mvp.presenter.bmdanalysis.BMDAnalysisPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
@@ -443,7 +444,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		}
 
 		bMRTypeComboBox.getItems().add("Standard Deviation");
-		bMRTypeComboBox.getItems().add("Relative Deviation");
+		if (allIsNotLogScaled())
+			bMRTypeComboBox.getItems().add("Relative Deviation");
 		bMRTypeComboBox.getSelectionModel().select(0);
 
 		// init checkboxes
@@ -573,6 +575,20 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		ActionEvent event = new ActionEvent();
 		handle_HillCheckBox(event);
 		handle_PowerCheckBox(event);
+	}
+
+	/*
+	 * This method looks at all the processable results and checks to see whethere they are all log
+	 * transformed or not. returns true if all are log transformed. This method was created to help decide
+	 * whether or not to allow relative deviation.
+	 */
+	private boolean allIsNotLogScaled()
+	{
+		for (IStatModelProcessable processables : this.processableData)
+			if (!processables.getProcessableDoseResponseExperiment().getLogTransformation()
+					.equals(LogTransformationEnum.NONE))
+				return false;
+		return true;
 	}
 
 	private ModelInputParameters assignParameters()
