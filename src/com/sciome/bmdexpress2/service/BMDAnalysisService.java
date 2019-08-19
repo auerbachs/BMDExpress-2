@@ -294,8 +294,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				correctedPoints = correctedPointsPlus;
 				mono = 1;
 			}
-			// if all converge, and there is a pvalue != 0.0, pick best fit (fraction of saved signal), as the direction
-			else if (valuesPlus.get(0).doubleValue() < valuesMinus.get(0).doubleValue())			
+			// if all converge, and there is a pvalue != 0.0, pick best fit (fraction of saved signal), as the
+			// direction
+			else if (valuesPlus.get(0).doubleValue() < valuesMinus.get(0).doubleValue())
 			{// ..choose
 				mono = -1;
 				values = valuesMinus;

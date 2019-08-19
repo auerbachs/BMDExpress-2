@@ -32,11 +32,17 @@ public class GCurvePResult extends StatResult
 	@Override
 	public List<String> getColumnNames()
 	{
-		return new ArrayList<String>(Arrays.asList("GCurveP BMD", "GCurveP BMDL", "GCurveP BMDU",
-				"GCurveP fitValue", "GCurveP BMD AUC", "GCurveP BMDL AUC", "GCurveP BMDU AUC",
-				"GCurveP BMD wAUC", "GCurveP BMDL wAUC", "GCurveP BMDU wAUC",
+		List<String> l = new ArrayList<String>(Arrays.asList("GCurveP BMD", "GCurveP BMDL", "GCurveP BMDU",
+				"GCurveP BMR", "GCurveP fitValue", "GCurveP BMD AUC", "GCurveP BMDL AUC", "GCurveP BMDU AUC",
+				"GCurveP BMD wAUC", "GCurveP BMDL wAUC", "GCurveP BMDU wAUC", "GCurveP adverseDirection",
+				"GCurveP BMD/BMDL", "GCurveP Execution Complete"));
+		if (weightedAverages.size() > 0 && weightedAverages.get(0) != null)
+			l.add("GCurveP Baseline");
 
-				"GCurveP adverseDirection", "GCurveP BMD/BMDL", "GCurveP Execution Complete"));
+		if (weightedStdDeviations.size() > 0 && weightedStdDeviations.get(0) != null)
+			l.add("GCurveP Weighted STD DEV");
+
+		return l;
 
 	}
 
@@ -44,10 +50,17 @@ public class GCurvePResult extends StatResult
 	public List<Object> getRow()
 	{
 
-		return new ArrayList<Object>(Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()),
-				(this.getFitPValue()), (this.getBMDauc()), (this.getBMDLauc()), (this.getBMDUauc()),
-				(this.getBMDwAuc()), (this.getBMDLwAuc()), (this.getBMDUwAuc()), (this.getAdverseDirection()),
-				(this.getBMDdiffBMDL()), this.getSuccess()));
+		List<Object> l = new ArrayList<Object>(
+				Arrays.asList((this.getBMD()), (this.getBMDL()), (this.getBMDU()), this.getBmr(),
+						(this.getFitPValue()), (this.getBMDauc()), (this.getBMDLauc()), (this.getBMDUauc()),
+						(this.getBMDwAuc()), (this.getBMDLwAuc()), (this.getBMDUwAuc()),
+						(this.getAdverseDirection()), (this.getBMDdiffBMDL()), this.getSuccess()));
+		if (weightedAverages.size() > 0 && weightedAverages.get(0) != null)
+			l.add(this.weightedAverages.get(0));
+		if (weightedStdDeviations.size() > 0 && weightedStdDeviations.get(0) != null)
+			l.add(this.weightedStdDeviations.get(0));
+
+		return l;
 	}
 
 	@Override
