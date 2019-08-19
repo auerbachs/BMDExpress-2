@@ -14,7 +14,9 @@ import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.category.GOAnalysisResult;
+import com.sciome.bmdexpress2.mvp.model.category.GeneLevelAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.PathwayAnalysisResult;
+import com.sciome.bmdexpress2.mvp.model.category.PathwayTypeEnum;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.CategoryAnalysisDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.CategoryAnalysisDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
@@ -162,10 +164,29 @@ public class CategoryAnalysisDataView extends BMDExpressDataView<CategoryAnalysi
 					java.awt.Desktop.getDesktop()
 							.browse(new URI(BMDExpressConstants.getInstance().GO_WEB + bmdAnalysisDataSet
 									.getValueForRow(item, CategoryAnalysisResults.CATEGORY_ID).toString()));
-				else if (item.getObject() instanceof PathwayAnalysisResult)
-					java.awt.Desktop.getDesktop()
-							.browse(new URI(BMDExpressConstants.getInstance().PATHWAY_WEB + bmdAnalysisDataSet
+				else if (item.getObject() instanceof GeneLevelAnalysisResult)
+					java.awt.Desktop.getDesktop().browse(
+							new URI(BMDExpressConstants.getInstance().GENE_WEB + "?term=" + bmdAnalysisDataSet
 									.getValueForRow(item, CategoryAnalysisResults.CATEGORY_ID).toString()));
+				else if (item.getObject() instanceof PathwayAnalysisResult)
+				{
+					String urlString = "";
+					if (((PathwayAnalysisResult) item.getObject()).getPathWayAnalysisType()
+							.equals(PathwayTypeEnum.REACTOME))
+					{
+						urlString = BMDExpressConstants.getInstance().REACTOME_WEB + bmdAnalysisDataSet
+								.getValueForRow(item, CategoryAnalysisResults.CATEGORY_ID).toString();
+					}
+					else if (((PathwayAnalysisResult) item.getObject()).getPathWayAnalysisType()
+							.equals(PathwayTypeEnum.BIOPLANET))
+					{
+						urlString = BMDExpressConstants.getInstance().BIOPLANET_WEB
+								+ "?pid=bioplanet_" + bmdAnalysisDataSet
+										.getValueForRow(item, CategoryAnalysisResults.CATEGORY_ID).toString()
+								+ "&target=pathway";
+					}
+					java.awt.Desktop.getDesktop().browse(new URI(urlString));
+				}
 			}
 			catch (IOException e)
 			{

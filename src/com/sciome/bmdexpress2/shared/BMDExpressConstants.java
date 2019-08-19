@@ -61,7 +61,9 @@ public class BMDExpressConstants
 	public final String					COMMA			= ",";
 	public final String					SEMICOLON		= ";";
 	public final String					GO_WEB			= "http://amigo.geneontology.org/amigo/term/";
-	public final String					PATHWAY_WEB		= "http://reactome.org/content/detail/";
+	public final String					REACTOME_WEB	= "http://reactome.org/content/detail/";
+	public final String					BIOPLANET_WEB	= "https://tripod.nih.gov/bioplanet/detail.jsp";
+	public final String					GENE_WEB		= "https://www.ncbi.nlm.nih.gov/gene/";
 	public final String					NTP_WWW			= "http://ntp.niehs.nih.gov/";
 	public final String					SCIOM_WWW		= "http://www.sciome.com";
 	public final String					EPA_WWW			= "https://www.epa.gov/";

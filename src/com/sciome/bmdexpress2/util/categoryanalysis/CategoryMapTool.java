@@ -31,6 +31,7 @@ import com.sciome.bmdexpress2.mvp.model.category.DefinedCategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.GOAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.GeneLevelAnalysisResult;
 import com.sciome.bmdexpress2.mvp.model.category.PathwayAnalysisResult;
+import com.sciome.bmdexpress2.mvp.model.category.PathwayTypeEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
@@ -67,6 +68,8 @@ public class CategoryMapTool
 	private String						rstName;
 	private ICategoryMapToolProgress	categoryMapProgress;
 	private AnalysisInfo				analysisInfo;
+
+	String								pathwayDB;
 
 	private CategoryAnalysisParameters	params;
 
@@ -152,6 +155,7 @@ public class CategoryMapTool
 		}
 		else if (catAnalysisEnum == CategoryAnalysisEnum.PATHWAY)
 		{
+			this.pathwayDB = params.getPathwayDB();
 			if (params.getRemovePromiscuousProbes())
 				removePromiscuousProbes(doseResponseExperiment.getReferenceGeneAnnotations(), probeHash);
 			probeGeneMaps.probeGeneMaping(chip, true);
@@ -423,6 +427,15 @@ public class CategoryMapTool
 			if (categoryGeneMap instanceof GenesPathways)
 			{
 				categoryAnalysisResult = new PathwayAnalysisResult();
+				((PathwayAnalysisResult) categoryAnalysisResult)
+						.setPathWayAnalysisType(PathwayTypeEnum.REACTOME);
+
+				if (this.pathwayDB.equalsIgnoreCase("bioplanet"))
+					((PathwayAnalysisResult) categoryAnalysisResult)
+							.setPathWayAnalysisType(PathwayTypeEnum.BIOPLANET);
+				else if (this.pathwayDB.equalsIgnoreCase("kegg"))
+					((PathwayAnalysisResult) categoryAnalysisResult)
+							.setPathWayAnalysisType(PathwayTypeEnum.KEGG);
 			}
 			else if (categoryGeneMap instanceof GeneLevelCategoryMap)
 			{

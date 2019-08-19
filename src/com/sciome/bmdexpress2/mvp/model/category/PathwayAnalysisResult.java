@@ -12,7 +12,9 @@ public class PathwayAnalysisResult extends CategoryAnalysisResult implements Ser
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7831296139399726937L;
+	private static final long	serialVersionUID	= -7831296139399726937L;
+
+	private PathwayTypeEnum		pathWayAnalysisType;
 
 	@Override
 	public List<String> generateColumnHeader()
@@ -36,6 +38,21 @@ public class PathwayAnalysisResult extends CategoryAnalysisResult implements Ser
 			row.add(0, catID.getId());
 		}
 
+	}
+
+	public PathwayTypeEnum getPathWayAnalysisType()
+	{
+		// backwards compatitibility code. if null, then it is REACTOME because
+		// it used to only be REACTOME and this would property has been introduced
+		// since REACTOME
+		if (pathWayAnalysisType == null)
+			pathWayAnalysisType = PathwayTypeEnum.REACTOME;
+		return pathWayAnalysisType;
+	}
+
+	public void setPathWayAnalysisType(PathwayTypeEnum pathWayAnalysisType)
+	{
+		this.pathWayAnalysisType = pathWayAnalysisType;
 	}
 
 	@Override
