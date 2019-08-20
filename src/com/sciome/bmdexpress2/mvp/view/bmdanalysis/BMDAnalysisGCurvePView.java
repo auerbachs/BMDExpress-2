@@ -25,6 +25,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -43,6 +44,12 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 	private ComboBox					bMRFactorComboBox;
 	@FXML
 	private ComboBox					pValueConfidenceInterval;
+
+	@FXML
+	private ComboBox					adjustControlDoseComboBox;
+
+	@FXML
+	private CheckBox					adjustControlDoseCheckBox;
 
 	@FXML
 	private ProgressBar					progressBar;

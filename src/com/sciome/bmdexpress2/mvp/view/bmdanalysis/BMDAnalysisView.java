@@ -117,6 +117,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	@FXML
 	private ComboBox					killTimeComboBox;
 
+	@FXML
+	private ComboBox					adjustControlDoseComboBox;
+
+	@FXML
+	private CheckBox					adjustControlDoseCheckBox;
+
 	// labels
 	@FXML
 	private Label						expressionDataLabel;
