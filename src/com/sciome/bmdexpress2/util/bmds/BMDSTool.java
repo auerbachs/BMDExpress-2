@@ -115,6 +115,22 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		this.modelSelectionParameters = modelSelectionParameters;
 		this.modelsToRun = modelsToRun;
 
+		// create an array of doubles for the doses for the old code to user.
+		doses = new float[treatments.size()];
+		for (int i = 0; i < treatments.size(); i++)
+		{
+			doses[i] = treatments.get(i).getDose();
+		}
+
+		// calculate flagDose before adjusting doses for bmd calculation
+		checkDoses();
+		checkOptions();
+		flagDose = lowPDose * flagRatio;
+
+		if (inputParameters.getControlDoseAdjustment() != null
+				&& inputParameters.getControlDoseAdjustment() > 0.0)
+			adjustDoses();
+
 		analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
@@ -205,17 +221,40 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		this.tmpFolder = tmpFolder;
 
 		bmdResults.setName(processableData.toString() + "_BMD");
-		// create an array of doubles for the doses for the old code to user.
-		doses = new float[treatments.size()];
-		for (int i = 0; i < treatments.size(); i++)
+
+	}
+
+	private void adjustDoses()
+	{
+		// identify the first non-control dose
+		float nonControlDose = 0.0f;
+
+		float currDose = -9999.0f;
+		for (int i = 0; i < doses.length; i++)
 		{
-			doses[i] = treatments.get(i).getDose();
+			if (currDose != doses[i] && currDose == -9999.0f)
+				currDose = doses[i];
+			else if (currDose != doses[i])
+			{
+				nonControlDose = doses[i];
+				break;
+			}
 		}
+		float newControlDose = nonControlDose * inputParameters.getControlDoseAdjustment().floatValue();
 
-		checkDoses();
-		checkOptions();
-		flagDose = lowPDose * flagRatio;
+		// now replace control dose with newly calculated one
+		currDose = -9999.0f;
+		for (int i = 0; i < doses.length; i++)
+		{
+			if (currDose != doses[i] && currDose == -9999.0f)
+				currDose = doses[i];
+			else if (currDose != doses[i])
+			{
+				break;
+			}
 
+			doses[i] = newControlDose;
+		}
 	}
 
 	private boolean isModelInThere(String modelName, List<StatModel> modelsToFit)

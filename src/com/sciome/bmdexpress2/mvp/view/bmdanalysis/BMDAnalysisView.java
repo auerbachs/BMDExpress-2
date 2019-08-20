@@ -578,6 +578,20 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		});
 
+		adjustControlDoseComboBox.getItems().addAll(initControlDoseAdjustment());
+		this.adjustControlDoseComboBox.setDisable(true);
+		adjustControlDoseCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (!newValue.booleanValue())
+					BMDAnalysisView.this.adjustControlDoseComboBox.setDisable(true);
+				else
+					BMDAnalysisView.this.adjustControlDoseComboBox.setDisable(false);
+			}
+		});
+		adjustControlDoseCheckBox.selectedProperty().setValue(false);
 		ActionEvent event = new ActionEvent();
 		handle_HillCheckBox(event);
 		handle_PowerCheckBox(event);
@@ -626,6 +640,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			// inputParameters.setBMRLevel(1);
 			// inputParameters.setObservations(
 			// processableData.getProcessableDoseResponseExperiment().getTreatments().size());
+
+			if (this.adjustControlDoseCheckBox.selectedProperty().getValue())
+				inputParameters.setControlDoseAdjustment(
+						Double.valueOf(this.adjustControlDoseComboBox.valueProperty().getValue().toString()));
+			else
+				inputParameters.setControlDoseAdjustment(null);
 
 			if (inputParameters.getConstantVariance() == 0)
 			{
@@ -776,4 +796,18 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		return factors;
 	}
+
+	private List<Double> initControlDoseAdjustment()
+	{
+		List<Double> adjustments = new ArrayList<>();
+		adjustments.add(0.5);
+		adjustments.add(0.4);
+		adjustments.add(0.3);
+		adjustments.add(0.2);
+		adjustments.add(0.1);
+		adjustments.add(0.05);
+
+		return adjustments;
+	}
+
 }

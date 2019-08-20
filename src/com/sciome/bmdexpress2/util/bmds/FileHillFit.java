@@ -145,9 +145,7 @@ public class FileHillFit extends FileFitBase
 
 		for (int i = 0; i < inputX.length; i++)
 		{
-
 			bf.append(inputX[i] + space1 + inputY[i] + newline);
-
 		}
 
 		try

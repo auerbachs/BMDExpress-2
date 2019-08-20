@@ -227,12 +227,12 @@ public class CurvePProcessor
 		/*
 		 * Calculates pulled st.dev from entire dose-response ignoring dose groups with 0-variance
 		 */
-		
-		List<Float> D = CollapseDoses(allDoses);		
-		
+
+		List<Float> D = CollapseDoses(allDoses);
+
 		float pullv = 0.0f;
 		int npullv = 0;
-		
+
 		for (int d = 0; d < D.size(); d++)
 		{
 			float g = D.get(d), x = 0.0f;
@@ -249,29 +249,28 @@ public class CurvePProcessor
 			for (int bd = 0; bd < gR.size(); bd++)
 			{
 				float dx = gR.get(bd) - x;
-				if (dx == 0.0f) continue; //skips 0-variance points - assume those are missing
-				pullv += dx*dx;
-				npullv ++;
-			}		
+				if (dx == 0.0f)
+					continue; // skips 0-variance points - assume those are missing
+				pullv += dx * dx;
+				npullv++;
+			}
 		} // for d
-		
-		return (float)Math.sqrt( (double)pullv / (npullv - 1) );		
-	}
 
+		return (float) Math.sqrt((double) pullv / (npullv - 1));
+	}
 
 	public static float calc_PulledMAD(List<Float> allDoses, List<Float> allResponses, boolean doseMeans)
 	{
 		/*
-		 * Calculates pulled median absolute difference 
-		 * from entire dose-response ignoring dose groups with 0-variance
-		 * Prior to pooling, if doseMeans is true, simple average is used for each dose group, 
-		 * when calculating absolute differences for that dose group, otherwise - dose group median is used.
-		 * After pooling, median value is returned
+		 * Calculates pulled median absolute difference from entire dose-response ignoring dose groups with
+		 * 0-variance Prior to pooling, if doseMeans is true, simple average is used for each dose group, when
+		 * calculating absolute differences for that dose group, otherwise - dose group median is used. After
+		 * pooling, median value is returned
 		 */
-		
-		List<Float> D = CollapseDoses(allDoses);		
+
+		List<Float> D = CollapseDoses(allDoses);
 		List<Float> RS = new ArrayList<Float>();
-		
+
 		for (int d = 0; d < D.size(); d++)
 		{
 			float g = D.get(d), x = 0.0f;
@@ -285,29 +284,33 @@ public class CurvePProcessor
 				}
 
 			x /= gR.size();
-			
+
 			if (!doseMeans)
 			{
 				Float[] v = gR.toArray(new Float[0]);
 				Arrays.sort(v);
 				x = smedian(v);
-			}			
-			
-			for (int bd = 0; bd < gR.size(); bd++) 
+			}
+
+			for (int bd = 0; bd < gR.size(); bd++)
 			{
-				float dx = Math.abs( gR.get(bd) - x );
-				if (dx < 0.000001f) continue; 	//skip zero differences, likely from degenerate replicate points that are not true measurements but "fill-ins" for missing data
-				RS.add( dx );	
+				float dx = Math.abs(gR.get(bd) - x);
+				if (dx < 0.000001f)
+					continue; // skip zero differences, likely from degenerate replicate points that are not
+								// true measurements but "fill-ins" for missing data
+				RS.add(dx);
 			}
 		} // for d
-		
-		if (RS.size() == 0) return 0.0f;
-		if (RS.size() == 1) return RS.get(0);
-		
+
+		if (RS.size() == 0)
+			return 0.0f;
+		if (RS.size() == 1)
+			return RS.get(0);
+
 		Float[] ads = RS.toArray(new Float[0]);
 		Arrays.sort(ads);
-		
-		return ( smedian(ads) );		
+
+		return (smedian(ads));
 	} // end of calc_PulledMAD()
 
 	public static List<Float> calc_WgtSdResponses(List<Float> allDoses, List<Float> allResponses)
@@ -317,7 +320,7 @@ public class CurvePProcessor
 		 */
 		List<Float> D = CollapseDoses(allDoses);
 		List<Float> RS = new ArrayList<Float>();
-				
+
 		for (int d = 0; d < D.size(); d++)
 		{
 			float g = D.get(d);
@@ -331,11 +334,11 @@ public class CurvePProcessor
 			Float[] cfs = TukeyBiWs(gResps, 5.0f, 0.00001f);
 
 			float csd = wSD(gResps, cfs);
-			RS.add( csd );			
+			RS.add(csd);
 		} // for d
-		
+
 		float x = calc_PulledMAD(allDoses, allResponses, false);
-		
+
 		for (int d = 0; d < RS.size(); d++)
 		{// checks and replaces those SDs that are below pulled SD
 			if (x > RS.get(d))
@@ -482,66 +485,76 @@ public class CurvePProcessor
 
 	public static float get_baseline_response(List<Float> allD, List<Float> allR)
 	{// calculates and returns the response (signal) value for the control group
-		
+
 		List<Float> avr = calc_WgtAvResponses(allD, allR);
 		return avr.get(0);
 	}
-	
+
 	public static float get_baseline_SD(List<Float> allD, List<Float> allR)
 	{
-		/* calculates and returns the standard deviation for the control group, which is based on
-		 * weighted average of control group replicates or on the pulled variance (whichever is larger)
+		/*
+		 * calculates and returns the standard deviation for the control group, which is based on weighted
+		 * average of control group replicates or on the pulled variance (whichever is larger)
 		 */
-		
+
 		List<Float> sdr = calc_WgtSdResponses(allD, allR);
 		return sdr.get(0);
 	}
-	
+
 	public static float calc_PODR_bySD(List<Float> allD, List<Float> allR, float Z_thr)
 	{
-		/* calculates point of departure (POD) response, based on supplied dose-response data
-		 * the signal direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward) 
+		/*
+		 * calculates point of departure (POD) response, based on supplied dose-response data the signal
+		 * direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward)
 		 */
-		
-		float b = get_baseline_response(allD, allR), bs = get_baseline_SD(allD, allR);				
+
+		float b = get_baseline_response(allD, allR), bs = get_baseline_SD(allD, allR);
 		return (b + Z_thr * bs);
 	}
 
 	public static float calc_PODR_bySD(float base, float base_sd, float Z_thr)
 	{
-		/* calculates point of departure (POD) response, based on supplied baseline and its st.dev
-		 * the signal direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward) 
-		 */						
+		/*
+		 * calculates point of departure (POD) response, based on supplied baseline and its st.dev the signal
+		 * direction should be given as the sign of Z_thr (<0 for downward trend, >0 for upward)
+		 */
 		return (base + Z_thr * base_sd);
 	}
-	
+
 	public static float calc_PODR_byFoldChange(List<Float> allD, List<Float> allR, float fold_thr)
 	{
-		/* calculates point of departure (POD) response, based on supplied dose-response data and fold change
-		 * curve direction should be supplied by fold_thr (0..1 for downward trend, >1 for upward trend) */
-				
-		float b = get_baseline_response(allD, allR);		
-		if (fold_thr < 0.0f) return b;
+		/*
+		 * calculates point of departure (POD) response, based on supplied dose-response data and fold change
+		 * curve direction should be supplied by fold_thr (0..1 for downward trend, >1 for upward trend)
+		 */
+
+		float b = get_baseline_response(allD, allR);
+		if (fold_thr < 0.0f)
+			return b;
 		return (b * fold_thr);
 	}
 
 	public static float calc_PODR_byFoldChange(float b, float fold_thr)
 	{
-		/* calculates point of departure (POD) response, based on supplied baseline signal and fold change threshold (fold_thr)
-		 * curve direction should be supplied by fold_thr (0..1 for downward trend, >1 for upward trend) */
+		/*
+		 * calculates point of departure (POD) response, based on supplied baseline signal and fold change
+		 * threshold (fold_thr) curve direction should be supplied by fold_thr (0..1 for downward trend, >1
+		 * for upward trend)
+		 */
 
-		if (fold_thr < 0.0f) return b;
+		if (fold_thr < 0.0f)
+			return b;
 		return (b * fold_thr);
 	}
-	
+
 	public static float calc_POD(List<Float> allD, List<Float> allR, float BMR, boolean UseLog)
 	{
 		/*
-		 * autonomous version that does all needed auxiliary calculations (good for external use)
-		 * returns a POD estimate based on supplied response level L
+		 * autonomous version that does all needed auxiliary calculations (good for external use) returns a
+		 * POD estimate based on supplied response level L
 		 * 
-		 * allD - all doses, allR - all responses (for all replicates in all dose groups) 
-		 * UseLog - if on, the doses will be log-transformed
+		 * allD - all doses, allR - all responses (for all replicates in all dose groups) UseLog - if on, the
+		 * doses will be log-transformed
 		 */
 
 		List<Float> avr = calc_WgtAvResponses(allD, allR);
@@ -562,18 +575,17 @@ public class CurvePProcessor
 			}
 
 		return SafeImputeDose(ulD, avr, BMR);
-}
+	}
 
 	public static float calc_POD(List<Float> ud, List<Float> avr, float BMR)
 	{
 		/*
-		 * shortcut version, skips some auxiliary calculations; returns a POD estimate for
-		 * supplied response level, if number larger than highest dose is returned, it indicates no POD can be estimated
+		 * shortcut version, skips some auxiliary calculations; returns a POD estimate for supplied response
+		 * level, if number larger than highest dose is returned, it indicates no POD can be estimated
 		 */
 
-		return SafeImputeDose(ud, avr, BMR);		
+		return SafeImputeDose(ud, avr, BMR);
 	}
-	
 
 	public static float calc_AUC(List<Float> D, List<Float> R)
 	/*
@@ -623,9 +635,9 @@ public class CurvePProcessor
 
 	public static float parametric_val(float D0, List<Float> P, int type)
 	/*
-	 * deprecated, there is a StatgetResponseAt() in StatResult class which stores parametric
-	 * calculates response at D0 dose based on parametric curve model, P contains curve coefficients, type
-	 * defines math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
+	 * deprecated, there is a StatgetResponseAt() in StatResult class which stores parametric calculates
+	 * response at D0 dose based on parametric curve model, P contains curve coefficients, type defines
+	 * math.equation: 0 - polynomial, 1 - power, 2 - exponential, 3 - log, 4 - Hill
 	 */
 	{
 		float rBase = 0.0f;
@@ -1291,7 +1303,10 @@ public class CurvePProcessor
 		{
 			luD = logBaseDoses(unqD, -24);
 			Float myAUC = calc_AUC(luD, avR), v;
-			if (myAUC < 0) v = calc_PODR_bySD(allD, allR, -1.34f); else v = calc_PODR_bySD(allD, allR, 1.34f);
+			if (myAUC < 0)
+				v = calc_PODR_bySD(allD, allR, -1.34f);
+			else
+				v = calc_PODR_bySD(allD, allR, 1.34f);
 			Float myPOD = calc_POD(allD, allR, v, true);
 
 			// main call:

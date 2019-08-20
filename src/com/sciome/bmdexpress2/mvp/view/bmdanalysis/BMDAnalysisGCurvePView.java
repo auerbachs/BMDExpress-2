@@ -19,6 +19,8 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
 import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -110,7 +112,6 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 	 * use clicked start button
 	 */
 
-	@SuppressWarnings("restriction")
 	public void handle_start(ActionEvent event)
 	{
 		this.progressBar.setVisible(true);
@@ -121,10 +122,15 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		inputParameters.setpValueCutoff(
 				Float.valueOf(this.pValueConfidenceInterval.getValue().toString()).floatValue());
 
+		if (this.adjustControlDoseCheckBox.selectedProperty().getValue())
+			inputParameters.setControlDoseAdjustment(
+					Double.valueOf(this.adjustControlDoseComboBox.valueProperty().getValue().toString()));
+		else
+			inputParameters.setControlDoseAdjustment(null);
+
 		presenter.performBMDAnalysisGCurveP(inputParameters);
 	}
 
-	@SuppressWarnings("restriction")
 	public void handle_saveSettingsButtonPressed(ActionEvent event)
 	{
 
@@ -168,7 +174,7 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 
 	}
 
-	@SuppressWarnings({ "unchecked", "restriction" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void initData(List<IStatModelProcessable> processableData)
 	{
@@ -208,6 +214,22 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		bMRFactorComboBox.getSelectionModel().select(input.getBmrFactor());
 
 		this.bootStrapsTextField.setText(String.valueOf(input.getBootStrapIterations()));
+
+		adjustControlDoseComboBox.getItems().addAll(initControlDoseAdjustment());
+		this.adjustControlDoseComboBox.setDisable(true);
+		adjustControlDoseCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+					Boolean newValue)
+			{
+				if (!newValue.booleanValue())
+					BMDAnalysisGCurvePView.this.adjustControlDoseComboBox.setDisable(true);
+				else
+					BMDAnalysisGCurvePView.this.adjustControlDoseComboBox.setDisable(false);
+			}
+		});
+
+		adjustControlDoseCheckBox.selectedProperty().setValue(false);
 
 	}
 
@@ -284,6 +306,19 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		factors.add(new BMRFactor("2.855148 (60%)", "2.855148"));
 		factors.add(new BMRFactor("3 SD", "3.0"));
 		return factors;
+	}
+
+	private List<Double> initControlDoseAdjustment()
+	{
+		List<Double> adjustments = new ArrayList<>();
+		adjustments.add(0.5);
+		adjustments.add(0.4);
+		adjustments.add(0.3);
+		adjustments.add(0.2);
+		adjustments.add(0.1);
+		adjustments.add(0.05);
+
+		return adjustments;
 	}
 
 }
