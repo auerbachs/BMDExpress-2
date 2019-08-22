@@ -347,7 +347,7 @@ public class CurvePProcessor
 		return RS;
 	} // end of calc_WgtSdResponses()
 
-	public static List<Float> logBaseDoses(List<Float> D, int FirstDoseBaseFix) throws Exception
+	public static List<Float> logBaseDoses(List<Float> D, float FirstDoseBaseFix) throws Exception
 	/*
 	 * logBaseDoses() converts Doses to log10 scale and handles first dose, if 0 FirstDoseBaseFix - default
 	 * value to use for the "untreated" (zero) dose, - if it is = 0 then same spacing is used as between two
@@ -547,14 +547,14 @@ public class CurvePProcessor
 		return (b * fold_thr);
 	}
 
-	public static float calc_POD(List<Float> allD, List<Float> allR, float BMR, boolean UseLog)
+	public static float calc_POD(List<Float> allD, List<Float> allR, float BMR, boolean UseLog, float logD0)
 	{
 		/*
 		 * autonomous version that does all needed auxiliary calculations (good for external use) returns a
 		 * POD estimate based on supplied response level L
 		 * 
 		 * allD - all doses, allR - all responses (for all replicates in all dose groups) UseLog - if on, the
-		 * doses will be log-transformed
+		 * doses will be log-transformed, logD0 is default log-value for control dose (not used if UseLog is FALSE)
 		 */
 
 		List<Float> avr = calc_WgtAvResponses(allD, allR);
@@ -564,7 +564,7 @@ public class CurvePProcessor
 		if (UseLog)
 			try
 			{
-				ulD = logBaseDoses(uD, -24); // use lowest theoretical limit for the 0-dose
+				ulD = logBaseDoses(uD, logD0); // use lowest theoretical limit for the 0-dose
 			}
 			catch (Exception e)
 			{
@@ -1094,6 +1094,12 @@ public class CurvePProcessor
 	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, List<Float> dr0, float BMR,
 			int mono, int nboot, float p)
 	{
+		return curvePcorr(allD, allR, dr0, BMR, mono, nboot, p, -24.0f);
+	}
+	
+	public static List<Float> curvePcorr(List<Float> allD, List<Float> allR, List<Float> dr0, float BMR,
+			int mono, int nboot, float p, float logD0)
+	{
 		/*
 		 * corrects curves monotonically based on supplied direction in mono (0 - flat, 1 - rising, -1 -
 		 * falling) bootstraps to estimate POD and AUC (only if nboot*p > 1), p is pvalue for confidence
@@ -1109,7 +1115,7 @@ public class CurvePProcessor
 		List<Float> luD;
 		try
 		{
-			luD = logBaseDoses(unqD, -24);
+			luD = logBaseDoses(unqD, logD0);
 		}
 
 		catch (Exception e)
@@ -1237,8 +1243,13 @@ public class CurvePProcessor
 	}
 
 	public static Float curveP(List<Float> allD, List<Float> allR, float BMR)
-	{
-		// basic calculator of wAUC, does not do corrections or bootstrap
+	{//basic calculator of wAUC, does not do corrections or bootstrap; -24 used for infinite dilution of control (0 dose group)
+		return curveP(allD, allR, BMR, -24.0f);
+	}
+	
+	public static Float curveP(List<Float> allD, List<Float> allR, float BMR, float logD0)
+	{// basic calculator of wAUC, does not do corrections or bootstrap, user supplies log-dose for control group
+		
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
 		List<Float> sdR = calc_WgtSdResponses(allD, allR);
 		List<Float> unqD = CollapseDoses(allD);
@@ -1246,13 +1257,13 @@ public class CurvePProcessor
 		List<Float> luD;
 		try
 		{
-			luD = logBaseDoses(unqD, -24);
+			luD = logBaseDoses(unqD, logD0);
 			Float myAUC = calc_AUC(luD, avR);
 			Float myPOD = calc_POD(luD, avR, BMR);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
-			// System.out.printf("wAUC = %f%n", res);
+
 			return res;
 		}
 		catch (Exception e)
@@ -1307,7 +1318,7 @@ public class CurvePProcessor
 				v = calc_PODR_bySD(allD, allR, -1.34f);
 			else
 				v = calc_PODR_bySD(allD, allR, 1.34f);
-			Float myPOD = calc_POD(allD, allR, v, true);
+			Float myPOD = calc_POD(allD, allR, v, true, -15.0f);
 
 			// main call:
 			Float res = calc_wAUC(myAUC, myPOD, luD);
@@ -1319,7 +1330,7 @@ public class CurvePProcessor
 			System.out.println("problems with calculations");
 		}
 
-		System.out.println("Mery Christmas, you dirty animal... And Hapy New Year!");
+		System.out.println("Merry Xmas, du, schmutziges Tier... und Wuensch dir ein glueklich neuen Jahr!");
 
 	}
 
