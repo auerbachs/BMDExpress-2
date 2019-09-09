@@ -117,12 +117,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	@FXML
 	private ComboBox					killTimeComboBox;
 
-	@FXML
-	private ComboBox					adjustControlDoseComboBox;
-
-	@FXML
-	private CheckBox					adjustControlDoseCheckBox;
-
 	// labels
 	@FXML
 	private Label						expressionDataLabel;
@@ -578,20 +572,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		});
 
-		adjustControlDoseComboBox.getItems().addAll(initControlDoseAdjustment());
-		this.adjustControlDoseComboBox.setDisable(true);
-		adjustControlDoseCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (!newValue.booleanValue())
-					BMDAnalysisView.this.adjustControlDoseComboBox.setDisable(true);
-				else
-					BMDAnalysisView.this.adjustControlDoseComboBox.setDisable(false);
-			}
-		});
-		adjustControlDoseCheckBox.selectedProperty().setValue(false);
 		ActionEvent event = new ActionEvent();
 		handle_HillCheckBox(event);
 		handle_PowerCheckBox(event);
@@ -637,15 +617,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);
 			// for simulation only?
 			inputParameters.setRestirctPower(restrictPowerComboBox.getSelectionModel().getSelectedIndex());
-			// inputParameters.setBMRLevel(1);
-			// inputParameters.setObservations(
-			// processableData.getProcessableDoseResponseExperiment().getTreatments().size());
-
-			if (this.adjustControlDoseCheckBox.selectedProperty().getValue())
-				inputParameters.setControlDoseAdjustment(
-						Double.valueOf(this.adjustControlDoseComboBox.valueProperty().getValue().toString()));
-			else
-				inputParameters.setControlDoseAdjustment(null);
 
 			if (inputParameters.getConstantVariance() == 0)
 			{

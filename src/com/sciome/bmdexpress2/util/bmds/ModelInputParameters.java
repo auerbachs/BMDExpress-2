@@ -13,59 +13,57 @@ package com.sciome.bmdexpress2.util.bmds;
 
 public class ModelInputParameters
 {
-	private int			inputType				= 0;
-	private int			observations			= 0;
-	private int			polyDegree				= 2;
-	private int			adversDirection			= 0;
-	private int			iterations				= 250;
-	private int			bmdlCalculation			= 1;
-	private int			bmdCalculation			= 1;
-	private int			restrictPolyCoef		= 0;
-	private int			restrictN				= 1;
-	private int			restrictBetas			= 1;
-	private int			restirctPower			= 1;
-	private int			append					= 0;
-	private int			smooth					= 0;
-	private int			bmrType					= 1;
-	private int			constantVariance		= 0;
-	private int			riskType				= 0;
-	private int			initialParams			= 0;
+	private int			inputType			= 0;
+	private int			observations		= 0;
+	private int			polyDegree			= 2;
+	private int			adversDirection		= 0;
+	private int			iterations			= 250;
+	private int			bmdlCalculation		= 1;
+	private int			bmdCalculation		= 1;
+	private int			restrictPolyCoef	= 0;
+	private int			restrictN			= 1;
+	private int			restrictBetas		= 1;
+	private int			restirctPower		= 1;
+	private int			append				= 0;
+	private int			smooth				= 0;
+	private int			bmrType				= 1;
+	private int			constantVariance	= 0;
+	private int			riskType			= 0;
+	private int			initialParams		= 0;
 
-	private double		relFuncConvergence		= 1.0e-8;
-	private double		bmrLevel				= 1.349;
-	private double		paramConvergence		= 1.0e-8;
-	private double		confidence				= 0.95;
-	private double		alpha					= -9999;
-	private double		rho						= 0;															// depends
-																												// on
-																												// 'constantVariance'
-	private double		negative				= -9999;
+	private double		relFuncConvergence	= 1.0e-8;
+	private double		bmrLevel			= 1.349;
+	private double		paramConvergence	= 1.0e-8;
+	private double		confidence			= 0.95;
+	private double		alpha				= -9999;
+	private double		rho					= 0;															// depends
+																											// on
+																											// 'constantVariance'
+	private double		negative			= -9999;
 
 	// for Power model
-	private double		control					= -9999;
-	private double		slope					= -9999;
-	private double		power					= -9999;
+	private double		control				= -9999;
+	private double		slope				= -9999;
+	private double		power				= -9999;
 
 	// for Hill model
-	private double		intercept				= -9999;
-	private double		v						= -9999;
-	private double		n						= -9999;
-	private double		k						= -9999;
+	private double		intercept			= -9999;
+	private double		v					= -9999;
+	private double		n					= -9999;
+	private double		k					= -9999;
 
 	// for Multistage model
-	private double		background				= -9999;
-	private double		beta1					= -9999;
-	private double		beta2					= -9999;
+	private double		background			= -9999;
+	private double		beta1				= -9999;
+	private double		beta2				= -9999;
 
 	// threading
 	private int			numThreads;
 	private int			killTime;
 
-	private String		defNegative				= "-9999";
+	private String		defNegative			= "-9999";
 
-	private String[][]	columns					= { { "DOSE", "RESPONSE" }, { "DOSE", "NI", "MEAN", "STD" } };
-
-	private Double		controlDoseAdjustment	= null;
+	private String[][]	columns				= { { "DOSE", "RESPONSE" }, { "DOSE", "NI", "MEAN", "STD" } };
 
 	public int getInputType()
 	{
@@ -445,16 +443,6 @@ public class ModelInputParameters
 	public void setKillTime(int killTime)
 	{
 		this.killTime = killTime;
-	}
-
-	public Double getControlDoseAdjustment()
-	{
-		return controlDoseAdjustment;
-	}
-
-	public void setControlDoseAdjustment(Double controlDoseAdjustment)
-	{
-		this.controlDoseAdjustment = controlDoseAdjustment;
 	}
 
 }

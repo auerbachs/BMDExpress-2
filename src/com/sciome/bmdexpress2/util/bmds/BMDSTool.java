@@ -127,10 +127,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		checkOptions();
 		flagDose = lowPDose * flagRatio;
 
-		if (inputParameters.getControlDoseAdjustment() != null
-				&& inputParameters.getControlDoseAdjustment() > 0.0)
-			adjustDoses();
-
 		analysisInfo = new AnalysisInfo();
 		List<String> notes = new ArrayList<>();
 
@@ -222,39 +218,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 		bmdResults.setName(processableData.toString() + "_BMD");
 
-	}
-
-	private void adjustDoses()
-	{
-		// identify the first non-control dose
-		float nonControlDose = 0.0f;
-
-		float currDose = -9999.0f;
-		for (int i = 0; i < doses.length; i++)
-		{
-			if (currDose != doses[i] && currDose == -9999.0f)
-				currDose = doses[i];
-			else if (currDose != doses[i])
-			{
-				nonControlDose = doses[i];
-				break;
-			}
-		}
-		float newControlDose = nonControlDose * inputParameters.getControlDoseAdjustment().floatValue();
-
-		// now replace control dose with newly calculated one
-		currDose = -9999.0f;
-		for (int i = 0; i < doses.length; i++)
-		{
-			if (currDose != doses[i] && currDose == -9999.0f)
-				currDose = doses[i];
-			else if (currDose != doses[i])
-			{
-				break;
-			}
-
-			doses[i] = newControlDose;
-		}
 	}
 
 	private boolean isModelInThere(String modelName, List<StatModel> modelsToFit)

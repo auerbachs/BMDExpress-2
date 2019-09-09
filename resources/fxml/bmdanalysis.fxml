@@ -152,7 +152,6 @@
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" layoutX="425.0" layoutY="21.0" prefHeight="16.0" prefWidth="240.0" text="Confidence Level" GridPane.columnIndex="2" />
@@ -185,16 +184,6 @@
                                                    </GridPane.margin></ComboBox>
                                                 <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="157.0" text="BMR Type" GridPane.rowIndex="1" />
                                                 <ComboBox fx:id="bMRTypeComboBox" prefHeight="27.0" prefWidth="199.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                   <GridPane.margin>
-                                                      <Insets left="10.0" />
-                                                   </GridPane.margin>
-                                                </ComboBox>
-                                                <CheckBox fx:id="adjustControlDoseCheckBox" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" selected="true" text="Adjust control dose" GridPane.rowIndex="2">
-                                                   <GridPane.margin>
-                                                      <Insets left="10.0" />
-                                                   </GridPane.margin>
-                                                </CheckBox>
-                                                <ComboBox fx:id="adjustControlDoseComboBox" editable="true" prefHeight="27.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="10.0" />
                                                    </GridPane.margin>
