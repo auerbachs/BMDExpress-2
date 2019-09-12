@@ -51,8 +51,8 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 	private static final String	MEAN_HISTOGRAMS		= "Mean Histograms";
 	private static final String	MEDIAN_HISTOGRAMS	= "Median Histograms";
 	private static final String	BMD_BMDL_SCATTER	= "BMD vs BMDL Scatter Plots";
-	private static final String VIOLIN				= "Violin Plots";
-	private final static String VIOLIN_PLOT_DATASET	= "New Violin Plot";
+	private static final String	VIOLIN				= "Violin Plot Per Category";
+	private final static String	VIOLIN_PLOT_DATASET	= "Global Violin Plot";
 
 	public CategoryAnalysisDataVisualizationView()
 	{
@@ -186,14 +186,16 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
 						new ChartKey(CategoryAnalysisResults.FISHERS_TWO_TAIL, ChartKey.NEGLOG),
 						new ChartKey("Percentage", null), CategoryAnalysisDataVisualizationView.this));
-		
-		chartCache.put(VIOLIN, new SciomeViolinPlotJFree("", new ArrayList<>(),
-				new ChartKey(CategoryAnalysisResults.BMD_LIST, null),
-				CategoryAnalysisDataVisualizationView.this));
-		
-		chartCache.put(VIOLIN_PLOT_DATASET, new SciomeViolinPlotDatasetJFree("", new ArrayList<>(),
-				new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
-				CategoryAnalysisDataVisualizationView.this));
+
+		chartCache.put(VIOLIN,
+				new SciomeViolinPlotJFree("", new ArrayList<>(),
+						new ChartKey(CategoryAnalysisResults.BMD_LIST, null),
+						CategoryAnalysisDataVisualizationView.this));
+
+		chartCache.put(VIOLIN_PLOT_DATASET,
+				new SciomeViolinPlotDatasetJFree("", new ArrayList<>(),
+						new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null),
+						CategoryAnalysisDataVisualizationView.this));
 
 		chartCache.put("DEFAULT-Accumulation", new SciomeAccumulationPlotJFree("Accumulation",
 				new ArrayList<>(), new ChartKey(CategoryAnalysisResults.BMD_MEDIAN, null), 0.0, this));
@@ -331,12 +333,13 @@ public class CategoryAnalysisDataVisualizationView extends DataVisualizationView
 			ignoreCustomCharts = true;
 			chartsList.add(new PathwayCurveViewer(results, pack, CategoryAnalysisDataVisualizationView.this));
 
-		} else if (chartKey.equals(VIOLIN))
+		}
+		else if (chartKey.equals(VIOLIN))
 		{
 			SciomeChartBase chart = chartCache.get(VIOLIN);
-			chartsList.add(chart);		
+			chartsList.add(chart);
 		}
-		else if (chartKey.equals(VIOLIN_PLOT_DATASET)) 
+		else if (chartKey.equals(VIOLIN_PLOT_DATASET))
 		{
 			SciomeChartBase chart = chartCache.get(VIOLIN_PLOT_DATASET);
 			chartsList.add(chart);

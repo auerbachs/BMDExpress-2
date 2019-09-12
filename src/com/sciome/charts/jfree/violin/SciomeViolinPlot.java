@@ -37,30 +37,32 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 
-public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Double>>{
+public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Double>>
+{
 	private JFreeChart				chart;
 	private SlidingCategoryDataset	slidingDataset;
 	private ChartKey				key;
-	
-	//Adjustable settings
+
+	// Adjustable settings
 	private Double					bandwidth		= null;
 	private Integer					maxNodesShown	= 5;
-	
-	
-	public SciomeViolinPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key, boolean allowXAxisSlider,
-			boolean allowYAxisSlider, SciomeChartListener chartListener) {
-		super(title, chartDataPacks, new ChartKey[]{key}, allowXAxisSlider, allowYAxisSlider, chartListener);
+
+	public SciomeViolinPlot(String title, List<ChartDataPack> chartDataPacks, ChartKey key,
+			boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
+	{
+		super(title, chartDataPacks, new ChartKey[] { key }, allowXAxisSlider, allowYAxisSlider,
+				chartListener);
 		this.key = key;
 		this.configurationButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -69,8 +71,8 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 				showConfiguration();
 			}
 		});
-		
-		showLogAxes(false, true, false, true);
+
+		showLogAxes(false, false, false, false);
 		getLogYAxis().selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val)
@@ -95,18 +97,19 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 
 		double minValue = Double.POSITIVE_INFINITY;
 		double maxValue = Double.NEGATIVE_INFINITY;
-		
+
 		for (SciomeSeries<String, List<Double>> series : getSeriesData())
 		{
 			String seriesName = series.getName();
 			for (SciomeData<String, List<Double>> chartData : series.getData())
 			{
 				List value = chartData.getYValue();
-				for(int i = 0; i < value.size(); i++) {
-					double val = (double)value.get(i);
-					if(val < minValue)
+				for (int i = 0; i < value.size(); i++)
+				{
+					double val = (double) value.get(i);
+					if (val < minValue)
 						minValue = val;
-					if(val > maxValue)
+					if (val > maxValue)
 						maxValue = val;
 				}
 				if (value != null)
@@ -125,7 +128,6 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 				key.toString());
 		yAxis.setVerticalTickLabels(true);
 
-		
 		ViolinRenderer renderer = new ViolinRenderer();
 
 		// Set tooltip string
@@ -133,9 +135,12 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 			@Override
 			public String generateToolTip(CategoryDataset dataset, int row, int column)
 			{
-				try {
+				try
+				{
 					return getSeriesData().get(row).getData().get(column).getExtraValue().toString();
-				} catch(Exception e) {
+				}
+				catch (Exception e)
+				{
 					return "";
 				}
 			}
@@ -164,7 +169,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		{
 			plot.getRangeAxis().setAutoRange(true);
 		}
-		
+
 		// Set default legend items
 		LegendItemCollection chartLegend = new LegendItemCollection();
 		Shape shape = new Rectangle(10, 10);
@@ -239,9 +244,9 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 
 	protected void setRange()
 	{
-		if(getLockYAxis().isSelected())
+		if (getLockYAxis().isSelected())
 			return;
-		
+
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 		ViolinCategoryDataset dataset = (ViolinCategoryDataset) slidingDataset.getUnderlyingDataset();
@@ -268,7 +273,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 					min = item.getMinOutlier().doubleValue();
 			}
 		}
-		if(min < max)
+		if (min < max)
 			((CategoryPlot) chart.getPlot()).getRangeAxis().setRange(new Range(min, max));
 	}
 
@@ -284,21 +289,21 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		bandwidthTF.setMaxWidth(100.0);
 		TextField maxNodesTF = new TextField();
 		maxNodesTF.setMaxWidth(100.0);
-		
+
 		if (bandwidth != null)
 			bandwidthTF.setText(bandwidth.toString());
 		maxNodesTF.setText(maxNodesShown.toString());
-		
+
 		HBox mainBox = new HBox();
 		mainBox.setSpacing(20.0);
-		
+
 		VBox leftBox = new VBox();
 		leftBox.setPrefWidth(200.0);
 		leftBox.setSpacing(20.0);
 		VBox rightBox = new VBox();
 		rightBox.setSpacing(20.0);
 		rightBox.setPrefWidth(200.0);
-		
+
 		HBox firstLeft = new HBox();
 		firstLeft.setAlignment(Pos.CENTER_RIGHT);
 		firstLeft.setSpacing(10.0);
@@ -308,7 +313,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		secondLeft.setAlignment(Pos.CENTER_RIGHT);
 		secondLeft.setSpacing(10.0);
 		secondLeft.getChildren().addAll(new Label("Max Nodes Shown"));
-		
+
 		HBox firstRight = new HBox();
 		firstRight.setAlignment(Pos.CENTER_LEFT);
 		firstRight.setSpacing(10.0);
@@ -318,7 +323,7 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 		secondRight.setAlignment(Pos.CENTER_LEFT);
 		secondRight.setSpacing(10.0);
 		secondRight.getChildren().addAll(maxNodesTF);
-		
+
 		leftBox.getChildren().addAll(firstLeft, secondLeft);
 		rightBox.getChildren().addAll(firstRight, secondRight);
 		mainBox.getChildren().addAll(leftBox, rightBox);
@@ -337,13 +342,13 @@ public abstract class SciomeViolinPlot extends SciomeChartBase<String, List<Doub
 
 				if (b == buttonTypeOk)
 				{
-					//If the user keeps the box empty, leave the value the same
-					if(!bandwidthTF.getText().equals(""))
+					// If the user keeps the box empty, leave the value the same
+					if (!bandwidthTF.getText().equals(""))
 						bandwidth = Double.valueOf(bandwidthTF.getText());
 
-					if(!maxNodesTF.getText().equals(""))
+					if (!maxNodesTF.getText().equals(""))
 						maxNodesShown = Integer.valueOf(maxNodesTF.getText());
-					
+
 					convertChartDataPacksToSciomeSeries(new ChartKey[] { key }, getChartDataPacks());
 					return true;
 				}
