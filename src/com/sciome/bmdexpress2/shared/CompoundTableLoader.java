@@ -24,6 +24,8 @@ public class CompoundTableLoader
 		}
 		catch (Exception e)
 		{
+			// load default if unable to load operIce + default
+			compoundTable.loadDefault();
 			e.printStackTrace();
 		}
 
