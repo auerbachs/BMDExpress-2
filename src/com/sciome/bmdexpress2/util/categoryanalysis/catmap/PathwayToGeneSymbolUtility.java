@@ -65,8 +65,8 @@ public class PathwayToGeneSymbolUtility
 				gene2Symbol.put(rg.getId(), rg.getGeneSymbol());
 
 		fillGOTerms(doseResponseExperiment.getChip(), gene2Symbol);
-
-		fillREACTOMETerms(doseResponseExperiment.getChip(), gene2Symbol);
+		fillPathWayTerms("BioPlanet", doseResponseExperiment.getChip(), gene2Symbol);
+		fillPathWayTerms("REACTOME", doseResponseExperiment.getChip(), gene2Symbol);
 
 		return dbToPathwayToGeneSet;
 	}
@@ -142,19 +142,19 @@ public class PathwayToGeneSymbolUtility
 		}
 	}
 
-	private void fillREACTOMETerms(ChipInfo chipInfo, Map<String, String> gene2Symbol)
+	private void fillPathWayTerms(String dataBase, ChipInfo chipInfo, Map<String, String> gene2Symbol)
 	{
 
-		dbToPathwayToGeneSet.put("REACTOME", new HashMap<>());
-		Map<String, Set<String>> reactomeToGeneMap = dbToPathwayToGeneSet.get("REACTOME");
+		dbToPathwayToGeneSet.put(dataBase, new HashMap<>());
+		Map<String, Set<String>> reactomeToGeneMap = dbToPathwayToGeneSet.get(dataBase);
 		String species = chipInfo.getSpecies();
 		String fName = BMDExpressConstants.getInstance().KEGGFILES[1];
 		String relativePath = BMDExpressConstants.getInstance().ANNOTATION_BASE_PATH + File.separator
-				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + File.separator + "REACTOME"
+				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + File.separator + dataBase
 				+ File.separator;
 
 		String httpPath = BMDExpressProperties.getInstance().getUpdateURL()
-				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + "/" + "REACTOME" + "/" + fName;
+				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + "/" + dataBase + "/" + fName;
 		File inFile = checkDownload(httpPath, relativePath, fName);
 		Map<String, String> titleHash = new HashMap<String, String>();
 		try
@@ -208,11 +208,11 @@ public class PathwayToGeneSymbolUtility
 
 		fName = organismCode + BMDExpressConstants.getInstance().KEGGFILES[2];
 		relativePath = BMDExpressConstants.getInstance().ANNOTATION_BASE_PATH + File.separator
-				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + File.separator + "REACTOME"
+				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + File.separator + dataBase
 				+ File.separator + BMDExpressConstants.getInstance().PATHWAYDIRS[1] + File.separator
 				+ organismCode + File.separator;
 		httpPath = BMDExpressProperties.getInstance().getUpdateURL()
-				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + "/" + "REACTOME" + "/"
+				+ BMDExpressConstants.getInstance().PATHWAYDIRS[0] + "/" + dataBase + "/"
 				+ BMDExpressConstants.getInstance().PATHWAYDIRS[1] + "/" + organismCode + "/" + fName;
 
 		inFile = checkDownload(httpPath, relativePath, fName);

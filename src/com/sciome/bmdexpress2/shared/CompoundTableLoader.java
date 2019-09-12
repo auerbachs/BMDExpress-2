@@ -15,7 +15,6 @@ public class CompoundTableLoader
 	protected CompoundTableLoader()
 	{
 		compoundTable = CompoundTable.getInstance();
-		// table.loadCombined();
 		try
 		{
 			InputStream fileInputStream = new FileInputStream(
