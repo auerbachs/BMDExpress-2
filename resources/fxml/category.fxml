@@ -173,37 +173,9 @@
                                                    </children>
                                                 </HBox>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
-                                                <HBox prefHeight="100.0" prefWidth="200.0">
-                                                   <children>
-                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
-                                                         <children>
-                                                            <Label alignment="CENTER" prefWidth="200.0" text="Name" />
-                                                            <TextField fx:id="nameAutoPopulate" />
-                                                         </children>
-                                                         <padding>
-                                                            <Insets left="50.0" />
-                                                         </padding>
-                                                      </VBox>
-                                                      <Label alignment="CENTER" prefHeight="75.0" prefWidth="50.0" text="OR" />
-                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="150.0">
-                                                         <children>
-                                                            <Label alignment="CENTER" prefWidth="200.0" text="CASRN" />
-                                                            <TextField fx:id="casrnAutoPopulate" />
-                                                         </children>
-                                                      </VBox>
-                                                      <Label alignment="CENTER" prefHeight="75.0" prefWidth="50.0" text="OR" />
-                                                      <VBox minHeight="75.0" prefHeight="75.0" prefWidth="200.0">
-                                                         <children>
-                                                            <Label alignment="CENTER" prefWidth="200.0" text="SMILES" />
-                                                            <TextField fx:id="smilesAutoPopulate" />
-                                                         </children>
-                                                         <padding>
-                                                            <Insets right="50.0" />
-                                                         </padding>
-                                                      </VBox>
-                                                   </children>
+                                                <HBox fx:id="autoPopulateHBox" prefHeight="49.0" prefWidth="610.0">
                                                    <VBox.margin>
-                                                      <Insets />
+                                                      <Insets left="20.0" right="20.0" />
                                                    </VBox.margin>
                                                    <padding>
                                                       <Insets top="12.5" />
@@ -223,11 +195,6 @@
                                                       </ComboBox>
                                                    </children>
                                                 </HBox>
-                                                <Button fx:id="autoPopulateButton" mnemonicParsing="false" onAction="#handle_auto_populate" prefHeight="30.0" prefWidth="200.0" text="Auto Populate">
-                                                   <VBox.margin>
-                                                      <Insets bottom="12.5" left="225.0" right="225.0" />
-                                                   </VBox.margin>
-                                                </Button>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
                                                 <GridPane vgap="20.0">
                                                   <columnConstraints>

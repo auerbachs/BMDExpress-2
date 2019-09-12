@@ -2,10 +2,18 @@ package com.sciome.bmdexpress2.mvp.view.categorization;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
+import java.util.Set;
+
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
+import org.controlsfx.control.textfield.TextFields;
 
 import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
@@ -17,6 +25,7 @@ import com.sciome.bmdexpress2.serviceInterface.ICategoryAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
+import com.sciome.bmdexpress2.shared.CompoundTableLoader;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
@@ -31,6 +40,8 @@ import com.sciome.commons.math.httk.model.InVitroData;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,8 +55,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class CategorizationView extends BMDExpressViewBase implements ICategorizationView, Initializable
 {
@@ -59,6 +72,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	// FXML injection
 	@FXML
 	private Tab								iviveTab;
+
+	@FXML
+	private HBox							autoPopulateHBox;
 
 	// checkboxes
 	@FXML
@@ -170,14 +186,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private CheckBox						threeCompartmentCheckBox;
 	@FXML
 	private CheckBox						threeCompartmentSSCheckBox;
-	@FXML
-	private TextField						nameAutoPopulate;
-	@FXML
-	private TextField						casrnAutoPopulate;
-	@FXML
-	private TextField						smilesAutoPopulate;
-	@FXML
-	private Button							autoPopulateButton;
+
 	@FXML
 	private TextField						nameTextField;
 	@FXML
@@ -205,7 +214,13 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private ComboBox						speciesComboBox;
 
+	TextField								stringAutoCompleteSelector;
+
+	CompoundTable							compoundTable	= null;
+
 	private CategoryInput					input;
+	private final String					MGPERKGPERDAY	= "mg/kg/day";
+	private final String					UMOLPERKGPERDAY	= "uM/kg/day";
 
 	public CategorizationView()
 	{
@@ -316,24 +331,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		alert.showAndWait();
 	}
 
-	public void handle_auto_populate(ActionEvent event)
+	public void handle_auto_populate(String textValue)
 	{
-		CompoundTable table = CompoundTable.getInstance();
-		table.loadCombined();
 
 		Compound compound = null;
-		if (!nameAutoPopulate.getText().equals(""))
-		{
-			compound = table.getCompoundByName(nameAutoPopulate.getText());
-		}
-		else if (!casrnAutoPopulate.getText().equals(""))
-		{
-			compound = table.getCompoundByCAS(casrnAutoPopulate.getText());
-		}
-		else if (!smilesAutoPopulate.getText().equals(""))
-		{
-			compound = table.getCompoundBySMILES(smilesAutoPopulate.getText());
-		}
+
+		compound = compoundTable.getCompoundByCAS(textValue);
+		if (compound == null)
+			compound = compoundTable.getCompoundByName(textValue);
 
 		if (compound != null)
 		{
@@ -404,7 +409,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			alert.setTitle("Compound Search");
 			alert.setHeaderText(null);
 			alert.setContentText("Could not find compound");
-			alert.showAndWait();
+			// alert.showAndWait();
 		}
 	}
 
@@ -483,7 +488,25 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 					Boolean newValue)
 			{
 				if (newValue)
+				{
 					iviveTab.setDisable(false);
+
+					// load compoundTable one time if iviveTab is checked.
+					// it's a big one so no need to load it multiple times.
+					if (compoundTable == null)
+					{
+						compoundTable = CompoundTableLoader.getInstance().getCompoundTable();
+						List<String> list = new ArrayList<>();
+						for (Compound c : compoundTable.getCompoundList())
+						{
+							list.add(c.getCAS());
+							list.add(c.getName());
+						}
+
+						addIVIVESearchTextBox(list);
+
+					}
+				}
 				else
 					iviveTab.setDisable(true);
 			}
@@ -551,34 +574,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			}
 		});
 
-		// Initialize Auto populate boxes
-		nameAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue,
-					String newValue)
-			{
-				casrnAutoPopulate.setText("");
-				smilesAutoPopulate.setText("");
-			}
-		});
-		casrnAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue,
-					String newValue)
-			{
-				nameAutoPopulate.setText("");
-				smilesAutoPopulate.setText("");
-			}
-		});
-		smilesAutoPopulate.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue,
-					String newValue)
-			{
-				casrnAutoPopulate.setText("");
-				nameAutoPopulate.setText("");
-			}
-		});
 		speciesComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue,
@@ -609,8 +604,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
 		doseUnitsComboBox.getSelectionModel().select(0);
 
-		outputUnitsComboBox.getItems().add(Units.MG);
-		outputUnitsComboBox.getItems().add(Units.MOL);
+		// kgs/mg/per day?
+		outputUnitsComboBox.getItems().add(MGPERKGPERDAY);
+
+		// is this milli-mols-per-kg-day?
+		outputUnitsComboBox.getItems().add(UMOLPERKGPERDAY);
 		outputUnitsComboBox.getSelectionModel().select(0);
 
 		speciesComboBox.getItems().add("Human");
@@ -760,7 +758,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				parameters.setQuantile(quantile);
 
 			parameters.setDoseUnits((DoseUnits) doseUnitsComboBox.getSelectionModel().getSelectedItem());
-			parameters.setOutputUnits((Units) outputUnitsComboBox.getSelectionModel().getSelectedItem());
+
+			// user has friendly text for specifying output units.
+			// we must translate to enum
+			if (outputUnitsComboBox.getSelectionModel().getSelectedItem().equals(MGPERKGPERDAY))
+				parameters.setOutputUnits(Units.MG);
+			else
+				parameters.setOutputUnits(Units.MOL);
+
 			parameters.setSpecies((String) speciesComboBox.getSelectionModel().getSelectedItem());
 			params.setIviveParameters(parameters);
 		}
@@ -770,10 +775,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 	private void toggleIVIVE(boolean disable)
 	{
-		nameAutoPopulate.setDisable(disable);
-		casrnAutoPopulate.setDisable(disable);
-		smilesAutoPopulate.setDisable(disable);
-		autoPopulateButton.setDisable(disable);
 		nameTextField.setDisable(disable);
 		casrnTextField.setDisable(disable);
 		smilesTextField.setDisable(disable);
@@ -786,7 +787,61 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		quantileTextField.setDisable(disable);
 		doseUnitsComboBox.setDisable(disable);
 		outputUnitsComboBox.setDisable(disable);
-		speciesComboBox.setDisable(disable);
+		speciesComboBox.setDisable(false);
+	}
+
+	private void addIVIVESearchTextBox(List<String> list)
+	{
+		TextField stringAutoCompleteSelector = new TextField();
+
+		// create the data to show in the CheckComboBox
+		final ObservableList<String> strings = FXCollections.observableArrayList(list);
+		Set<String> possibleValues = new HashSet<>(list);
+
+		Button clearButton = new Button("Clear");
+		ComboBox<String> howtodostring;
+		// Create the CheckComboBox with the data
+		howtodostring = new ComboBox<String>(
+				FXCollections.observableArrayList(Arrays.asList("begins with", "contains")));
+
+		howtodostring.setValue("begins with");
+		howtodostring.setMaxWidth(150);
+		stringAutoCompleteSelector.setMinWidth(200);
+		TextFields.bindAutoCompletion(stringAutoCompleteSelector,
+				new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
+
+					@Override
+					public Collection<String> call(ISuggestionRequest param)
+					{
+						List<String> returnList = new ArrayList<>();
+						for (String p : strings)
+							if (howtodostring.getValue().equals("contains")
+									&& p.toLowerCase().contains(param.getUserText().toLowerCase()))
+								returnList.add(p);
+							else if (howtodostring.getValue().equals("begins with")
+									&& p.toLowerCase().startsWith(param.getUserText().toLowerCase()))
+								returnList.add(p);
+
+						return returnList;
+					}
+				});
+
+		stringAutoCompleteSelector.textProperty().addListener((observable, oldValue, newValue) ->
+		{
+			if (newValue == null)
+				return;
+
+			handle_auto_populate(newValue);
+			if (newValue.trim().equals(""))
+				return;
+			if (!possibleValues.contains(newValue))
+				return;
+
+		});
+
+		HBox.setHgrow(stringAutoCompleteSelector, Priority.ALWAYS);
+		autoPopulateHBox.getChildren().add(howtodostring);
+		autoPopulateHBox.getChildren().add(stringAutoCompleteSelector);
 	}
 
 	private boolean checkIVIVE()
