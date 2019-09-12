@@ -167,6 +167,7 @@ public class CategoryMapTool
 			Date date = new Date(catMap.getCategoryFileVersionDate());
 			SimpleDateFormat df2 = new SimpleDateFormat("MM/dd/yy");
 			analysisInfo.getNotes().add("Signaling Pathway File Creation Date: " + df2.format(date));
+			analysisInfo.getNotes().add("Pathway DB Name: " + this.pathwayDB);
 
 		}
 		else if (catAnalysisEnum == CategoryAnalysisEnum.DEFINED)

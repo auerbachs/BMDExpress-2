@@ -234,6 +234,15 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			 * Supply BMR directly into CurveP calls! 07.16.2019
 			 */
 
+			List<Float> collapsedDoses = CurvePProcessor.CollapseDoses(doseVector);
+			Float firstNonControlDose = collapsedDoses.get(1);
+			if (inputParameters.getControlDoseAdjustment() != null)
+				firstNonControlDose *= inputParameters.getControlDoseAdjustment().floatValue();
+			else
+				firstNonControlDose *= collapsedDoses.get(1) / collapsedDoses.get(2);
+
+			Float firstNonControlDoseLogged10 = new Float(Math.log10(firstNonControlDose.doubleValue()));
+
 			List<Float> weightedAvgs = CurvePProcessor.calc_WgtAvResponses(doseVector, numericMatrix.get(i));
 			List<Float> weightedStdDeviations = CurvePProcessor.calc_WgtSdResponses(doseVector,
 					numericMatrix.get(i));
@@ -245,11 +254,11 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 			List<Float> valuesMinus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsMinus, BMR_neg, -1, inputParameters.getBootStraps(),
-					inputParameters.getpValueCutoff());
+					inputParameters.getpValueCutoff(), firstNonControlDoseLogged10);
 
 			List<Float> valuesPlus = CurvePProcessor.curvePcorr(doseVector, numericMatrix.get(i),
 					correctedPointsPlus, BMR_poz, 1, inputParameters.getBootStraps(),
-					inputParameters.getpValueCutoff());
+					inputParameters.getpValueCutoff(), firstNonControlDoseLogged10);
 
 			List<Float> values = valuesPlus;
 			List<Float> correctedPoints = correctedPointsPlus;
@@ -371,6 +380,9 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		analysisInfo.getNotes().add("Number of bootstraps: " + inputParameters.getBootStraps());
 		analysisInfo.getNotes().add("BMR: " + inputParameters.getBMR());
 		analysisInfo.getNotes().add("pValue for intervals: " + inputParameters.getpValueCutoff());
+		if (inputParameters.getControlDoseAdjustment() != null)
+			analysisInfo.getNotes()
+					.add("Control Dose Adjustment: " + inputParameters.getControlDoseAdjustment());
 		bMDResults.setAnalysisInfo(analysisInfo);
 
 		return bMDResults;
