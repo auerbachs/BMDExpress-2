@@ -39,7 +39,7 @@ public class TableViewCache
 			return tableViewHash.get(key);
 
 		TableView tv = new TableView();
-		tv.getSelectionModel().setCellSelectionEnabled(true);
+		tv.getSelectionModel().setCellSelectionEnabled(false);
 		tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		// enable copy/paste
 		TableViewUtils.installCopyPasteHandler(tv);

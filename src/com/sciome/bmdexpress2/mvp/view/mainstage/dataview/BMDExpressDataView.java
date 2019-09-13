@@ -148,7 +148,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 			else
 			{
 				tableView = new TableView<>();
-				tableView.getSelectionModel().setCellSelectionEnabled(true);
+				tableView.getSelectionModel().setCellSelectionEnabled(false);
 				tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 				TableViewUtils.installCopyPasteHandler(tableView);
 

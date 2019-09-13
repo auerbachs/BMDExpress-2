@@ -1,6 +1,5 @@
 package com.sciome.bmdexpress2.util;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -95,41 +94,41 @@ public class TableViewUtils
 		{
 
 			int row = position.getRow();
-			int col = position.getColumn();
-
-			Object cell = (Object) table.getColumns().get(col).getCellData(row);
-			TableColumn tc = table.getColumns().get(col);
-			ObservableValue v = tc.getCellObservableValue(row);
-
-			// null-check: provide empty string for nulls
-			if (cell == null)
-			{
-				cell = "";
-			}
-
-			// determine whether we advance in a row (tab) or a column
-			// (newline).
-			if (prevRow == row)
+			for (TableColumn tc : table.getColumns())
 			{
 
-				clipboardString.append('\t');
+				Object cell = tc.getCellData(row);
 
+				// null-check: provide empty string for nulls
+				if (cell == null)
+				{
+					cell = "";
+				}
+
+				// determine whether we advance in a row (tab) or a column
+				// (newline).
+				if (prevRow == row)
+				{
+
+					clipboardString.append('\t');
+
+				}
+				else if (prevRow != -1)
+				{
+
+					clipboardString.append('\n');
+
+				}
+
+				// create string from cell
+				String text = cell.toString();
+
+				// add new item to clipboard
+				clipboardString.append(text);
+
+				// remember previous
+				prevRow = row;
 			}
-			else if (prevRow != -1)
-			{
-
-				clipboardString.append('\n');
-
-			}
-
-			// create string from cell
-			String text = cell.toString();
-
-			// add new item to clipboard
-			clipboardString.append(text);
-
-			// remember previous
-			prevRow = row;
 		}
 
 		// create clipboard content
