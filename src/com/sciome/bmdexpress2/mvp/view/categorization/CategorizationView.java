@@ -220,7 +220,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 	private CategoryInput					input;
 	private final String					MGPERKGPERDAY	= "mg/kg/day";
-	private final String					UMOLPERKGPERDAY	= "uM/kg/day";
+	private final String					UMOLPERKGPERDAY	= "mmol/kg/day";
 
 	public CategorizationView()
 	{

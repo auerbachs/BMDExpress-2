@@ -26,9 +26,9 @@ import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.BMDExpressDataViewPresenter;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
-import com.sciome.bmdexpress2.service.ProjectNavigationService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.TableViewCache;
+import com.sciome.bmdexpress2.util.TableViewUtils;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
 import com.sciome.filter.component.DataFilterComponentListener;
@@ -77,7 +77,7 @@ import javafx.util.Callback;
 public abstract class BMDExpressDataView<T> extends VBox
 		implements DataFilterComponentListener, IBMDExpressDataView
 {
-	protected TableView<BMDExpressAnalysisRow>					tableView		= null;
+	protected TableView<BMDExpressAnalysisRow>					tableView				= null;
 	protected HBox												topHBox;
 	protected Label												totalItemsLabel;
 	protected CheckBox											enableFilterCheckBox;
@@ -92,32 +92,32 @@ public abstract class BMDExpressDataView<T> extends VBox
 	protected Button											toggleColumns;
 	protected Node												dataVisualizationNode;
 
-	private final String										EXPORT_DATA					= "Export";
-	private final String										EXPORT_FILTERED_DATA		= "Export Filtered Data";
-	private final String										MARK_DATA	 				= "Mark Data";
-	private final String										HIDE_TABLE					= "Hide Table";
-	private final String										SHOW_TABLE					= "Show Table";
-	private final String										HIDE_FILTER					= "Hide Filter";
-	private final String										SHOW_FILTER					= "Show Filter";
-	private final String										HIDE_CHART					= "Hide Charts";
-	private final String										SHOW_CHART					= "Show Charts";
-	private final String										APPLY_FILTER				= "Apply Filter";
-	private final String										TOGGLE_COLUMNS				= "Toggle Columns";
-								
+	private final String										EXPORT_DATA				= "Export";
+	private final String										EXPORT_FILTERED_DATA	= "Export Filtered Data";
+	private final String										MARK_DATA				= "Mark Data";
+	private final String										HIDE_TABLE				= "Hide Table";
+	private final String										SHOW_TABLE				= "Show Table";
+	private final String										HIDE_FILTER				= "Hide Filter";
+	private final String										SHOW_FILTER				= "Show Filter";
+	private final String										HIDE_CHART				= "Hide Charts";
+	private final String										SHOW_CHART				= "Show Charts";
+	private final String										APPLY_FILTER			= "Apply Filter";
+	private final String										TOGGLE_COLUMNS			= "Toggle Columns";
+
 	private FilteredList<BMDExpressAnalysisRow>					filteredData;
 	private BMDExpressAnalysisDataSet							analysisDataSet;
 	protected DataVisualizationView								dataVisualizationController;
 	protected BMDExpressDataViewPresenter<IBMDExpressDataView>	presenter;
 	private Class<?>											filterableClass;
 	protected BMDExpressAnalysisDataSet							bmdAnalysisDataSet;
-	private DataFilterPack										defaultDPack	= null;
-	protected ObservableList<BMDExpressAnalysisRow>				rawTableData	= null;
+	private DataFilterPack										defaultDPack			= null;
+	protected ObservableList<BMDExpressAnalysisRow>				rawTableData			= null;
 	protected LinkedList<String>								columnOrder;
 	protected Map<String, Boolean>								columnMap;
 
 	private List<String>										prevHeaderList;
 	private Map<String, Map<String, Set<String>>>				dbToPathwayToGeneSet;
-	private Set<String>											markedData		= new TreeSet<>(
+	private Set<String>											markedData				= new TreeSet<>(
 			String.CASE_INSENSITIVE_ORDER);
 
 	@SuppressWarnings("unchecked")
@@ -146,7 +146,13 @@ public abstract class BMDExpressDataView<T> extends VBox
 				tableView = TableViewCache.getInstance()
 						.getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
 			else
+			{
 				tableView = new TableView<>();
+				tableView.getSelectionModel().setCellSelectionEnabled(true);
+				tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+				TableViewUtils.installCopyPasteHandler(tableView);
+
+			}
 
 			VBox.setMargin(topHBox, new Insets(5.0));
 
@@ -192,10 +198,13 @@ public abstract class BMDExpressDataView<T> extends VBox
 			totalItemsLabel = new Label("");
 			enableFilterCheckBox = new CheckBox(APPLY_FILTER);
 			enableFilterCheckBox.setSelected(BMDExpressProperties.getInstance().isApplyFilter());
-			if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment)) {
+			if (enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
+			{
 				exportData = new Button(EXPORT_FILTERED_DATA);
 				exportData.setTooltip(new Tooltip("Exports all selected datasets with filters applied"));
-			} else {
+			}
+			else
+			{
 				exportData = new Button(EXPORT_DATA);
 				exportData.setTooltip(new Tooltip("Exports all selected datasets"));
 			}
@@ -219,22 +228,28 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 			enableFilterCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 				@Override
-				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-					if(newValue) {
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+						Boolean newValue)
+				{
+					if (newValue)
+					{
 						exportData.setText(EXPORT_FILTERED_DATA);
-					} else {
+					}
+					else
+					{
 						exportData.setText(EXPORT_DATA);
 					}
 				}
 			});
-			
+
 			exportData.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
-				public void handle(ActionEvent event) {
+				public void handle(ActionEvent event)
+				{
 					exportVisualizedData();
 				}
 			});
-			
+
 			markData.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent e)
@@ -302,7 +317,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 					}
 				}
 			});
-			
+
 			toggleColumns.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent e)
@@ -324,17 +339,19 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 					CheckListView<String> checkList = new CheckListView<String>();
 					checkList.getItems().setAll(analysisDataSet.getColumnHeader());
-					
-					for(String header : columnMap.keySet()) {
-						if(columnMap.get(header))
+
+					for (String header : columnMap.keySet())
+					{
+						if (columnMap.get(header))
 							checkList.getCheckModel().check(header);
 					}
-					
+
 					Button checkAll = new Button("Check All");
 					checkAll.setPrefWidth(100);
 					checkAll.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
-						public void handle(ActionEvent event) {
+						public void handle(ActionEvent event)
+						{
 							checkList.getCheckModel().checkAll();
 						}
 					});
@@ -342,11 +359,12 @@ public abstract class BMDExpressDataView<T> extends VBox
 					clear.setPrefWidth(100);
 					clear.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
-						public void handle(ActionEvent event) {
+						public void handle(ActionEvent event)
+						{
 							checkList.getCheckModel().clearChecks();
 						}
 					});
-					
+
 					vb1.getChildren().addAll(checkList);
 					vb2.getChildren().addAll(checkAll, clear);
 					hb.getChildren().addAll(vb1, vb2);
@@ -365,18 +383,17 @@ public abstract class BMDExpressDataView<T> extends VBox
 
 							if (b == buttonTypeOk)
 							{
-								for(String header : columnMap.keySet())
+								for (String header : columnMap.keySet())
 								{
-									if(!checkList.getItems().contains(header))
+									if (!checkList.getItems().contains(header))
 										continue;
-									
-									
-									if(checkList.getCheckModel().isChecked(header))
+
+									if (checkList.getCheckModel().isChecked(header))
 										columnMap.put(header, true);
 									else
 										columnMap.put(header, false);
 								}
-								
+
 								setUpTableView(analysisDataSet);
 								setCellFactory();
 								return true;
@@ -403,7 +420,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 	}
 
 	protected abstract Map<String, Map<String, Set<String>>> fillUpDBToPathwayGeneSymbols();
-	
+
 	/**
 	 * Used to setup any clickable columns or change the apperance of them
 	 */
@@ -429,13 +446,14 @@ public abstract class BMDExpressDataView<T> extends VBox
 				TableColumn tc = null;
 				TableColumn tcSub = null;
 
-				if(!columnMap.containsKey(columnOrder.get(i)) || columnMap.get(columnOrder.get(i))) {
+				if (!columnMap.containsKey(columnOrder.get(i)) || columnMap.get(columnOrder.get(i)))
+				{
 					int colNo = columnHeaders.indexOf(columnOrder.get(i));
-					if(colNo == -1)
+					if (colNo == -1)
 						continue;
-					
+
 					tc = new TableColumn(columnOrder.get(i));
-	
+
 					if (columnHeaders2 != null)
 					{
 						tcSub = new TableColumn(columnHeaders2.get(i).toString());
@@ -444,6 +462,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 						tcSub.setPrefWidth(90);
 						tableView.getColumns().add(tc);
 						tcSub.setCellValueFactory(new TableCellCallBack(colNo));
+						tc.setCellValueFactory(new TableCellCallBack(colNo));
 					}
 					else
 					{
@@ -455,7 +474,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 				}
 			}
 		}
-		
+
 		tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		totalItemsLabel.setText("Total Items: " + analysisDataSet.getAnalysisRows().size());
@@ -490,53 +509,65 @@ public abstract class BMDExpressDataView<T> extends VBox
 			totalItemsLabel.setText("Total Items: " + analysisDataSet.getAnalysisRows().size());
 		}
 	}
-	
-	protected void setUpTableListeners() {
+
+	protected void setUpTableListeners()
+	{
 		prevHeaderList = new ArrayList<String>();
-		for(TableColumn t : tableView.getColumns()) {
+		for (TableColumn t : tableView.getColumns())
+		{
 			prevHeaderList.add(t.getText());
 		}
-		
+
 		tableView.getColumns().addListener(new ListChangeListener<TableColumn>() {
 
 			@Override
-			public void onChanged(Change c) {
+			public void onChanged(Change c)
+			{
 				c.next();
-				if(c.wasReplaced()) {
-					//Change columnOrder to reflect column reordering
-					for(int i = 0; i < prevHeaderList.size(); i++) {
+				if (c.wasReplaced())
+				{
+					// Change columnOrder to reflect column reordering
+					for (int i = 0; i < prevHeaderList.size(); i++)
+					{
 						String text = prevHeaderList.get(i);
-						String newText = ((TableColumn)c.getList().get(i)).getText();
-						if(!text.equals(newText)) {
-							//Check to see if the column was moved forward or backward
-							if(newText.equals(prevHeaderList.get(i + 1))) {
+						String newText = ((TableColumn) c.getList().get(i)).getText();
+						if (!text.equals(newText))
+						{
+							// Check to see if the column was moved forward or backward
+							if (newText.equals(prevHeaderList.get(i + 1)))
+							{
 								int index = 0;
-								for(int j = 0; j < c.getList().size(); j++) {
-									if(((TableColumn)c.getList().get(j)).getText().equals(text)) {
+								for (int j = 0; j < c.getList().size(); j++)
+								{
+									if (((TableColumn) c.getList().get(j)).getText().equals(text))
+									{
 										index = j;
 										break;
-									}	
+									}
 								}
 								columnOrder.remove(text);
 								columnOrder.add(index, text);
 								break;
-							} else {
+							}
+							else
+							{
 								columnOrder.remove(newText);
 								columnOrder.add(i, newText);
 								break;
 							}
 						}
 					}
-					
-					//Change the prevList to the new list
+
+					// Change the prevList to the new list
 					prevHeaderList = new ArrayList<String>();
-					for(Object t : c.getList()) {
-						prevHeaderList.add(((TableColumn)t).getText());
+					for (Object t : c.getList())
+					{
+						prevHeaderList.add(((TableColumn) t).getText());
 					}
 				}
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -916,23 +947,23 @@ public abstract class BMDExpressDataView<T> extends VBox
 	{
 		StringBuilder builder = new StringBuilder();
 		builder.append(bmdAnalysisDataSet.getName());
-		//Dose response experiments can't be filtered
-		if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
+		// Dose response experiments can't be filtered
+		if (enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
 			builder.append("_filtered");
 		builder.append(".txt");
-		
-		File selectedFile = getFileToSave(bmdAnalysisDataSet.getName(),
-				builder.toString());
+
+		File selectedFile = getFileToSave(bmdAnalysisDataSet.getName(), builder.toString());
 		if (selectedFile == null)
 			return;
-		
-		if(enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
-			presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile, filtrationNode.getFilterDataPack());
+
+		if (enableFilterCheckBox.isSelected() && !(bmdAnalysisDataSet instanceof DoseResponseExperiment))
+			presenter.exportFilteredResults(bmdAnalysisDataSet, filteredData, selectedFile,
+					filtrationNode.getFilterDataPack());
 		else
 			presenter.exportResults(bmdAnalysisDataSet, selectedFile);
 	}
-	
-	//This is copied from ProjectNavigationView (might be a better way)
+
+	// This is copied from ProjectNavigationView (might be a better way)
 	private File getFileToSave(String title, String initName)
 	{
 		FileChooser fileChooser = new FileChooser();

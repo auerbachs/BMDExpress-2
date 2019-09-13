@@ -2,6 +2,9 @@ package com.sciome.bmdexpress2.shared;
 
 import java.util.Hashtable;
 
+import com.sciome.bmdexpress2.util.TableViewUtils;
+
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 
 //store the tableviews in a hash and make them
@@ -36,6 +39,10 @@ public class TableViewCache
 			return tableViewHash.get(key);
 
 		TableView tv = new TableView();
+		tv.getSelectionModel().setCellSelectionEnabled(true);
+		tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		// enable copy/paste
+		TableViewUtils.installCopyPasteHandler(tv);
 		tableViewHash.put(key, tv);
 		return tv;
 

@@ -36,10 +36,11 @@ public class GCurvePResult extends StatResult
 				"GCurveP BMR", "GCurveP fitValue", "GCurveP BMD AUC", "GCurveP BMDL AUC", "GCurveP BMDU AUC",
 				"GCurveP BMD wAUC", "GCurveP BMDL wAUC", "GCurveP BMDU wAUC", "GCurveP adverseDirection",
 				"GCurveP BMD/BMDL", "GCurveP Execution Complete"));
-		if (weightedAverages.size() > 0 && weightedAverages.get(0) != null)
+		if (weightedAverages != null && weightedAverages.size() > 0 && weightedAverages.get(0) != null)
 			l.add("GCurveP Baseline");
 
-		if (weightedStdDeviations.size() > 0 && weightedStdDeviations.get(0) != null)
+		if (weightedStdDeviations != null && weightedStdDeviations.size() > 0
+				&& weightedStdDeviations.get(0) != null)
 			l.add("GCurveP Weighted STD DEV");
 
 		return l;
@@ -55,9 +56,10 @@ public class GCurvePResult extends StatResult
 						(this.getFitPValue()), (this.getBMDauc()), (this.getBMDLauc()), (this.getBMDUauc()),
 						(this.getBMDwAuc()), (this.getBMDLwAuc()), (this.getBMDUwAuc()),
 						(this.getAdverseDirection()), (this.getBMDdiffBMDL()), this.getSuccess()));
-		if (weightedAverages.size() > 0 && weightedAverages.get(0) != null)
+		if (weightedAverages != null && weightedAverages.size() > 0 && weightedAverages.get(0) != null)
 			l.add(this.weightedAverages.get(0));
-		if (weightedStdDeviations.size() > 0 && weightedStdDeviations.get(0) != null)
+		if (weightedStdDeviations != null && weightedStdDeviations.size() > 0
+				&& weightedStdDeviations.get(0) != null)
 			l.add(this.weightedStdDeviations.get(0));
 
 		return l;
