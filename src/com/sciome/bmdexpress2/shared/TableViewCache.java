@@ -2,10 +2,13 @@ package com.sciome.bmdexpress2.shared;
 
 import java.util.Hashtable;
 
+import org.controlsfx.control.tableview2.TableView2;
+
 import com.sciome.bmdexpress2.util.TableViewUtils;
 
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableView;
 
 //store the tableviews in a hash and make them
 // available.  This is to keep track of how the 
@@ -16,7 +19,7 @@ public class TableViewCache
 
 	private static TableViewCache			instance		= null;
 
-	private Hashtable<String, TableView>	tableViewHash	= new Hashtable<>();
+	private Hashtable<String, TableView2>	tableViewHash	= new Hashtable<>();
 
 	protected TableViewCache()
 	{
@@ -33,14 +36,19 @@ public class TableViewCache
 	}
 
 	@SuppressWarnings("rawtypes")
-	public TableView getTableView(String key)
+	public TableView2 getTableView(String key)
 	{
 		if (tableViewHash.containsKey(key))
 			return tableViewHash.get(key);
 
-		TableView tv = new TableView();
+		TableView2 tv = new TableView2();
 		tv.getSelectionModel().setCellSelectionEnabled(false);
 		tv.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		tv.setRowFixingEnabled(true);
+		tv.setRowHeaderVisible(true);
+
+		ContextMenu m = new ContextMenu();
+		m.getItems().add(new MenuItem("fix"));
 		// enable copy/paste
 		TableViewUtils.installCopyPasteHandler(tv);
 		tableViewHash.put(key, tv);

@@ -1,5 +1,11 @@
 package com.sciome.bmdexpress2.util;
 
+import java.util.Arrays;
+
+import org.controlsfx.control.action.ActionUtils;
+import org.controlsfx.control.tableview2.TableView2;
+import org.controlsfx.control.tableview2.actions.RowFixAction;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,6 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 
 public class TableViewUtils
 {
@@ -23,18 +30,60 @@ public class TableViewUtils
 	 * 
 	 * @param table
 	 */
-	public static void installCopyPasteHandler(TableView<?> table)
+	public static void installCopyPasteHandler(TableView2<?> table)
 	{
+		table.setRowHeaderWidth(55);
+
+		table.setRowHeaderContextMenuFactory((i, object) ->
+		{
+			ContextMenu rowCM = ActionUtils.createContextMenu(
+					Arrays.asList(new RowFixAction(table, i), ActionUtils.ACTION_SEPARATOR));
+			MenuItem copyMenu = new MenuItem("Copy");
+			copyMenu.setOnAction((ActionEvent event) ->
+			{
+				copySelectionToClipboard(table, false);
+			});
+
+			MenuItem copyMenuH = new MenuItem("Copy With Headers");
+			copyMenuH.setOnAction((ActionEvent event) ->
+			{
+				copySelectionToClipboard(table, true);
+			});
+			rowCM.getItems().addAll(copyMenu, copyMenuH);
+
+			return rowCM;
+		});
 
 		MenuItem copyMenu = new MenuItem("Copy");
 		copyMenu.setOnAction((ActionEvent event) ->
 		{
-			copySelectionToClipboard(table);
+			copySelectionToClipboard(table, false);
 		});
 
-		ContextMenu menu = new ContextMenu();
-		menu.getItems().addAll(copyMenu);
-		table.setContextMenu(menu);
+		MenuItem copyMenuH = new MenuItem("Copy With Headers");
+		copyMenuH.setOnAction((ActionEvent event) ->
+		{
+			copySelectionToClipboard(table, true);
+		});
+		ContextMenu tableCM = new ContextMenu();
+
+		tableCM.getItems().addAll(copyMenu, copyMenuH);
+		table.setOnMouseClicked(value ->
+		{
+			double columnHeaderHeight = table.lookup(".column-header-background").getBoundsInLocal()
+					.getHeight();
+			if (value.getButton().equals(MouseButton.SECONDARY) && value.getX() > table.getRowHeaderWidth()
+					&& value.getY() > columnHeaderHeight)
+			{
+				tableCM.show(table, value.getScreenX(), value.getScreenY());
+			}
+			else
+			{
+				tableCM.hide();
+			}
+			System.out.println();
+
+		});
 
 		// install copy/paste keyboard handler
 		table.setOnKeyPressed(new TableKeyEventHandler());
@@ -61,7 +110,7 @@ public class TableViewUtils
 				{
 
 					// copy to clipboard
-					copySelectionToClipboard((TableView<?>) keyEvent.getSource());
+					copySelectionToClipboard((TableView<?>) keyEvent.getSource(), true);
 
 					System.out.println("Selection copied to clipboard");
 
@@ -81,7 +130,7 @@ public class TableViewUtils
 	 * 
 	 * @param table
 	 */
-	public static void copySelectionToClipboard(TableView<?> table)
+	public static void copySelectionToClipboard(TableView<?> table, boolean copyHeaders)
 	{
 
 		StringBuilder clipboardString = new StringBuilder();
@@ -89,6 +138,38 @@ public class TableViewUtils
 		ObservableList<TablePosition> positionList = table.getSelectionModel().getSelectedCells();
 
 		int prevRow = -1;
+		if (copyHeaders)
+		{
+			boolean twoHeaders = false;
+			for (TableColumn tc : table.getColumns())
+			{
+				clipboardString.append(tc.getText());
+				clipboardString.append('\t');
+				if (tc.getColumns().size() > 0)
+				{
+					twoHeaders = true;
+				}
+			}
+			if (clipboardString.length() > 0)
+				clipboardString.deleteCharAt(clipboardString.length() - 1);
+			clipboardString.append('\n');
+
+			if (twoHeaders)
+			{
+				for (TableColumn tc : table.getColumns())
+				{
+					TableColumn tcc = (TableColumn) tc.getColumns().get(0);
+					clipboardString.append(tcc.getText());
+					clipboardString.append('\t');
+					if (tc.getColumns().size() > 0)
+					{
+						twoHeaders = true;
+					}
+				}
+				clipboardString.deleteCharAt(clipboardString.length() - 1);
+				clipboardString.append('\n');
+			}
+		}
 
 		for (TablePosition position : positionList)
 		{

@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.controlsfx.control.CheckListView;
+import org.controlsfx.control.action.ActionUtils;
+import org.controlsfx.control.tableview2.TableView2;
+import org.controlsfx.control.tableview2.actions.ColumnFixAction;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
@@ -53,13 +56,13 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -77,7 +80,7 @@ import javafx.util.Callback;
 public abstract class BMDExpressDataView<T> extends VBox
 		implements DataFilterComponentListener, IBMDExpressDataView
 {
-	protected TableView<BMDExpressAnalysisRow>					tableView				= null;
+	protected TableView2<BMDExpressAnalysisRow>					tableView				= null;
 	protected HBox												topHBox;
 	protected Label												totalItemsLabel;
 	protected CheckBox											enableFilterCheckBox;
@@ -147,9 +150,12 @@ public abstract class BMDExpressDataView<T> extends VBox
 						.getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
 			else
 			{
-				tableView = new TableView<>();
+				tableView = new TableView2<>();
 				tableView.getSelectionModel().setCellSelectionEnabled(false);
 				tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+				tableView.setRowFixingEnabled(true);
+				tableView.setRowHeaderVisible(true);
+				tableView.setColumnFixingEnabled(true);
 				TableViewUtils.installCopyPasteHandler(tableView);
 
 			}
@@ -453,6 +459,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 						continue;
 
 					tc = new TableColumn(columnOrder.get(i));
+					ContextMenu cm = ActionUtils.createContextMenu(Arrays.asList(new ColumnFixAction(tc)));
+					tc.setContextMenu(cm);
 
 					if (columnHeaders2 != null)
 					{
