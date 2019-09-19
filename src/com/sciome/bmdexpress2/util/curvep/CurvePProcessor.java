@@ -347,9 +347,17 @@ public class CurvePProcessor
 		return RS;
 	} // end of calc_WgtSdResponses()
 
-	public static List<Float> logBaseDoses(List<Float> D, float FirstDoseBaseFix) throws Exception
+	public static float GetFirstDoseFraction(float D1, float fraction)
+	{
+		//calculates log-dose based on fraction * D1 (first test dose); 
+		//this can be fed into logBaseDoses() function for control dose fix
+		
+		return (float)Math.log10( D1*fraction );
+	}
+	
+	public static List<Float> logBaseDoses(List<Float> D, float ControlDoseBaseFix) throws Exception
 	/*
-	 * logBaseDoses() converts Doses to log10 scale and handles first dose, if 0 FirstDoseBaseFix - default
+	 * logBaseDoses() converts Doses to log10 scale and handles first dose, if 0 ControlDoseBaseFix - default
 	 * value to use for the "untreated" (zero) dose, - if it is = 0 then same spacing is used as between two
 	 * following doses
 	 */
@@ -378,9 +386,9 @@ public class CurvePProcessor
 
 		if (fDoseRedo)
 		{
-			float Fixer = FirstDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
+			float Fixer = ControlDoseBaseFix; // e.g., -12, -24 (Avogadro#), etc.
 
-			if (FirstDoseBaseFix == 0)
+			if (Fixer == 0.0f)
 				Fixer = 2 * NewD.get(1) - NewD.get(2);
 			NewD.set(0, Fixer);
 		}
@@ -1053,14 +1061,28 @@ public class CurvePProcessor
 		return (bootr);
 	}
 
+	public static float get_abs_dr_signal(List<Float> r)
+	{
+		// r is array of single-value responses (one per dose, such as averaged curve, etc.)
+		// calculates average signal (including control)
+		int n = r.size();
+		float sig = 0.0f;
+		for (int i = 0; i < n; i++)
+			sig += r.get(i);
+
+		return sig / n; // returns averaged absolute signal
+	}
+	
 	public static float get_dr_signal(List<Float> r)
-	{// r is array of single-value responses (one per dose, such as averaged curve, etc.)
+	{
+		// r is array of single-value responses (one per dose, such as averaged curve, etc.)
+		//calculates average signal relative to control
 		int n = r.size() - 1;
 		float base = r.get(0), sig = 0.0f;
 		for (int i = 1; i <= n; i++)
-			sig += r.get(i) - base;
+			sig += Math.abs( r.get(i) - base ); //updated to prevent canceling out signal contributions below and above baseline
 
-		return sig / n; // returns averaged signal relative to control (0-element)
+		return sig / n;
 	}
 
 	public static List<Float> get_combi_dr(int[] ndoses, List<Float> r)
@@ -1105,7 +1127,7 @@ public class CurvePProcessor
 		 * falling) bootstraps to estimate POD and AUC (only if nboot*p > 1), p is pvalue for confidence
 		 * interval boundaries on returned metrics returns list of 10 values: 1st = #fit-score, 0..1, (the
 		 * higher the fewer are the corrections) 2nd - 4th POD triplet (lower confidence, POD, upper
-		 * confidence) 5th - 7th AUC triplet 8th - 10th wAUC triplet
+		 * confidence) 5th - 7th AUC triplet 8th - 10th wAUC triplet, 11th - #fixed points
 		 */
 
 		List<Float> avR = calc_WgtAvResponses(allD, allR);
@@ -1126,7 +1148,7 @@ public class CurvePProcessor
 
 		// List<Float> dr0 = new ArrayList<Float>(), dr1 = new ArrayList<Float>();
 		List<Float> dr1 = new ArrayList<Float>();
-		int nfixed = monotonize(allD, allR, dr0, mono);
+		int nfixed = monotonize(allD, allR, dr0, mono), ntestdoses = unqD.size() - 1;
 
 		List<Float> xx_avR = calc_WgtAvResponses(allD, dr0);
 		Float myAUC = calc_AUC(luD, xx_avR);
@@ -1135,14 +1157,24 @@ public class CurvePProcessor
 
 		// normally, this very function is called only when significant response is detected,
 		// so the below signal-estimates should not be near-0
-		float asis_sgnl = Math.abs(get_dr_signal(avR)), corr_sgnl = Math.abs(get_dr_signal(xx_avR));
-		float fit_score = Math.min(asis_sgnl, corr_sgnl) / Math.max(asis_sgnl, corr_sgnl);
-		if (!Float.isFinite(fit_score))
-			fit_score = -1.0f;
-		if (nfixed == 0)
-			fit_score = 1.0f;
+		float asis_sgnl = get_dr_signal(avR), 
+				corr_sgnl = get_dr_signal(xx_avR);
 
-		if (myPOD > luD.get(luD.size() - 1))
+		float est1 = corr_sgnl / asis_sgnl;
+		if (corr_sgnl > asis_sgnl) 
+			est1 = asis_sgnl / corr_sgnl;
+		
+		float est2 = ntestdoses - nfixed;
+		est2 /= ntestdoses;
+
+		float fit_score = Math.min(est1, est2);
+
+		if (!Float.isFinite(fit_score))
+			fit_score = 0.0f;
+		else
+			fit_score = (float)Math.pow(fit_score , nfixed); //penalize progressively by number of corrections
+
+		if (myPOD > luD.get(ntestdoses))
 			myPOD = Float.NaN; // luD.get(luD.size()-1); //fixes NA PODs
 
 		List<Float> metrics = new ArrayList<Float>(); // results
@@ -1170,11 +1202,11 @@ public class CurvePProcessor
 		List<Float> bPOD = new ArrayList<Float>();
 		List<Float> bwAUC = new ArrayList<Float>();
 
-		List<Double> bFit = new ArrayList<Double>();
+		//List<Double> bFit = new ArrayList<Double>();
 		for (int s = 0; s < nboot; s++)
 		{
-			List<Float> curr_cdr = get_combi_dr(ngroups, allR);
-			bFit.add((double) get_dr_signal(curr_cdr));
+			//List<Float> curr_cdr = get_combi_dr(ngroups, allR);
+			//bFit.add((double) get_dr_signal(curr_cdr));
 
 			List<Float> curr_dr = get_dr_sample(ngroups, avR, sdR);
 			monotonize(allD, curr_dr, dr1, mono);
@@ -1200,7 +1232,7 @@ public class CurvePProcessor
 		fit_score = (float)ff.tTest((double)corr_sgnl, DoubleStream.of(fits).distinct().toArray());
 		//-------------------------- */
 
-		// update fitness based on non-parametric calculations
+		/*//no need to update fitness based on non-parametric calculations
 		double corr_median = Math.abs(bFit.get((bFit.size() >> 1)));
 		float fit_score2 = Math.min(asis_sgnl, (float) corr_median)
 				/ Math.max(asis_sgnl, (float) corr_median);
@@ -1209,7 +1241,7 @@ public class CurvePProcessor
 		fit_score = Math.max(fit_score2, fit_score);
 		if (nfixed == 0)
 			fit_score = 1.0f; // if nothing was fixed, set to perfect fit
-		// --------------------------
+		// -------------------------- */
 
 		// ascending sort
 		Collections.sort(bAUC);
@@ -1230,7 +1262,7 @@ public class CurvePProcessor
 		if (PODL > luD.get(luD.size() - 1))
 			PODL = Float.NaN;
 		if (PODU > luD.get(luD.size() - 1))
-			PODU = Float.NaN;
+			PODU = luD.get(luD.size() - 1); //reset to max test dose, if NA (this should be more robust than invalidating this metric - for partial curves
 
 		metrics.add(PODL);
 		metrics.add(myPOD); // myPOD was checked and fixed earlier, if invalid
@@ -1239,6 +1271,8 @@ public class CurvePProcessor
 		metrics.add(bwAUC.get(rank));
 		metrics.add(mywAUC);
 		metrics.add(bwAUC.get(lrank));
+		
+		metrics.add( (float)nfixed); //return #fixed points, just in case
 		return metrics;
 	}
 
