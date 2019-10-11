@@ -22,6 +22,7 @@ public class GCurvePResult extends StatResult
 	private List<Float>			correctedDoseResponseOffsetValues;
 	private List<Float>			weightedAverages;
 	private List<Float>			weightedStdDeviations;
+	private Double				adjustedControlDoseValue;
 
 	public GCurvePResult()
 	{
@@ -69,6 +70,16 @@ public class GCurvePResult extends StatResult
 	public String toString()
 	{
 		return "GCurveP";
+	}
+
+	public Double getAdjustedControlDoseValue()
+	{
+		return adjustedControlDoseValue;
+	}
+
+	public void setAdjustedControlDoseValue(Double adjustedControlDoseValue)
+	{
+		this.adjustedControlDoseValue = adjustedControlDoseValue;
 	}
 
 	@Override

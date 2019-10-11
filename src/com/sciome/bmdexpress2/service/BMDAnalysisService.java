@@ -334,6 +334,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			gResult.setBMDLwAuc(values.get(7).doubleValue());
 			gResult.setBMDwAuc(values.get(8).doubleValue());
 			gResult.setBMDUwAuc(values.get(9).doubleValue());
+			gResult.setAdjustedControlDoseValue(firstNonControlDose.doubleValue());
 			if (mono > 0)
 				gResult.setBmr(BMR_poz);
 			else

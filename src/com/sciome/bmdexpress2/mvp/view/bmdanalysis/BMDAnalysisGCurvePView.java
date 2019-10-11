@@ -19,15 +19,12 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
 import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -46,12 +43,6 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 	private ComboBox					bMRFactorComboBox;
 	@FXML
 	private ComboBox					pValueConfidenceInterval;
-
-	@FXML
-	private ComboBox					adjustControlDoseComboBox;
-
-	@FXML
-	private CheckBox					adjustControlDoseCheckBox;
 
 	@FXML
 	private ProgressBar					progressBar;
@@ -122,11 +113,7 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		inputParameters.setpValueCutoff(
 				Float.valueOf(this.pValueConfidenceInterval.getValue().toString()).floatValue());
 
-		if (this.adjustControlDoseCheckBox.selectedProperty().getValue())
-			inputParameters.setControlDoseAdjustment(
-					Double.valueOf(this.adjustControlDoseComboBox.valueProperty().getValue().toString()));
-		else
-			inputParameters.setControlDoseAdjustment(null);
+		inputParameters.setControlDoseAdjustment(null);
 
 		presenter.performBMDAnalysisGCurveP(inputParameters);
 	}
@@ -215,22 +202,6 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 
 		this.bootStrapsTextField.setText(String.valueOf(input.getBootStrapIterations()));
 
-		adjustControlDoseComboBox.getItems().addAll(initControlDoseAdjustment());
-		this.adjustControlDoseComboBox.setDisable(true);
-		adjustControlDoseCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (!newValue.booleanValue())
-					BMDAnalysisGCurvePView.this.adjustControlDoseComboBox.setDisable(true);
-				else
-					BMDAnalysisGCurvePView.this.adjustControlDoseComboBox.setDisable(false);
-			}
-		});
-
-		adjustControlDoseCheckBox.selectedProperty().setValue(false);
-
 	}
 
 	@Override
@@ -306,19 +277,6 @@ public class BMDAnalysisGCurvePView extends BMDExpressViewBase
 		factors.add(new BMRFactor("2.855148 (60%)", "2.855148"));
 		factors.add(new BMRFactor("3 SD", "3.0"));
 		return factors;
-	}
-
-	private List<Double> initControlDoseAdjustment()
-	{
-		List<Double> adjustments = new ArrayList<>();
-		adjustments.add(0.5);
-		adjustments.add(0.4);
-		adjustments.add(0.3);
-		adjustments.add(0.2);
-		adjustments.add(0.1);
-		adjustments.add(0.05);
-
-		return adjustments;
 	}
 
 }

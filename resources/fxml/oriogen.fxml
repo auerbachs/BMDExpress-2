@@ -138,13 +138,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" prefHeight="120.0" prefWidth="600.0">
                <children>
                   <TitledPane collapsible="false" text="NOTEL/LOTEL Determination" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="600.0">
                            <children>
-                              <GridPane prefHeight="141.0" prefWidth="600.0">
+                              <GridPane layoutY="11.0" prefHeight="80.0" prefWidth="600.0">
                                  <children>
                                     <TextField fx:id="pValueLoelTextField" prefHeight="20.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
                                        <GridPane.margin>
@@ -166,10 +166,6 @@
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <ProgressBar fx:id="oriogenProgressBar" prefHeight="20.0" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
-                                       <GridPane.margin>
-                                          <Insets left="10.0" right="10.0" />
-                                       </GridPane.margin></ProgressBar>
                                     <RadioButton fx:id="dunnettsRadioButton" mnemonicParsing="false" text="Dunnett's Test" GridPane.columnIndex="2">
                                        <GridPane.margin>
                                           <Insets left="10.0" />
@@ -180,22 +176,47 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </RadioButton>
-                                    <Label fx:id="oriogenProgressMessage" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="90.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="120.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="600.0">
+                           <children>
+                              <GridPane prefHeight="141.0" prefWidth="600.0">
+                                 <children>
+                                    <ProgressBar fx:id="oriogenProgressBar" prefHeight="20.0" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </ProgressBar>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="253.0" text="Number of Threads:" textAlignment="RIGHT">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="253.0" text="Number of Threads:" textAlignment="RIGHT" GridPane.rowIndex="2">
-                                       <GridPane.margin>
-                                          <Insets left="10.0" right="10.0" />
-                                       </GridPane.margin>
-                                    </Label>
-                                    <TextField fx:id="numberOfThreadsTextField" prefHeight="20.0" prefWidth="140.0" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <TextField fx:id="numberOfThreadsTextField" prefHeight="20.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label fx:id="datasetsCompletedLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" textAlignment="CENTER" GridPane.rowIndex="3">
+                                    <Label fx:id="datasetsCompletedLabel1" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" textAlignment="CENTER" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" />
                                        </GridPane.margin>
@@ -207,9 +228,6 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>

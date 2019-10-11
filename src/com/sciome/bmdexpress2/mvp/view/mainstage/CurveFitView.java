@@ -12,7 +12,6 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +48,6 @@ import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.ICurveFitView;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.NumberManager;
-import com.sciome.bmdexpress2.util.curvep.CurvePProcessor;
 import com.sciome.bmdexpress2.util.prefilter.OnewayAnova;
 import com.sciome.bmdexpress2.util.visualizations.curvefit.BMDoseModel;
 import com.sciome.charts.jfree.CustomJFreeLogAxis;
@@ -173,6 +170,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		{
 			doses[i] = bmdResults.getDoseResponseExperiment().getTreatments().get(i).getDose();
 		}
+
 		oneway = new OnewayAnova();
 		oneway.setVariablesXX(0, doses);
 
@@ -506,8 +504,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// model parameters and responses
 		double lastDose, mean, stdD;
 		int holder, counter, counter2;
-		Vector sv = new Vector();
-		XYSeries sh;// = new XYSeries("Data");
+		List<XYSeries> sv = new ArrayList();
+		XYSeries sh = null;// = new XYSeries("Data");
 		XYPlot plot = (XYPlot) chart.getPlot();
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
@@ -523,6 +521,28 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		bmdModel = new BMDoseModel(name, probe);
 		bmdModel.setParameters(parameters);
 		bmdModel.setEstimates(estimates);
+
+		// if this is gcurvep set the 0 dose to the internal adjusted control dose
+		if (bmdModel.getName().equalsIgnoreCase("gcurvep"))
+		{
+			GCurvePResult gcurvePResult = (GCurvePResult) theStatResult;
+
+			// set the first dose to be the adjusted control dose
+			if (gcurvePResult.getAdjustedControlDoseValue() != null)
+			{
+				double curr = -1.0;
+				for (int i = 0; i < doses.length; i++)
+				{
+					if (curr < 0.0)
+						curr = doses[i];
+					else if (curr != doses[i])
+						break;
+
+					doses[i] = gcurvePResult.getAdjustedControlDoseValue().floatValue();
+				}
+			}
+
+		}
 
 		if (!meanAndDeviationCheckBox.isSelected())
 		{
@@ -626,10 +646,15 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			// set the base data sets in the seriesSet collection
 			seriesSet = new XYSeriesCollection();
 			NUM_SERIES = sv.size();
-			for (Enumeration e = sv.elements(); e.hasMoreElements();)
+			int i = 0;
+
+			// a hack to fix the series name displayed as key. make sure no numbers are shown
+			for (XYSeries s : sv)
 			{
-				// add all the series into the dataset
-				seriesSet.addSeries((XYSeries) e.nextElement());
+				if (i == 0)
+					s.setKey("Data");
+				i++;
+				seriesSet.addSeries(s);
 			}
 
 		}
@@ -1157,19 +1182,19 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		for (int i = 0; i < doses.length; i++)
 			doseList.add((float) doses[i]);
 
-		List<Float> weightedMeans = CurvePProcessor.calc_WgtAvResponses(doseList, doseResponseValues);
-		List<Float> weightedStdDev = CurvePProcessor.calc_WgtSdResponses(doseList, doseResponseValues);
+		List<Float> weightedMeans = gcurvePResult.getWeightedAverages();
+		List<Float> weightedStdDev = gcurvePResult.getWeightedStdDeviations();
 
 		double[] responses = new double[doseResponseValues.size()];
 		for (int i = 0; i < doseResponseValues.size(); i++)
 			responses[i] = doseResponseValues.get(i).doubleValue();
 
-		lastDose = doses[0];
+		lastDose = doseList.get(0);
 		holder = 0;
 		int doseIndex = 0;
-		for (counter = 0; counter < doses.length; counter++)
+		for (counter = 0; counter < doseList.size(); counter++)
 		{
-			if (lastDose != doses[counter])
+			if (lastDose != doseList.get(counter))
 			{
 
 				Double[] dr = new Double[(counter - holder)];
@@ -1189,7 +1214,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				meanMinusSD.add(maskDose(lastDose), mean - stdD);
 				meanSeries.add(maskDose(lastDose), mean);
 				medianSeries.add(maskDose(lastDose), median);
-				lastDose = doses[counter];
+				lastDose = doseList.get(counter);
 				holder = counter;
 				doseIndex++;
 			}

@@ -125,11 +125,6 @@
                            <children>
                               <GridPane prefHeight="141.0" prefWidth="600.0">
                                  <children>
-                                    <ProgressBar fx:id="oneWayProgressBar" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
-                                       <padding>
-                                          <Insets left="10.0" right="10.0" />
-                                       </padding>
-                                    </ProgressBar>
                                     <TextField fx:id="pValueLoelTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
@@ -160,22 +155,47 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </RadioButton>
-                                    <Label fx:id="oneWayProgressMessage" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="30.0" prefWidth="140.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                       <GridPane.margin>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="190.0" prefWidth="598.0">
+                           <children>
+                              <GridPane prefHeight="141.0" prefWidth="600.0">
+                                 <children>
+                                    <ProgressBar fx:id="oneWayProgressBar" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                       <padding>
                                           <Insets left="10.0" right="10.0" />
-                                       </GridPane.margin>
-                                    </Label>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="253.0" text="Number of Threads:" GridPane.rowIndex="2">
+                                       </padding>
+                                    </ProgressBar>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="253.0" text="Number of Threads:">
                                        <padding>
                                           <Insets left="10.0" right="10.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="numberOfThreadsTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <TextField fx:id="numberOfThreadsTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" right="10.0" />
                                        </GridPane.margin>
                                     </TextField>
-                                    <Label fx:id="datasetsCompletedLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="30.0" prefWidth="140.0" textAlignment="CENTER" GridPane.rowIndex="3">
+                                    <Label fx:id="datasetsCompletedLabel1" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="30.0" prefWidth="140.0" textAlignment="CENTER" GridPane.rowIndex="1">
                                        <GridPane.margin>
                                           <Insets left="10.0" />
                                        </GridPane.margin>
@@ -187,9 +207,6 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
