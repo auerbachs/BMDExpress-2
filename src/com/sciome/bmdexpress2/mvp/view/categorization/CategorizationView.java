@@ -496,11 +496,13 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 					if (compoundTable == null)
 					{
 						compoundTable = CompoundTableLoader.getInstance().getCompoundTable();
-						List<String> list = new ArrayList<>();
+						List<AutoCompleteChemical> list = new ArrayList<>();
 						for (Compound c : compoundTable.getCompoundList())
 						{
-							list.add(c.getCAS());
-							list.add(c.getName());
+							AutoCompleteChemical ac = new AutoCompleteChemical();
+							ac.casrn = c.getCAS();
+							ac.name = c.getName();
+							list.add(ac);
 						}
 
 						addIVIVESearchTextBox(list);
@@ -790,15 +792,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		speciesComboBox.setDisable(false);
 	}
 
-	private void addIVIVESearchTextBox(List<String> list)
+	private void addIVIVESearchTextBox(List<AutoCompleteChemical> list)
 	{
 		TextField stringAutoCompleteSelector = new TextField();
 
 		// create the data to show in the CheckComboBox
-		final ObservableList<String> strings = FXCollections.observableArrayList(list);
-		Set<String> possibleValues = new HashSet<>(list);
+		final ObservableList<AutoCompleteChemical> strings = FXCollections.observableArrayList(list);
+		Set<AutoCompleteChemical> possibleValues = new HashSet<>(list);
 
-		Button clearButton = new Button("Clear");
 		ComboBox<String> howtodostring;
 		// Create the CheckComboBox with the data
 		howtodostring = new ComboBox<String>(
@@ -808,18 +809,18 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		howtodostring.setMaxWidth(150);
 		stringAutoCompleteSelector.setMinWidth(200);
 		TextFields.bindAutoCompletion(stringAutoCompleteSelector,
-				new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<String>>() {
+				new Callback<AutoCompletionBinding.ISuggestionRequest, Collection<AutoCompleteChemical>>() {
 
 					@Override
-					public Collection<String> call(ISuggestionRequest param)
+					public Collection<AutoCompleteChemical> call(ISuggestionRequest param)
 					{
-						List<String> returnList = new ArrayList<>();
-						for (String p : strings)
+						List<AutoCompleteChemical> returnList = new ArrayList<>();
+						for (AutoCompleteChemical p : strings)
 							if (howtodostring.getValue().equals("contains")
-									&& p.toLowerCase().contains(param.getUserText().toLowerCase()))
+									&& p.contains(param.getUserText()))
 								returnList.add(p);
 							else if (howtodostring.getValue().equals("begins with")
-									&& p.toLowerCase().startsWith(param.getUserText().toLowerCase()))
+									&& p.beginsWith(param.getUserText()))
 								returnList.add(p);
 
 						return returnList;
@@ -831,6 +832,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			if (newValue == null)
 				return;
 
+			if (newValue.contains(":"))
+				newValue = newValue.split(":")[0];
 			handle_auto_populate(newValue);
 			if (newValue.trim().equals(""))
 				return;
@@ -842,6 +845,30 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		HBox.setHgrow(stringAutoCompleteSelector, Priority.ALWAYS);
 		autoPopulateHBox.getChildren().add(howtodostring);
 		autoPopulateHBox.getChildren().add(stringAutoCompleteSelector);
+	}
+
+	private class AutoCompleteChemical
+	{
+		public String	casrn;
+		public String	name;
+
+		public boolean contains(String s)
+		{
+			return casrn.toLowerCase().contains(s.toLowerCase())
+					|| name.toLowerCase().contains(s.toLowerCase());
+		}
+
+		public boolean beginsWith(String s)
+		{
+			return casrn.toLowerCase().startsWith(s.toLowerCase())
+					|| name.toLowerCase().startsWith(s.toLowerCase());
+		}
+
+		@Override
+		public String toString()
+		{
+			return casrn + ": " + name;
+		}
 	}
 
 	private boolean checkIVIVE()
