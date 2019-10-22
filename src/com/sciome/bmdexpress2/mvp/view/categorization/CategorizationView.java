@@ -178,14 +178,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
 
 	// IVIVE
-	@FXML
-	private CheckBox						oneCompartmentCheckBox;
-	@FXML
-	private CheckBox						pbtkCheckBox;
-	@FXML
-	private CheckBox						threeCompartmentCheckBox;
-	@FXML
-	private CheckBox						threeCompartmentSSCheckBox;
 
 	@FXML
 	private TextField						nameTextField;
@@ -476,7 +468,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		presenter.initData(bmdResults, catAnalysisEnum);
 
 		// Initialize IVIVE check box listeners
-		toggleIVIVE(true);
+		toggleIVIVE(false);
 
 		if (!this.isInVitroCheckBox.isSelected())
 			iviveTab.setDisable(true);
@@ -515,87 +507,12 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		});
 
-		oneCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (newValue)
-				{
-					toggleIVIVE(false);
-				}
-				else if (!checkIVIVE())
-				{
-					toggleIVIVE(true);
-				}
-			}
-		});
-		pbtkCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (newValue)
-				{
-					toggleIVIVE(false);
-				}
-				else if (!checkIVIVE())
-				{
-					toggleIVIVE(true);
-				}
-			}
-		});
-		threeCompartmentCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (newValue)
-				{
-					toggleIVIVE(false);
-				}
-				else if (!checkIVIVE())
-				{
-					toggleIVIVE(true);
-				}
-			}
-		});
-		threeCompartmentSSCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
-					Boolean newValue)
-			{
-				if (newValue)
-				{
-					toggleIVIVE(false);
-				}
-				else if (!checkIVIVE())
-				{
-					toggleIVIVE(true);
-				}
-			}
-		});
-
 		speciesComboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue,
 					String newValue)
 			{
-				if (newValue.equals("Human"))
-				{
-					oneCompartmentCheckBox.setDisable(false);
-					threeCompartmentCheckBox.setDisable(false);
-					pbtkCheckBox.setDisable(false);
-				}
-				else
-				{
-					oneCompartmentCheckBox.setSelected(false);
-					threeCompartmentCheckBox.setSelected(false);
-					pbtkCheckBox.setSelected(false);
-					oneCompartmentCheckBox.setDisable(true);
-					threeCompartmentCheckBox.setDisable(true);
-					pbtkCheckBox.setDisable(true);
-				}
+
 			}
 		});
 
@@ -701,7 +618,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
-		if (isInVitroCheckBox.isSelected() && checkIVIVE())
+		if (isInVitroCheckBox.isSelected())
 		{
 			String name = nameTextField.getText();
 			String casrn = casrnTextField.getText();
@@ -743,14 +660,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 			// Set params with
 			List<Model> models = new ArrayList<Model>();
-			if (oneCompartmentCheckBox.isSelected())
-				models.add(Model.ONECOMP);
-			if (threeCompartmentCheckBox.isSelected())
-				models.add(Model.THREECOMP);
-			if (pbtkCheckBox.isSelected())
-				models.add(Model.PBTK);
-			if (threeCompartmentSSCheckBox.isSelected())
-				models.add(Model.THREECOMPSS);
+
+			models.add(Model.THREECOMPSS);
 
 			parameters.setModels(models);
 			double quantile = Double.valueOf(quantileTextField.getText());
@@ -869,12 +780,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		{
 			return casrn + ": " + name;
 		}
-	}
-
-	private boolean checkIVIVE()
-	{
-		return oneCompartmentCheckBox.isSelected() || pbtkCheckBox.isSelected()
-				|| threeCompartmentCheckBox.isSelected() || threeCompartmentSSCheckBox.isSelected();
 	}
 
 	@Override

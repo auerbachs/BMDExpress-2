@@ -542,7 +542,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 						if (!text.equals(newText))
 						{
 							// Check to see if the column was moved forward or backward
-							if (newText.equals(prevHeaderList.get(i + 1)))
+							if (i + 1 < prevHeaderList.size() && newText.equals(prevHeaderList.get(i + 1)))
 							{
 								int index = 0;
 								for (int j = 0; j < c.getList().size(); j++)

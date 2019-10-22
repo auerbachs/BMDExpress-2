@@ -152,26 +152,6 @@
                                        <children>
                                           <VBox prefHeight="500.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <HBox prefHeight="50.0" prefWidth="650.0">
-                                                   <children>
-                                                      <CheckBox fx:id="oneCompartmentCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="1 Compartment">
-                                                         <HBox.margin>
-                                                            <Insets left="50.0" />
-                                                         </HBox.margin>
-                                                      </CheckBox>
-                                                      <CheckBox fx:id="pbtkCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="PBTK" />
-                                                   </children>
-                                                </HBox>
-                                                <HBox prefHeight="50.0" prefWidth="650.0">
-                                                   <children>
-                                                      <CheckBox fx:id="threeCompartmentCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="275.0" text="3 Compartment">
-                                                         <HBox.margin>
-                                                            <Insets left="50.0" />
-                                                         </HBox.margin>
-                                                      </CheckBox>
-                                                      <CheckBox fx:id="threeCompartmentSSCheckBox" mnemonicParsing="false" prefHeight="50.0" prefWidth="325.0" text="3 Compartment-SS" />
-                                                   </children>
-                                                </HBox>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
                                                 <HBox fx:id="autoPopulateHBox" prefHeight="49.0" prefWidth="610.0">
                                                    <VBox.margin>

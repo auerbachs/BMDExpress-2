@@ -35,6 +35,7 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	private List<ProbeResponse>				probeResponses;
 	private List<ReferenceGeneAnnotation>	referenceGeneAnnotations;
 	private ChipInfo						chip;
+	private Long							chipCreationDate;
 	private AnalysisInfo					analysisInfo;
 
 	// default to logTransformation of base2
@@ -109,6 +110,16 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	public void setChip(ChipInfo chip)
 	{
 		this.chip = chip;
+	}
+
+	public Long getChipCreationDate()
+	{
+		return chipCreationDate;
+	}
+
+	public void setChipCreationDate(Long chipCreationDate)
+	{
+		this.chipCreationDate = chipCreationDate;
 	}
 
 	@Override

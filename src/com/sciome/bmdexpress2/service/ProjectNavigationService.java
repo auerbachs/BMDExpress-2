@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,10 +41,11 @@ import com.sciome.filter.DataFilterType;
 
 import javafx.collections.transformation.FilteredList;
 
-public class ProjectNavigationService implements IProjectNavigationService {
+public class ProjectNavigationService implements IProjectNavigationService
+{
 
-	private final int	MAX_FILES_FOR_MULTI_EXPORT	= 10;
-	
+	private final int MAX_FILES_FOR_MULTI_EXPORT = 10;
+
 	@SuppressWarnings("unchecked")
 	public void assignArrayAnnotations(ChipInfo chipInfo, List<DoseResponseExperiment> experiments,
 			FileAnnotation fileAnnotation)
@@ -68,10 +71,9 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			{
 				notes.add("Chip: " + chipInfo.getGeoName());
 				notes.add("Provider: " + chipInfo.getProvider());
+
 			}
-			notes.add("Log Transformation: " + doseResponseExperiment.getLogTransformation());
-			notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
-			notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
+
 			analysisInfo.setNotes(notes);
 			doseResponseExperiment.setAnalysisInfo(analysisInfo);
 
@@ -81,7 +83,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			Map<String, ReferenceGene> refCache = new HashMap<>();
 			List<ReferenceGeneAnnotation> referenceGeneAnnotations = new ArrayList<>();
 			// if there is no chip selected, the set it as Generic and load empty
-			// referencegeneannotation
+			// referencegeneannotation DateFormat
 			if (chipInfo.getName().equals("Generic"))
 			{
 				doseResponseExperiment.setReferenceGeneAnnotations(referenceGeneAnnotations);
@@ -91,6 +93,15 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			fileAnnotation.arrayProbesGenes();
 			fileAnnotation.arrayGenesSymbols();
 
+			doseResponseExperiment.setChipCreationDate(fileAnnotation.timeStamp);
+			Date date = new Date(fileAnnotation.timeStamp);
+			SimpleDateFormat df2 = new SimpleDateFormat("MM/dd/yy");
+
+			notes.add("Chip File Creation Date: " + df2.format(date));
+
+			notes.add("Log Transformation: " + doseResponseExperiment.getLogTransformation());
+			notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+			notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 			fileAnnotation.getGene2ProbeHash();
 
 			Hashtable<String, Vector> probesToGene = fileAnnotation.getProbe2GeneHash();
@@ -135,9 +146,11 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		}
 
 	}
-	
+
 	@Override
-	public String exportMultipleFiles(Map<String, Set<BMDExpressAnalysisDataSet>> header2Rows, File selectedFile) {
+	public String exportMultipleFiles(Map<String, Set<BMDExpressAnalysisDataSet>> header2Rows,
+			File selectedFile)
+	{
 		if (header2Rows.keySet().size() > MAX_FILES_FOR_MULTI_EXPORT)
 		{
 			BMDExpressEventBus.getInstance().post(new ShowErrorEvent(
@@ -151,7 +164,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		String filesCreateString = "The following file was created: ";
 		if (header2Rows.keySet().size() > 1)
 			filesCreateString = "The following files were created (please be aware the that multiple files were generated due to varying column headers : ";
-	
+
 		String fileName = selectedFile.getAbsolutePath();
 		String fileNameWOExtension = fileName.replaceAll("\\.txt$", "");
 		List<String> filesThatWereCreated = new ArrayList<>();
@@ -191,7 +204,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 					started = true;
 				}
 				writer.close();
-	
+
 			}
 			catch (IOException e)
 			{
@@ -203,12 +216,12 @@ public class ProjectNavigationService implements IProjectNavigationService {
 								+ ".  Please reduce the number of distinct datasets that you wish to export."));
 				e.printStackTrace();
 			}
-	
+
 		}
 		filesCreateString += String.join(",", filesThatWereCreated);
 		return filesCreateString;
 	}
-	
+
 	public void exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
 	{
 		try
@@ -225,21 +238,24 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			e.printStackTrace();
 		}
 	}
-	
-	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults, FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
+
+	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults,
+			FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
 	{
 		StringBuilder filterInformation = new StringBuilder();
 		filterInformation.append("Filter information: \n");
-		for(DataFilter filter : pack.getDataFilters())
+		for (DataFilter filter : pack.getDataFilters())
 		{
 			System.out.println(filter.getKey());
-			if(filter.getDataFilterType().equals(DataFilterType.CONTAINS) || filter.getDataFilterType().equals(DataFilterType.BETWEEN))
+			if (filter.getDataFilterType().equals(DataFilterType.CONTAINS)
+					|| filter.getDataFilterType().equals(DataFilterType.BETWEEN))
 				filterInformation.append(filter.toString() + "\n");
 			else
-				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " " + filter.getValues().get(0) + "\n");
+				filterInformation.append(filter.getKey() + "  " + filter.getDataFilterType().name() + " "
+						+ filter.getValues().get(0) + "\n");
 		}
 		filterInformation.append("\n");
-		
+
 		try
 		{
 			BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile), 1024 * 2000);
@@ -254,7 +270,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void exportDoseResponseExperiment(DoseResponseExperiment doseResponseExperiment, File selectedFile)
 	{
 		try
@@ -271,7 +287,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		}
 
 	}
-	
+
 	public void exportBMDResultBestModel(BMDResult bmdResults, File selectedFile)
 	{
 		try
@@ -323,7 +339,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void exportModelParameters(BMDProject bmdProject)
 	{
 		File selectedFile = new File("/tmp/modelParams.txt");
@@ -366,7 +382,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Object[][] showProbeToGeneMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 
@@ -399,10 +415,10 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		}
 		else
 			matrixData = new Object[0][];
-		
+
 		return matrixData;
 	}
-	
+
 	public Object[][] showGenesToProbeMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 
@@ -440,11 +456,14 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		}
 		return matrixData;
 	}
-	
+
 	/**
 	 * Creates a string using a list of rows from a data set
-	 * @param rows The list of rows to write
-	 * @param prependName A name to prepend to each of the rows
+	 * 
+	 * @param rows
+	 *            The list of rows to write
+	 * @param prependName
+	 *            A name to prepend to each of the rows
 	 * @return A string with the data from the rows
 	 */
 	private String getRowsToWrite(List<BMDExpressAnalysisRow> rows, String prependName)
@@ -459,7 +478,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 		}
 		return sb.toString();
 	}
-	
+
 	private String joinRowData(List<Object> datas, String delimiter)
 	{
 		StringBuffer bf = new StringBuffer();
@@ -483,7 +502,7 @@ public class ProjectNavigationService implements IProjectNavigationService {
 
 		return bf.toString();
 	}
-	
+
 	private String getExperimentToWrite(DoseResponseExperiment doseResponseExperiment, boolean prependname)
 	{
 		StringBuffer sb = new StringBuffer();

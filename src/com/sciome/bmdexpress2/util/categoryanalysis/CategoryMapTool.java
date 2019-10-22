@@ -218,12 +218,16 @@ public class CategoryMapTool
 					params.getCategoryFileParameters().getUsedColumns()[2],
 					params.getCategoryFileParameters().getMatrixData().getData(), probeCategoryGeneMaps);
 
-			File catFile = new File(params.getCategoryFileParameters().getFileName());
-			String catFileName = catFile.getName();
+			SimpleDateFormat df2 = new SimpleDateFormat("MM/dd/yy");
+			String chipDate = "NA";
+			if (doseResponseExperiment.getChipCreationDate() != null)
+			{
+				chipDate = df2.format(doseResponseExperiment.getChipCreationDate());
+			}
 
 			rstName += "_GENE";
 			analysisInfo.getNotes().add("Gene Level Analyses");
-
+			analysisInfo.getNotes().add("Gene Annotation File Creation Date: " + chipDate);
 			probeGeneMaps = probeCategoryGeneMaps;
 		}
 
