@@ -175,7 +175,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		oneway.setVariablesXX(0, doses);
 
 		// init holder series
-		dataSeries = new XYSeries("Data");
+		dataSeries = new XYSeries("Input Data");
 		modelSeries = new XYSeries("Model");
 		bmdSeries = new XYSeries("BMD");
 		bmdlSeries = new XYSeries("BMDL");
@@ -511,7 +511,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		String name = (String) modelNameComboBox.getSelectionModel().getSelectedItem();
 		double[] responses = this.probeResponseMap.get(probe);
 		setParameters(probe, name);
-		dataSeries = new XYSeries("Data");
+		dataSeries = new XYSeries("Input Data");
 		NUM_SERIES = 0;
 
 		// perform onewayANOVA on the responses provided by the modelParams var
@@ -591,7 +591,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 					stdD = org.jfree.data.statistics.Statistics.getStdDev(dr);
 
 					// make series
-					sh = new XYSeries("Data" + String.valueOf(counter));
+					sh = new XYSeries("Input Data" + String.valueOf(counter));
 					// sh = new XYSeries("Data");
 					sh.add(maskDose(doses[counter - 1]), mean); // add mean
 					sh.add(maskDose(doses[counter - 1]), (mean + stdD));// add Standard Deviation
@@ -652,7 +652,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			for (XYSeries s : sv)
 			{
 				if (i == 0)
-					s.setKey("Data");
+					s.setKey("Input Data");
 				i++;
 				seriesSet.addSeries(s);
 			}
