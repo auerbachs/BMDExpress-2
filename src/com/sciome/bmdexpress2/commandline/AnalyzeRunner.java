@@ -312,67 +312,68 @@ public class AnalyzeRunner
 		else
 			params.setDeduplicateGeneSets(catConfig.getDeduplicateGeneSets());
 
-		//Set IVIVE parameters
-		if(catConfig.getComputeIVIVE()) {
+		// Set IVIVE parameters
+		if (catConfig.getComputeIVIVE())
+		{
 			IVIVEConfig config = catConfig.getIviveConfig();
-			
+
 			IVIVEParameters iviveParameters = new IVIVEParameters();
-			//Set compound
+			// Set compound
 			Compound compound = null;
-			if(config.getUseAutoPopulate()) {
-				//Initialize InVitroData with clint and fub
+			if (config.getUseAutoPopulate())
+			{
+				// Initialize InVitroData with clint and fub
 				InVitroData data = new InVitroData();
-				data.setParam("Clint",  config.getCLint());
-				data.setParam("Funbound.plasma",  config.getFractionUnboundPlamsa());
+				data.setParam("Clint", config.getCLint());
+				data.setParam("Funbound.plasma", config.getFractionUnboundPlasma());
 				HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
 				map.put(config.getSpecies(), data);
-				
+
 				HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
-				
-				compound = new Compound(config.getCompoundName(),
-										config.getCompoundCASRN(),
-										config.getCompoundSMILES(),
-										config.getLogP(),
-										config.getMw(),
-										0.0,
-										config.getPkaAcceptor(),
-										config.getPkaDonor(),
-										map,
-										rBlood2Plasma);
-			} else {
+
+				compound = new Compound(config.getCompoundName(), config.getCompoundCASRN(),
+						config.getCompoundSMILES(), config.getLogP(), config.getMw(), 0.0,
+						config.getPkaAcceptor(), config.getPkaDonor(), map, rBlood2Plasma);
+			}
+			else
+			{
 				CompoundTable table = CompoundTable.getInstance();
 				table.loadDefault();
-				if(config.getCompoundName() != null) {
+				if (config.getCompoundName() != null)
+				{
 					compound = table.getCompoundByName(config.getCompoundName());
-				} else if(config.getCompoundCASRN() != null) {
+				}
+				else if (config.getCompoundCASRN() != null)
+				{
 					compound = table.getCompoundByCAS(config.getCompoundCASRN());
-				} else if(config.getCompoundSMILES() != null) {
+				}
+				else if (config.getCompoundSMILES() != null)
+				{
 					compound = table.getCompoundBySMILES(config.getCompoundSMILES());
 				}
 			}
 			iviveParameters.setCompound(compound);
-			
-			//Set models
+
+			// Set models
 			List<Model> models = new ArrayList<Model>();
-			if(config.getOneCompartment())
+			if (config.getOneCompartment())
 				models.add(Model.ONECOMP);
-			if(config.getPbtk())
+			if (config.getPbtk())
 				models.add(Model.PBTK);
-			if(config.getThreeCompartment())
+			if (config.getThreeCompartment())
 				models.add(Model.THREECOMP);
-			if(config.getThreeCompartmentSS())
+			if (config.getThreeCompartmentSS())
 				models.add(Model.THREECOMPSS);
 			iviveParameters.setModels(models);
-			
+
 			iviveParameters.setDoseUnits(config.getDoseUnits());
 			iviveParameters.setOutputUnits(config.getOutputUnits());
 			iviveParameters.setQuantile(config.getQuantile());
 			iviveParameters.setSpecies(config.getSpecies());
-			
-			
+
 			params.setIviveParameters(iviveParameters);
 		}
-		
+
 		if (catConfig instanceof DefinedConfig)
 		{
 			DefinedCategoryFileParameters probeFileParameters = new DefinedCategoryFileParameters();
@@ -412,7 +413,7 @@ public class AnalyzeRunner
 				params.setGoTermIdx(3);
 
 		}
-		
+
 		for (BMDResult bmdResult : bmdResultsToRun)
 		{
 			CategoryAnalysisResults catResults = new CategoryAnalysisRunner().runCategoryAnalysis(bmdResult,
@@ -455,12 +456,26 @@ public class AnalyzeRunner
 		// for simulation only?
 		inputParameters.setRestirctPower((bmdsConfig.getBmdsInputConfig().getRestrictPower()) ? 1 : 0);
 
+		// in practice bmrtype can only be set to relative deviation for non-log normalized data.
+		inputParameters.setBmrType(1);
+		if (bmdsConfig.getBmdsInputConfig().getBmrType() != null)
+			inputParameters.setBmrType(bmdsConfig.getBmdsInputConfig().getBmrType().intValue());
+
 		if (inputParameters.getConstantVariance() == 0)
 			inputParameters.setRho(inputParameters.getNegative());
 
 		// now set up the model selection parameters.
 		ModelSelectionParameters modelSelectionParameters = new ModelSelectionParameters();
 
+		// set up how to use the bmdl and bmdu
+		modelSelectionParameters
+				.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE);
+		if (bmdsConfig.getBmdsBestModelSelection().getBmdlBMDUUse().equals(2))
+			modelSelectionParameters
+					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_BUT_IGNORE);
+		else if (bmdsConfig.getBmdsBestModelSelection().getBmdlBMDUUse().equals(3))
+			modelSelectionParameters
+					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE);
 		BestPolyModelTestEnum polyTest = null;
 		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(2))
 			polyTest = BestPolyModelTestEnum.LOWEST_AIC;
@@ -695,12 +710,14 @@ public class AnalyzeRunner
 			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
-				project.getOneWayANOVAResults().add(anovaRunner.runANOVAFilter(processable,
-						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
-						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						preFilterConfig.getFoldChange(), preFilterConfig.getpValueLoel(),
-						preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
-						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
+				project.getOneWayANOVAResults()
+						.add(anovaRunner.runANOVAFilter(processable, preFilterConfig.getpValueCutoff(),
+								preFilterConfig.getUseMultipleTestingCorrection(),
+								preFilterConfig.getFilterOutControlGenes(),
+								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
+								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
+								preFilterConfig.getlotelTest().equals(2), project));
 			}
 		}
 		else if (preFilterConfig instanceof WilliamsConfig)
@@ -711,16 +728,18 @@ public class AnalyzeRunner
 				stdoutInfo = "Williams Trend Test on " + preFilterConfig.getInputName();
 			else
 				stdoutInfo = "Williams Trend Test";
-			
+
 			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
 				project.getWilliamsTrendResults().add(williamsRunner.runWilliamsTrendFilter(processable,
 						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						preFilterConfig.getFoldChange(), ((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
-						preFilterConfig.getpValueLoel(), preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
-						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
+						preFilterConfig.getFoldChange(),
+						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
+						preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+						preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
+						preFilterConfig.getlotelTest().equals(2), project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)
@@ -731,21 +750,22 @@ public class AnalyzeRunner
 				stdoutInfo = "Oriogen on " + preFilterConfig.getInputName();
 			else
 				stdoutInfo = "Oriogen";
-			
+
 			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
-				project.getOriogenResults().add(oriogenRunner.runOriogenFilter(processable,
-						preFilterConfig.getpValueCutoff(), preFilterConfig.getUseMultipleTestingCorrection(),
-						((OriogenConfig) preFilterConfig).getMpc(),
-						((OriogenConfig) preFilterConfig).getInitialBootstraps(),
-						((OriogenConfig) preFilterConfig).getMaxBootstraps(),
-						((OriogenConfig) preFilterConfig).getS0Adjustment(),
-						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
-						preFilterConfig.getFoldChange(),
-						preFilterConfig.getpValueLoel(),
-						preFilterConfig.getFoldChangeLoel(), preFilterConfig.getOutputName(),
-						preFilterConfig.getNumberOfThreads(), preFilterConfig.gettTest(), project));
+				project.getOriogenResults()
+						.add(oriogenRunner.runOriogenFilter(processable, preFilterConfig.getpValueCutoff(),
+								preFilterConfig.getUseMultipleTestingCorrection(),
+								((OriogenConfig) preFilterConfig).getMpc(),
+								((OriogenConfig) preFilterConfig).getInitialBootstraps(),
+								((OriogenConfig) preFilterConfig).getMaxBootstraps(),
+								((OriogenConfig) preFilterConfig).getS0Adjustment(),
+								preFilterConfig.getFilterOutControlGenes(),
+								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
+								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
+								preFilterConfig.getlotelTest().equals(2), project));
 			}
 		}
 		System.out.println("Finished " + stdoutInfo);
@@ -755,7 +775,6 @@ public class AnalyzeRunner
 	{
 
 		System.out.println("import expression: " + expressionConfig.getInputFileName());
-		List<File> files = new ArrayList<>();
 
 		// if the inputfilename is a directory, then loop through each file
 		// in the directory and import it as a doseresponse experiment.

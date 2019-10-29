@@ -30,6 +30,12 @@ public class BMDSBestModelSelectionConfig
 	// 3 Do not compute
 	private Integer	bestModelSelectionBMDLandBMDUConvergence;
 
+	// 1,2,3
+	// 1 Compute and utilize in best model selection
+	// 2 Compute but ignore non-convergence in best model selection
+	// 3 Do not compute
+	private Integer	bmdlBMDUUse;
+
 	public Integer getBestPolyTest()
 	{
 		return bestPolyTest;
@@ -98,6 +104,16 @@ public class BMDSBestModelSelectionConfig
 	public void setBestModelSelectionBMDLandBMDUConvergence(Integer bestModelSelectionBMDLandBMDUConvergence)
 	{
 		this.bestModelSelectionBMDLandBMDUConvergence = bestModelSelectionBMDLandBMDUConvergence;
+	}
+
+	public Integer getBmdlBMDUUse()
+	{
+		return bmdlBMDUUse;
+	}
+
+	public void setBmdlBMDUUse(Integer bmdlBMDUUse)
+	{
+		this.bmdlBMDUUse = bmdlBMDUUse;
 	}
 
 }

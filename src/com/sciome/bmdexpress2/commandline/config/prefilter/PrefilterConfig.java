@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = ANOVAConfig.class, name = "anova"),
-				@Type(value = WilliamsConfig.class, name = "williams"),
-				@Type(value = OriogenConfig.class, name = "oriogen")})
+		@Type(value = WilliamsConfig.class, name = "williams"),
+		@Type(value = OriogenConfig.class, name = "oriogen") })
 public abstract class PrefilterConfig
 {
 
@@ -26,11 +26,14 @@ public abstract class PrefilterConfig
 
 	private Double	foldChange;
 	private Double	foldChangeLoel;
-	private Double	pValueLoel;
-	
-	private Integer numberOfThreads					= 1;
-	
-	private Boolean	tTest							= false;
+	private Double	pValueLotel;
+
+	private Integer	numberOfThreads					= 1;
+
+	// 1,2
+	// 1 Dunnett's test
+	// 2 T-Test
+	private Integer	lotelTest						= 1;
 
 	public String getInputName()
 	{
@@ -102,39 +105,43 @@ public abstract class PrefilterConfig
 		this.foldChange = foldChange;
 	}
 
-	public Double getFoldChangeLoel() 
+	public Double getFoldChangeLoel()
 	{
 		return foldChangeLoel;
 	}
 
-	public void setFoldChangeLoel(Double foldChangeLoel) 
+	public void setFoldChangeLoel(Double foldChangeLoel)
 	{
 		this.foldChangeLoel = foldChangeLoel;
 	}
 
-	public Double getpValueLoel() 
+	public Double getpValueLotel()
 	{
-		return pValueLoel;
+		return pValueLotel;
 	}
 
-	public void setpValueLoel(Double pValueLoel) 
+	public void setpValueLotel(Double pValueLoel)
 	{
-		this.pValueLoel = pValueLoel;
+		this.pValueLotel = pValueLoel;
 	}
 
-	public Boolean gettTest() {
-		return tTest;
+	public Integer getlotelTest()
+	{
+		return lotelTest;
 	}
 
-	public void settTest(Boolean tTest) {
-		this.tTest = tTest;
+	public void setLotelTest(Integer tTest)
+	{
+		this.lotelTest = tTest;
 	}
 
-	public Integer getNumberOfThreads() {
+	public Integer getNumberOfThreads()
+	{
 		return numberOfThreads;
 	}
 
-	public void setNumberOfThreads(Integer numberOfThreads) {
+	public void setNumberOfThreads(Integer numberOfThreads)
+	{
 		this.numberOfThreads = numberOfThreads;
 	}
 }

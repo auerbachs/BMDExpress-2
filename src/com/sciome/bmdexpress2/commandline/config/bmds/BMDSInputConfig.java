@@ -2,6 +2,7 @@ package com.sciome.bmdexpress2.commandline.config.bmds;
 
 public class BMDSInputConfig
 {
+
 	private Integer	maxIterations;
 	private Double	confidenceLevel;
 
@@ -10,6 +11,8 @@ public class BMDSInputConfig
 	private Boolean	restrictPower;
 
 	private Double	bmrFactor;
+
+	private Integer	bmrType;
 
 	public Integer getMaxIterations()
 	{
@@ -59,6 +62,16 @@ public class BMDSInputConfig
 	public void setRestrictPower(Boolean restrict)
 	{
 		this.restrictPower = restrict;
+	}
+
+	public Integer getBmrType()
+	{
+		return bmrType;
+	}
+
+	public void setBmrType(Integer bmrType)
+	{
+		this.bmrType = bmrType;
 	}
 
 }
