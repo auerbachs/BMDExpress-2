@@ -337,41 +337,47 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			String species = (String) speciesComboBox.getSelectionModel().getSelectedItem();
 			Double clint = compound.getInVitroParam(species, "Clint", false);
 			Double fup = compound.getInVitroParam(species, "Funbound.plasma", false);
-			if (clint == null && fup == null)
-			{
-				clint = compound.getInVitroParam("Human", "Clint", false);
-				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
+			
+			if(clint == null || fup == null) {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
 				alert.setHeaderText(null);
-				alert.setContentText(
-						"Compound data for species not found. Human values were used for CLint and Fup");
+				StringBuilder builder = new StringBuilder();
+				builder.append("Some compound data was not found.\n");
+				if (clint == null)
+				{
+					clint = compound.getInVitroParam("Human", "Clint", false);
+					if(clint == null) 
+						builder.append("No Clint values were found - Defaulted to 0\n");
+					else 
+						builder.append("Human values were used for Clint.\n");
+				}
+				if (fup == null)
+				{
+					fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
+					if(clint == null) 
+						builder.append("No Fup values were found.\n");
+					else 
+						builder.append("Human values were used for Fup.\n");
+				}
+				alert.setContentText(builder.toString());
 				alert.showAndWait();
 			}
-			else if (clint == null)
-			{
-				clint = compound.getInVitroParam("Human", "Clint", false);
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Compound Data");
-				alert.setHeaderText(null);
-				alert.setContentText("Some compound data was not found. Human values were used for Clint");
-				alert.showAndWait();
-			}
-			else if (fup == null)
-			{
-				fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Compound Data");
-				alert.setHeaderText(null);
-				alert.setContentText("Some compound data was not found. Human values were used for Fup");
-				alert.showAndWait();
-			}
+			
 			// If we got a compound fill in the fields
 			nameTextField.setText(compound.getName());
 			casrnTextField.setText(compound.getCAS());
 			smilesTextField.setText(compound.getSMILES());
-			mwTextField.setText("" + compound.getMW());
-			logPTextField.setText("" + compound.getLogP());
+			if(compound.getMW() != null)
+				mwTextField.setText("" + compound.getMW());
+			else
+				mwTextField.setText("");
+			
+			if(compound.getLogP() != null)
+				logPTextField.setText("" + compound.getLogP());
+			else
+				logPTextField.setText("");
+			
 			String pkaDonorString = "";
 			String pkaAcceptorString = "";
 			if (!compound.getpKaDonors().toString().equals("[]"))
@@ -386,13 +392,17 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			}
 			pKaDonorTextField.setText(pkaDonorString);
 			pKaAcceptorTextField.setText(pkaAcceptorString);
-			if (compound.getInVitroParam(species, "Clint.pValue") == null
-					|| compound.getInVitroParam(species, "Clint.pValue") < .05)
+			if ((compound.getInVitroParam(species, "Clint.pValue") == null
+					|| compound.getInVitroParam(species, "Clint.pValue") < .05) &&
+					clint != null)
 				clintTextField.setText("" + clint);
 			else
 				clintTextField.setText("" + 0.0);
 
-			fubTextField.setText("" + fup);
+			if(fup != null)
+				fubTextField.setText("" + fup);
+			else
+				fubTextField.setText("");
 		}
 		else
 		{
