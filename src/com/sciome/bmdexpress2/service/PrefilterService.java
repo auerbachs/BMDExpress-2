@@ -327,6 +327,10 @@ public class PrefilterService implements IPrefilterService
 				count = 1;
 			}
 			current = doseVector[i];
+			
+			if(i == doseVector.length - 1) {
+				list.add(count);
+			}
 		}
 
 		data.setInputData(MatrixUtils.createRealMatrix(numericMatrix));
@@ -343,15 +347,15 @@ public class PrefilterService implements IPrefilterService
 		data.setTwoGroups(false);
 
 		int[] values = new int[30];
-		for (int i = 0; i < values.length; i++)
+		for (int i = 0; i < values.length - 1; i++)
 		{
 			if (i < list.size())
 			{
-				values[i] = list.get(i);
+				values[i + 1] = list.get(i);
 			}
 			else
 			{
-				values[i] = list.get(list.size() - 1);
+				values[i + 1] = 0;
 			}
 		}
 		data.setSampleSizeDefault(values);
