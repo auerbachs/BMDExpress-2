@@ -1,11 +1,5 @@
 package com.sciome.bmdexpress2.util;
 
-import java.util.Arrays;
-
-import org.controlsfx.control.action.ActionUtils;
-import org.controlsfx.control.tableview2.TableView2;
-import org.controlsfx.control.tableview2.actions.RowFixAction;
-
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,29 +24,8 @@ public class TableViewUtils
 	 * 
 	 * @param table
 	 */
-	public static void installCopyPasteHandler(TableView2<?> table)
+	public static void installCopyPasteHandler(TableView<?> table)
 	{
-		table.setRowHeaderWidth(55);
-
-		table.setRowHeaderContextMenuFactory((i, object) ->
-		{
-			ContextMenu rowCM = ActionUtils.createContextMenu(
-					Arrays.asList(new RowFixAction(table, i), ActionUtils.ACTION_SEPARATOR));
-			MenuItem copyMenu = new MenuItem("Copy");
-			copyMenu.setOnAction((ActionEvent event) ->
-			{
-				copySelectionToClipboard(table, false);
-			});
-
-			MenuItem copyMenuH = new MenuItem("Copy With Headers");
-			copyMenuH.setOnAction((ActionEvent event) ->
-			{
-				copySelectionToClipboard(table, true);
-			});
-			rowCM.getItems().addAll(copyMenu, copyMenuH);
-
-			return rowCM;
-		});
 
 		MenuItem copyMenu = new MenuItem("Copy");
 		copyMenu.setOnAction((ActionEvent event) ->
@@ -72,8 +45,7 @@ public class TableViewUtils
 		{
 			double columnHeaderHeight = table.lookup(".column-header-background").getBoundsInLocal()
 					.getHeight();
-			if (value.getButton().equals(MouseButton.SECONDARY) && value.getX() > table.getRowHeaderWidth()
-					&& value.getY() > columnHeaderHeight)
+			if (value.getButton().equals(MouseButton.SECONDARY) && value.getY() > columnHeaderHeight)
 			{
 				tableCM.show(table, value.getScreenX(), value.getScreenY());
 			}

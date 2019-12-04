@@ -63,6 +63,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -80,7 +81,7 @@ import javafx.util.Callback;
 public abstract class BMDExpressDataView<T> extends VBox
 		implements DataFilterComponentListener, IBMDExpressDataView
 {
-	protected TableView2<BMDExpressAnalysisRow>					tableView				= null;
+	protected TableView<BMDExpressAnalysisRow>					tableView				= null;
 	protected HBox												topHBox;
 	protected Label												totalItemsLabel;
 	protected CheckBox											enableFilterCheckBox;
@@ -153,9 +154,9 @@ public abstract class BMDExpressDataView<T> extends VBox
 				tableView = new TableView2<>();
 				tableView.getSelectionModel().setCellSelectionEnabled(false);
 				tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-				tableView.setRowFixingEnabled(true);
-				tableView.setRowHeaderVisible(true);
-				tableView.setColumnFixingEnabled(true);
+				// tableView.setRowFixingEnabled(true);
+				// tableView.setRowHeaderVisible(true);
+				// tableView.setColumnFixingEnabled(true);
 				TableViewUtils.installCopyPasteHandler(tableView);
 
 			}
