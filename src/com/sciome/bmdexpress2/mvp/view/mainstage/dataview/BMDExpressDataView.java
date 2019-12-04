@@ -15,7 +15,6 @@ import java.util.TreeSet;
 
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.action.ActionUtils;
-import org.controlsfx.control.tableview2.TableView2;
 import org.controlsfx.control.tableview2.actions.ColumnFixAction;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
@@ -151,7 +150,7 @@ public abstract class BMDExpressDataView<T> extends VBox
 						.getTableView(viewTypeKey + bmdAnalysisDataSet.getName());
 			else
 			{
-				tableView = new TableView2<>();
+				tableView = new TableView<>();
 				tableView.getSelectionModel().setCellSelectionEnabled(false);
 				tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 				// tableView.setRowFixingEnabled(true);
