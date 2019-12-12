@@ -25,7 +25,7 @@ public abstract class PrefilterConfig
 	private Boolean	useFoldChange					= true;
 
 	private Double	foldChange						= 2.0;
-	private Double	foldChangeLoel					= 1.5;
+	private Double	foldChangeLotel					= 1.5;
 	private Double	pValueLotel						= 0.05;
 
 	private Integer	numberOfThreads					= 1;
@@ -105,14 +105,14 @@ public abstract class PrefilterConfig
 		this.foldChange = foldChange;
 	}
 
-	public Double getFoldChangeLoel()
+	public Double getFoldChangeLotel()
 	{
-		return foldChangeLoel;
+		return foldChangeLotel;
 	}
 
-	public void setFoldChangeLoel(Double foldChangeLoel)
+	public void setFoldChangeLotel(Double foldChangeLoel)
 	{
-		this.foldChangeLoel = foldChangeLoel;
+		this.foldChangeLotel = foldChangeLoel;
 	}
 
 	public Double getpValueLotel()

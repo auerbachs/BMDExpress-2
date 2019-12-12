@@ -703,7 +703,7 @@ public class AnalyzeRunner
 								preFilterConfig.getUseMultipleTestingCorrection(),
 								preFilterConfig.getFilterOutControlGenes(),
 								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
-								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
 								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
 								preFilterConfig.getlotelTest().equals(2), project));
 			}
@@ -725,7 +725,7 @@ public class AnalyzeRunner
 						preFilterConfig.getFilterOutControlGenes(), preFilterConfig.getUseFoldChange(),
 						preFilterConfig.getFoldChange(),
 						((WilliamsConfig) preFilterConfig).getNumberOfPermutations(),
-						preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+						preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
 						preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
 						preFilterConfig.getlotelTest().equals(2), project));
 			}
@@ -751,7 +751,7 @@ public class AnalyzeRunner
 								((OriogenConfig) preFilterConfig).getS0Adjustment(),
 								preFilterConfig.getFilterOutControlGenes(),
 								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
-								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLoel(),
+								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
 								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
 								preFilterConfig.getlotelTest().equals(2), project));
 			}
