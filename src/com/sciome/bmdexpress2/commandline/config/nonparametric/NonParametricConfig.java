@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonSubTypes({ @Type(value = GCurvePConfig.class, name = "gcurvep") })
 public abstract class NonParametricConfig
 {
-	private Integer	bootstraps;
-	private Double	bmrFactor;
-	private Double	pValueConfidence;
+	private Integer	bootstraps			= 1000;
+	private Double	bmrFactor			= 3.0;
+	private Double	pValueConfidence	= 0.05;
 
 	// this could be dose response data or prefiltered data.
 	private String	inputCategory;
@@ -21,7 +21,7 @@ public abstract class NonParametricConfig
 	// name of output for the analysis
 	private String	outputName;
 
-	private Integer	numberOfThreads	= 1;
+	private Integer	numberOfThreads		= 1;
 
 	public Integer getBootStraps()
 	{

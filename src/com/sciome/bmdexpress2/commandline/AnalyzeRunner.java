@@ -515,18 +515,6 @@ public class AnalyzeRunner
 
 		modelSelectionParameters.setBestModelSelectionWithFlaggedHill(bestModeSel);
 
-		BestModelSelectionBMDLandBMDU bestModelSelBMDLBMDU = null;
-		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence().equals(1))
-			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE;
-		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence()
-				.equals(2))
-			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_BUT_IGNORE;
-		else if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionBMDLandBMDUConvergence()
-				.equals(3))
-			bestModelSelBMDLBMDU = BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE;
-
-		modelSelectionParameters.setBestModelSelectionBMDLandBMDU(bestModelSelBMDLBMDU);
-
 		if (bmdsConfig.getBmdsBestModelSelection().getBestModelSelectionWithFlaggedHill().equals(4))
 			modelSelectionParameters.setModFlaggedHillBMDFractionMinBMD(
 					bmdsConfig.getBmdsBestModelSelection().getModifyFlaggedHillWithFractionMinBMD());

@@ -18,7 +18,7 @@ public class ExpressionDataConfig
 	private String					platform;
 
 	// specify the log transformation
-	private LogTransformationEnum	logTransformation;
+	private LogTransformationEnum	logTransformation	= LogTransformationEnum.BASE2;
 
 	public String getInputFileName()
 	{

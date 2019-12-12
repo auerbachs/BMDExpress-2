@@ -18,15 +18,15 @@ public abstract class PrefilterConfig
 	// name of output for the analysis
 	private String	outputName;
 
-	private Double	pValueCutoff;
+	private Double	pValueCutoff					= 0.05;
 	private Boolean	useMultipleTestingCorrection	= false;
-	private Boolean	filterOutControlGenes			= false;
+	private Boolean	filterOutControlGenes			= true;
 
-	private Boolean	useFoldChange					= false;
+	private Boolean	useFoldChange					= true;
 
-	private Double	foldChange;
-	private Double	foldChangeLoel;
-	private Double	pValueLotel;
+	private Double	foldChange						= 2.0;
+	private Double	foldChangeLoel					= 1.5;
+	private Double	pValueLotel						= 0.05;
 
 	private Integer	numberOfThreads					= 1;
 

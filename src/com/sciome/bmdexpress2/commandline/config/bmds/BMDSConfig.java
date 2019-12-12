@@ -18,7 +18,7 @@ public class BMDSConfig
 	// name of output for the analysis
 	private String							outputName;
 
-	private Integer							killTime;
+	private Integer							killTime		= 600;
 
 	private Integer							numberOfThreads	= 1;
 

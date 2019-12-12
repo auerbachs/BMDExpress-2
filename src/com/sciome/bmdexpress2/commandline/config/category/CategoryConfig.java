@@ -12,13 +12,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 public abstract class CategoryConfig
 {
 	// name of bmdanalysis to cateogorize
-	private String	inputName;
+	private String		inputName;
 
 	// name of output for the analysis
 	private String		outputName;
 
-	private Boolean		removePromiscuousProbes;
-	private Boolean		removeBMDGreaterHighDose;
+	private Boolean		removePromiscuousProbes		= true;
+	private Boolean		removeBMDGreaterHighDose	= true;
 
 	private Double		bmdPValueCutoff;
 	private Double		bmdBMDLRatioMin;
@@ -32,10 +32,10 @@ public abstract class CategoryConfig
 	private Boolean		identifyConflictingProbeSets;
 	private Double		correlationCutoffForConflictingProbeSets;
 
-	private Boolean		deduplicateGeneSets	= false;
-	
-	private Boolean 	computeIVIVE;
-	private IVIVEConfig iviveConfig;
+	private Boolean		deduplicateGeneSets			= false;
+
+	private Boolean		computeIVIVE				= false;
+	private IVIVEConfig	iviveConfig;
 
 	public String getInputName()
 	{
@@ -187,19 +187,23 @@ public abstract class CategoryConfig
 		this.deduplicateGeneSets = deduplicateGeneSets;
 	}
 
-	public Boolean getComputeIVIVE() {
+	public Boolean getComputeIVIVE()
+	{
 		return computeIVIVE;
 	}
 
-	public void setComputeIVIVE(Boolean computeIVIVE) {
+	public void setComputeIVIVE(Boolean computeIVIVE)
+	{
 		this.computeIVIVE = computeIVIVE;
 	}
 
-	public IVIVEConfig getIviveConfig() {
+	public IVIVEConfig getIviveConfig()
+	{
 		return iviveConfig;
 	}
 
-	public void setIviveConfig(IVIVEConfig iviveConfig) {
+	public void setIviveConfig(IVIVEConfig iviveConfig)
+	{
 		this.iviveConfig = iviveConfig;
 	}
 }

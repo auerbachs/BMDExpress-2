@@ -3,16 +3,16 @@ package com.sciome.bmdexpress2.commandline.config.bmds;
 public class BMDSInputConfig
 {
 
-	private Integer	maxIterations;
-	private Double	confidenceLevel;
+	private Integer	maxIterations		= 250;
+	private Double	confidenceLevel		= 0.95;
 
-	private Boolean	constantVariance;
+	private Boolean	constantVariance	= true;
 
-	private Boolean	restrictPower;
+	private Boolean	restrictPower		= true;
 
-	private Double	bmrFactor;
+	private Double	bmrFactor			= 1.021;
 
-	private Integer	bmrType;
+	private Integer	bmrType				= 1;
 
 	public Integer getMaxIterations()
 	{
