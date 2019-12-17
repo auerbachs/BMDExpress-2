@@ -5,7 +5,7 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on December 13, 2019</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on December 17, 2019</h2>
 
 <h3>
 New Features
