@@ -734,16 +734,16 @@ public class PrefilterService implements IPrefilterService
 					prefilterResults.getPrefilterResults().get(index).setNoelLoelPValues(pValues);
 
 					// Loop through the doses (excluding control dose)
-					for (int j = 1; j < prefilterResults.getPrefilterResults().get(index).getFoldChanges().size(); j++)
+					for (int j = 0; j < prefilterResults.getPrefilterResults().get(index).getFoldChanges().size(); j++)
 					{
 						// If t test p value is less than parameter and fold change is above threshold, then set
 						// NOEL/LOEL
 						// and stop.
 						if (Math.abs(prefilterResults.getPrefilterResults().get(index).getFoldChanges()
-								.get(j - 1)) > foldFilterValue && pValues.get(j - 1) < pValue)
+								.get(j)) > foldFilterValue && pValues.get(j) < pValue)
 						{
-							prefilterResults.getPrefilterResults().get(index).setNoelDose(treatments.get(j - 1));
-							prefilterResults.getPrefilterResults().get(index).setLoelDose(treatments.get(j));
+							prefilterResults.getPrefilterResults().get(index).setNoelDose(treatments.get(j));
+							prefilterResults.getPrefilterResults().get(index).setLoelDose(treatments.get(j + 1));
 							break;
 						}
 					}
