@@ -164,7 +164,7 @@
          <dependency>
          	<groupId>sciome-commons</groupId>
   			<artifactId>math</artifactId>
- 	 		<version>1.04.0125</version>
+ 	 		<version>1.04.0128</version>
          </dependency>
 	</dependencies>	
   

@@ -54,6 +54,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -209,6 +210,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	TextField								stringAutoCompleteSelector;
 
 	CompoundTable							compoundTable	= null;
+	Compound								compound		= null;
 
 	private CategoryInput					input;
 	private final String					MGPERKGPERDAY	= "mg/kg/day";
@@ -325,8 +327,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 	public void handle_auto_populate(String textValue)
 	{
-
-		Compound compound = null;
+		compound = null;
 
 		compound = compoundTable.getCompoundByCAS(textValue);
 		if (compound == null)
@@ -403,6 +404,37 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				fubTextField.setText("" + fup);
 			else
 				fubTextField.setText("");
+			
+			//Initialize source hover
+			if(compound.getMWSource() != null)
+				mwTextField.setTooltip(new Tooltip("MW Source: " + compound.getMWSource()));
+			else
+				mwTextField.setTooltip(new Tooltip("No source available"));
+			
+			if(compound.getLogPSource() != null)
+				logPTextField.setTooltip(new Tooltip("LogP Source: " + compound.getLogPSource()));
+			else
+				logPTextField.setTooltip(new Tooltip("No source available"));
+			
+			if(compound.getpKaAcceptorsSource() != null)
+				pKaAcceptorTextField.setTooltip(new Tooltip("pKa Acceptor Source: " + compound.getpKaAcceptorsSource()));
+			else
+				pKaAcceptorTextField.setTooltip(new Tooltip("No source available"));
+			
+			if(compound.getpKaDonorsSource() != null)
+				pKaDonorTextField.setTooltip(new Tooltip("pKa Donor Source: " + compound.getpKaDonorsSource()));
+			else
+				pKaDonorTextField.setTooltip(new Tooltip("No source available"));
+			
+			if(compound.getIVdataSourceForSpecies(species, "Clint") != null)
+				clintTextField.setTooltip(new Tooltip("Clint Source: " + compound.getIVdataSourceForSpecies(species, "Clint")));
+			else
+				clintTextField.setTooltip(new Tooltip("No source available"));
+			
+			if(compound.getIVdataSourceForSpecies(species, "Funbound.plasma") != null)
+				fubTextField.setTooltip(new Tooltip("Fup Source: " + compound.getIVdataSourceForSpecies(species, "Funbound.plasma")));
+			else
+				fubTextField.setTooltip(new Tooltip("No source available"));
 		}
 		else
 		{
@@ -630,11 +662,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		if (isInVitroCheckBox.isSelected())
 		{
-			String name = nameTextField.getText();
-			String casrn = casrnTextField.getText();
-			String smiles = smilesTextField.getText();
-			double mw = Double.valueOf(mwTextField.getText());
-			double logP = Double.valueOf(logPTextField.getText());
+			compound.setName(nameTextField.getText());
+			compound.setCAS(casrnTextField.getText());
+			compound.setSMILES(smilesTextField.getText());
+			compound.setMW(Double.valueOf(mwTextField.getText()));
+			compound.setLogP(Double.valueOf(logPTextField.getText()));
 
 			// Read in pka donors and acceptors
 			ArrayList<Double> pkaDonors = new ArrayList<Double>();
@@ -653,6 +685,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				pkaAcceptors.add(scanner.nextDouble());
 			}
 			scanner.close();
+			compound.setpKaAcceptors(pkaAcceptors);
+			compound.setpKaDonors(pkaDonors);
 
 			// Initialize InVitroData with clint and fub
 			InVitroData data = new InVitroData();
@@ -660,13 +694,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			data.setParam("Funbound.plasma", Double.valueOf(fubTextField.getText()));
 			HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
 			map.put((String) speciesComboBox.getSelectionModel().getSelectedItem(), data);
+			compound.setIVdata(map);
 
 			HashMap<String, Double> rBlood2Plasma = new HashMap<String, Double>();
+			compound.setrBlood2Plasma(rBlood2Plasma);
 
 			IVIVEParameters parameters = new IVIVEParameters();
 
-			parameters.setCompound(new Compound(name, casrn, smiles, logP, mw, null, pkaAcceptors, pkaDonors,
-					map, rBlood2Plasma));
+			parameters.setCompound(compound);
 
 			// Set params with
 			List<Model> models = new ArrayList<Model>();

@@ -50,11 +50,23 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CASRN: " + params.getIviveParameters().getCompound().getCAS());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound SMILES: " + params.getIviveParameters().getCompound().getSMILES());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound MW: " + params.getIviveParameters().getCompound().getMW());
+			if(params.getIviveParameters().getCompound().getMWSource() != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound MW Source: " + params.getIviveParameters().getCompound().getMWSource().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound LogP: " + params.getIviveParameters().getCompound().getLogP());
+			if(params.getIviveParameters().getCompound().getLogPSource() != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound LogP Source: " + params.getIviveParameters().getCompound().getLogPSource().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Donor: " + params.getIviveParameters().getCompound().getpKaDonors());
+			if(params.getIviveParameters().getCompound().getpKaDonorsSource() != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Donor Source: " + params.getIviveParameters().getCompound().getpKaDonorsSource().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Acceptor: " + params.getIviveParameters().getCompound().getpKaAcceptors());
+			if(params.getIviveParameters().getCompound().getpKaAcceptorsSource() != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Acceptor Source: " + params.getIviveParameters().getCompound().getpKaAcceptorsSource().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Clint"));
+			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint") != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint").getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Funbound.plasma"));
+			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma") != null)
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma").getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Species: " + params.getIviveParameters().getSpecies());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Quantile: " + params.getIviveParameters().getQuantile());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Units: " + params.getIviveParameters().getDoseUnits());
