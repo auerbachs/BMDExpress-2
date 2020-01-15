@@ -5,10 +5,27 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on December 17, 2019</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 15, 2020</h2>
 
 <h3>
 New Features
+</h3>
+<ul>
+<li>The IVIVE chemical table has been updated to contain information about the source of the parameters that are read and used to to auto-populate the text fields.</li>
+<li>The Category Analysis output table has been updated to contain the a,b,c and d parameters used for the Fisher's Exact Test calculations.</li>
+<li>The b parameter of the Fisher's Exact Test is now based on the number of genes with BMD values that passed the category analysis filters.  Previously it was based on the number of genes with BMD values disregarding the filters applied prior to running the analysis</li>
+</ul>
+
+<h3>
+Bug Fixes
+</h3>
+<ul>
+<li>LOTEL and NOTEL values were not populated in the results during the prefilter analysis if the LOTEL was supposed to be the last dose group.  This has been corrected.</li>
+	
+</ul>
+
+<h3>
+New Features on December 17, 2019
 </h3>
 <ul>
 <li>IVIVE analysis over 700,000 chemicals and properties using HTTK</li>
