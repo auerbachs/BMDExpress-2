@@ -425,6 +425,10 @@ public class CategoryMapTool
 		// get total number of genes that are in this set that shows some relation here.
 		int chgTotal = categoryGeneMap.getSubGeneCount();
 
+		Set<String> genesThatPassedFilters = new HashSet<>();
+		List<Integer> geneCountPerCategoryThatPassed = new ArrayList<>();
+		List<Integer> geneCountPerCategory = new ArrayList<>();
+
 		for (int i = 0; i < rows; i++)
 		{
 			// TODO: turn this into a factory
@@ -562,15 +566,14 @@ public class CategoryMapTool
 			subList = bmdStats.getFinalList(subList, subHashG2Ids, removedProbes);
 
 			sub = subList.size();
-			categoryAnalysisResult.setGenesThatPassedAllFilters(sub);
-			// calculate Fisher's exact test values
-			double[] triple = fisherExactTest(sub, chgTotal, all, allTotal);
-			categoryAnalysisResult.setFishersExactLeftPValue(triple[0]);
-			categoryAnalysisResult.setFishersExactRightPValue(triple[1]);
-			categoryAnalysisResult.setFishersExactTwoTailPValue(triple[2]);
+
+			// keep list of genecount per category for fisher's exact test calculation
+			geneCountPerCategoryThatPassed.add(sub);
+			geneCountPerCategory.add(all);
 			categoryAnalysisResult.setPercentage(probeGeneMaps.percentage(sub, all, 2));
-			// categoryAnalysisResult.setGeneIDs(probeGeneMaps.vectorGenes2String(subList));
-			// categoryAnalysisResult.setProbeIds(probeGeneMaps.genesProbes2String(subList));
+			// maintain a list of unique genes that passed filters...for fisher's test
+			genesThatPassedFilters.addAll(subList);
+			categoryAnalysisResult.setGenesThatPassedAllFilters(sub);
 
 			if (params.isIdentifyConflictingProbeSets()) // need to initialize this
 			{
@@ -599,6 +602,28 @@ public class CategoryMapTool
 
 		if (params.getDeduplicateGeneSets())
 			categoryAnalysisResults.deDuplicateGeneSets();
+
+		// loop through each category analysis result and calculate fishers exact test
+		int i = 0;
+		int genesThatPassedAllFilters = genesThatPassedFilters.size();
+		for (CategoryAnalysisResult categoryAnalysisResult : categoryAnalysisResults
+				.getCategoryAnalsyisResults())
+		{
+			Integer geneCountForThisCategory = geneCountPerCategory.get(i);
+			Integer geneCountForThisCategoryResult = geneCountPerCategoryThatPassed.get(i++);
+			FisherResult fisherResult = fisherExactTest(geneCountForThisCategoryResult,
+					genesThatPassedAllFilters, geneCountForThisCategory, allTotal);
+			categoryAnalysisResult.setFishersA(fisherResult.a);
+			categoryAnalysisResult.setFishersB(fisherResult.b);
+			categoryAnalysisResult.setFishersC(fisherResult.c);
+			categoryAnalysisResult.setFishersD(fisherResult.d);
+
+			categoryAnalysisResult.setFishersExactLeftPValue(fisherResult.left);
+			categoryAnalysisResult.setFishersExactRightPValue(fisherResult.right);
+			categoryAnalysisResult.setFishersExactTwoTailPValue(fisherResult.twoTail);
+
+		}
+
 		return categoryAnalysisResults;
 	}
 
@@ -606,7 +631,7 @@ public class CategoryMapTool
 	 *
 	 * @return left, right and two-tail p-Values
 	 */
-	private double[] fisherExactTest(int sub, int chgTotal, int all, int allTotal)
+	private FisherResult fisherExactTest(int sub, int chgTotal, int all, int allTotal)
 	{
 		// sub = number of genes that has bmd for a go term
 		// chgTotal = total number of genes that has a bmd
@@ -618,6 +643,7 @@ public class CategoryMapTool
 		int d = allTotal - a - b - c;
 		double[] pValues = { 1, 1, 1 };
 
+		FisherResult fr = new FisherResult();
 		if (a >= 0 && b >= 0 && c >= 0 && d >= 0)
 		{
 			FishersExact test = new FishersExact(a, b, c, d);
@@ -625,9 +651,17 @@ public class CategoryMapTool
 			pValues[1] = NumberManager.numberFormat(5, test.pRight());
 			pValues[2] = NumberManager.numberFormat(5, test.twoTail());
 
+			fr.a = a;
+			fr.b = b;
+			fr.c = c;
+			fr.d = d;
+			fr.left = pValues[0];
+			fr.right = pValues[1];
+			fr.twoTail = pValues[2];
+
 		}
 
-		return pValues;// NumberManager.numberFormat(4, pValues);
+		return fr;// NumberManager.numberFormat(4, pValues);
 	}
 
 	// for default annotations.
@@ -660,6 +694,18 @@ public class CategoryMapTool
 			genes2Probe.get(probe).add(gene);
 
 		}
+
+	}
+
+	private class FisherResult
+	{
+		Integer	a		= null;
+		Integer	b		= null;
+		Integer	c		= null;
+		Integer	d		= null;
+		Double	left	= null;
+		Double	right	= null;
+		Double	twoTail	= null;
 
 	}
 

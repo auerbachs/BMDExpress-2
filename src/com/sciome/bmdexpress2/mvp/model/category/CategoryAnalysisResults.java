@@ -83,6 +83,11 @@ public class CategoryAnalysisResults extends BMDExpressAnalysisDataSet implement
 	public static final String				FISHERS_TWO_TAIL						= "Fisher's Exact Two Tail";
 	public static final String				NUM_SIGNFICANT_GENES					= "Input Genes";
 
+	public static final String				FISHERS_A								= "Fisher's A Parameter";
+	public static final String				FISHERS_B								= "Fisher's B Parameter";
+	public static final String				FISHERS_C								= "Fisher's C Parameter";
+	public static final String				FISHERS_D								= "Fisher's D Parameter";
+
 	public static final String				FISHERS_LEFT							= "Fisher's Exact Left P-Value";
 	public static final String				FISHERS_RIGHT							= "Fisher's Exact Right P-Value";
 	public static final String				FISHERS_TWO_TAIL_NEG_LOG				= "Negative Log of Fisher's Two Tail";
