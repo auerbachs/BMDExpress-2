@@ -600,9 +600,6 @@ public class CategoryMapTool
 
 		}
 
-		if (params.getDeduplicateGeneSets())
-			categoryAnalysisResults.deDuplicateGeneSets();
-
 		// loop through each category analysis result and calculate fishers exact test
 		int i = 0;
 		int genesThatPassedAllFilters = genesThatPassedFilters.size();
@@ -624,6 +621,8 @@ public class CategoryMapTool
 
 		}
 
+		if (params.getDeduplicateGeneSets())
+			categoryAnalysisResults.deDuplicateGeneSets();
 		return categoryAnalysisResults;
 	}
 
