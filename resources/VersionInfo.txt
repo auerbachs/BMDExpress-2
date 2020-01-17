@@ -5,10 +5,19 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 15, 2020</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 17, 2020</h2>
 
 <h3>
-New Features
+Bug Fixes
+</h3>
+<ul>
+<li>Fisher's Exact Test was not working correctly when "Eliminate Gene Set Redundancy" was selected.  This issue has been fixed.</li>
+	
+	
+</ul>
+
+<h3>
+New Features on January 15, 2020
 </h3>
 <ul>
 <li>The IVIVE chemical table has been updated to contain information about the source of the parameters that are read and used to to auto-populate the text fields.</li>
@@ -21,7 +30,6 @@ Bug Fixes
 </h3>
 <ul>
 <li>LOTEL and NOTEL values were not populated in the results during the prefilter analysis if the LOTEL was supposed to be the last dose group.  This has been corrected.</li>
-	
 </ul>
 
 <h3>
