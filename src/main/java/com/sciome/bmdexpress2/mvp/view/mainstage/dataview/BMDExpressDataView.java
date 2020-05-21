@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.action.ActionUtils;
-import org.controlsfx.control.tableview2.actions.ColumnFixAction;
+//import org.controlsfx.control.tableview2.actions.ColumnFixAction;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
@@ -459,8 +459,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 						continue;
 
 					tc = new TableColumn(columnOrder.get(i));
-					ContextMenu cm = ActionUtils.createContextMenu(Arrays.asList(new ColumnFixAction(tc)));
-					tc.setContextMenu(cm);
+				//	ContextMenu cm = ActionUtils.createContextMenu(Arrays.asList(new ColumnFixAction(tc)));
+				//	tc.setContextMenu(cm);
 
 					if (columnHeaders2 != null)
 					{

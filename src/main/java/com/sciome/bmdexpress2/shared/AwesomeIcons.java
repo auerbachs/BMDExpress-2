@@ -1,9 +1,7 @@
 package com.sciome.bmdexpress2.shared;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 
 public class AwesomeIcons
 {
@@ -267,12 +265,21 @@ public class AwesomeIcons
 	{
 		Label icon = createIconLabel(iconName);
 		icon.setStyle("-fx-font-size: " + iconSize + "px;");
-		return ButtonBuilder.create().text(text).graphic(icon).build();
+
+		Button b = new Button();
+		b.setText(text);
+		b.setGraphic(icon);
+		return b;
+
 	}
 
 	public static Label createIconLabel(String iconName, String style)
 	{
-		return LabelBuilder.create().text(iconName).style(style).build();
+		Label l = new Label();
+		l.setText(iconName);
+		l.setStyle(style);
+		return l;
+
 	}
 
 	public static Label createIconLabel(String iconName)
@@ -282,7 +289,11 @@ public class AwesomeIcons
 
 	public static Label createIconLabel(String iconName, int iconSize)
 	{
-		return LabelBuilder.create().text(iconName).styleClass("icons")
-				.style("-fx-font-size: " + iconSize + "px;").build();
+		Label l = new Label();
+		l.setText(iconName);
+		l.setStyle("-fx-font-size: " + iconSize + "px;");
+		return l;
+		// return LabelBuilder.create().text(iconName).styleClass("icons")
+		// .style("-fx-font-size: " + iconSize + "px;").build();
 	}
 }

@@ -26,7 +26,7 @@ public class MatrixSwingNodeView extends BMDExpressViewBase implements IMatrixSw
 {
 
 	@FXML
-	SwingNode swingNode;
+	VBox swingNode;
 
 	@FXML
 	Button doneButton;
@@ -72,49 +72,10 @@ public class MatrixSwingNodeView extends BMDExpressViewBase implements IMatrixSw
 	public void initData(String headerText, MatrixData matrixData)
 	{
 		headerLabel.setText(headerText + ", " + matrixData.rows() + " rows.");
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run()
-			{
-				MatrixDataPreviewer pane = new MatrixDataPreviewer(matrixData);
-				swingNode.setContent(pane);
-			}
-		});
-
-		this.swingNode.getScene().widthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth,
-					Number newSceneWidth)
-			{
-
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run()
-					{
-						swingNode.getContent().repaint();
-					}
-				});
-
-			}
-		});
-		this.swingNode.getScene().heightProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2)
-			{
-
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run()
-					{
-						swingNode.getContent().repaint();
-					}
-				});
-
-			}
-		});
-
+		swingNode.getChildren().clear();
+		MatrixDataPreviewer pane = new MatrixDataPreviewer(matrixData);
+		swingNode.getChildren().add(pane);
+		
 	}
 
 	@Override

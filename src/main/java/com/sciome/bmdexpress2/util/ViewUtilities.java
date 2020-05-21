@@ -2,14 +2,12 @@ package com.sciome.bmdexpress2.util;
 
 import java.io.File;
 
-import javax.swing.SwingUtilities;
 
 import com.sciome.bmdexpress2.mvp.view.mainstage.MatrixSwingNodeView;
 import com.sciome.bmdexpress2.shared.BMDExpressFXUtils;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.MatrixDataPreviewer;
 
-import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -53,19 +51,8 @@ public class ViewUtilities
 		dialog.initOwner(owner);
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.setResizable(false);
-		SwingNode swingNode = new SwingNode();
-		dialog.getDialogPane().setContent(swingNode);
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run()
-			{
-				MatrixDataPreviewer pane = new MatrixDataPreviewer(matrixData);
-				swingNode.setContent(pane);
-				swingNode.getContent().repaint();
-			}
-		});
-
+		MatrixDataPreviewer pane = new MatrixDataPreviewer(matrixData);
+		dialog.getDialogPane().setContent(pane);
 		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 		dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);

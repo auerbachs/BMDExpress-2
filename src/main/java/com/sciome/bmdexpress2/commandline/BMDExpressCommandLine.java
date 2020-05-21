@@ -13,7 +13,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sciome.bmdexpress2.commandline.config.RunConfig;
@@ -286,17 +285,17 @@ public class BMDExpressCommandLine
 		{
 			mapper.writerWithDefaultPrettyPrinter().writeValue(testFile, runConfig);
 		}
-		catch (JsonGenerationException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		catch (JsonMappingException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -171,16 +171,17 @@ public class BMDExpressConstants
 
 	private String getBaseDir()
 	{
-		Properties applicationProperties = new Properties();
-		InputStream in = this.getClass().getResourceAsStream("/application.properties");
+
 		try
 		{
+			Properties applicationProperties = new Properties();
+			InputStream in = this.getClass().getResourceAsStream("/application.properties");
 			applicationProperties.load(in);
 			String basedir = applicationProperties.getProperty("bmdexpress2.homedir");
 			if (basedir != null && basedir != "")
 				return basedir;
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 

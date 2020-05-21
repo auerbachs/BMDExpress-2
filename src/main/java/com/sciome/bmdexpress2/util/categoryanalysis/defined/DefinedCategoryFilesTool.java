@@ -14,25 +14,21 @@ package com.sciome.bmdexpress2.util.categoryanalysis.defined;
 import java.io.File;
 import java.util.Optional;
 
-import javax.swing.SwingUtilities;
 
 import com.sciome.bmdexpress2.util.FileIO;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.ViewUtilities;
 
-import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import javafx.util.Callback;
 
 /**
  * The class for CategoryTool
- *
- * @version 0.5, 10/12/2005
- * @author Longlong Yang
  */
 public class DefinedCategoryFilesTool
 {
@@ -133,28 +129,13 @@ public class DefinedCategoryFilesTool
 		dialog.initOwner(owner);
 		dialog.initModality(Modality.WINDOW_MODAL);
 
-		SwingNode swingNode = new SwingNode();
+		VBox swingNode = new VBox();
 		dialog.getDialogPane().setContent(swingNode);
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run()
-			{
-				try
-				{
-					MultiInputPane mpane = new MultiInputPane(message, prompts, colNames, 1);
+		MultiInputPane mpane = new MultiInputPane(message, prompts, colNames, 1);
 
-					swingNode.setContent(mpane);
-					mpane.setVisible(true);
-					swingNode.getContent().repaint();
-				}
-				catch (Exception e)
-				{
-
-				}
-			}
-
-		});
+		swingNode.getChildren().add(mpane);
+			
 
 		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
@@ -166,12 +147,12 @@ public class DefinedCategoryFilesTool
 			public int[] call(ButtonType b)
 			{
 
-				if (b == buttonTypeOk)
-				{
-					MultiInputPane mpane = (MultiInputPane) swingNode.getContent();
+				//if (b == buttonTypeOk)
+				//{
+				//	MultiInputPane mpane = (MultiInputPane) swingNode.getContent();
 
-					return mpane.getIndices();
-				}
+				//	return mpane.getIndices();
+				//}
 
 				return null;
 			}
