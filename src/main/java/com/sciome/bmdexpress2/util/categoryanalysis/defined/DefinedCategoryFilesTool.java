@@ -14,7 +14,6 @@ package com.sciome.bmdexpress2.util.categoryanalysis.defined;
 import java.io.File;
 import java.util.Optional;
 
-
 import com.sciome.bmdexpress2.util.FileIO;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.ViewUtilities;
@@ -135,7 +134,6 @@ public class DefinedCategoryFilesTool
 		MultiInputPane mpane = new MultiInputPane(message, prompts, colNames, 1);
 
 		swingNode.getChildren().add(mpane);
-			
 
 		ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
@@ -147,12 +145,10 @@ public class DefinedCategoryFilesTool
 			public int[] call(ButtonType b)
 			{
 
-				//if (b == buttonTypeOk)
-				//{
-				//	MultiInputPane mpane = (MultiInputPane) swingNode.getContent();
-
-				//	return mpane.getIndices();
-				//}
+				if (b == buttonTypeOk)
+				{
+					return mpane.getIndices();
+				}
 
 				return null;
 			}
