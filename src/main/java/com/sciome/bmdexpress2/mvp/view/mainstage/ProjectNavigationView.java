@@ -46,6 +46,7 @@ import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -94,6 +95,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
 	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
 	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
+	private VBox checkListVBox;
 
 	ProjectNavigationPresenter								presenter;
 	private boolean											fireSelection				= false;
@@ -129,6 +131,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		hbox.getChildren().add(checkAllButton);
 		hbox.getChildren().add(clearButton);
 		getChildren().add(hbox);
+		checkListVBox = new VBox();
+		getChildren().add(checkListVBox);
 		initializeAnalysisList();
 
 		checkAllButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -218,7 +222,6 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		presenter.clearMainDataView();
 		clearChecks(null);
 		this.getChildren().remove(analysisCheckList);
-		initializeAnalysisList();
 		initializeDataSetMap();
 		refreshAnalysisList(this.dataGroupCombo.getValue());
 
@@ -1384,8 +1387,10 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	private void refreshAnalysisList(String forDataGroup)
 	{
+initializeAnalysisList();
 		clearChecks(null);
-		analysisCheckList.getItems().setAll(new ArrayList<>(dataSetMap.get(forDataGroup)));
+		List<BMDExpressAnalysisDataSet> dataset = dataSetMap.get(forDataGroup);
+		analysisCheckList.getItems().addAll(new ArrayList<>(dataset));
 		analysisCheckList.refresh();
 		presenter.clearMainDataView();
 	}
@@ -1413,10 +1418,12 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	private void initializeAnalysisList()
 	{
+		checkListVBox.getChildren().clear();
 
 		analysisCheckList = new CheckListView<>();
 		analysisCheckList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		getChildren().add(analysisCheckList);
+		checkListVBox.getChildren().add(analysisCheckList);
+		VBox.setVgrow(checkListVBox, Priority.ALWAYS);
 		VBox.setVgrow(analysisCheckList, Priority.ALWAYS);
 
 		analysisCheckList.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1444,6 +1451,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			}
 		});
 
+		
+		
 		analysisCheckList.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
