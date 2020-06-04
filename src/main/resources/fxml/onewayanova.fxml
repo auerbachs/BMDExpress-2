@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="600.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView">
+<BorderPane maxHeight="672.0" maxWidth="643.0" minHeight="250.0" minWidth="600.0" prefHeight="641.0" prefWidth="643.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView">
    <center>
       <VBox prefHeight="700.0" prefWidth="600.0">
          <children>
-            <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
+            <AnchorPane minHeight="-Infinity" prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
                <children>
                   <TitledPane collapsible="false" prefHeight="170.0" prefWidth="600.0" text="One Way Anova" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
@@ -71,11 +71,11 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="125.0" prefWidth="600.0">
+            <AnchorPane minHeight="-Infinity" prefHeight="113.0" prefWidth="632.0">
                <children>
-                  <TitledPane collapsible="false" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TitledPane collapsible="false" prefHeight="142.0" prefWidth="600.0" text="Fold Change " AnchorPane.bottomAnchor="-64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
+                      <AnchorPane minHeight="-Infinity" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
                            <children>
                               <GridPane prefHeight="114.0" prefWidth="598.0">
                                  <children>
@@ -117,13 +117,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+            <AnchorPane minHeight="-Infinity" prefHeight="124.0" prefWidth="632.0">
                <children>
                   <TitledPane collapsible="false" text="NOTEL/LOTEL Determination" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="190.0" prefWidth="598.0">
                            <children>
-                              <GridPane prefHeight="141.0" prefWidth="600.0">
+                              <GridPane prefHeight="70.0" prefWidth="600.0">
                                  <children>
                                     <TextField fx:id="pValueLoelTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
                                        <GridPane.margin>
@@ -162,8 +162,8 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="87.0" minHeight="0.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="112.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
                            </children>
@@ -172,13 +172,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="600.0">
+            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="119.0" prefWidth="632.0">
                <children>
-                  <TitledPane collapsible="false" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TitledPane collapsible="false" layoutY="58.0" prefHeight="92.0" prefWidth="600.0" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="190.0" prefWidth="598.0">
+                        <AnchorPane minWidth="0.0" prefHeight="89.0" prefWidth="630.0">
                            <children>
-                              <GridPane prefHeight="116.0" prefWidth="607.0">
+                              <GridPane prefHeight="59.0" prefWidth="607.0">
                                  <children>
                                     <ProgressBar fx:id="oneWayProgressBar" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                        <padding>
@@ -200,7 +200,6 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="oneWayProgressMessage" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="140.0" prefHeight="27.0" prefWidth="200.0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
@@ -208,9 +207,8 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
                            </children>
@@ -219,7 +217,7 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane>
+            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0">
                <children>
                   <HBox fx:id="adjustedPValueComboBox" alignment="CENTER" prefHeight="66.0" prefWidth="600.0" spacing="50.0">
                      <children>

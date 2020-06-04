@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -159,7 +160,12 @@ public class MatrixDataPreviewer extends VBox
 			setPane.getChildren().add(yesBox);
 			setPane.getChildren().add(setButton);
 			pan.getChildren().add(setPane);
+			
+			setPane.setSpacing(15.0);
+			setPane.setAlignment(Pos.CENTER_LEFT);
 		}
+		
+		pan.setSpacing(15.0);
 
 		return pan;
 	}
