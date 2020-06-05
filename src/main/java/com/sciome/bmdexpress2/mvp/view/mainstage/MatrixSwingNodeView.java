@@ -3,7 +3,6 @@ package com.sciome.bmdexpress2.mvp.view.mainstage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javax.swing.SwingUtilities;
 
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.MatrixSwingNodePresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
@@ -12,9 +11,6 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.MatrixData;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.MatrixDataPreviewer;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;

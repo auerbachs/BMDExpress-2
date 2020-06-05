@@ -621,8 +621,7 @@ public class CategoryMapTool
 
 		}
 
-		if (params.getDeduplicateGeneSets())
-			categoryAnalysisResults.deDuplicateGeneSets();
+
 		return categoryAnalysisResults;
 	}
 

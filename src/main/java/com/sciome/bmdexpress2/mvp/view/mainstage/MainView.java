@@ -16,7 +16,6 @@ import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 
 import javafx.application.Platform;
-import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,8 +54,6 @@ public class MainView extends BMDExpressViewBase implements IMainView, Initializ
 	@FXML
 	private ImageView	epaImageView;
 
-	@FXML
-	private SwingNode	swingNode;
 
 	private boolean		actionLabelUpdatInProgress	= false;
 	private boolean		actionaLabelFiredOff		= false;
@@ -78,14 +75,7 @@ public class MainView extends BMDExpressViewBase implements IMainView, Initializ
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run()
-			{
-				swingNode.setContent(new JLabel(""));
-			}
-		});
-
+		
 		ProjectNavigationView pv = new ProjectNavigationView(BMDExpressEventBus.getInstance());
 
 		treeViewContainer.getChildren().add(pv);

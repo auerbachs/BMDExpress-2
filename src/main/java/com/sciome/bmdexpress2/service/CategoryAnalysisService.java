@@ -72,6 +72,9 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Units: " + params.getIviveParameters().getDoseUnits());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getOutputUnits());
 		}
+		
+		if (params.getDeduplicateGeneSets())
+			categoryAnalysisResults.deDuplicateGeneSets();
 
 		long endTime = System.currentTimeMillis();
 
