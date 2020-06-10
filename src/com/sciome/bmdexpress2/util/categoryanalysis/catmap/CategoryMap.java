@@ -56,7 +56,7 @@ public class CategoryMap extends CategoryMapBase
 		titleHash = new Hashtable<String, String>();
 
 		Vector<CategoryIdentifier> vectGos = new Vector<CategoryIdentifier>(subHash.size());
-		for (int i = 2; i < rows; i++)
+		for (int i = 0; i < rows; i++)
 		{
 			String categoryId = (String) mData[i][c0];
 			String categoryName = (String) mData[i][c1];

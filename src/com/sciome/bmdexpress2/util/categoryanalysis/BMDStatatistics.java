@@ -39,22 +39,22 @@ import com.sciome.bmdexpress2.util.stat.SampleStats;
 public class BMDStatatistics
 {
 
-	private BMDResult		bmdResults;
-	private ProbeGeneMaps	probeGeneMaps;
-	private GenesBMDs		genesBMDs;
-	private BestBMDModels	bestBMDModels;
-	private final String	BMD		= "BMD";
-	private final String	BMDL	= "BMDL";
-	private final String	BMDU	= "BMDU";
+	private BMDResult bmdResults;
+	private ProbeGeneMaps probeGeneMaps;
+	private GenesBMDs genesBMDs;
+	private BestBMDModels bestBMDModels;
+	private final String BMD = "BMD";
+	private final String BMDL = "BMDL";
+	private final String BMDU = "BMDU";
 
-	private boolean			removeMax, doRemovePCut, hasData, doneCorrelation, doEnrichment;
-	private double			fitPCutoff, rCutoff, pCutoff = 0.05, maxDose = 0, minDose, minPositiveDose;
-	private Vector<String>	subGenes, bmdProbes;
-	private int[]			proIndices;
-	private double[]		minCorrelations;
-	private double[][]		bmds;
+	private boolean removeMax, doRemovePCut, hasData, doneCorrelation, doEnrichment;
+	private double fitPCutoff, rCutoff, pCutoff = 0.05, maxDose = 0, minDose, minPositiveDose;
+	private Vector<String> subGenes, bmdProbes;
+	private int[] proIndices;
+	private double[] minCorrelations;
+	private double[][] bmds;
 
-	private final String	title	= "BMD Statistics";
+	private final String title = "BMD Statistics";
 
 	/**
 	 * Class constructor
@@ -1081,7 +1081,7 @@ public class BMDStatatistics
 
 						double bmddivbmdl = Double.NaN;
 						if (probeStatResult.getBestStatResult() != null)
-							bmddivbmdl = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
+							bmddivbmdl = probeStatResult.getBestStatResult().getBMDdiffBMDL();
 
 						if (Double.isNaN(bmddivbmdl) || probeStatResult.getBestStatResult() == null
 								|| bmddivbmdl > bmdBmdlRatio)
@@ -1228,7 +1228,7 @@ public class BMDStatatistics
 
 						double bmdudivbmd = Double.NaN;
 						if (probeStatResult.getBestStatResult() != null)
-							bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMDL();
+							bmdudivbmd = probeStatResult.getBestStatResult().getBMDUdiffBMD();
 						// if this ratio is NaN, then allow passage.
 
 						if (Double.isNaN(bmdudivbmd) || probeStatResult.getBestStatResult() == null
