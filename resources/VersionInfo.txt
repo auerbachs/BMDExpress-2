@@ -5,10 +5,27 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 17, 2020</h2>
-
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on June 9, 2020</h2>
 <h3>
 Bug Fixes
+</h3>
+<ul>
+<li>
+When the user selected and specified a value for "Remove Genes with BMD/BMDL >" AND/OR "Remove Genes with BMU/BMD >" to filter out 
+genes while filling out the input form for 
+Functional Classification, the user specified value(s) were actually compared to BMDU/BMDL of the Best Model for the BMD Analysis result
+ for the gene/probe.
+ This issue has been corrected.
+</li>
+
+<li>The first two non-header lines of the category input file were being ignored when performing Defined Category Analysis.
+This issue has been fixed.</li>
+</ul>
+
+
+
+<h3>
+Bug Fixes January 17, 2020
 </h3>
 <ul>
 <li>Fisher's Exact Test was not working correctly when "Eliminate Gene Set Redundancy" was selected.  This issue has been fixed.</li>
