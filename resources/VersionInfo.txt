@@ -11,7 +11,7 @@ Bug Fixes
 </h3>
 <ul>
 <li>
-When the user selected and specified a value for "Remove Genes with BMD/BMDL >" AND/OR "Remove Genes with BMU/BMD >" to filter out 
+When the user selected and specified a value for "Remove Genes with BMD/BMDL >" AND/OR "Remove Genes with BMDU/BMD >" to filter out 
 genes while filling out the input form for 
 Functional Classification, the user specified value(s) were actually compared to BMDU/BMDL of the Best Model for the BMD Analysis result
  for the gene/probe.
