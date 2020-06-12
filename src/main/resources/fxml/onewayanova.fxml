@@ -172,13 +172,13 @@
                   </TitledPane>
                </children>
             </AnchorPane>
-            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="119.0" prefWidth="632.0">
+            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="125.0" prefWidth="632.0">
                <children>
                   <TitledPane collapsible="false" layoutY="58.0" prefHeight="92.0" prefWidth="600.0" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <AnchorPane minWidth="0.0" prefHeight="89.0" prefWidth="630.0">
                            <children>
-                              <GridPane prefHeight="59.0" prefWidth="607.0">
+                              <GridPane layoutY="24.0" prefHeight="75.0" prefWidth="620.0">
                                  <children>
                                     <ProgressBar fx:id="oneWayProgressBar" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                                        <padding>
@@ -200,6 +200,7 @@
                                           <Insets left="10.0" />
                                        </GridPane.margin>
                                     </Label>
+                                    <Label fx:id="oneWayProgressMessage" alignment="CENTER_RIGHT" prefHeight="37.0" prefWidth="200.0" textAlignment="RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
@@ -207,8 +208,9 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                                    <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="59.0" minHeight="4.0" prefHeight="27.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="87.0" minHeight="0.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                               </GridPane>
                            </children>
