@@ -29,30 +29,30 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 	/**
 	 * 
 	 */
-	private static final long		serialVersionUID	= 8457191085367967268L;
+	private static final long serialVersionUID = 8457191085367967268L;
 
-	private ProbeResponse			probeResponse;
-	private StatResult				bestStatResult;
-	private StatResult				bestPolyStatResult;
-	private List<StatResult>		statResults;
-	private List<ChiSquareResult>	chiSquaredResults;
+	private ProbeResponse probeResponse;
+	private StatResult bestStatResult;
+	private StatResult bestPolyStatResult;
+	private List<StatResult> statResults;
+	private List<ChiSquareResult> chiSquaredResults;
 
 	// convenience variables for easy query and reduced processing.
-	private transient List<Object>	row;
-	private transient String		genes;
-	private transient String		geneSymbols;
-	private transient Set<String>	geneSet				= new HashSet<>();
-	private transient Set<String>	geneSymbolSet		= new HashSet<>();
+	private transient List<Object> row;
+	private transient String genes;
+	private transient String geneSymbols;
+	private transient Set<String> geneSet = new HashSet<>();
+	private transient Set<String> geneSymbolSet = new HashSet<>();
 
-	private transient Double		prefilterAdjustedPValue;
-	private transient Double		prefilterPvalue;
-	private transient Double		prefilterBestFoldChange;
-	private transient Double		prefilterBestABSFoldChange;
+	private transient Double prefilterAdjustedPValue;
+	private transient Double prefilterPvalue;
+	private transient Double prefilterBestFoldChange;
+	private transient Double prefilterBestABSFoldChange;
 
-	private transient Float			prefilterNoel;
-	private transient Float			prefilterLoel;
+	private transient Float prefilterNoel;
+	private transient Float prefilterLoel;
 
-	private Long					id;
+	private Long id;
 
 	// clone probestatresult. but this is really for
 	// reselecting best models. so keep the beststat/bestpolystatresults empty
@@ -421,30 +421,6 @@ public class ProbeStatResult extends BMDExpressAnalysisRow implements Serializab
 		if (bestStatResult == null)
 			return null;
 		return bestStatResult.getBMDU();
-	}
-
-	@JsonIgnore
-	public Double getBestBMDdiffBMDL()
-	{
-		if (bestStatResult == null)
-			return null;
-		return bestStatResult.getBMD() / bestStatResult.getBMDL();
-	}
-
-	@JsonIgnore
-	public Double getBestBMDUdiffBMDL()
-	{
-		if (bestStatResult == null)
-			return null;
-		return bestStatResult.getBMDU() / bestStatResult.getBMDL();
-	}
-
-	@JsonIgnore
-	public Double getBestBMDUdiffBMD()
-	{
-		if (bestStatResult == null)
-			return null;
-		return bestStatResult.getBMDU() / bestStatResult.getBMD();
 	}
 
 	@JsonIgnore
