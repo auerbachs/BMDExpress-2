@@ -3,10 +3,14 @@ package com.sciome.charts.jfree;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -189,6 +193,7 @@ public class SciomeChartViewer extends ChartViewer
 		JPanel panel = new JPanel();
 		panel.add((JComponent) editor);
 		SwingNode node = new SwingNode();
+		
 		node.setContent((JComponent) editor);
 		node.setFocusTraversable(true);
 
@@ -220,5 +225,17 @@ public class SciomeChartViewer extends ChartViewer
 
 		dialog.initModality(Modality.WINDOW_MODAL);
 		dialog.show();
+		 new Timer().schedule(new TimerTask() {
+	           public void run() {
+	        	   try
+	        	   {
+	                node.getContent().repaint();
+	        	   }
+	        	   catch(Exception e)
+	        	   {
+	        		   e.printStackTrace();
+	        	   }
+	           }
+	       }, 1000L);
 	}
 }
