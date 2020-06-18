@@ -30,6 +30,7 @@ import org.jfree.chart.util.ShapeUtils;
 import com.sciome.charts.jfree.editor.ChartEditor;
 import com.sciome.charts.jfree.editor.ChartEditorManager;
 
+import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -194,8 +195,11 @@ public class SciomeChartViewer extends ChartViewer
 		panel.add((JComponent) editor);
 		SwingNode node = new SwingNode();
 		
-		node.setContent((JComponent) editor);
-		node.setFocusTraversable(true);
+		SwingUtilities.invokeLater(()->
+		{
+			node.setContent((JComponent) editor);
+			node.setFocusTraversable(true);
+		});
 
 		DialogPane dialogPane = new DialogPane();
 		dialogPane.getButtonTypes().add(ButtonType.OK);
@@ -224,12 +228,27 @@ public class SciomeChartViewer extends ChartViewer
 		});
 
 		dialog.initModality(Modality.WINDOW_MODAL);
+		
+		ChangeListener<Number> sizeListener = (o, oldSize, newSize) -> {
+				SwingUtilities.invokeLater(()->
+	   			{
+	   				node.getContent().repaint();
+	   				node.getContent().requestFocus();
+	   			});
+			};
+		dialog.widthProperty().addListener(sizeListener);
+		dialog.heightProperty().addListener(sizeListener);
+		
 		dialog.show();
 		 new Timer().schedule(new TimerTask() {
 	           public void run() {
 	        	   try
 	        	   {
-	                node.getContent().repaint();
+	        		SwingUtilities.invokeLater(()->
+	       			{
+	       				node.getContent().repaint();
+	       				node.getContent().requestFocus();
+	       			});
 	        	   }
 	        	   catch(Exception e)
 	        	   {
