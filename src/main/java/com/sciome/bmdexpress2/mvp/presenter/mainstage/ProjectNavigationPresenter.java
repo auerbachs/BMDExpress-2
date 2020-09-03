@@ -174,10 +174,9 @@ public class ProjectNavigationPresenter
 			return;
 		// FileAnnotation uses the probe hash to help find a valid list of chips.
 		Hashtable<String, Integer> probeHash = new Hashtable<>();
-		for (ProbeResponse probeResponse : experiments.get(0).getProbeResponses())
-		{
-			probeHash.put(probeResponse.getProbe().getId(), 1);
-		}
+		for(DoseResponseExperiment exp: experiments)
+			for (ProbeResponse probeResponse : exp.getProbeResponses())
+				probeHash.put(probeResponse.getProbe().getId(), 1);
 		FileAnnotation fileAnnotation = new FileAnnotation();
 		fileAnnotation.setProbesHash(probeHash);
 		fileAnnotation.readArraysInfo();

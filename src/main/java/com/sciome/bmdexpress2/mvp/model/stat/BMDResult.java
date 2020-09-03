@@ -291,7 +291,16 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			// it's not too expensive.
 			if (bestFoldChange == null)
 			{
-				FoldChange fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 2.0);
+				FoldChange fc = null; 
+				if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE10))
+					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 10.0);
+				else if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE2))
+					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 2.0);
+				else if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, Math.E);
+				else
+					fc = new FoldChange(doseResponseExperiment.getTreatments(), false, 10.0);
+				
 				bestFoldChange = fc.getBestFoldChangeValue(probeStatResult.getProbeResponse().getResponses())
 						.doubleValue();
 				foldChanges = fc.getFoldChanges();
