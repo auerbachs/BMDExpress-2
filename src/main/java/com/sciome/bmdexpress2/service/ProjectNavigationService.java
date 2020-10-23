@@ -121,6 +121,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 						continue;
 					for (String gene : genes)
 					{
+							
 						ReferenceGene refGene = refCache.get(gene);
 						if (refGene == null)
 						{

@@ -16,28 +16,31 @@ import com.sciome.bmdexpress2.mvp.model.stat.ExponentialResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BMDSToxicRUtils;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FileExponentialFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.toxicR.ToxicRConstants;
 
 public class ExponentialFitThread extends Thread implements IFitThread
 {
-	private CountDownLatch			cdLatch;
-	private FileExponentialFit		fExponentialFit		= null;
+	private CountDownLatch cdLatch;
+	private FileExponentialFit fExponentialFit = null;
 
-	private ModelInputParameters	inputParameters;
+	private ModelInputParameters inputParameters;
 
-	private float[]					doses;
+	private float[] doses;
 
-	private final int[]				adversDirections	= { 0, 1, -1 };
-	private List<ProbeResponse>		probeResponses;
-	private List<StatResult>		powerResults;
-	private int						numThread;
-	private int						instanceIndex;
-	private IModelProgressUpdater	progressUpdater;
-	private IProbeIndexGetter		probeIndexGetter;
-	private boolean					cancel				= false;
-	private int						expOption			= 0;
-	private String					tmpFolder;
+	private final int[] adversDirections = { 0, 1, -1 };
+	private List<ProbeResponse> probeResponses;
+	private List<StatResult> powerResults;
+	private int numThread;
+	private int instanceIndex;
+	private IModelProgressUpdater progressUpdater;
+	private IProbeIndexGetter probeIndexGetter;
+	private boolean cancel = false;
+	private int expOption = 0;
+	private String tmpFolder;
 
 	public ExponentialFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> powerResults, int numThread, int instanceIndex, int option, int killTime,
@@ -77,10 +80,13 @@ public class ExponentialFitThread extends Thread implements IFitThread
 	@Override
 	public void run()
 	{
-		if (fExponentialFit != null)
+		if (inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
 		{
-			filedExponential();
+			if (fExponentialFit != null)
+				filedExponential();
 		}
+		else
+			toxicRFit();
 
 		try
 		{
@@ -90,6 +96,63 @@ public class ExponentialFitThread extends Thread implements IFitThread
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void toxicRFit()
+	{
+		double[] dosesd = new double[doses.length];
+		int di = 0;
+		for (float d : doses)
+			dosesd[di++] = d;
+		Random rand = new Random(System.nanoTime());
+		int randInt = Math.abs(rand.nextInt());
+
+		Integer probeIndex = probeIndexGetter.getNextProbeIndex();
+		while (probeIndex != null)
+		{
+
+			ExponentialResult expResult = (ExponentialResult) powerResults.get(probeIndex);
+
+			if (cancel)
+			{
+				break;
+			}
+
+			try
+			{
+				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
+						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
+				float[] responses = probeResponses.get(probeIndex).getResponseArray();
+				double[] responsesD = new double[responses.length];
+				int ri = 0;
+				for (float r : responses)
+					responsesD[ri++] = r;
+
+				int expModel = ToxicRConstants.EXP3;
+
+				if (expOption == 5)
+					expModel = ToxicRConstants.EXP5;
+				double[] results = BMDSToxicRUtils.calculateToxicR(expModel, responsesD, dosesd,
+						inputParameters.getBmrType(), inputParameters.getBmrLevel(), false);
+
+				if (expModel == ToxicRConstants.EXP3) // move param d to param c
+					results[9] = results[10];
+				if (expModel == ToxicRConstants.EXP5) // anti log c
+					results[9] = Math.pow(Math.E, results[9]);
+				if (results != null)
+				{
+					fillOutput(results, expResult);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			this.progressUpdater.incrementModelsComputed();
+			probeIndex = probeIndexGetter.getNextProbeIndex();
+		}
+
 	}
 
 	private void filedExponential()

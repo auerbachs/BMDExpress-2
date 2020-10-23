@@ -61,4 +61,6 @@ public interface IProjectNavigationView
 
 	public void performBMDAnalysisGCurveP();
 
+	public void performBMDAnalysisToxicR();
+
 }

@@ -19,6 +19,6 @@ public interface IBMDAnalysisView
 
 	public void closeWindow();
 
-	void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly);
+	void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly, boolean useToxicR);
 
 }

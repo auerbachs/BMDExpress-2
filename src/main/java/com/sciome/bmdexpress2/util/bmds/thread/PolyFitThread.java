@@ -16,33 +16,34 @@ import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FilePolyFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 
 public class PolyFitThread extends Thread implements IFitThread
 {
-	private CountDownLatch			cdLatch;
-	private FilePolyFit				fPolyFit			= null;
+	private CountDownLatch cdLatch;
+	private FilePolyFit fPolyFit = null;
 
-	private int						degree;
-	private ModelInputParameters	inputParameters;
+	private int degree;
+	private ModelInputParameters inputParameters;
 
-	private float[]					doses;
+	private float[] doses;
 
-	private final int[]				adversDirections	= { 0, 1, -1 };
+	private final int[] adversDirections = { 0, 1, -1 };
 
-	List<ProbeResponse>				probeResponses;
-	List<StatResult>				polyResults;
-	int								numThreads;
-	int								instanceIndex;
-	private IModelProgressUpdater	progressUpdater;
-	private IProbeIndexGetter		probeIndexGetter;
+	List<ProbeResponse> probeResponses;
+	List<StatResult> polyResults;
+	int numThreads;
+	int instanceIndex;
+	private IModelProgressUpdater progressUpdater;
+	private IProbeIndexGetter probeIndexGetter;
 
-	private boolean					cancel				= false;
+	private boolean cancel = false;
 
-	private final double			DEFAULTDOUBLE		= -9999;
+	private final double DEFAULTDOUBLE = -9999;
 
-	private String					tmpFolder;
+	private String tmpFolder;
 
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
 			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
@@ -78,7 +79,10 @@ public class PolyFitThread extends Thread implements IFitThread
 	@Override
 	public void run()
 	{
-		doFiledPolyFit();
+		if (inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
+			doFiledPolyFit();
+		else
+			toxicRFit();
 
 		try
 		{
@@ -88,6 +92,12 @@ public class PolyFitThread extends Thread implements IFitThread
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void toxicRFit()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 	private void doFiledPolyFit()

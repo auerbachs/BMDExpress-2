@@ -15,6 +15,8 @@ import com.sciome.bmdexpress2.service.BMDAnalysisService;
 import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.util.bmds.BESTMODEL_METHOD;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
@@ -41,129 +43,147 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisView, Initializable
 {
 
-	BMDAnalysisPresenter				presenter;
+	BMDAnalysisPresenter presenter;
 
 	// FXML injection
 
 	// checkboxes
 	@FXML
-	private CheckBox					exponential2CheckBox;
+	private CheckBox exponential2CheckBox;
 	@FXML
-	private CheckBox					exponential3CheckBox;
+	private CheckBox exponential3CheckBox;
 	@FXML
-	private CheckBox					exponential4CheckBox;
+	private CheckBox exponential4CheckBox;
 	@FXML
-	private CheckBox					exponential5CheckBox;
+	private CheckBox exponential5CheckBox;
 	@FXML
-	private CheckBox					hillCheckBox;
+	private CheckBox hillCheckBox;
 	@FXML
-	private CheckBox					powerCheckBox;
+	private CheckBox powerCheckBox;
 	@FXML
-	private CheckBox					linearCheckBox;
+	private CheckBox linearCheckBox;
 	@FXML
-	private CheckBox					poly2CheckBox;
+	private CheckBox poly2CheckBox;
 	@FXML
-	private CheckBox					poly3CheckBox;
+	private CheckBox poly3CheckBox;
 	@FXML
-	private CheckBox					poly4CheckBox;
+	private CheckBox poly4CheckBox;
 
 	@FXML
-	private CheckBox					constantVarianceCheckBox;
+	private CheckBox constantVarianceCheckBox;
 
 	@FXML
-	private CheckBox					flagHillkParamCheckBox;
+	private CheckBox flagHillkParamCheckBox;
 	@FXML
-	private CheckBox					setThreadCheckBox;
+	private CheckBox setThreadCheckBox;
 
 	// textfields
 	@FXML
-	private TextField					maximumIterationsTextField;
+	private TextField maximumIterationsTextField;
 	@FXML
-	private TextField					modifyFlaggedHillBMDTextField;
+	private TextField modifyFlaggedHillBMDTextField;
 
 	// ComboBoxes
 	@FXML
-	private ComboBox					bMRFactorComboBox;
+	private ComboBox bMRFactorComboBox;
 	@FXML
-	private ComboBox					bMRTypeComboBox;
+	private ComboBox bMRTypeComboBox;
 	@FXML
-	private ComboBox					confidenceLevelComboBox;
+	private ComboBox confidenceLevelComboBox;
 	@FXML
-	private ComboBox					restrictPowerComboBox;
+	private ComboBox restrictPowerComboBox;
 
 	@FXML
-	private ComboBox					bestPolyTestComboBox;
+	private ComboBox bestPolyTestComboBox;
 	@FXML
-	private ComboBox					pValueCutoffComboBox;
+	private ComboBox pValueCutoffComboBox;
 
 	@FXML
-	private ComboBox					flagHillkParamComboBox;
+	private ComboBox flagHillkParamComboBox;
 	@FXML
-	private ComboBox					bestModelSeletionWithFlaggedHillComboBox;
+	private ComboBox bestModelSeletionWithFlaggedHillComboBox;
 
 	@FXML
-	private ComboBox					bmdlBmduComboBox;
+	private ComboBox bmdlBmduComboBox;
 
 	@FXML
-	private ComboBox					numberOfThreadsComboBox;
+	private ComboBox numberOfThreadsComboBox;
 	@FXML
-	private ComboBox					killTimeComboBox;
+	private ComboBox killTimeComboBox;
 
 	// labels
 	@FXML
-	private Label						expressionDataLabel;
+	private Label expressionDataLabel;
 	@FXML
-	private Label						oneWayANOVADataLabel;
+	private Label oneWayANOVADataLabel;
 	@FXML
-	private Label						oneWayANOVADataLabelLabel;
+	private Label oneWayANOVADataLabelLabel;
 	@FXML
-	private Label						modifyFlaggedHillBMDLabel;
+	private Label modifyFlaggedHillBMDLabel;
 	@FXML
-	private Label						bestModelSeletionWithFlaggedHillLabel;
+	private Label bestModelSeletionWithFlaggedHillLabel;
 	@FXML
-	private Label						restrictPowerLabel;
+	private Label restrictPowerLabel;
 
 	@FXML
-	private ProgressBar					progressBar;
+	private ProgressBar progressBar;
 	@FXML
-	private Label						progressLabel;
+	private Label progressLabel;
 
 	@FXML
-	private Button						startButton;
+	private Button startButton;
 	@FXML
-	private Button						saveSettingsButton;
+	private Button saveSettingsButton;
 	@FXML
-	private Button						cancelButton;
+	private Button cancelButton;
 
 	@FXML
-	private VBox						mainVBox;
+	private VBox mainVBox;
 	// anchor panes
 	@FXML
-	private AnchorPane					startCancelPane;
+	private AnchorPane startCancelPane;
 	@FXML
-	private AnchorPane					threadPane;
+	private AnchorPane threadPane;
 	@FXML
-	private AnchorPane					modelSelectionPane;
+	private AnchorPane modelSelectionPane;
 	@FXML
-	private AnchorPane					parametersPane;
+	private AnchorPane parametersPane;
 	@FXML
-	private AnchorPane					modelsPane;
+	private AnchorPane modelsPane;
 	@FXML
-	private AnchorPane					dataOptionsPane;
+	private AnchorPane dataOptionsPane;
 
-	private List<IStatModelProcessable>	processableData;
+	@FXML
+	private RadioButton origMethodRadio;
 
-	private boolean						selectModelsOnly	= false;
+	@FXML
+	private RadioButton toxicRMethodRadio;
+	@FXML
+	private RadioButton toxicRMAMethodRadio;
 
-	private BMDInput					input;
+	@FXML
+	private RadioButton toxicRMCMCMAMethodRadio;
+
+	@FXML
+	private HBox methodHBox;
+
+	private List<IStatModelProcessable> processableData;
+
+	private boolean selectModelsOnly = false;
+
+	private BMDInput input;
+
+	private boolean useToxicR;
 
 	public BMDAnalysisView()
 	{
@@ -208,26 +228,26 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		ModelInputParameters inputParameters = assignParameters();
 		ModelSelectionParameters modelSectionParameters = assignModelSelectionParameters();
 		List<StatModel> modelsToRun = new ArrayList<>();
-		if (hillCheckBox.isSelected())
+		if (!hillCheckBox.isDisabled() && hillCheckBox.isSelected())
 		{
 			HillModel hillModel = new HillModel();
 			hillModel.setVersion(BMDExpressProperties.getInstance().getHillVersion());
 			modelsToRun.add(hillModel);
 		}
-		if (powerCheckBox.isSelected())
+		if (!powerCheckBox.isDisabled() && powerCheckBox.isSelected())
 		{
 			PowerModel powerModel = new PowerModel();
 			powerModel.setVersion(BMDExpressProperties.getInstance().getPowerVersion());
 			modelsToRun.add(powerModel);
 		}
-		if (linearCheckBox.isSelected())
+		if (!linearCheckBox.isDisabled() && linearCheckBox.isSelected())
 		{
 			PolyModel linearModel = new PolyModel();
 			linearModel.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
 			linearModel.setDegree(1);
 			modelsToRun.add(linearModel);
 		}
-		if (poly2CheckBox.isSelected())
+		if (!poly2CheckBox.isDisabled() && poly2CheckBox.isSelected())
 
 		{
 			PolyModel poly2Model = new PolyModel();
@@ -235,14 +255,14 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			poly2Model.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
 			modelsToRun.add(poly2Model);
 		}
-		if (poly3CheckBox.isSelected())
+		if (!poly3CheckBox.isDisabled() && poly3CheckBox.isSelected())
 		{
 			PolyModel poly3Model = new PolyModel();
 			poly3Model.setDegree(3);
 			poly3Model.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
 			modelsToRun.add(poly3Model);
 		}
-		if (poly4CheckBox.isSelected())
+		if (!poly4CheckBox.isDisabled() && poly4CheckBox.isSelected())
 		{
 			PolyModel poly4Model = new PolyModel();
 			poly4Model.setDegree(4);
@@ -250,28 +270,28 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			modelsToRun.add(poly4Model);
 		}
 
-		if (exponential2CheckBox.isSelected())
+		if (!exponential2CheckBox.isDisabled() && exponential2CheckBox.isSelected())
 		{
 			ExponentialModel exponentialModel = new ExponentialModel();
 			exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
 			exponentialModel.setOption(2);
 			modelsToRun.add(exponentialModel);
 		}
-		if (exponential3CheckBox.isSelected())
+		if (!exponential3CheckBox.isDisabled() && exponential3CheckBox.isSelected())
 		{
 			ExponentialModel exponentialModel = new ExponentialModel();
 			exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
 			modelsToRun.add(exponentialModel);
 			exponentialModel.setOption(3);
 		}
-		if (exponential4CheckBox.isSelected())
+		if (!exponential4CheckBox.isDisabled() && exponential4CheckBox.isSelected())
 		{
 			ExponentialModel exponentialModel = new ExponentialModel();
 			exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
 			exponentialModel.setOption(4);
 			modelsToRun.add(exponentialModel);
 		}
-		if (exponential5CheckBox.isSelected())
+		if (!exponential5CheckBox.isDisabled() && exponential5CheckBox.isSelected())
 		{
 			ExponentialModel exponentialModel = new ExponentialModel();
 			exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
@@ -416,14 +436,143 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	public void handle_PowerCheckBox(ActionEvent event)
 	{
-		restrictPowerComboBox.setDisable(!powerCheckBox.isSelected());
-		restrictPowerLabel.setDisable(!powerCheckBox.isSelected());
+		if (!useToxicR)
+		{
+			restrictPowerComboBox.setDisable(!powerCheckBox.isSelected());
+			restrictPowerLabel.setDisable(!powerCheckBox.isSelected());
+		}
+	}
+
+	public void handle_OrigMethod(ActionEvent event)
+	{
+		boolean value = origMethodRadio.isSelected();
+		if (value == false)
+			return;
+		// enable all models;
+		exponential2CheckBox.setDisable(false);
+		exponential3CheckBox.setDisable(false);
+		exponential4CheckBox.setDisable(false);
+		exponential5CheckBox.setDisable(false);
+		linearCheckBox.setDisable(false);
+		poly2CheckBox.setDisable(false);
+		poly3CheckBox.setDisable(false);
+		poly4CheckBox.setDisable(false);
+		powerCheckBox.setDisable(false);
+		hillCheckBox.setDisable(false);
+
+		this.constantVarianceCheckBox.setDisable(false);
+		this.confidenceLevelComboBox.setDisable(false);
+		this.restrictPowerComboBox.setDisable(false);
+		this.maximumIterationsTextField.setDisable(false);
+
+		// enable all parameters
+
+	}
+
+	public void handle_ToxicRLaplaceMethod(ActionEvent event)
+	{
+		boolean value = toxicRMethodRadio.isSelected();
+		if (value == false)
+			return;
+		// enable some models;
+		exponential2CheckBox.setDisable(true);
+		exponential3CheckBox.setDisable(false);
+		exponential4CheckBox.setDisable(true);
+		exponential5CheckBox.setDisable(false);
+		linearCheckBox.setDisable(true);
+		poly2CheckBox.setDisable(true);
+		poly3CheckBox.setDisable(true);
+		poly4CheckBox.setDisable(true);
+		powerCheckBox.setDisable(false);
+		hillCheckBox.setDisable(false);
+
+		this.constantVarianceCheckBox.setDisable(true);
+		this.confidenceLevelComboBox.setDisable(true);
+		this.restrictPowerComboBox.setDisable(true);
+		this.maximumIterationsTextField.setDisable(true);
+
+		// enable some parameters
+
+	}
+
+	public void handle_ToxicRLaplaceMAMethod(ActionEvent event)
+	{
+		boolean value = toxicRMAMethodRadio.isSelected();
+		if (value == false)
+			return;
+		// enable some models;
+		exponential2CheckBox.setDisable(true);
+		exponential3CheckBox.setDisable(false);
+		exponential4CheckBox.setDisable(true);
+		exponential5CheckBox.setDisable(false);
+		linearCheckBox.setDisable(true);
+		poly2CheckBox.setDisable(true);
+		poly3CheckBox.setDisable(true);
+		poly4CheckBox.setDisable(true);
+		powerCheckBox.setDisable(false);
+		hillCheckBox.setDisable(false);
+
+		this.constantVarianceCheckBox.setDisable(true);
+		this.confidenceLevelComboBox.setDisable(true);
+		this.restrictPowerComboBox.setDisable(true);
+		this.maximumIterationsTextField.setDisable(true);
+
+		// disable some parameters
+
+	}
+
+	public void handle_ToxicRMCMCMAMethod(ActionEvent event)
+	{
+		boolean value = toxicRMCMCMAMethodRadio.isSelected();
+		if (value == false)
+			return;
+		// enable certain models;
+		exponential2CheckBox.setDisable(true);
+		exponential3CheckBox.setDisable(false);
+		exponential4CheckBox.setDisable(true);
+		exponential5CheckBox.setDisable(false);
+		linearCheckBox.setDisable(true);
+		poly2CheckBox.setDisable(true);
+		poly3CheckBox.setDisable(true);
+		poly4CheckBox.setDisable(true);
+		powerCheckBox.setDisable(false);
+		hillCheckBox.setDisable(false);
+
+		this.constantVarianceCheckBox.setDisable(true);
+		this.confidenceLevelComboBox.setDisable(true);
+		this.restrictPowerComboBox.setDisable(true);
+		this.maximumIterationsTextField.setDisable(true);
+
+		// disable some parameters
+
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly)
+	public void initData(List<IStatModelProcessable> processableData, boolean selectModelsOnly,
+			boolean useToxicR)
 	{
+
+		this.useToxicR = useToxicR;
+		if (useToxicR)
+		{
+			// using model averaging. So no need for model selection parameters
+			mainVBox.getChildren().remove(modelSelectionPane);
+
+			methodHBox.getChildren().removeAll(origMethodRadio, toxicRMethodRadio);
+			toxicRMAMethodRadio.setSelected(true);
+			handle_ToxicRLaplaceMAMethod(null);
+
+			this.constantVarianceCheckBox.setDisable(true);
+			this.confidenceLevelComboBox.setDisable(true);
+			this.restrictPowerComboBox.setDisable(true);
+			this.maximumIterationsTextField.setDisable(true);
+		}
+		else
+		{
+			methodHBox.getChildren().removeAll(toxicRMAMethodRadio, toxicRMCMCMAMethodRadio);
+		}
+
 		presenter.initData(processableData);
 
 		this.processableData = processableData;
@@ -621,6 +770,28 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			if (inputParameters.getConstantVariance() == 0)
 			{
 				inputParameters.setRho(inputParameters.getNegative());
+			}
+
+			if (origMethodRadio.isSelected())
+			{
+				inputParameters.setBmdMethod(BMD_METHOD.ORIGINAL);
+				inputParameters.setBestModelMethod(BESTMODEL_METHOD.CALCULATE);
+
+			}
+			else if (toxicRMethodRadio.isSelected())
+			{
+				inputParameters.setBmdMethod(BMD_METHOD.TOXICR);
+				inputParameters.setBestModelMethod(BESTMODEL_METHOD.CALCULATE);
+			}
+			else if (toxicRMCMCMAMethodRadio.isSelected())
+			{
+				inputParameters.setBmdMethod(BMD_METHOD.TOXICR);
+				inputParameters.setBestModelMethod(BESTMODEL_METHOD.MODEL_AVERAGING);
+			}
+			else
+			{
+				inputParameters.setBmdMethod(BMD_METHOD.TOXICR_MCMC);
+				inputParameters.setBestModelMethod(BESTMODEL_METHOD.MODEL_AVERAGING);
 			}
 		}
 

@@ -60,10 +60,35 @@ public class ModelInputParameters
 	// threading
 	private int			numThreads;
 	private int			killTime;
+	
+	
+	private BMD_METHOD bmdMethod;
+	private BESTMODEL_METHOD bestModelMethod;
 
 	private String		defNegative			= "-9999";
 
 	private String[][]	columns				= { { "DOSE", "RESPONSE" }, { "DOSE", "NI", "MEAN", "STD" } };
+
+	
+	
+	
+	
+	
+	public BMD_METHOD getBmdMethod() {
+		return bmdMethod;
+	}
+
+	public void setBmdMethod(BMD_METHOD bmdMethod) {
+		this.bmdMethod = bmdMethod;
+	}
+
+	public BESTMODEL_METHOD getBestModelMethod() {
+		return bestModelMethod;
+	}
+
+	public void setBestModelMethod(BESTMODEL_METHOD bestModelMethod) {
+		this.bestModelMethod = bestModelMethod;
+	}
 
 	public int getInputType()
 	{

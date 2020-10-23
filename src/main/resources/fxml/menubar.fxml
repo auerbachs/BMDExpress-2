@@ -57,6 +57,7 @@
             <Menu mnemonicParsing="false" text="Benchmark Dose Analysis">
                <items>
                   <MenuItem fx:id="bMDAnalysesMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalyses" text="EPA BMDS Models (Parametric)" />
+                  <MenuItem fx:id="toxicRModelAveragingMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalysesToxicR" text="ToxicR Model Averaging" />
                   <MenuItem fx:id="bMDAnalysesGcurvePMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_BMDAnalysesGcurveP" text="Sciome GCurveP (Non-parametric)" />
                </items>
             </Menu>

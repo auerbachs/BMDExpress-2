@@ -46,7 +46,6 @@ import com.sciome.bmdexpress2.util.annotation.FileAnnotation;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -79,28 +78,28 @@ import javafx.stage.WindowEvent;
 public class ProjectNavigationView extends VBox implements IProjectNavigationView
 {
 
-	private final String									EXPRESSION_DATA				= "Expression Data";
-	private final String									ONEWAY_DATA					= "One-way ANOVA";
-	private final String									WILLIAMS_DATA				= "Williams Trend Test";
-	private final String									ORIOGEN_DATA				= "Oriogen";
-	private final String									BENCHMARK_DATA				= "Benchmark Dose Analyses";
-	private final String									CATEGORY_DATA				= "Functional Classifications";
+	private final String EXPRESSION_DATA = "Expression Data";
+	private final String ONEWAY_DATA = "One-way ANOVA";
+	private final String WILLIAMS_DATA = "Williams Trend Test";
+	private final String ORIOGEN_DATA = "Oriogen";
+	private final String BENCHMARK_DATA = "Benchmark Dose Analyses";
+	private final String CATEGORY_DATA = "Functional Classifications";
 
-	private final String									RENAME						= "Rename";
-	private final String									REMOVE						= "Remove";
-	private final String									EXPORT						= "Export";
-	private final String									SPREADSHEET_VIEW			= "Spreedsheet View";
-	private final String									REMOVE_ALL					= "Remove All Selected Items";
+	private final String RENAME = "Rename";
+	private final String REMOVE = "Remove";
+	private final String EXPORT = "Export";
+	private final String SPREADSHEET_VIEW = "Spreedsheet View";
+	private final String REMOVE_ALL = "Remove All Selected Items";
 
-	private Map<String, List<BMDExpressAnalysisDataSet>>	dataSetMap					= new HashMap<>();
-	private ComboBox<String>								dataGroupCombo				= new ComboBox<>();
-	private CheckListView<BMDExpressAnalysisDataSet>		analysisCheckList			= new CheckListView<>();
+	private Map<String, List<BMDExpressAnalysisDataSet>> dataSetMap = new HashMap<>();
+	private ComboBox<String> dataGroupCombo = new ComboBox<>();
+	private CheckListView<BMDExpressAnalysisDataSet> analysisCheckList = new CheckListView<>();
 	private VBox checkListVBox;
 
-	ProjectNavigationPresenter								presenter;
-	private boolean											fireSelection				= false;
-	private boolean											selectionChangeInProgress	= false;
-	private boolean											visualizationSelected		= false;
+	ProjectNavigationPresenter presenter;
+	private boolean fireSelection = false;
+	private boolean selectionChangeInProgress = false;
+	private boolean visualizationSelected = false;
 
 	public ProjectNavigationView()
 	{
@@ -568,7 +567,66 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						stage.setScene(new Scene((BorderPane) loader.load()));
 						BMDAnalysisView viewCode = loader.<BMDAnalysisView> getController();
 						// The false means that we are not running "select models only mode"
-						viewCode.initData(selectedItems, false);
+						viewCode.initData(selectedItems, false, false);
+						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+							@Override
+							public void handle(WindowEvent event)
+							{
+								viewCode.close();
+							}
+						});
+						// stage.sizeToScene();
+						stage.show();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+	}
+
+	/*
+	 * get the selected data set and start up a new view to perform bmd analysis
+	 */
+	@Override
+	public void performBMDAnalysisToxicR()
+	{
+		// need to run this on the main ui thread. this is being called from event bus thread..hence the
+		// runlater.
+		Platform.runLater(new Runnable() {
+
+			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+			public void run()
+			{
+
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
+				List<IStatModelProcessable> selectedItems = new ArrayList<>();
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
+				{
+					if ((selectedItem instanceof IStatModelProcessable
+							&& ((IStatModelProcessable) selectedItem).getProcessableProbeResponses() != null))
+					{
+						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
+						selectedItems.add(processableData);
+					}
+				}
+
+				if (selectedItems.size() > 0)
+				{
+					try
+					{
+						FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/bmdanalysis.fxml"));
+
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("BMD Analysis");
+						stage.setScene(new Scene((BorderPane) loader.load()));
+						BMDAnalysisView viewCode = loader.<BMDAnalysisView> getController();
+						// The false means that we are not running "select models only mode"
+						viewCode.initData(selectedItems, false, true);
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 							@Override
 							public void handle(WindowEvent event)
@@ -1147,7 +1205,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 						BMDAnalysisView viewCode = loader.<BMDAnalysisView> getController();
 						// The true means that we are not running "select models only mode"
-						viewCode.initData(selectedItems, true);
+						viewCode.initData(selectedItems, true, false);
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 							@Override
 							public void handle(WindowEvent event)
@@ -1387,7 +1445,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 	private void refreshAnalysisList(String forDataGroup)
 	{
-initializeAnalysisList();
+		initializeAnalysisList();
 		clearChecks(null);
 		List<BMDExpressAnalysisDataSet> dataset = dataSetMap.get(forDataGroup);
 		analysisCheckList.getItems().addAll(new ArrayList<>(dataset));
@@ -1451,8 +1509,6 @@ initializeAnalysisList();
 			}
 		});
 
-		
-		
 		analysisCheckList.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)

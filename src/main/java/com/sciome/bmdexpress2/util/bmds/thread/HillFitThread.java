@@ -16,33 +16,36 @@ import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BMDSToxicRUtils;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FileHillFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.toxicR.ToxicRConstants;
 
 public class HillFitThread extends Thread implements IFitThread
 {
-	private CountDownLatch			cdLatch;
-	private FileHillFit				fHillFit			= null;
+	private CountDownLatch cdLatch;
+	private FileHillFit fHillFit = null;
 
-	private ModelInputParameters	inputParameters;
-	private boolean					flagHill			= false;
+	private ModelInputParameters inputParameters;
+	private boolean flagHill = false;
 
-	private double					flagDose;
-	private float[]					doses;
+	private double flagDose;
+	private float[] doses;
 
-	private final int[]				adversDirections	= { 0, 1, -1 };
-	private List<ProbeResponse>		probeResponses;
-	private List<StatResult>		hillResults;
+	private final int[] adversDirections = { 0, 1, -1 };
+	private List<ProbeResponse> probeResponses;
+	private List<StatResult> hillResults;
 
-	private int						numThreads;
-	private int						instanceIndex;
+	private int numThreads;
+	private int instanceIndex;
 
-	private boolean					cancel				= false;
+	private boolean cancel = false;
 
-	private IModelProgressUpdater	progressUpdater;
-	private IProbeIndexGetter		probeIndexGetter;
+	private IModelProgressUpdater progressUpdater;
+	private IProbeIndexGetter probeIndexGetter;
 
-	private String					tmpFolder;
+	private String tmpFolder;
 
 	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
@@ -80,7 +83,10 @@ public class HillFitThread extends Thread implements IFitThread
 	@Override
 	public void run()
 	{
-		filedHillFit();
+		if (inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
+			filedHillFit();
+		else
+			toxicRFit();
 		try
 		{
 			cdLatch.countDown();
@@ -89,6 +95,59 @@ public class HillFitThread extends Thread implements IFitThread
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private void toxicRFit()
+	{
+		double[] dosesd = new double[doses.length];
+		int di = 0;
+		for (float d : doses)
+			dosesd[di++] = d;
+		Random rand = new Random(System.nanoTime());
+		int randInt = Math.abs(rand.nextInt());
+
+		Integer probeIndex = probeIndexGetter.getNextProbeIndex();
+		while (probeIndex != null)
+		{
+
+			HillResult hillResult = (HillResult) hillResults.get(probeIndex);
+
+			if (cancel)
+			{
+				break;
+			}
+
+			try
+			{
+				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
+						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
+				float[] responses = probeResponses.get(probeIndex).getResponseArray();
+				double[] responsesD = new double[responses.length];
+				int ri = 0;
+				for (float r : responses)
+					responsesD[ri++] = r;
+
+				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.HILL, responsesD, dosesd,
+						inputParameters.getBmrType(), inputParameters.getBmrLevel(), false);
+
+				double tmpr = results[8];
+				results[8] = results[9];
+				results[9] = tmpr;
+
+				if (results != null)
+				{
+					fillOutput(results, hillResult);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			this.progressUpdater.incrementModelsComputed();
+			probeIndex = probeIndexGetter.getNextProbeIndex();
+		}
+
 	}
 
 	private void filedHillFit()

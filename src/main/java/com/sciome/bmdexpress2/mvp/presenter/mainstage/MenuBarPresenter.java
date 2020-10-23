@@ -14,6 +14,7 @@ import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisGCurvePRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisToxicRRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
@@ -257,6 +258,13 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
 		// which dataset to analyze
 		getEventBus().post(new BMDAnalysisGCurvePRequestEvent(""));
+
+	}
+
+	public void performBMDAnalsyisToxicR()
+	{
+		// TODO Auto-generated method stub
+		getEventBus().post(new BMDAnalysisToxicRRequestEvent(""));
 
 	}
 

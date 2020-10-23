@@ -35,6 +35,7 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisGCurvePRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisToxicRRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
@@ -90,9 +91,9 @@ public class ProjectNavigationPresenter
 		extends ServicePresenterBase<IProjectNavigationView, IProjectNavigationService>
 {
 
-	private BMDProject				currentProject	= new BMDProject();
-	private File					currentProjectFile;
-	private IDataCombinerService	combinerService	= new DataCombinerService();
+	private BMDProject currentProject = new BMDProject();
+	private File currentProjectFile;
+	private IDataCombinerService combinerService = new DataCombinerService();
 
 	public ProjectNavigationPresenter(IProjectNavigationView view, IProjectNavigationService service,
 			BMDExpressEventBus eventBus)
@@ -174,7 +175,7 @@ public class ProjectNavigationPresenter
 			return;
 		// FileAnnotation uses the probe hash to help find a valid list of chips.
 		Hashtable<String, Integer> probeHash = new Hashtable<>();
-		for(DoseResponseExperiment exp: experiments)
+		for (DoseResponseExperiment exp : experiments)
 			for (ProbeResponse probeResponse : exp.getProbeResponses())
 				probeHash.put(probeResponse.getProbe().getId(), 1);
 		FileAnnotation fileAnnotation = new FileAnnotation();
@@ -321,6 +322,14 @@ public class ProjectNavigationPresenter
 	{
 
 		getView().performBMDAnalysisGCurveP();
+
+	}
+
+	@Subscribe
+	public void onBMDAnalysisGCurvePRequest(BMDAnalysisToxicRRequestEvent event)
+	{
+
+		getView().performBMDAnalysisToxicR();
 
 	}
 

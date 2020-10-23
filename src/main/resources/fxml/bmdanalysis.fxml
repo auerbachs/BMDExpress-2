@@ -58,6 +58,30 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
+                        <AnchorPane fx:id="modelsPane1" layoutX="10.0" layoutY="110.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="1004.0">
+                           <children>
+                              <TitledPane collapsible="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="800.0" text="Method" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <HBox fx:id="methodHBox" layoutX="14.0" layoutY="52.0" spacing="50.0">
+                                             <children>
+                                                <RadioButton fx:id="origMethodRadio" layoutX="14.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_OrigMethod" selected="true" text="EPA BMDS Executables">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="methodGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="toxicRMethodRadio" layoutX="258.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRLaplaceMethod" text="New EPA BMDS" toggleGroup="$methodGroup" />
+                                                <RadioButton fx:id="toxicRMAMethodRadio" layoutX="403.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRLaplaceMAMethod" text="ToxicR Laplace with Model Averaging" toggleGroup="$methodGroup" />
+                                                <RadioButton fx:id="toxicRMCMCMAMethodRadio" layoutX="734.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRMCMCMAMethod" text="ToxicR MCMC with Model Averaging" toggleGroup="$methodGroup" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </children>
+                        </AnchorPane>
                         <AnchorPane fx:id="modelsPane" maxHeight="-Infinity">
                            <children>
                               <TitledPane collapsible="false" prefHeight="98.0" prefWidth="800.0" text="Continuous Models" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -67,8 +91,8 @@
                                           <GridPane layoutX="36.0" layoutY="18.0" prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="444.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.0" minWidth="10.0" prefWidth="155.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                              </columnConstraints>
                                              <rowConstraints>
@@ -77,52 +101,52 @@
                                                 <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <CheckBox fx:id="poly2CheckBox" layoutX="179.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 2" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="poly2CheckBox" layoutX="179.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 2" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential2CheckBox" layoutX="36.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="Exp 2">
+                                                <CheckBox fx:id="exponential2CheckBox" layoutX="36.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="Exp 2" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="poly3CheckBox" layoutX="324.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 3" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="poly3CheckBox" layoutX="324.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 3" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="hillCheckBox" layoutX="146.0" layoutY="27.0" mnemonicParsing="false" onAction="#handle_HillCheckBox" selected="true" text="Hill" GridPane.rowIndex="2">
+                                                <CheckBox fx:id="hillCheckBox" layoutX="146.0" layoutY="27.0" mnemonicParsing="false" onAction="#handle_HillCheckBox" selected="true" text="Hill">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="powerCheckBox" layoutX="367.0" layoutY="18.0" mnemonicParsing="false" onAction="#handle_PowerCheckBox" selected="true" text="Power" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <CheckBox fx:id="powerCheckBox" layoutX="367.0" layoutY="18.0" mnemonicParsing="false" onAction="#handle_PowerCheckBox" selected="true" text="Power" GridPane.columnIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="linearCheckBox" layoutX="49.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Linear" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="linearCheckBox" layoutX="49.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Linear" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential3CheckBox" mnemonicParsing="false" selected="true" text="Exp 3" GridPane.columnIndex="1">
+                                                <CheckBox fx:id="exponential3CheckBox" mnemonicParsing="false" selected="true" text="Exp 3" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential4CheckBox" mnemonicParsing="false" selected="true" text="Exp 4" GridPane.columnIndex="2">
+                                                <CheckBox fx:id="exponential4CheckBox" mnemonicParsing="false" selected="true" text="Exp 4" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential5CheckBox" mnemonicParsing="false" selected="true" text="Exp 5" GridPane.columnIndex="3">
+                                                <CheckBox fx:id="exponential5CheckBox" mnemonicParsing="false" selected="true" text="Exp 5" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="poly4CheckBox" mnemonicParsing="false" text="Poly 4" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="poly4CheckBox" mnemonicParsing="false" text="Poly 4" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
@@ -135,7 +159,7 @@
                               </TitledPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="204.0" prefWidth="998.0" VBox.vgrow="NEVER">
+                        <AnchorPane fx:id="parametersPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="998.0" VBox.vgrow="NEVER">
                            <children>
                               <TitledPane collapsible="false" layoutY="-34.0" prefHeight="167.0" prefWidth="800.0" text="Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-34.0">
                                  <content>
