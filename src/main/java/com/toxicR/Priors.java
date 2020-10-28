@@ -8,19 +8,19 @@ public class Priors
 	double[] exp3;
 	double[] exp5;
 
-	boolean isLogNormal = false;
+	boolean isNCV = false;
 	boolean isMLE = false;
-	int distType = 2;
+	int distType = 1;
 
 	// intialialize priors
 	public Priors(boolean ln, boolean ism)
 	{
-		isLogNormal = ln;
-		ism = isMLE;
-		if (isLogNormal)
-			distType = 1;
+		isNCV = ln;
+		isMLE = ism;
+		if (isNCV)
+			distType = 2;
 
-		if (!isLogNormal && !isMLE)
+		if (isNCV && !isMLE)
 		{
 			// normal bayesian
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 2, 0, 1, 0, 100, 2, 0, 0.5, 0, 30, 1,
@@ -33,7 +33,7 @@ public class Priors
 					0, 1, -20, 20, 2, Math.log(1.5), 0.3, 0, 18, 2, 0, 0.5, 0, 18, 1, 0, 2, -18, 18 }, 6, 5);
 		}
 
-		else if (!isLogNormal && isMLE)
+		else if (isNCV && isMLE)
 		{
 			// normal MLE
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 1, 0, 100, 0, 0, 0.5, 0, 30, 0,
@@ -41,11 +41,12 @@ public class Priors
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 1, 0, 100, 0, 0, 1, -1e4, 1e4,
 					0, Math.log(1.5), 0.5, 0, 40, 0, 0, 0.250099980007996, 0, 18, 0, 0, 2, -18, 18 }, 5, 5);
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 0.1, 0, 100, 0, 0, 1, -100, 100,
-					0, 0, 1, 0, 100, 0, 0, 0.3, 0, 100, 0, 0, 0.5, 0, 100, 0, 0, 2, -18, 18 }, 6, 5);
+					0, 0, 1, 1, 100, 0, 0, 0.3, 0, 100, 0, 0, 0.5, 0, 100, 0, 0, 2, -18, 18 }, 6, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 0.1, 0, 100, 0, 0, 1, -30, 30, 0,
 					0, 1, -20, 20, 0, Math.log(1.5), 0.3, 0, 18, 0, 0, 0.5, 0, 18, 0, 0, 2, -18, 18 }, 6, 5);
+
 		}
-		else if (isLogNormal && !isMLE)
+		else if (!isNCV && !isMLE)
 		{
 			// lognormal bayesian
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 2, 0, 0.1, 0, 100, 1, 0, 1, -100, 100,
@@ -57,11 +58,11 @@ public class Priors
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 2, 0, 0.1, 0, 100, 1, 0, 1, -30, 30, 1,
 					0, 2, -20, 20, 2, Math.log(1.5), 0.3, 0, 18, 1, 0, 2, -18, 18 }, 5, 5);
 		}
-		else if (isLogNormal && isMLE)
+		else if (!isNCV && isMLE)
 		{
-			// lognomrla MLE
+			// lognormal MLE
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 0.1, 0, 100, 0, 0, 1, -100, 100,
-					0, 0, 0.33, 0, 100, 0, 0, 0.33, 0, 18, 0, 0, 2, -18, 18 }, 5, 5);
+					0, 0, 0.33, 1, 100, 0, 0, 0.33, 0, 18, 0, 0, 2, -18, 18 }, 5, 5);
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 0.1, 0, 100, 0, 0, 1, 0, 30, 0,
 					0, 1, -20, 20, 0, 0, 0.3, 0, 18, 0, 0, 2, -18, 18 }, 5, 5);
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { 0, 0, 0.1, 0, 100, 0, 0, 1, -1e4, 1e4,
@@ -113,7 +114,7 @@ public class Priors
 
 		// log normal priors have 1 less number of rows.
 		int diff = 0;
-		if (isLogNormal)
+		if (!isNCV)
 			diff = 1;
 		for (Integer model : models)
 		{
@@ -140,22 +141,22 @@ public class Priors
 
 	public int getHillRowCount()
 	{
-		return 6 - (isLogNormal ? 1 : 0);
+		return 6 - (!isNCV ? 1 : 0);
 	}
 
 	public int getExp3RowCount()
 	{
-		return 6 - (isLogNormal ? 1 : 0);
+		return 6 - (!isNCV ? 1 : 0);
 	}
 
 	public int getExp5RowCount()
 	{
-		return 6 - (isLogNormal ? 1 : 0);
+		return 6 - (!isNCV ? 1 : 0);
 	}
 
 	public int getPowerRowCount()
 	{
-		return 5 - (isLogNormal ? 1 : 0);
+		return 5 - (!isNCV ? 1 : 0);
 	}
 
 	public int getHillColCount()

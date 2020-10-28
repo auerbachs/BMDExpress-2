@@ -129,7 +129,8 @@ public class HillFitThread extends Thread implements IFitThread
 					responsesD[ri++] = r;
 
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.HILL, responsesD, dosesd,
-						inputParameters.getBmrType(), inputParameters.getBmrLevel(), false);
+						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+						inputParameters.getConstantVariance() != 1);
 
 				double tmpr = results[8];
 				results[8] = results[9];
@@ -138,6 +139,17 @@ public class HillFitThread extends Thread implements IFitThread
 				if (results != null)
 				{
 					fillOutput(results, hillResult);
+					if (flagHill)
+					{
+						if (results[9] < flagDose)
+						{
+							hillResult.setkFlag((short) 1);
+						}
+						else
+						{
+							hillResult.setkFlag((short) 0);
+						}
+					}
 				}
 			}
 			catch (Exception e)

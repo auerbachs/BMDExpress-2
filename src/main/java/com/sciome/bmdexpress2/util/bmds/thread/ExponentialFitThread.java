@@ -120,6 +120,7 @@ public class ExponentialFitThread extends Thread implements IFitThread
 
 			try
 			{
+				System.out.println(probeResponses.get(probeIndex).getProbe().getId());
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
 						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
@@ -134,7 +135,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 				if (expOption == 5)
 					expModel = ToxicRConstants.EXP5;
 				double[] results = BMDSToxicRUtils.calculateToxicR(expModel, responsesD, dosesd,
-						inputParameters.getBmrType(), inputParameters.getBmrLevel(), false);
+						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+						inputParameters.getConstantVariance() != 1);
 
 				if (expModel == ToxicRConstants.EXP3) // move param d to param c
 					results[9] = results[10];

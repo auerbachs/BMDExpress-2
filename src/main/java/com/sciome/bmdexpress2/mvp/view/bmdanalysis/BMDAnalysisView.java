@@ -486,7 +486,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 
-		this.constantVarianceCheckBox.setDisable(true);
+		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
@@ -512,7 +512,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 
-		this.constantVarianceCheckBox.setDisable(true);
+		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
@@ -538,7 +538,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 
-		this.constantVarianceCheckBox.setDisable(true);
+		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);

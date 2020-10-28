@@ -12,15 +12,13 @@ import com.toxicR.model.ContinuousResult;
 public class BMDSToxicRUtils
 {
 
-	public static double calculateAIC(int K, double maxlikelihood, double n)
+	public static double calculateAIC(int K, double maxlikelihood)
 	{
-		// K += 2;
-		// return -2 * Math.log(maxlikelihood) + 2 * K + (2 * K * (K + 1) / (n - K - 1));
-		return -2 * Math.log(maxlikelihood) + 2 * K;
+		return 2 * K - 2 * maxlikelihood;
 	}
 
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isLogNormal) throws JsonMappingException, JsonProcessingException
+			boolean isNCV) throws JsonMappingException, JsonProcessingException
 	{
 
 		if (bmdType == 1)
@@ -29,8 +27,7 @@ public class BMDSToxicRUtils
 			bmdType = ToxicRConstants.BMD_TYPE_REL;
 
 		ToxicRJNI tRJNI = new ToxicRJNI();
-		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true,
-				isLogNormal);
+		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true, isNCV);
 		double sampleSize = 1;
 		double currd = -9999;
 		for (double dose : doses)
@@ -40,12 +37,11 @@ public class BMDSToxicRUtils
 			currd = dose;
 		}
 
-		double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), continousResult.getMax(),
-				sampleSize);
+		double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), -continousResult.getMax());
 
 		int extraparms = 1;
 
-		if (!isLogNormal)
+		if (isNCV)
 			extraparms = 2;
 
 		int extraoption = 0;
@@ -66,7 +62,7 @@ public class BMDSToxicRUtils
 		results[2] = getBMDU(continousResult.getBmdDist());
 
 		results[3] = 9999;
-		results[4] = continousResult.getMax();
+		results[4] = -continousResult.getMax();
 		results[5] = aic;
 
 		int start = 6;
