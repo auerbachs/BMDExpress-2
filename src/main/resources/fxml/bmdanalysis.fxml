@@ -90,10 +90,11 @@
                                        <children>
                                           <GridPane layoutX="36.0" layoutY="18.0" prefHeight="123.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="444.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.0" minWidth="10.0" prefWidth="155.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.00000762939453" minWidth="10.0" prefWidth="173.00000762939453" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="260.99999237060547" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="232.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="328.0" minWidth="10.0" prefWidth="172.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.0" minWidth="10.0" prefWidth="168.0" />
                                              </columnConstraints>
                                              <rowConstraints>
                                                 <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -106,12 +107,12 @@
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential2CheckBox" layoutX="36.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="Exp 2" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="exponential2CheckBox" layoutX="36.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="Exp 2" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="poly3CheckBox" layoutX="324.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 3" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                <CheckBox fx:id="poly3CheckBox" layoutX="324.0" layoutY="71.0" mnemonicParsing="false" selected="true" text="Poly 3" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
@@ -136,7 +137,7 @@
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="exponential4CheckBox" mnemonicParsing="false" selected="true" text="Exp 4" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                                <CheckBox fx:id="exponential4CheckBox" mnemonicParsing="false" selected="true" text="Exp 4" GridPane.columnIndex="4" GridPane.rowIndex="1">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
@@ -146,11 +147,12 @@
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
-                                                <CheckBox fx:id="poly4CheckBox" mnemonicParsing="false" text="Poly 4" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                                <CheckBox fx:id="poly4CheckBox" mnemonicParsing="false" text="Poly 4" GridPane.columnIndex="4" GridPane.rowIndex="2">
                                                    <GridPane.margin>
                                                       <Insets left="20.0" />
                                                    </GridPane.margin>
                                                 </CheckBox>
+                                                <CheckBox fx:id="funlCheckBox" mnemonicParsing="false" prefHeight="18.0" prefWidth="75.0" selected="true" text="FUNL" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                              </children>
                                           </GridPane>
                                        </children>

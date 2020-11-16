@@ -9,31 +9,32 @@ import com.sciome.bmdexpress2.util.bmds.shared.RestrictPowerEnum;
 
 public class BMDInput
 {
-	private boolean										exp2;
-	private boolean										exp3;
-	private boolean										exp4;
-	private boolean										exp5;
-	private boolean										linear;
-	private boolean										poly2;
-	private boolean										poly3;
-	private boolean										poly4;
-	private boolean										hill;
-	private boolean										power;
-	private boolean										constantVariance;
-	private boolean										flagHillModel;
-	private int											maxIterations;
-	private int											numThreads;
-	private int											killTime;
-	private double										confidenceLevel;
-	private double										pValueCutoff;
-	private double										modifyBMDFlaggedHill;
-	private BMRFactor									BMRFactor;
-	private String										bmrType;
-	private RestrictPowerEnum							restrictPower;
-	private BestPolyModelTestEnum						bestPolyModelTest;
-	private FlagHillModelDoseEnum						kParameterLessThan;
-	private BestModelSelectionWithFlaggedHillModelEnum	bestModelWithFlaggedHill;
-	private BestModelSelectionBMDLandBMDU				bestModelSelectionBMDLandBMDU;
+	private boolean exp2;
+	private boolean exp3;
+	private boolean exp4;
+	private boolean exp5;
+	private boolean linear;
+	private boolean poly2;
+	private boolean poly3;
+	private boolean poly4;
+	private boolean funl;
+	private boolean hill;
+	private boolean power;
+	private boolean constantVariance;
+	private boolean flagHillModel;
+	private int maxIterations;
+	private int numThreads;
+	private int killTime;
+	private double confidenceLevel;
+	private double pValueCutoff;
+	private double modifyBMDFlaggedHill;
+	private BMRFactor BMRFactor;
+	private String bmrType;
+	private RestrictPowerEnum restrictPower;
+	private BestPolyModelTestEnum bestPolyModelTest;
+	private FlagHillModelDoseEnum kParameterLessThan;
+	private BestModelSelectionWithFlaggedHillModelEnum bestModelWithFlaggedHill;
+	private BestModelSelectionBMDLandBMDU bestModelSelectionBMDLandBMDU;
 
 	public BMDInput()
 	{
@@ -64,6 +65,16 @@ public class BMDInput
 		kParameterLessThan = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 		bestModelWithFlaggedHill = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
 		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE;
+	}
+
+	public boolean isFunl()
+	{
+		return funl;
+	}
+
+	public void setFunl(boolean funl)
+	{
+		this.funl = funl;
 	}
 
 	public boolean isExp2()

@@ -20,6 +20,13 @@ public class BMDSToxicRUtils
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
 			boolean isNCV) throws JsonMappingException, JsonProcessingException
 	{
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
+		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing);
+	}
+
+	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
+			boolean isNCV, boolean isIncreasing) throws JsonMappingException, JsonProcessingException
+	{
 
 		if (bmdType == 1)
 			bmdType = ToxicRConstants.BMD_TYPE_SD;
@@ -27,7 +34,8 @@ public class BMDSToxicRUtils
 			bmdType = ToxicRConstants.BMD_TYPE_REL;
 
 		ToxicRJNI tRJNI = new ToxicRJNI();
-		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true, isNCV);
+		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true, isNCV,
+				isIncreasing);
 		double sampleSize = 1;
 		double currd = -9999;
 		for (double dose : doses)
@@ -49,12 +57,9 @@ public class BMDSToxicRUtils
 		// add directionality to exponential models
 		// this goes into the results
 		if (model == ToxicRConstants.EXP3 || model == ToxicRConstants.EXP5)
-		{
-			boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 			extraoption = (isIncreasing ? 1 : -1);
-		}
 
-		// special logic for EXP3.
+		// special logic for EXP3
 		double[] results = new double[6 + continousResult.getNparms() - extraparms
 				+ (extraoption != 0 ? 1 : 0) + (model == ToxicRConstants.EXP3 ? 1 : 0)];
 		results[0] = getBMD(continousResult.getBmdDist());

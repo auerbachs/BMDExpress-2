@@ -16,9 +16,11 @@ import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BMDSToxicRUtils;
 import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FilePolyFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.toxicR.ToxicRConstants;
 
 public class PolyFitThread extends Thread implements IFitThread
 {
@@ -96,7 +98,77 @@ public class PolyFitThread extends Thread implements IFitThread
 
 	private void toxicRFit()
 	{
-		// TODO Auto-generated method stub
+		double[] dosesd = new double[doses.length];
+		int di = 0;
+		for (float d : doses)
+			dosesd[di++] = d;
+		Random rand = new Random(System.nanoTime());
+		int randInt = Math.abs(rand.nextInt());
+
+		Integer probeIndex = probeIndexGetter.getNextProbeIndex();
+		while (probeIndex != null)
+		{
+
+			PolyResult polyResult = (PolyResult) polyResults.get(probeIndex);
+			// System.out.println(probeResponses.get(probeIndex).getProbe().getId());
+
+			if (cancel)
+			{
+				break;
+			}
+
+			try
+			{
+				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
+						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
+				float[] responses = probeResponses.get(probeIndex).getResponseArray();
+				double[] responsesD = new double[responses.length];
+				int ri = 0;
+				for (float r : responses)
+					responsesD[ri++] = r;
+
+				int polyModelConstant = ToxicRConstants.LINEAR;
+				if (inputParameters.getPolyDegree() == 2)
+					polyModelConstant = ToxicRConstants.POLY2;
+				else if (inputParameters.getPolyDegree() == 3)
+					polyModelConstant = ToxicRConstants.POLY3;
+				else if (inputParameters.getPolyDegree() == 4)
+					polyModelConstant = ToxicRConstants.POLY4;
+				double[] results = null;
+				if (inputParameters.getPolyDegree() == 1)
+					results = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
+							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+							inputParameters.getConstantVariance() != 1);
+				else
+				{
+					// run it in both directions.
+					double[] results1 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
+							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+							inputParameters.getConstantVariance() != 1, false);
+					double[] results2 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
+							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+							inputParameters.getConstantVariance() != 1, true);
+
+					if ((results1[0] > results2[0] && results2[0] != DEFAULTDOUBLE)
+							|| results1[0] == DEFAULTDOUBLE)
+						results = results2;
+					else
+						results = results1;
+				}
+
+				if (results != null)
+				{
+					fillOutput(results, polyResult);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			this.progressUpdater.incrementModelsComputed();
+			probeIndex = probeIndexGetter.getNextProbeIndex();
+		}
 
 	}
 
@@ -113,7 +185,6 @@ public class PolyFitThread extends Thread implements IFitThread
 			PolyResult polyResult = (PolyResult) polyResults.get(probeIndex);
 			try
 			{
-				double direction = 0;
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_"
 						+ BMDExpressProperties.getInstance().getNextTempFile(this.tmpFolder,
@@ -139,11 +210,6 @@ public class PolyFitThread extends Thread implements IFitThread
 							|| results[0] == DEFAULTDOUBLE)
 						results = pResults1;
 				}
-
-				if (results[6] > 0)
-					direction = 1;
-				else
-					direction = -1;
 
 				if (results != null)
 					fillOutput(results, polyResult);

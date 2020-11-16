@@ -120,7 +120,7 @@ public class ExponentialFitThread extends Thread implements IFitThread
 
 			try
 			{
-				System.out.println(probeResponses.get(probeIndex).getProbe().getId());
+				// System.out.println(probeResponses.get(probeIndex).getProbe().getId());
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
 						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");

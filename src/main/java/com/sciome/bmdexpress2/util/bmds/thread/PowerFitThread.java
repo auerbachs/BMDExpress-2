@@ -111,6 +111,7 @@ public class PowerFitThread extends Thread implements IFitThread
 		{
 
 			PowerResult powerResult = (PowerResult) powerResults.get(probeIndex);
+			// System.out.println(probeResponses.get(probeIndex).getProbe().getId());
 
 			if (cancel)
 			{

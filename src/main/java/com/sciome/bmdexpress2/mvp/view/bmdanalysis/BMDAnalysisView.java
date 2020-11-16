@@ -25,6 +25,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHill
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
 import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.FunlModel;
 import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
@@ -78,6 +79,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private CheckBox poly3CheckBox;
 	@FXML
 	private CheckBox poly4CheckBox;
+	@FXML
+	private CheckBox funlCheckBox;
 
 	@FXML
 	private CheckBox constantVarianceCheckBox;
@@ -270,6 +273,13 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			modelsToRun.add(poly4Model);
 		}
 
+		if (!funlCheckBox.isDisabled() && funlCheckBox.isSelected())
+		{
+			FunlModel funlModel = new FunlModel();
+			funlModel.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
+			modelsToRun.add(funlModel);
+		}
+
 		if (!exponential2CheckBox.isDisabled() && exponential2CheckBox.isSelected())
 		{
 			ExponentialModel exponentialModel = new ExponentialModel();
@@ -332,6 +342,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setPoly2(this.poly2CheckBox.isSelected());
 		input.setPoly3(this.poly3CheckBox.isSelected());
 		input.setPoly4(this.poly4CheckBox.isSelected());
+		input.setFunl(this.funlCheckBox.isSelected());
 		input.setHill(this.hillCheckBox.isSelected());
 		input.setPower(this.powerCheckBox.isSelected());
 		input.setConstantVariance(this.constantVarianceCheckBox.isSelected());
@@ -459,6 +470,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(false);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
+		funlCheckBox.setDisable(true);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(false);
@@ -479,12 +491,13 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		exponential3CheckBox.setDisable(false);
 		exponential4CheckBox.setDisable(true);
 		exponential5CheckBox.setDisable(false);
-		linearCheckBox.setDisable(true);
-		poly2CheckBox.setDisable(true);
-		poly3CheckBox.setDisable(true);
-		poly4CheckBox.setDisable(true);
+		linearCheckBox.setDisable(false);
+		poly2CheckBox.setDisable(false);
+		poly3CheckBox.setDisable(false);
+		poly4CheckBox.setDisable(false);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
+		funlCheckBox.setDisable(false);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -511,6 +524,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(true);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
+		funlCheckBox.setDisable(false);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -537,6 +551,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(true);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
+		funlCheckBox.setDisable(false);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -606,6 +621,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly2CheckBox.setSelected(input.isPoly2());
 		poly3CheckBox.setSelected(input.isPoly3());
 		poly4CheckBox.setSelected(input.isPoly4());
+		funlCheckBox.setSelected(input.isFunl());
 		hillCheckBox.setSelected(input.isHill());
 		powerCheckBox.setSelected(input.isPower());
 		constantVarianceCheckBox.setSelected(input.isConstantVariance());

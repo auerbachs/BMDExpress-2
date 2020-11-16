@@ -33,14 +33,14 @@ public class ToxicRJNIMain
 				11.2, 12.1, 6.1, 6.4, 6.2, 6.2, 3.1, 3.4, 3.3, 2.9, 3.7 };
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
-
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		// ************************************ model suff_stat Y doses sd n_group prior BMD_type
 		// isIncreasing*****************
 		String results = new ToxicRJNI().runContinuousSingleJNI(3, false, Y, doses, sd, n_group,
 				pr.getExp3Priors(), 2, false,
 				// ************************************* BMR tail_prob disttype alpha samples burnin parms
 				// prior_cols ************
-				1.1, .001, pr.getDistType(), 0.005, 210, 100, pr.getExp3RowCount(), pr.getExp3ColCount());
+				1.1, .001, pr.getDistType(), 0.005, 210, 100, pr.getExp3RowCount(), pr.getExp3ColCount(), 0);
 		System.out.println(results);
 
 	}
@@ -52,11 +52,12 @@ public class ToxicRJNIMain
 				40, 40, 40, 40 };
 		double[] Y = { 39, 38.4, 36.3, 37.1, 40.2, 45.3, 42.1, 38.3, 35.9, 42.5, 45.2, 40.1, 39.8, 50.1, 53.4,
 				48.2, 52.1, 56.1, 50.4, 53.2, 55.2, 55.1, 59.1, 56.3, 52.9, 53.7 };
-
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		ContinuousMCMCResult results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuousMCMC(6, Y, doses, 2, 1.3, 2100, 1000, true, true);
+			results = new ToxicRJNI().runContinuousMCMC(6, Y, doses, 2, 1.3, 2100, 1000, true, true,
+					isIncreasing);
 		}
 		catch (JsonProcessingException e)
 		{
@@ -78,11 +79,11 @@ public class ToxicRJNIMain
 		// sd and n_group are not being used because suff_stat is being set to false
 		double[] sd = new double[1];
 		double[] n_group = new double[1];
-
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		ContinuousResult results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuous(6, Y, doses, 2, 1.3, true, true);
+			results = new ToxicRJNI().runContinuous(6, Y, doses, 2, 1.3, true, true, isIncreasing);
 		}
 		catch (JsonProcessingException e)
 		{
@@ -113,7 +114,7 @@ public class ToxicRJNIMain
 		{
 			n_group[i] = 1.2 / i;
 		}
-
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		// ************************************ model suff_stat Y doses sd n_group prior BMD_type
 		// isIncreasing*****************
 		String results = new ToxicRJNI().runContinuousSingleJNI(8, false, Y, doses, sd, n_group,
@@ -121,7 +122,7 @@ public class ToxicRJNIMain
 				// ************************************* BMR tail_prob disttype alpha samples burnin parms
 				// prior_cols ************
 				1.2, 0.001, pr.getDistType(), 0.005, 21000, 1000, pr.getPowerRowCount(),
-				pr.getPowerColCount());
+				pr.getPowerColCount(), 0);
 		System.out.println(results);
 
 	}
@@ -136,11 +137,11 @@ public class ToxicRJNIMain
 				40, 40, 40, 40 };
 		double[] Y = { 39, 38.4, 36.3, 37.1, 40.2, 45.3, 42.1, 38.3, 35.9, 42.5, 45.2, 40.1, 39.8, 50.1, 53.4,
 				48.2, 52.1, 56.1, 50.4, 53.2, 55.2, 55.1, 59.1, 56.3, 52.9, 53.7 };
-
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		ContinuousResultMA results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuousMA(models, Y, doses, 2, 1.3, true, false);
+			results = new ToxicRJNI().runContinuousMA(models, Y, doses, 2, 1.3, true, false, isIncreasing);
 		}
 		catch (Exception e)
 		{
@@ -173,11 +174,13 @@ public class ToxicRJNIMain
 		{
 			n_group[i] = 1.2 / i;
 		}
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 
 		ContinuousMCMCMAResult results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuousMCMCMA(models, Y, doses, 2, 1.3, 20000, 1000, false, true);
+			results = new ToxicRJNI().runContinuousMCMCMA(models, Y, doses, 2, 1.3, 20000, 1000, false, true,
+					isIncreasing);
 		}
 		catch (JsonProcessingException e)
 		{
