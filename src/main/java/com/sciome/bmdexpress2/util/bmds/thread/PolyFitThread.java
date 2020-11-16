@@ -145,10 +145,10 @@ public class PolyFitThread extends Thread implements IFitThread
 					// run it in both directions.
 					double[] results1 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
 							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-							inputParameters.getConstantVariance() != 1, false);
+							inputParameters.getConstantVariance() != 1, true);
 					double[] results2 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
 							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-							inputParameters.getConstantVariance() != 1, true);
+							inputParameters.getConstantVariance() != 1, false);
 
 					if ((results1[0] > results2[0] && results2[0] != DEFAULTDOUBLE)
 							|| results1[0] == DEFAULTDOUBLE)
