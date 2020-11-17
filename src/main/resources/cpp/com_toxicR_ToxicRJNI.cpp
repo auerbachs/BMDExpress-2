@@ -39,7 +39,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols)
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree)
 {
     
     ////////////////////////////////////////////////
@@ -71,6 +71,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
     analysis.suff_stat    = suff_stat;
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
+    analysis.degree   = degree;
 
 
     analysis.prior   = new double[parms*prior_cols]; 
@@ -212,7 +213,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols)
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols,jint degree)
 {
     
     ////////////////////////////////////////////////
@@ -245,6 +246,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
     analysis.suff_stat    = suff_stat;
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
+    analysis.degree   = degree;
 
 
     analysis.prior   = new double[parms*prior_cols]; 

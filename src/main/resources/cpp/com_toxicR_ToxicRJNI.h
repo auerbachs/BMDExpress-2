@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (IZ[D[D[D[D[DIZDDIDIII)V
  */
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
-  (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint);
+  (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint, jint);
 
 string convertSingleContinuousResultToJSON(continuous_model_result* result);
 
@@ -31,7 +31,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols);
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree);
 
 string convertMCMCSingleContinuousResultToJSON(continuous_model_result* result, bmd_analysis_MCMC  *output);
 
