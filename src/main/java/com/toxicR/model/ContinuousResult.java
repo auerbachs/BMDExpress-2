@@ -13,7 +13,7 @@ public class ContinuousResult
 	private Double max;
 	private Integer distNumE;
 	private List<Double> parms;
-	private List<Double> cov;
+	// private List<Double> cov;
 	private List<Double> bmdDist;
 
 	public Integer getModel()
@@ -56,15 +56,15 @@ public class ContinuousResult
 		this.parms = parms;
 	}
 
-	public List<Double> getCov()
-	{
-		return cov;
-	}
+	// public List<Double> getCov()
+	// {
+	// return cov;
+	// }
 
-	public void setCov(List<Double> cov)
-	{
-		this.cov = cov;
-	}
+	// public void setCov(List<Double> cov)
+	// {
+	// this.cov = cov;
+	// }
 
 	public Double getMax()
 	{

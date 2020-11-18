@@ -72,6 +72,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
     analysis.degree   = degree;
+    analysis.sd = new double[1];
+    analysis.n_group = new double[1];
 
 
     analysis.prior   = new double[parms*prior_cols]; 
@@ -94,6 +96,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
 
     
    string jsonResults = convertSingleContinuousResultToJSON(result);
+   del_continuous_analysis(analysis);
+   del_continuous_model_result(result); 
 
    return env->NewStringUTF(jsonResults.c_str());
 
@@ -177,6 +181,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
     analysis.tail_prob    = tail_prob; 
     analysis.suff_stat    = suff_stat;
     analysis.prior   = NULL;
+    analysis.sd = new double[1];
+    analysis.n_group = new double[1];
 
     for (int i = 0; i < len; i++){
       analysis.Y[i] = yBody[i]; 
@@ -197,7 +203,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
    delete ma_result->post_probs;
    delete ma_result->bmd_dist;
    delete ma_result;
-  // del_continuous_analysis(analysis);
+   del_continuous_analysis(analysis);
    del_continuousMA_analysis(ma_analysis);
     
 
@@ -247,6 +253,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
     analysis.degree   = degree;
+    analysis.sd = new double[1];
+    analysis.n_group = new double[1];
 
 
     analysis.prior   = new double[parms*prior_cols]; 
@@ -275,6 +283,9 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
     
    string jsonResults = convertMCMCSingleContinuousResultToJSON(result, output);
 
+   del_continuous_model_result(result);
+   del_continuous_analysis(analysis);
+ 
    return env->NewStringUTF(jsonResults.c_str());
 
   }
@@ -364,6 +375,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
     analysis.burnin       = burnin;
     analysis.tail_prob    = tail_prob; 
     analysis.suff_stat    = suff_stat;
+    analysis.sd = new double[1];
+    analysis.n_group = new double[1];
     analysis.prior   = NULL;
 
     for (int i = 0; i < len; i++){
@@ -385,7 +398,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
    delete ma_result->post_probs;
    delete ma_result->bmd_dist;
    delete ma_result;
-  // del_continuous_analysis(analysis);
+   del_continuous_analysis(analysis);
    del_continuousMA_analysis(ma_analysis);
     
 
@@ -428,6 +441,7 @@ string convertSingleContinuousResultToJSON(continuous_model_result* result)
   buffer <<"],";
   buffer << std::endl;
 
+  /*
   buffer << "\"cov\":";
   buffer <<"[";
   for(int i=0; i< result->dist_numE; i++)
@@ -438,7 +452,7 @@ string convertSingleContinuousResultToJSON(continuous_model_result* result)
   }
   buffer <<"],";
   buffer << std::endl;
-
+  */
 
   buffer << "\"bmd_dist\":";
   buffer <<"[";
