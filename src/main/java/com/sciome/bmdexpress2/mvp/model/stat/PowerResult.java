@@ -65,4 +65,38 @@ public class PowerResult extends StatResult
 		return curveParameters[base] + curveParameters[base + 1] * Math.pow(dose, curveParameters[base + 2]);
 	}
 
+	@Override
+	public String getFormulaText()
+	{
+		return "y[dose] = control + slope * dose^power";
+	}
+
+	@Override
+	public String getEquation()
+	{
+		int base = 0;
+		StringBuilder sb = new StringBuilder("RESPONSE = " + curveParameters[base]);
+
+		if (curveParameters[base + 1] >= 0)
+		{
+			// the parameter is positive, so set display with a +
+			sb.append(" + " + curveParameters[base + 1] + " * DOSE^");
+		}
+		else
+		{
+			// the parameter is negative, set display with a -
+			sb.append(" " + curveParameters[base + 1] + " * DOSE^");
+		}
+
+		if (curveParameters[base + 2] >= 0)
+		{
+			sb.append(curveParameters[base + 2]);
+		}
+		else
+		{
+			sb.append("(" + curveParameters[base + 2] + ")");
+		}
+		return sb.toString();
+	}
+
 }

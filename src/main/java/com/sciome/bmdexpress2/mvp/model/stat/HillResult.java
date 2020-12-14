@@ -85,4 +85,44 @@ public class HillResult extends StatResult
 		return curveParameters[base] + nom / denom;
 	}
 
+	@Override
+	public String getFormulaText()
+	{
+		return "intercept + v * dose^n/(k^n + dose^n)";
+	}
+
+	@Override
+	public String getEquation()
+	{
+		int base = 0;
+		StringBuilder sb = new StringBuilder("RESPONSE = " + curveParameters[base]);
+		if (curveParameters[base + 1] >= 0)
+		{
+			sb.append(" + " + curveParameters[base + 1] + " * DOSE^");
+		}
+		else
+		{
+			sb.append(" " + curveParameters[base + 1] + " * DOSE^");
+		}
+
+		String paramN = Double.toString(curveParameters[base + 2]);
+
+		if (curveParameters[base + 2] < 0)
+		{
+			paramN = "(" + curveParameters[base + 2] + ")";
+		}
+
+		sb.append(paramN + "/(");
+
+		if (curveParameters[base + 3] >= 0)
+		{
+			sb.append(curveParameters[base + 3] + "^" + paramN + " + DOSE^" + paramN + ")");
+		}
+		else
+		{
+			sb.append("(" + curveParameters[base + 2] + ")^" + paramN + " + DOSE^" + paramN + ")");
+		}
+		return sb.toString();
+	}
+
 }

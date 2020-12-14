@@ -34,6 +34,7 @@ import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ChiSquareResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ExponentialResult;
+import com.sciome.bmdexpress2.mvp.model.stat.FunlResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.PolyResult;
 import com.sciome.bmdexpress2.mvp.model.stat.PowerResult;
@@ -46,11 +47,13 @@ import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHill
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
 import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.FunlModel;
 import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.bmds.thread.ExponentialFitThread;
+import com.sciome.bmdexpress2.util.bmds.thread.FUNLFitThread;
 import com.sciome.bmdexpress2.util.bmds.thread.HillFitThread;
 import com.sciome.bmdexpress2.util.bmds.thread.IFitThread;
 import com.sciome.bmdexpress2.util.bmds.thread.IModelProgressUpdater;
@@ -70,36 +73,36 @@ import com.sciome.bmdexpress2.util.stat.DosesStat;
  */
 public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 {
-	private Vector<File>				tempFiles;
-	private BufferedWriter				LOGOUT;
+	private Vector<File> tempFiles;
+	private BufferedWriter LOGOUT;
 
-	private double						maxDose, lowPDose, flagDose, flagRatio;
+	private double maxDose, lowPDose, flagDose, flagRatio;
 
-	private final String				TEMPDIR				= "temp";
+	private final String TEMPDIR = "temp";
 
-	private final double				DEFAULTDOUBLE		= -9999;
-	private final double				p05					= 0.05;
+	private final double DEFAULTDOUBLE = -9999;
+	private final double p05 = 0.05;
 
-	private List<ProbeResponse>			probeResponses;
-	private ModelInputParameters		inputParameters;
-	private ModelSelectionParameters	modelSelectionParameters;
-	private List<StatModel>				modelsToRun;
-	private float[]						doses;
-	private BMDResult					bmdResults			= new BMDResult();
+	private List<ProbeResponse> probeResponses;
+	private ModelInputParameters inputParameters;
+	private ModelSelectionParameters modelSelectionParameters;
+	private List<StatModel> modelsToRun;
+	private float[] doses;
+	private BMDResult bmdResults = new BMDResult();
 
-	private int							numberOfProbesRun	= 0;
-	private String						currentMessage		= "";
+	private int numberOfProbesRun = 0;
+	private String currentMessage = "";
 
 	// the calling thing that needs to update progress to a view or something.
-	private IBMDSToolProgress			progressReciever	= null;
+	private IBMDSToolProgress progressReciever = null;
 
-	private List<IFitThread>			fitThreads			= new ArrayList<>();
-	private boolean						cancel				= false;
-	private AnalysisInfo				analysisInfo;
-	private DosesStat					dosesStat;
-	private List<Integer>				doseResponseQueue	= new ArrayList<>();
-	private String						tmpFolder			= null;
-	private boolean						isCustomTmpFolder	= false;
+	private List<IFitThread> fitThreads = new ArrayList<>();
+	private boolean cancel = false;
+	private AnalysisInfo analysisInfo;
+	private DosesStat dosesStat;
+	private List<Integer> doseResponseQueue = new ArrayList<>();
+	private String tmpFolder = null;
+	private boolean isCustomTmpFolder = false;
 
 	/**
 	 * Class constructor
@@ -379,6 +382,13 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 					progressReciever.updateProgress(currentMessage, 0.0);
 					statResults = fitPowerModel();
 				}
+				else if (modelToRun instanceof FunlModel)
+				{
+					currentMessage = "running FUNL Model";
+					numberOfProbesRun = 0;
+					progressReciever.updateProgress(currentMessage, 0.0);
+					statResults = fitFUNLModel();
+				}
 				else if (modelToRun instanceof ExponentialModel)
 				{
 					currentMessage = "running Exp " + ((ExponentialModel) modelToRun).getOption() + " Model";
@@ -585,6 +595,50 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			powerThread.start();
 
 			fitThreads.add(powerThread);
+		}
+
+		try
+		{
+			cDownLatch.await();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		return statResults;
+	}
+
+	private List<StatResult> fitFUNLModel()
+	{
+
+		// instantiate a List of StatResults
+		List<StatResult> statResults = new ArrayList<>();
+
+		// populate with empty hill result objects so the threads can process and populate
+		int probeIndex = 0;
+		doseResponseQueue.clear();
+		for (@SuppressWarnings("unused")
+		ProbeResponse probeRespone : probeResponses)
+		{
+			FunlResult powerResult = new FunlResult();
+			statResults.add(powerResult);
+			doseResponseQueue.add(probeIndex);
+			probeIndex++;
+		}
+		CountDownLatch cDownLatch = new CountDownLatch(inputParameters.getNumThreads());
+
+		for (int i = 0; i < inputParameters.getNumThreads(); i++)
+		{
+
+			FUNLFitThread funlThread = new FUNLFitThread(cDownLatch, probeResponses, statResults,
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this);
+
+			funlThread.setDoses(doses);
+			funlThread.setObjects(inputParameters);
+			funlThread.start();
+
+			fitThreads.add(funlThread);
 		}
 
 		try

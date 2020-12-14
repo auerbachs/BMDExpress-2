@@ -10,19 +10,19 @@ public class GCurvePResult extends StatResult
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= 2275549172312801367L;
+	private static final long serialVersionUID = 2275549172312801367L;
 
-	private double				BMDauc;
-	private double				BMDLauc;
-	private double				BMDUauc;
-	private double				BMDwAuc;
-	private double				BMDLwAuc;
-	private double				BMDUwAuc;
-	private double				bmr;
-	private List<Float>			correctedDoseResponseOffsetValues;
-	private List<Float>			weightedAverages;
-	private List<Float>			weightedStdDeviations;
-	private Double				adjustedControlDoseValue;
+	private double BMDauc;
+	private double BMDLauc;
+	private double BMDUauc;
+	private double BMDwAuc;
+	private double BMDLwAuc;
+	private double BMDUwAuc;
+	private double bmr;
+	private List<Float> correctedDoseResponseOffsetValues;
+	private List<Float> weightedAverages;
+	private List<Float> weightedStdDeviations;
+	private Double adjustedControlDoseValue;
 
 	public GCurvePResult()
 	{
@@ -194,6 +194,18 @@ public class GCurvePResult extends StatResult
 
 		// TODO Auto-generated method stub
 		return -9999;
+	}
+
+	@Override
+	public String getFormulaText()
+	{
+		return "none";
+	}
+
+	@Override
+	public String getEquation()
+	{
+		return "GCurveP";
 	}
 
 }

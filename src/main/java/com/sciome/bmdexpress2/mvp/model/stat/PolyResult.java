@@ -123,4 +123,46 @@ public class PolyResult extends StatResult
 		}
 	}
 
+	@Override
+	public String getFormulaText()
+	{
+		StringBuilder sb = new StringBuilder("y[dose] = beta_0 + beta_1 * dose"); // degree == 1
+
+		for (int d = 2; d <= degree; d++)
+		{
+			sb.append(" + beta_" + d + " * dose^" + d);
+		}
+
+		return sb.toString();
+	}
+
+	@Override
+	public String getEquation()
+	{
+		int base = 0;
+		StringBuilder sb = new StringBuilder("RESPONSE = " + curveParameters[base]);
+
+		if (degree > 0)
+		{
+			for (int i = 1; i <= degree; i++)
+			{
+				if (curveParameters[base + i] >= 0)
+				{ // positive
+					sb.append(" + " + curveParameters[base + i] + " * DOSE");
+				}
+				else
+				{ // negative
+					sb.append(" " + curveParameters[base + i] + " * DOSE");
+				}
+
+				if (i > 1)
+				{
+					sb.append("^" + i);
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
 }

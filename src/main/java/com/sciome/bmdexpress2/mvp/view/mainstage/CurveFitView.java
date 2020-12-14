@@ -68,78 +68,78 @@ import javafx.stage.Stage;
 public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, Initializable
 {
 	@FXML
-	private HBox						chartBox;
+	private HBox chartBox;
 	@FXML
-	private CheckBox					meanAndDeviationCheckBox;
+	private CheckBox meanAndDeviationCheckBox;
 	@FXML
-	private CheckBox					logDosesCheckBox;
+	private CheckBox logDosesCheckBox;
 	@FXML
-	private ComboBox					modelNameComboBox;
+	private ComboBox modelNameComboBox;
 	@FXML
-	private ComboBox					idComboBox;
+	private ComboBox idComboBox;
 	@FXML
-	private TextField					modelTextField;
+	private TextField modelTextField;
 	@FXML
-	private TextField					bmdlTextField;
+	private TextField bmdlTextField;
 	@FXML
-	private TextField					bmdTextField;
+	private TextField bmdTextField;
 	@FXML
-	private TextField					bmduTextField;
+	private TextField bmduTextField;
 	@FXML
-	private TextField					fitPTextField;
+	private TextField fitPTextField;
 	@FXML
-	private TextField					aicTextField;
+	private TextField aicTextField;
 	@FXML
-	private Button						printButton;
+	private Button printButton;
 	@FXML
-	private Button						clearButton;
+	private Button clearButton;
 	@FXML
-	private Button						propertiesButton;
+	private Button propertiesButton;
 	@FXML
-	private Button						closeButton;
+	private Button closeButton;
 
-	private BMDResult					bmdResults;					// the matrix of data from the parent
-																	// analyis
-	private OnewayAnova					oneway;						//
-	private BMDoseModel					bmdModel;					//
-	private StatResult					bestModel;
+	private BMDResult bmdResults; // the matrix of data from the parent
+									// analyis
+	private OnewayAnova oneway; //
+	private BMDoseModel bmdModel; //
+	private StatResult bestModel;
 
-	private String						srcName;
+	private String srcName;
 
-	private double[]					doses;						// read in doses
-	private double[]					responses;					// holds responses
-	private double[]					parameters;					// read in parameters BMD, BMDL, BMDU,
-																	// pValue...
+	private double[] doses; // read in doses
+	private double[] responses; // holds responses
+	private double[] parameters; // read in parameters BMD, BMDL, BMDU,
+									// pValue...
 
-	private XYSeries					dataSeries;					// holds the raw data
-	private XYSeries					modelSeries;				// holds the model
-	private XYSeries					bmdSeries;					// holds the BMD drawing setup
-	private XYSeries					bmdlSeries;					// holds the BMDL drawing setup
-	private XYSeries					bmduSeries;					// holds the BMDU drawing setup
-	private XYSeries					noelSeries;
-	private XYSeries					loelSeries;
-	private XYSeriesCollection			seriesSet;					// holds the set of series currently
-																	// displayed
+	private XYSeries dataSeries; // holds the raw data
+	private XYSeries modelSeries; // holds the model
+	private XYSeries bmdSeries; // holds the BMD drawing setup
+	private XYSeries bmdlSeries; // holds the BMDL drawing setup
+	private XYSeries bmduSeries; // holds the BMDU drawing setup
+	private XYSeries noelSeries;
+	private XYSeries loelSeries;
+	private XYSeriesCollection seriesSet; // holds the set of series currently
+											// displayed
 
-	private Color[]						chartColors;				// holds the colors for various chart
-																	// components
+	private Color[] chartColors; // holds the colors for various chart
+									// components
 
-	private JFreeChart					chart;						// the displayed chart
-	private SciomeChartViewer			cP;							// the panel for the chart
+	private JFreeChart chart; // the displayed chart
+	private SciomeChartViewer cP; // the panel for the chart
 
-	private int							NUM_SERIES;					// holds the number of data series
+	private int NUM_SERIES; // holds the number of data series
 
-	private int							CHART_WIDTH		= 9000;		// fill up as much space as it can
-	private int							CHART_HEIGHT	= 9000;		// fill up as much space as it can
+	private int CHART_WIDTH = 9000; // fill up as much space as it can
+	private int CHART_HEIGHT = 9000; // fill up as much space as it can
 
-	private double						HIGH;						// holds the high y value
-	private double						LOW;						// holds the low y value
+	private double HIGH; // holds the high y value
+	private double LOW; // holds the low y value
 
-	private Map<Probe, double[]>		probeResponseMap;
-	private Map<Probe, ProbeStatResult>	probeStatResultMap;
-	private double						logZeroDose;
-	CurveFitPresenter					presenter;
-	private StatResult					theStatResult;
+	private Map<Probe, double[]> probeResponseMap;
+	private Map<Probe, ProbeStatResult> probeStatResultMap;
+	private double logZeroDose;
+	CurveFitPresenter presenter;
+	private StatResult theStatResult;
 
 	public CurveFitView()
 	{
@@ -518,7 +518,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		oneway.onewayANOVA(responses);
 		double[][] estimates = oneway.estimates();
 		// set up the bmdModel for use
-		bmdModel = new BMDoseModel(name, probe);
+		bmdModel = new BMDoseModel(theStatResult, probe);
 		bmdModel.setParameters(parameters);
 		bmdModel.setEstimates(estimates);
 
@@ -909,7 +909,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			}
 		}
 
-		modelTextField.setText(bmdModel.getModelEquation(model));// formula.toString());
+		modelTextField.setText(this.theStatResult.getEquation());// formula.toString());
 		bmdTextField.setText(Double.toString(parameters[0]));
 		bmdlTextField.setText(Double.toString(parameters[1]));
 		bmduTextField.setText(Double.toString(parameters[2]));

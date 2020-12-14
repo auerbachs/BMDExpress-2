@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FunlResult extends StatResult
+public class ModelAveragingResult extends StatResult
 {
 
 	private static final long serialVersionUID = -527776055122273597L;
@@ -13,7 +13,10 @@ public class FunlResult extends StatResult
 	 * GeneId
 	 */
 
-	public FunlResult()
+	private List<StatResult> modelResults;
+	private List<Double> posteriorProbabilities;
+
+	public ModelAveragingResult()
 	{
 		super();
 	}
@@ -71,35 +74,28 @@ public class FunlResult extends StatResult
 	@Override
 	public double getResponseAt(double dose)
 	{
-		Double param1 = curveParameters[0];
-		Double param2 = curveParameters[1];
-		Double param3 = curveParameters[2];
-		Double param4 = curveParameters[3];
-		Double param5 = curveParameters[4];
-		Double param6 = curveParameters[5];
+		List<Double> modelResponses = new ArrayList<>();
+		for (StatResult model : this.modelResults)
+			modelResponses.add(model.getResponseAt(dose));
 
-		return param1 + param2 * Math.exp(Math.pow(dose - param5, 2) * (-param6))
-				* (1 / (1 + Math.exp(-(dose - param3) / param4)));
+		return 0.0;
+		// perform the model averaging magic.
+
+		// return param1 + param2 * Math.exp(Math.pow(dose - param5, 2) * (-param6))
+		// * (1 / (1 + Math.exp(-(dose - param3) / param4)));
 
 	}
 
 	@Override
 	public String getFormulaText()
 	{
-		return "A[1] + A[2]*exp((doses-A[5])^2*(-A[6]))*(1/(1+exp(-(doses-A[3])/A[4])))";
+		return "Model Average";
 	}
 
 	@Override
 	public String getEquation()
 	{
-		Double param1 = curveParameters[0];
-		Double param2 = curveParameters[1];
-		Double param3 = curveParameters[2];
-		Double param4 = curveParameters[3];
-		Double param5 = curveParameters[4];
-		Double param6 = curveParameters[5];
-		return param1 + "+ " + param2 + "*EXP((DOSE-" + param5 + ")^2*(-" + param6 + "))*(1/(1+EXP(-(DOSE-"
-				+ param3 + ")/" + param4 + ")))";
+		return "equation coming soon....";
 	}
 
 }

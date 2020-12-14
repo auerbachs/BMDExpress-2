@@ -212,6 +212,12 @@ public abstract class StatResult extends BMDExpressAnalysisRow implements Serial
 	@JsonIgnore
 	public abstract List<String> getParametersNames();
 
+	@JsonIgnore
+	public abstract String getFormulaText();
+
+	@JsonIgnore
+	public abstract String getEquation();
+
 	@Override
 	public Object getObject()
 	{

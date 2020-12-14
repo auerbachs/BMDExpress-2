@@ -61,23 +61,23 @@ public class JFreeCurve
 
 	// Variables declaration
 
-	private XYSeriesCollection						seriesSet;
-	private Color[]									chartColors;
+	private XYSeriesCollection seriesSet;
+	private Color[] chartColors;
 
-	private JFreeChart								chart;
+	private JFreeChart chart;
 
-	private double									logZeroDose;
-	private boolean									logDoseAxis;
-	private final Double[]							decades		= { .00000000001, .0000000001, .000000001,
-			.00000001, .0000001, .000001, .00001, .0001, .001, .01, .1, 10.0, 100.0, 1000.0, 10000.0,
-			100000.0, 1000000.0, 10000000.0, 100000000.0 };
+	private double logZeroDose;
+	private boolean logDoseAxis;
+	private final Double[] decades = { .00000000001, .0000000001, .000000001, .00000001, .0000001, .000001,
+			.00001, .0001, .001, .01, .1, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0,
+			100000000.0 };
 
-	private String									pathway		= "";
+	private String pathway = "";
 	// store a mapping of the BMDResults and the individual stat results that will be plotted
-	private Map<BMDResult, Set<ProbeStatResult>>	bmdResultToProbeStatResultMap;
+	private Map<BMDResult, Set<ProbeStatResult>> bmdResultToProbeStatResultMap;
 
-	private SciomeChartViewer						chartView;
-	private List<AbstractXYAnnotation>				annotations	= new ArrayList<>();
+	private SciomeChartViewer chartView;
+	private List<AbstractXYAnnotation> annotations = new ArrayList<>();
 
 	// End of variables declaration
 
@@ -252,7 +252,7 @@ public class JFreeCurve
 		OnewayAnova oneway = new OnewayAnova();
 		double[] doses = getDoses(bmdResult);
 		oneway.setVariablesXX(0, doses);
-		BMDoseModel bmdModel = new BMDoseModel(probeStatResult.getBestStatResult().getModel(),
+		BMDoseModel bmdModel = new BMDoseModel(probeStatResult.getBestStatResult(),
 				probeStatResult.getProbeResponse().getProbe());
 		bmdModel.setEstimates(oneway.estimates());
 		double[] parameters = getParameters(probeStatResult);

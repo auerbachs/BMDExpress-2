@@ -174,4 +174,70 @@ public class ExponentialResult extends StatResult
 		return a * (c - (c - 1) * Math.exp(-expvalue));
 	}
 
+	@Override
+	public String getFormulaText()
+	{
+		String formula = "";
+
+		if (option == 2)
+		{
+			formula = "a * exp(b * dose)";
+		}
+		else if (option == 3)
+		{
+			formula = "a * exp((b * dose)^d)";
+		}
+		else if (option == 4)
+		{
+			formula = "a * (c - (c - 1) * exp(-b * dose))";
+		}
+		else if (option == 5)
+		{
+			formula = "a * (c - (c - 1) * exp(-(b * dose)^d))";
+		}
+
+		return formula;
+	}
+
+	@Override
+	public String getEquation()
+	{
+		int base = 0;
+		StringBuilder sb = new StringBuilder("RESPONSE = " + curveParameters[base]);
+
+		if (option == 2)
+		{
+			sb = new StringBuilder("RESPONSE = ");
+			double a = curveParameters[base + 1];
+			double b = curveParameters[base + 2];
+			sb.append(a + " * EXP(" + curveParameters[base] + " * " + b + " * DOSE)");
+		}
+		else if (option == 3)
+		{
+			sb = new StringBuilder("RESPONSE = ");
+			double a = curveParameters[base + 1];
+			double b = curveParameters[base + 2];
+			double d = curveParameters[base + 3];
+			sb.append(a + " * EXP((" + curveParameters[base] + " * " + b + " * DOSE)^" + d + ")");
+		}
+		else if (option == 4)
+		{
+			sb = new StringBuilder("RESPONSE = ");
+			double a = curveParameters[base + 1];
+			double b = curveParameters[base + 2];
+			double c = curveParameters[base + 3];
+			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP(-" + b + " * DOSE))");
+		}
+		else if (option == 5)
+		{
+			sb = new StringBuilder("RESPONSE = ");
+			double a = curveParameters[base + 1];
+			double b = curveParameters[base + 2];
+			double c = curveParameters[base + 3];
+			double d = curveParameters[base + 4];
+			sb.append(a + " * (" + c + " - (" + c + " - 1) * EXP(-(" + b + " * DOSE)^" + d + "))");
+		}
+		return sb.toString();
+	}
+
 }
