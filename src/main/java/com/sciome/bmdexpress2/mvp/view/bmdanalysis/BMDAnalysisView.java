@@ -229,7 +229,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		this.progressBar.setVisible(true);
 		ModelInputParameters inputParameters = assignParameters();
-		ModelSelectionParameters modelSectionParameters = assignModelSelectionParameters();
+		ModelSelectionParameters modelSectionParameters = null;
+		if (!this.toxicRMAMethodRadio.isSelected() && !this.toxicRMCMCMAMethodRadio.isSelected())
+			modelSectionParameters = assignModelSelectionParameters();
 		List<StatModel> modelsToRun = new ArrayList<>();
 		if (!hillCheckBox.isDisabled() && hillCheckBox.isSelected())
 		{
@@ -327,6 +329,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			presenter.performReselectParameters(inputParameters, modelSectionParameters);
 			this.closeWindow();
 		}
+		else if (this.toxicRMAMethodRadio.isSelected())
+			presenter.performLaplaceMA(inputParameters, modelsToRun);
+		else if (this.toxicRMCMCMAMethodRadio.isSelected())
+			presenter.performMCMCMA(inputParameters, modelsToRun);
 		else
 			presenter.performBMDAnalysis(inputParameters, modelSectionParameters, modelsToRun);
 	}
@@ -578,7 +584,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			toxicRMAMethodRadio.setSelected(true);
 			handle_ToxicRLaplaceMAMethod(null);
 
-			this.constantVarianceCheckBox.setDisable(true);
+			this.constantVarianceCheckBox.setDisable(false);
 			this.confidenceLevelComboBox.setDisable(true);
 			this.restrictPowerComboBox.setDisable(true);
 			this.maximumIterationsTextField.setDisable(true);

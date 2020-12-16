@@ -24,6 +24,7 @@ import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.serviceInterface.IBMDAnalysisService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BMDSMATool;
 import com.sciome.bmdexpress2.util.bmds.BMDSTool;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
@@ -35,8 +36,9 @@ import com.sciome.bmdexpress2.util.curvep.GCurvePInputParameters;
 public class BMDAnalysisService implements IBMDAnalysisService
 {
 
-	BMDSTool	bMDSTool;
-	boolean		cancel	= false;
+	BMDSTool bMDSTool;
+	BMDSMATool bMDSMATool;
+	boolean cancel = false;
 
 	/*
 	 * Run parametric bmd analylsis via epa models on processable data
@@ -388,6 +390,50 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 		return bMDResults;
 
+	}
+
+	@Override
+	public BMDResult bmdAnalysisLaPlaceMA(IStatModelProcessable processableData,
+			ModelInputParameters inputParameters, List<StatModel> modelsToRun,
+			IBMDSToolProgress progressUpdater)
+	{
+		return bmdAnalysisMA(processableData, inputParameters, modelsToRun, progressUpdater, false);
+	}
+
+	@Override
+	public BMDResult bmdAnalysisMCMCMA(IStatModelProcessable processableData,
+			ModelInputParameters inputParameters, List<StatModel> modelsToRun,
+			IBMDSToolProgress progressUpdater)
+	{
+		return bmdAnalysisMA(processableData, inputParameters, modelsToRun, progressUpdater, true);
+	}
+
+	private BMDResult bmdAnalysisMA(IStatModelProcessable processableData,
+			ModelInputParameters inputParameters, List<StatModel> modelsToRun,
+			IBMDSToolProgress progressUpdater, boolean useMCMC)
+	{
+		inputParameters.setObservations(
+				processableData.getProcessableDoseResponseExperiment().getTreatments().size());
+		bMDSMATool = new BMDSMATool(processableData.getProcessableProbeResponses(),
+				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
+				modelsToRun, useMCMC, progressUpdater, processableData);
+		BMDResult bMDResults = bMDSMATool.bmdAnalyses();
+
+		DoseResponseExperiment doseResponseExperiment = processableData
+				.getProcessableDoseResponseExperiment();
+		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
+		if (processableData instanceof PrefilterResults)
+			bMDResults.setPrefilterResults((PrefilterResults) processableData);
+
+		// someone canceled this. so just uncancel it before returning.
+		if (cancel)
+			cancel = false;
+		if (bMDResults == null)
+			return null;
+
+		// clean up any leftovers from this process
+		bMDSMATool.cleanUp();
+		return bMDResults;
 	}
 
 }

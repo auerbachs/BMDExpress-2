@@ -36,10 +36,10 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 		implements IBMDSToolProgress
 {
 
-	BMDSTool							bMDSTool;
+	BMDSTool bMDSTool;
 
-	private List<IStatModelProcessable>	processableDatas;
-	private boolean						cancel	= false;
+	private List<IStatModelProcessable> processableDatas;
+	private boolean cancel = false;
 	/*
 	 * Constructors
 	 */
@@ -216,5 +216,123 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 	{
 		getService().cancel();
 		getView().closeWindow();
+	}
+
+	public void performLaplaceMA(ModelInputParameters inputParameters, List<StatModel> modelsToRun)
+	{
+		cancel = false;
+
+		// send this to the bmdanalysis tool so some progress can be updated.
+		IBMDSToolProgress me = this;
+
+		Task<Integer> task = new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception
+			{
+				for (IStatModelProcessable processableData : processableDatas)
+				{
+					if (cancel)
+						continue;
+					try
+					{
+						BMDResult bMDResults = getService().bmdAnalysisLaPlaceMA(processableData,
+								inputParameters, modelsToRun, me);
+
+						// post a the new result set to the event bus
+
+						Platform.runLater(() ->
+						{
+
+							getView().finishedBMDAnalysis();
+							if (bMDResults != null)
+							{
+
+								getEventBus().post(new BMDAnalysisDataLoadedEvent(bMDResults));
+
+							}
+
+						});
+					}
+					catch (Exception exception)
+					{
+						Platform.runLater(() ->
+						{
+							BMDAnalysisPresenter.this.getEventBus()
+									.post(new ShowErrorEvent(exception.toString()));
+
+						});
+						exception.printStackTrace();
+					}
+				}
+				Platform.runLater(() ->
+				{
+					getView().closeWindow();
+				});
+				return 0;
+			}
+		};
+
+		getView().startedBMDAnalysis();
+		new Thread(task).start();
+
+	}
+
+	public void performMCMCMA(ModelInputParameters inputParameters, List<StatModel> modelsToRun)
+	{
+		cancel = false;
+
+		// send this to the bmdanalysis tool so some progress can be updated.
+		IBMDSToolProgress me = this;
+
+		Task<Integer> task = new Task<Integer>() {
+			@Override
+			protected Integer call() throws Exception
+			{
+				for (IStatModelProcessable processableData : processableDatas)
+				{
+					if (cancel)
+						continue;
+					try
+					{
+						BMDResult bMDResults = getService().bmdAnalysisMCMCMA(processableData,
+								inputParameters, modelsToRun, me);
+
+						// post a the new result set to the event bus
+
+						Platform.runLater(() ->
+						{
+
+							getView().finishedBMDAnalysis();
+							if (bMDResults != null)
+							{
+
+								getEventBus().post(new BMDAnalysisDataLoadedEvent(bMDResults));
+
+							}
+
+						});
+					}
+					catch (Exception exception)
+					{
+						Platform.runLater(() ->
+						{
+							BMDAnalysisPresenter.this.getEventBus()
+									.post(new ShowErrorEvent(exception.toString()));
+
+						});
+						exception.printStackTrace();
+					}
+				}
+				Platform.runLater(() ->
+				{
+					getView().closeWindow();
+				});
+				return 0;
+			}
+		};
+
+		getView().startedBMDAnalysis();
+		new Thread(task).start();
+
 	}
 }

@@ -20,4 +20,10 @@ public interface IBMDAnalysisService
 
 	public BMDResult bmdAnalysisGCurveP(IStatModelProcessable processableData,
 			GCurvePInputParameters inputParameters, IBMDSToolProgress me);
+
+	public BMDResult bmdAnalysisLaPlaceMA(IStatModelProcessable processableData,
+			ModelInputParameters inputParameters, List<StatModel> modelsToRun, IBMDSToolProgress me);
+
+	public BMDResult bmdAnalysisMCMCMA(IStatModelProcessable processableData,
+			ModelInputParameters inputParameters, List<StatModel> modelsToRun, IBMDSToolProgress me);
 }

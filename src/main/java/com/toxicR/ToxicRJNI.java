@@ -81,6 +81,14 @@ public class ToxicRJNI
 			double BMR, boolean isMLE, boolean isLogNormal, boolean isIncreasing)
 			throws JsonMappingException, JsonProcessingException
 	{
+
+		// for (int i = 0; i < doses.length; i++)
+		// System.out.print(doses[i] + ", ");
+		// System.out.println();
+		// for (int i = 0; i < Y.length; i++)
+		// System.out.print(Y[i] + ", ");
+		// System.out.println();
+
 		Priors pr = new Priors(isLogNormal, isMLE);
 		int[] disttypes = new int[models.length];
 		for (int i = 0; i < models.length; i++)
@@ -96,9 +104,9 @@ public class ToxicRJNI
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
 		int[] modelsToRun = getModelsToRun(models);
-		String resultString = runContinuousMAJNI(4, modelsToRun, parms, actualparms, prior_cols, disttypes,
-				modelPriors, false, Y, doses, sd, n_group, priors, bmdType, isIncreasing, BMR, 0.001, 0.005,
-				21000, 1000);
+		String resultString = runContinuousMAJNI(modelsToRun.length, modelsToRun, parms, actualparms,
+				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
+				isIncreasing, BMR, 0.001, 0.005, 25000, 1000);
 
 		ContinuousResultMA result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousResultMA.class);
@@ -118,7 +126,6 @@ public class ToxicRJNI
 		String resultString = runContinuousMCMCSingleJNI(modelToRun, false, Y, doses, sd, n_group,
 				pr.getPriors(model), bmdType, isIncreasing, BMR, .001, pr.getDistType(), 0.005, samples,
 				burnnin, pr.getRowCount(model), pr.getColCounts(model), degree);
-		System.out.println(resultString);
 		ContinuousMCMCResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousMCMCResult.class);
 
@@ -158,7 +165,6 @@ public class ToxicRJNI
 		String resultString = runContinuousMCMCMAJNI(models.length, modelsToRun, parms, actualparms,
 				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
 				isIncreasing, BMR, 0.001, 0.005, samples, burnnin);
-		System.out.println(fixNonNumerics(resultString));
 		ContinuousMCMCMAResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousMCMCMAResult.class);
 		return result;

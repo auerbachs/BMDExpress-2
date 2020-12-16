@@ -1,56 +1,82 @@
 /**
- * PowerFitThread.java
+ * HillFitThread.java
  *
  *
  */
 
 package com.sciome.bmdexpress2.util.bmds.thread;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
-import com.sciome.bmdexpress2.mvp.model.stat.FunlResult;
-import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
-import com.sciome.bmdexpress2.shared.BMDExpressConstants;
+import com.sciome.bmdexpress2.mvp.model.stat.ModelAveragingResult;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.bmds.BMDSToxicRUtils;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
+import com.sciome.bmdexpress2.util.bmds.shared.FunlModel;
+import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.toxicR.ToxicRConstants;
 
-public class FUNLFitThread extends Thread implements IFitThread
+public class MAFitThread extends Thread implements IFitThread
 {
 	private CountDownLatch cdLatch;
-
+	private List<ModelAveragingResult> maResults = new ArrayList<>();
 	private ModelInputParameters inputParameters;
 
 	private float[] doses;
 
 	private List<ProbeResponse> probeResponses;
-	private List<StatResult> funlResults;
+	boolean useMCMC = false;
+
+	private boolean cancel = false;
+
 	private IModelProgressUpdater progressUpdater;
 	private IProbeIndexGetter probeIndexGetter;
-	private boolean cancel = false;
+	int[] models;
+
 	private String tmpFolder;
 
-	public FUNLFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> funlResults, int numThread, int instanceIndex, int killTime, String tmpFolder,
+	public MAFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
+			List<ModelAveragingResult> maResults, boolean useMCMC, List<StatModel> modelsToRun,
 			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
 	{
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cdLatch;
 		this.probeResponses = probeResponses;
-		this.funlResults = funlResults;
-
 		this.probeIndexGetter = probeIndexGetter;
-		this.tmpFolder = tmpFolder;
+		this.maResults = maResults;
+		this.useMCMC = useMCMC;
 
-		if (tmpFolder == null || tmpFolder.equals(""))
-			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
+		models = new int[modelsToRun.size()];
+
+		int i = 0;
+		for (StatModel m : modelsToRun)
+		{
+			if (m instanceof ExponentialModel && ((ExponentialModel) m).getOption() == 3)
+				models[i] = ToxicRConstants.EXP3;
+			else if (m instanceof ExponentialModel && ((ExponentialModel) m).getOption() == 5)
+				models[i] = ToxicRConstants.EXP5;
+			else if (m instanceof FunlModel)
+				models[i] = ToxicRConstants.FUNL;
+			else if (m instanceof PowerModel)
+				models[i] = ToxicRConstants.POWER;
+			else if (m instanceof HillModel)
+				models[i] = ToxicRConstants.HILL;
+
+			i++;
+		}
 
 	}
+
+	/*
+	 * public void setJNIHillFit(HillFit hillFit) { this.hillFit = hillFit; }
+	 */
 
 	public void setDoses(float[] doses)
 	{
@@ -67,7 +93,6 @@ public class FUNLFitThread extends Thread implements IFitThread
 	{
 
 		toxicRFit();
-
 		try
 		{
 			cdLatch.countDown();
@@ -91,13 +116,8 @@ public class FUNLFitThread extends Thread implements IFitThread
 		while (probeIndex != null)
 		{
 
-			FunlResult funlResult = (FunlResult) funlResults.get(probeIndex);
-			// System.out.println(probeResponses.get(probeIndex).getProbe().getId());
-
 			if (cancel)
-			{
 				break;
-			}
 
 			try
 			{
@@ -110,14 +130,12 @@ public class FUNLFitThread extends Thread implements IFitThread
 				for (float r : responses)
 					responsesD[ri++] = r;
 
-				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.FUNL, responsesD, dosesd,
-						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1);
+				ModelAveragingResult statResult = BMDSToxicRUtils.calculateToxicRMA(models, responsesD,
+						dosesd, inputParameters.getBmrType(), inputParameters.getBmrLevel(),
+						inputParameters.getConstantVariance() != 1, useMCMC);
 
-				if (results != null)
-				{
-					fillOutput(results, funlResult);
-				}
+				maResults.set(probeIndex, statResult);
+
 			}
 			catch (Exception e)
 			{
@@ -129,29 +147,10 @@ public class FUNLFitThread extends Thread implements IFitThread
 
 	}
 
-	private void fillOutput(double[] results, FunlResult funlResult)
-	{
-		funlResult.setBMD(results[0]);
-		funlResult.setBMDL(results[1]);
-		funlResult.setBMDU(results[2]);
-		funlResult.setFitPValue(results[3]);
-		funlResult.setFitLogLikelihood(results[4]);
-		funlResult.setAIC(results[5]);
-
-		int direction = 1;
-
-		if (results[7] < 0)
-		{
-			direction = -1;
-		}
-		funlResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
-		funlResult.setAdverseDirection((short) direction);
-		funlResult.setSuccess("true");
-	}
-
 	@Override
 	public void cancel()
 	{
 		cancel = true;
 	}
+
 }

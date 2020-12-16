@@ -41,6 +41,7 @@ import com.sciome.bmdexpress2.mvp.model.probe.Probe;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.GCurvePResult;
+import com.sciome.bmdexpress2.mvp.model.stat.ModelAveragingResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.CurveFitPresenter;
@@ -113,6 +114,9 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 	private XYSeries dataSeries; // holds the raw data
 	private XYSeries modelSeries; // holds the model
+
+	private List<XYSeries> otherModelSeriesList;
+
 	private XYSeries bmdSeries; // holds the BMD drawing setup
 	private XYSeries bmdlSeries; // holds the BMDL drawing setup
 	private XYSeries bmduSeries; // holds the BMDU drawing setup
@@ -153,6 +157,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 	public void initData(BMDResult bmdResult, ProbeStatResult probeStatResult)
 	{
+		otherModelSeriesList = new ArrayList<>();
 		this.bmdResults = bmdResult;
 		logDosesCheckBox.setSelected(true);
 		meanAndDeviationCheckBox.setSelected(true);
@@ -683,6 +688,15 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		// low and high doses, to set model sample boundries
 		double minDose = bmdModel.minimumDose();
 		double maxDose = bmdModel.maximumDose();
+		otherModelSeriesList.clear();
+
+		ModelAveragingResult mar = null;
+		if (this.theStatResult instanceof ModelAveragingResult)
+		{
+			mar = (ModelAveragingResult) theStatResult;
+			for (StatResult st : mar.getModelResults())
+				otherModelSeriesList.add(new XYSeries(st.getModel()));
+		}
 
 		if (bmdModel.getName().equalsIgnoreCase("gcurvep"))
 		{
@@ -712,11 +726,24 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				continue;
 			}
 			// Set up modelSeries from LBUFFER below the minDose to RBUFFER above maxDose
-			double increment = (dose - prevDose) / 1000.0;
+			double increment = (dose - prevDose) / 100.0;
 			if (increment > .05 && prevDose < 10.0)
 				increment = .05;
 			for (double counter = prevDose; counter < dose; counter += increment)
-				modelSeries.add(counter, bmdModel.response(counter));
+			{
+				double res = bmdModel.response(counter);
+
+				modelSeries.add(counter, res);
+				if (mar != null)
+				{
+					int stI = 0;
+					for (StatResult st : mar.getModelResults())
+					{
+						otherModelSeriesList.get(stI++).add(counter, st.getResponseAt(counter));
+					}
+				}
+
+			}
 			prevDose = dose;
 		}
 
@@ -985,9 +1012,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
 		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
-
-		// data series have been added, adds the models
-		seriesSet.addSeries(modelSeries);
+		for (XYSeries xys : otherModelSeriesList)
+			seriesSet.addSeries(xys);
 		seriesSet.addSeries(bmdSeries);
 		seriesSet.addSeries(bmdlSeries);
 		seriesSet.addSeries(bmduSeries);
@@ -995,6 +1021,10 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			seriesSet.addSeries(noelSeries);
 		if (probeStatResult != null && probeStatResult.getPrefilterLoel() != null)
 			seriesSet.addSeries(loelSeries);
+
+		// data series have been added, adds the models
+		seriesSet.addSeries(modelSeries);
+
 		createChart(modelName);
 	}
 
@@ -1018,6 +1048,30 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 		// set dataset
 		plot.setDataset(0, seriesSet);
+		int modelIndex = seriesSet.getSeriesIndex("Model");
+		int bmdIndex = seriesSet.getSeriesIndex("BMD");
+		int bmdLIndex = seriesSet.getSeriesIndex("BMDL");
+		int bmdUIndex = seriesSet.getSeriesIndex("BMDU");
+		int noelIndex = seriesSet.getSeriesIndex("NOTEL");
+		int lolelIndex = seriesSet.getSeriesIndex("LOTEL");
+
+		ModelAveragingResult mar = null;
+		if (this.theStatResult instanceof ModelAveragingResult)
+		{
+			mar = (ModelAveragingResult) theStatResult;
+			for (StatResult st : mar.getModelResults())
+			{
+
+				int seriesIndex = seriesSet.getSeriesIndex(st.getModel());
+				Color c = new Color(Color.yellow.getRed() / 255.0f, Color.yellow.getGreen() / 255.0f,
+						Color.yellow.getBlue() / 255.0f, 0.25f);
+
+				renderer.setSeriesPaint(seriesIndex, c);
+				renderer.setSeriesShape(seriesIndex, ShapeUtils.createDiamond(1.0f));
+				renderer.setSeriesVisibleInLegend(seriesIndex, false);
+			}
+		}
+
 		// Painting
 		if (!meanAndDeviationCheckBox.isSelected())
 		{
@@ -1027,33 +1081,6 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			renderer.setSeriesLinesVisible(0, false);
 			renderer.setSeriesShapesVisible(0, true);
 			// options for the model set
-			renderer.setSeriesPaint(1, chartColors[1]);
-			renderer.setSeriesShapesVisible(1, false);
-			renderer.setSeriesVisibleInLegend(1, true);
-			// options for the BMD set
-			renderer.setSeriesPaint(2, chartColors[2]);
-			renderer.setSeriesShapesVisible(2, false);
-			renderer.setSeriesVisibleInLegend(2, false);
-			// options for the BMDL set
-			renderer.setSeriesPaint(3, chartColors[2]);
-			renderer.setSeriesShapesVisible(3, false);
-			renderer.setSeriesVisibleInLegend(3, false);
-
-			// options for the BMDU set
-			renderer.setSeriesPaint(4, chartColors[3]);
-			renderer.setSeriesShapesVisible(4, false);
-			renderer.setSeriesVisibleInLegend(4, false);
-
-			// options for the NOEL/LOEL set
-			renderer.setSeriesPaint(5, chartColors[4]);
-			renderer.setSeriesShapesVisible(5, true);
-			renderer.setSeriesVisibleInLegend(5, true);
-			renderer.setSeriesShape(5, ShapeUtils.createDownTriangle(8.0f));
-
-			renderer.setSeriesPaint(6, chartColors[4]);
-			renderer.setSeriesShapesVisible(6, true);
-			renderer.setSeriesVisibleInLegend(6, true);
-			renderer.setSeriesShape(6, ShapeUtils.createDiamond(8.0f));
 
 		}
 		else
@@ -1074,36 +1101,44 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				// set renderer options
 				renderer.setSeriesVisibleInLegend(counter, false);
 			}
-			// the last three series are the Model, BMD, and BMDL, in that order
-			renderer.setSeriesPaint(NUM_SERIES, chartColors[1]);
-			renderer.setSeriesShapesVisible(NUM_SERIES, false);
 
-			// BMD
-			renderer.setSeriesPaint(NUM_SERIES + 1, chartColors[2]);
-			renderer.setSeriesVisibleInLegend(NUM_SERIES + 1, false);
-			renderer.setSeriesShapesVisible(NUM_SERIES + 1, false);
-			// BMDL
-			renderer.setSeriesPaint(NUM_SERIES + 2, chartColors[2]);
-			renderer.setSeriesVisibleInLegend(NUM_SERIES + 2, false);
-			renderer.setSeriesShapesVisible(NUM_SERIES + 2, false);
-
-			// BMDU
-			renderer.setSeriesPaint(NUM_SERIES + 3, chartColors[3]);
-			renderer.setSeriesVisibleInLegend(NUM_SERIES + 3, false);
-			renderer.setSeriesShapesVisible(NUM_SERIES + 3, false);
-			// options for the NOEL/LOEL set
-			renderer.setSeriesPaint(NUM_SERIES + 4, chartColors[4]);
-			renderer.setSeriesShapesVisible(NUM_SERIES + 4, true);
-			renderer.setSeriesVisibleInLegend(NUM_SERIES + 4, true);
-			renderer.setSeriesLinesVisible(NUM_SERIES + 4, false);
-			renderer.setSeriesShape(NUM_SERIES + 4, ShapeUtils.createDownTriangle(8.0f));
-
-			renderer.setSeriesPaint(NUM_SERIES + 5, chartColors[4]);
-			renderer.setSeriesShapesVisible(NUM_SERIES + 5, true);
-			renderer.setSeriesVisibleInLegend(NUM_SERIES + 5, true);
-			renderer.setSeriesLinesVisible(NUM_SERIES + 5, false);
-			renderer.setSeriesShape(NUM_SERIES + 5, ShapeUtils.createDiamond(8.0f));
 		}
+
+		renderer.setSeriesPaint(modelIndex, chartColors[1]);
+		renderer.setSeriesShapesVisible(modelIndex, true);
+		renderer.setSeriesShape(modelIndex, ShapeUtils.createDiamond(3.5f));
+		renderer.setSeriesVisibleInLegend(modelIndex, true);
+		// options for the BMD set
+		renderer.setSeriesPaint(bmdIndex, chartColors[2]);
+		renderer.setSeriesShapesVisible(bmdIndex, false);
+		renderer.setSeriesVisibleInLegend(bmdIndex, false);
+		// options for the BMDL set
+		renderer.setSeriesPaint(bmdLIndex, chartColors[2]);
+		renderer.setSeriesShapesVisible(bmdLIndex, false);
+		renderer.setSeriesVisibleInLegend(bmdLIndex, false);
+
+		// options for the BMDU set
+		renderer.setSeriesPaint(bmdUIndex, chartColors[3]);
+		renderer.setSeriesShapesVisible(bmdUIndex, false);
+		renderer.setSeriesVisibleInLegend(bmdUIndex, false);
+
+		// options for the NOEL/LOEL set
+		if (noelIndex >= 0)
+		{
+			renderer.setSeriesPaint(noelIndex, chartColors[4]);
+			renderer.setSeriesShapesVisible(noelIndex, true);
+			renderer.setSeriesVisibleInLegend(noelIndex, true);
+			renderer.setSeriesShape(noelIndex, ShapeUtils.createDownTriangle(8.0f));
+		}
+
+		if (lolelIndex >= 0)
+		{
+			renderer.setSeriesPaint(lolelIndex, chartColors[4]);
+			renderer.setSeriesShapesVisible(lolelIndex, true);
+			renderer.setSeriesVisibleInLegend(lolelIndex, true);
+			renderer.setSeriesShape(lolelIndex, ShapeUtils.createDiamond(8.0f));
+		}
+
 	}
 
 	public void setSelectedProbe(Probe probe)
