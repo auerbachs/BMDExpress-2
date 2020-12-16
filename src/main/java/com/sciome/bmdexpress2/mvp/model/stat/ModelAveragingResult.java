@@ -106,7 +106,7 @@ public class ModelAveragingResult extends StatResult
 		String returnStr = "";
 		int i = 0;
 		for (StatResult sr : modelResults)
-			returnStr += "PP " + sr.getModel() + ": " + this.posteriorProbabilities.get(i++) + ",  ";
+			returnStr += "(PP " + sr.getModel() + ": " + this.posteriorProbabilities.get(i++) + "),  ";
 
 		return returnStr.replaceAll("\\,  $", "");
 	}

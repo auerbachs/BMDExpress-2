@@ -62,6 +62,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -70,6 +71,10 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 {
 	@FXML
 	private HBox chartBox;
+
+	@FXML
+	private HBox chkBoxOverlayHBox;
+
 	@FXML
 	private CheckBox meanAndDeviationCheckBox;
 	@FXML
@@ -98,6 +103,8 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 	private Button propertiesButton;
 	@FXML
 	private Button closeButton;
+
+	private List<CheckBox> overlayCheckBoxes;
 
 	private BMDResult bmdResults; // the matrix of data from the parent
 									// analyis
@@ -157,11 +164,11 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 
 	public void initData(BMDResult bmdResult, ProbeStatResult probeStatResult)
 	{
+		overlayCheckBoxes = new ArrayList<>();
 		otherModelSeriesList = new ArrayList<>();
 		this.bmdResults = bmdResult;
 		logDosesCheckBox.setSelected(true);
 		meanAndDeviationCheckBox.setSelected(true);
-		setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
 		if (probeStatResult.getBestStatResult() != null)
 			setSelectedModel(probeStatResult.getBestStatResult().toString());
 		else
@@ -229,10 +236,19 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		cP = new SciomeChartViewer(chart, CHART_WIDTH, CHART_HEIGHT);
 
 		initComponents();
-		getDataSeries();
-		updateGraphs();
+
+		setBestModel();
 
 		chartBox.getChildren().addAll(cP);
+		setParameters(probeStatResult.getProbeResponse().getProbe(),
+				modelNameComboBox.getSelectionModel().getSelectedItem().toString());
+		setSelectedProbe(probeStatResult.getProbeResponse().getProbe());
+		if (probeStatResult.getBestStatResult() instanceof GCurvePResult)
+		{
+			getDataSeries();
+			updateGraphs();
+		}
+
 	}
 
 	@Override
@@ -365,6 +381,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initComponents()
 	{
 		// retrieve models and probe IDs to populate the comboboxes
@@ -377,7 +394,9 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			@Override
 			public void changed(ObservableValue ov, Object t1, Object t2)
 			{
+
 				setBestModel();
+				updateCurveOverLayControl();
 				updateGraphs();
 			}
 		});
@@ -387,14 +406,26 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 			@Override
 			public void changed(ObservableValue ov, Object t1, Object t2)
 			{
+				for (CheckBox cb : overlayCheckBoxes)
+				{
+					if (cb.getText().equalsIgnoreCase(modelNameComboBox.getValue().toString()))
+						cb.setDisable(true);
+					else
+					{
+						// cb.setSelected(true);
+						cb.setDisable(false);
+					}
+				}
 				updateGraphs();
 			}
 
 		});
+
 	}
 
 	private void updateGraphs()
 	{
+
 		XYPlot plot = (XYPlot) chart.getPlot();
 		if (logDosesCheckBox.isSelected())
 		{
@@ -690,18 +721,43 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		double maxDose = bmdModel.maximumDose();
 		otherModelSeriesList.clear();
 
-		ModelAveragingResult mar = null;
-		if (this.theStatResult instanceof ModelAveragingResult)
-		{
-			mar = (ModelAveragingResult) theStatResult;
-			for (StatResult st : mar.getModelResults())
-				otherModelSeriesList.add(new XYSeries(st.getModel()));
-		}
-
 		if (bmdModel.getName().equalsIgnoreCase("gcurvep"))
 		{
 			showNonParametricCurve();
 			return;
+		}
+
+		Map<String, Boolean> overlayCBMap = new HashMap<>();
+		for (CheckBox cb : this.overlayCheckBoxes)
+			if (!cb.isDisable())
+				overlayCBMap.put(cb.getText(), cb.isSelected());
+
+		ModelAveragingResult mar = null;
+		List<StatResult> statResultOverlay = new ArrayList<>();
+		if (this.theStatResult instanceof ModelAveragingResult)
+		{
+			mar = (ModelAveragingResult) theStatResult;
+			for (StatResult st : mar.getModelResults())
+				if (overlayCBMap.containsKey(st.getModel()))
+				{
+					otherModelSeriesList.add(new XYSeries(st.getModel()));
+					statResultOverlay.add(st);
+				}
+		}
+		else
+		{
+
+			ProbeStatResult probeStatResult = this.probeStatResultMap
+					.get(idComboBox.getSelectionModel().getSelectedItem());
+
+			for (StatResult st : probeStatResult.getStatResults())
+			{
+				if (st.getModel().contentEquals(theStatResult.getModel()))
+					continue;
+				otherModelSeriesList.add(new XYSeries(st.getModel()));
+				statResultOverlay.add(st);
+
+			}
 		}
 
 		// create new series
@@ -718,6 +774,7 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		List<Double> uniqueDoses = new ArrayList<>(uniqueDosesSet);
 		Collections.sort(uniqueDoses);
 		Double prevDose = null;
+
 		for (Double dose : uniqueDoses)
 		{
 			if (prevDose == null)
@@ -734,13 +791,11 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 				double res = bmdModel.response(counter);
 
 				modelSeries.add(counter, res);
-				if (mar != null)
+
+				int stI = 0;
+				for (StatResult st : statResultOverlay)
 				{
-					int stI = 0;
-					for (StatResult st : mar.getModelResults())
-					{
-						otherModelSeriesList.get(stI++).add(counter, st.getResponseAt(counter));
-					}
+					otherModelSeriesList.get(stI++).add(counter, st.getResponseAt(counter));
 				}
 
 			}
@@ -1056,19 +1111,25 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		int lolelIndex = seriesSet.getSeriesIndex("LOTEL");
 
 		ModelAveragingResult mar = null;
-		if (this.theStatResult instanceof ModelAveragingResult)
-		{
-			mar = (ModelAveragingResult) theStatResult;
-			for (StatResult st : mar.getModelResults())
-			{
 
-				int seriesIndex = seriesSet.getSeriesIndex(st.getModel());
+		Map<String, Boolean> overlayCBMap = new HashMap<>();
+		for (CheckBox cb : this.overlayCheckBoxes)
+			if (!cb.isDisable())
+				overlayCBMap.put(cb.getText(), cb.isSelected());
+
+		for (CheckBox cb : this.overlayCheckBoxes)
+		{
+			if (overlayCBMap.containsKey(cb.getText()))
+			{
+				int seriesIndex = seriesSet.getSeriesIndex(cb.getText());
 				Color c = new Color(Color.yellow.getRed() / 255.0f, Color.yellow.getGreen() / 255.0f,
 						Color.yellow.getBlue() / 255.0f, 0.25f);
 
 				renderer.setSeriesPaint(seriesIndex, c);
 				renderer.setSeriesShape(seriesIndex, ShapeUtils.createDiamond(1.0f));
 				renderer.setSeriesVisibleInLegend(seriesIndex, false);
+				renderer.setSeriesVisible(seriesIndex, cb.isSelected());
+
 			}
 		}
 
@@ -1420,6 +1481,58 @@ public class CurveFitView extends BMDExpressViewBase implements ICurveFitView, I
 		}
 
 		return 0.0;
+
+	}
+
+	private void updateCurveOverLayControl()
+	{
+		chkBoxOverlayHBox.getChildren().clear();
+		if (theStatResult instanceof GCurvePResult)
+			return;
+
+		chkBoxOverlayHBox.getChildren().add(new Label("(De)Select Curve(s) to Overlay: "));
+		chkBoxOverlayHBox.setSpacing(20.0);
+		overlayCheckBoxes.clear();
+		if (theStatResult == null)
+			return;
+
+		Probe probe = (Probe) idComboBox.getSelectionModel().getSelectedItem();
+		ProbeStatResult probeStatResult = this.probeStatResultMap.get(probe);
+		for (StatResult str : probeStatResult.getStatResults())
+		{
+
+			CheckBox cb = new CheckBox(str.getModel());
+			chkBoxOverlayHBox.getChildren().add(cb);
+			cb.setSelected(true);
+
+			if (theStatResult instanceof ModelAveragingResult)
+				cb.setSelected(true);
+			else
+				cb.setSelected(false);
+
+			if (str.getModel().equalsIgnoreCase(theStatResult.getModel()))
+				cb.setDisable(true);
+			else
+				cb.setDisable(false);
+
+			cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+				@Override
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+						Boolean newValue)
+				{
+					XYPlot plot = (XYPlot) chart.getPlot();
+					XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer(0);
+
+					int seriesIndex = seriesSet.getSeriesIndex(cb.getText());
+
+					if (seriesIndex >= 0)
+						renderer.setSeriesVisible(seriesIndex, cb.isSelected());
+
+				}
+			});
+			overlayCheckBoxes.add(cb);
+
+		}
 
 	}
 }
