@@ -346,7 +346,6 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
    for (int i = 0; i < ma_analysis.nmodels; i++)
    {
       ma_analysis.modelPriors[i] = 1.0/double(ma_analysis.nmodels);
-      //Eigen::MatrixXd temp = model_priors[i];
 	int prows = nparms[i];
 	int pcols = priorCols[i];
         ma_analysis.priors[i]    = new double[prows*pcols];

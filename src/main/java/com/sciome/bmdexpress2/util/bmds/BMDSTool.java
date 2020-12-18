@@ -139,6 +139,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		notes.add("Operating System: " + System.getProperty("os.name"));
+
+		notes.add("BMDS Major Version: " + inputParameters.getBMDSMajorVersion());
 		String modelsToFit = "";
 		if (modelsToRun != null)
 		{
@@ -166,7 +168,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		else if (inputParameters.getBmrType() == 2)
 			notes.add("BMR Type: Relative Deviation");
 		notes.add("BMR Factor: " + inputParameters.getBmrLevel());
-		if (modelsToRun != null && isModelInThere("power", modelsToRun))
+		if (modelsToRun != null && isModelInThere("power", modelsToRun)
+				&& inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
 			notes.add("Restrict Power: " + inputParameters.getRestirctPower());
 		notes.add("Highest Dose: " + maxDose);
 		notes.add("Lowest Positive Dose: " + lowPDose);

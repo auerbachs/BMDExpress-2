@@ -180,6 +180,12 @@ public class BMDAnalysisService implements IBMDAnalysisService
 
 			return true;
 		}
+		if (bMDSMATool != null)
+		{
+			bMDSMATool.cancel();
+
+			return true;
+		}
 		return false;
 	}
 
@@ -418,7 +424,10 @@ public class BMDAnalysisService implements IBMDAnalysisService
 				processableData.getProcessableDoseResponseExperiment().getTreatments(), inputParameters,
 				modelsToRun, useMCMC, progressUpdater, processableData);
 		BMDResult bMDResults = bMDSMATool.bmdAnalyses();
-
+		if (cancel)
+			cancel = false;
+		if (bMDResults == null)
+			return null;
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
 		bMDResults.setDoseResponseExperiment(doseResponseExperiment);
@@ -426,10 +435,6 @@ public class BMDAnalysisService implements IBMDAnalysisService
 			bMDResults.setPrefilterResults((PrefilterResults) processableData);
 
 		// someone canceled this. so just uncancel it before returning.
-		if (cancel)
-			cancel = false;
-		if (bMDResults == null)
-			return null;
 
 		// clean up any leftovers from this process
 		bMDSMATool.cleanUp();

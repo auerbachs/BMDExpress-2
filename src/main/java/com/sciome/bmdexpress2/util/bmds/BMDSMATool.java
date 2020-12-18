@@ -93,6 +93,9 @@ public class BMDSMATool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		notes.add("Operating System: " + System.getProperty("os.name"));
+		notes.add("BMDS Major Version: " + inputParameters.getBMDSMajorVersion());
+		notes.add("Model Averaging Method: " + inputParameters.getMAMethod());
+
 		String modelsToFit = "";
 		if (modelsToRun != null)
 		{
@@ -104,7 +107,7 @@ public class BMDSMATool implements IModelProgressUpdater, IProbeIndexGetter
 				{
 					modelsToFit += ", ";
 				}
-				notes.add(statModel.getName() + " version: " + statModel.getVersion());
+				notes.add(statModel.getName() + " version: ToxicR");
 				modelsIndex++;
 
 			}
@@ -120,8 +123,8 @@ public class BMDSMATool implements IModelProgressUpdater, IProbeIndexGetter
 		else if (inputParameters.getBmrType() == 2)
 			notes.add("BMR Type: Relative Deviation");
 		notes.add("BMR Factor: " + inputParameters.getBmrLevel());
-		if (modelsToRun != null && isModelInThere("power", modelsToRun))
-			notes.add("Restrict Power: " + inputParameters.getRestirctPower());
+		// if (modelsToRun != null && isModelInThere("power", modelsToRun))
+		// notes.add("Restrict Power: " + inputParameters.getRestirctPower());
 		notes.add("Highest Dose: " + maxDose);
 		notes.add("Lowest Positive Dose: " + lowPDose);
 
