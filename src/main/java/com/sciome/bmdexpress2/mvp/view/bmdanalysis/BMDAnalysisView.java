@@ -212,6 +212,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		if (this.origMethodRadio.isSelected())
 			funlCheckBox.setDisable(true);
+		else
+			killTimeComboBox.setDisable(true);
 
 	}
 
@@ -520,6 +522,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.confidenceLevelComboBox.setDisable(false);
 		this.restrictPowerComboBox.setDisable(false);
 		this.maximumIterationsTextField.setDisable(false);
+		killTimeComboBox.setDisable(false);
 
 		if (powerCheckBox.isSelected())
 		{
@@ -556,6 +559,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
+		killTimeComboBox.setDisable(true);
 
 		// enable some parameters
 
@@ -585,6 +589,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
+		killTimeComboBox.setDisable(true);
 
 		// disable some parameters
 
@@ -614,6 +619,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
+		killTimeComboBox.setDisable(true);
 
 		// disable some parameters
 
