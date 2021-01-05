@@ -5,9 +5,17 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on July 15, 2020</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 5, 2021</h2>
 <h3>
-New Features
+New Features on July 15, 2020
+</h3>
+<ul>
+<li>Improved performance of Williams Trend Test</li>
+</ul>
+
+
+<h3>
+New Features on July 15, 2020
 </h3>
 <ul>
 <li>The code has been updated to be compatible with OpenJDK 11.  The new releases will come with embedded OpenJDK 11 JREs.</li>
