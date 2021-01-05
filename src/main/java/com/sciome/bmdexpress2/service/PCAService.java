@@ -12,8 +12,8 @@ import com.sciome.bmdexpress2.mvp.model.pca.PCAResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.serviceInterface.IPCAService;
-import com.sciome.commons.math.PCA.PCA;
-import com.sciome.commons.math.PCA.PCA.CovarianceType;
+import com.sciome.commons.math.PCA.old.PCA;
+import com.sciome.commons.math.PCA.old.PCA.CovarianceType;
 
 public class PCAService implements IPCAService {
 
