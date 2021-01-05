@@ -903,7 +903,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 					&& isConvergent(bmdu2));
 
 			// don't allow 0's no matter what.
-			if (bmd1 == 0.0 || bmdl1 == 0.0 || bmdu1 == 0.0)
+			if (bmd2 == 0.0 || bmdl2 == 0.0 || bmdu2 == 0.0)
 				return false;
 
 			if (aic1 < aic2)
@@ -923,7 +923,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			boolean better = (aic2 < aic1 && isConvergent(bmd2));
 
 			// don't allow 0's no matter what.
-			if (bmd1 == 0.0)
+			if (bmd2 == 0.0)
 				return false;
 
 			if (aic1 < aic2)

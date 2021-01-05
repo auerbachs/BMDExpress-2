@@ -20,17 +20,13 @@ public class Priors
 	// intialialize priors
 	public Priors(boolean ln, boolean ism)
 	{
-		this(ln, ism, 0, 0);
+		this(ln, ism, 1);
 
 	}
 
 	public Priors(boolean ln, boolean ism, double powerrestrict)
 	{
-		this(ln, ism, powerrestrict, 0);
-	}
 
-	public Priors(boolean ln, boolean ism, double powerrestrict, double hillKRestrict)
-	{
 		isNCV = ln;
 		isMLE = ism;
 		if (isNCV)
@@ -52,14 +48,14 @@ public class Priors
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					2, 0, 1, 0, 100, // 1
 					1, 0, 1, -1e4, 1e4, // 2
-					2, Math.log(1.5), 0.5, powerrestrict, 40, // 3
+					2, Math.log(1.5), 0.5, 0, 40, // 3
 					2, 0, 0.250099980007996, 0, 18, // 4
 					1, 0, 2, -18, 18 // 5
 			}, 5, 5);
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					1, 0, 5, -100, 100, // 1
 					1, 0, 1, -100, 100, // 2
-					2, 0, 1, hillKRestrict, 100, // 3
+					2, 0, 1, 0, 100, // 3
 					2, 0, 0.3, 0, 100, // 4
 					2, 0, .5, 0, 100, // 5
 					1, 0, 2, -18, 18// 6
@@ -125,15 +121,15 @@ public class Priors
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					0, 0, 1, 0, 100, // 1
 					0, 0, 1, -1e4, 1e4, // 2
-					0, Math.log(1.5), 0.5, powerrestrict, 40, // 3
+					0, powerrestrict, 0.5, powerrestrict, 40, // 3
 					0, 0, 0.250099980007996, 0, 18, // 4
 					0, 0, 2, -18, 18// 5
 			}, 5, 5);
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					0, 0, 5, -100, 100, // 1
 					0, 0, 1, -100, 100, // 2
-					0, 0, 1, hillKRestrict, 100, // 3
-					0, 0, 0.3, 0, 100, // 4
+					0, 0, 1, 0, 100, // 3
+					0, 1.0, 0.3, 1, 100, // 4 restrict hill
 					0, 0, .5, 0, 100, // 5
 					0, 0, 2, -18, 18 // 6
 			}, 6, 5);
@@ -141,7 +137,7 @@ public class Priors
 					0, 0, 0.1, 0, 100, // 1
 					0, 0, 1, -30, 30, // 2
 					0, 0, 1, -20, 20, // 3
-					0, Math.log(1.5), 0.3, 0, 18, // 4
+					0, 1.0, 0.3, 1, 18, // 4 restrict exp
 					0, 0, 0.5, 0, 18, // 5
 					0, 0, 2, -18, 18 // 6
 			}, 6, 5);
@@ -193,7 +189,7 @@ public class Priors
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					2, 0, 1, -100, 100, // 1
 					1, 0, 1, -100, 100, // 2
-					2, 0, 1, hillKRestrict, 100, // 3
+					2, 0, 1, 0, 100, // 3
 					2, 0, 1, 0, 18, // 4
 					1, 0, 2, -18, 18// 5
 			}, 5, 5);
@@ -207,7 +203,7 @@ public class Priors
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					2, 0, .1, 0, 100, // 1
 					1, 0, 1, -1e2, 1e2, // 2
-					2, 0, 0.5, powerrestrict, 40, // 3
+					2, 0, 0.5, 0, 40, // 3
 					0, 0, 2, -18, 18// 4
 			}, 4, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
@@ -261,8 +257,8 @@ public class Priors
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					0, 0, 1, -100, 100, // 1
 					0, 0, 1, -100, 100, // 2
-					0, 0, 1, hillKRestrict, 100, // 3
-					0, 0, 1, 0, 18, // 4
+					0, 0, 1, 0, 100, // 3
+					0, 1.0, 1, 1, 18, // 4 restrict hill
 					0, 0, 2, -18, 18// 5
 			}, 5, 5);
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
@@ -275,7 +271,7 @@ public class Priors
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					0, 0, 0.1, 0, 100, // 1
 					0, 0, 1, -1e2, 1e2, // 2
-					0, 0, 0.5, powerrestrict, 40, // 3
+					0, powerrestrict, 0.5, powerrestrict, 40, // 3
 					0, 0, 2, -18, 18// 4
 			}, 4, 5);
 
@@ -283,7 +279,7 @@ public class Priors
 					0, 0, 0.1, 0, 100, // 1
 					0, 0, 1, -30, 30, // 2
 					0, 0, 2, -20, 20, // 3
-					0, Math.log(1.5), 0.3, 0, 18, // 4
+					0, 1.0, 0.3, 1, 18, // 4 restrict exp5
 					0, 0, 2, -18, 18// 5
 			}, 5, 5);
 
