@@ -12,24 +12,29 @@
     "logTransformation" : "BASE2",
     "platform" : "GPL1355"
   } ],
-  "preFilterConfigs" : [ {
+ "preFilterConfigs" : [ {
     "@type" : "anova",
-    "inputName" : "expression1",
-    "outputName" : "expression1_anova",
     "pValueCutoff" : 0.05,
     "useMultipleTestingCorrection" : false,
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
-    "foldChange" : 2.0
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 2,   
+    "numberOfThreads" : 4
   }, {
-    "@type" : "anova",
-    "inputName" : "expression2",
-    "outputName" : "expression2_anova",
+    "@type" : "williams",
     "pValueCutoff" : 0.05,
     "useMultipleTestingCorrection" : false,
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
-    "foldChange" : 2.0
+    "numberOfPermutations": 50,
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 1,   
+    "numberOfThreads" : 4
   } ],
   "bmdsConfigs" : [ {
     "modelConfigs" : [ {
