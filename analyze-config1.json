@@ -9,13 +9,17 @@
     "platform" : "GPL1355"
   }
   ],
-  "preFilterConfigs" : [ {
+ "preFilterConfigs" : [ {
     "@type" : "anova",
     "pValueCutoff" : 0.05,
     "useMultipleTestingCorrection" : false,
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
-    "foldChange" : 2.0
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 2,   
+    "numberOfThreads" : 4
   }, {
     "@type" : "williams",
     "pValueCutoff" : 0.05,
@@ -23,7 +27,11 @@
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
     "numberOfPermutations": 50,
-    "foldChange" : 2.0
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 1,   
+    "numberOfThreads" : 4
   } ],
   "bmdsConfigs" : [ {
     "modelConfigs" : [ {
