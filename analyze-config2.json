@@ -20,16 +20,24 @@
     "useMultipleTestingCorrection" : false,
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
-    "foldChange" : 2.0
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 2,   
+    "numberOfThreads" : 4
   }, {
-    "@type" : "anova",
+    "@type" : "williams",
     "inputName" : "expression2",
     "outputName" : "expression2_anova",
     "pValueCutoff" : 0.05,
     "useMultipleTestingCorrection" : false,
     "filterOutControlGenes" : true,
     "useFoldChange" : true,
-    "foldChange" : 2.0
+    "foldChange" : 2.0,
+    "foldChangeLotel" : 1.5,
+    "pValueLotel" : 0.05,
+    "lotelTest" : 1,   
+    "numberOfThreads" : 4
   } ],
   "bmdsConfigs" : [ {
     "modelConfigs" : [ {
