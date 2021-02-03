@@ -34,6 +34,72 @@
 #define MAX_PARMS 32 // Should never get close to this many!!!
 
 
+JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_calcDeviance
+  (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
+   jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
+   jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree)
+{
+    ////////////////////////////////////////////////
+    /// Set up the analysis
+    ////////////////////////////////////////////////
+
+   jsize len = env->GetArrayLength( doses);
+   jdouble *doseBody = env->GetDoubleArrayElements( doses, 0);
+   jdouble *yBody = env->GetDoubleArrayElements( Y, 0);
+   jdouble *sdBody = env->GetDoubleArrayElements( sd, 0);
+   jdouble *nGroupBody = env->GetDoubleArrayElements( n_group, 0);
+
+
+   jsize priorLen = env->GetArrayLength( prior);
+   jdouble *priorBody = env->GetDoubleArrayElements( prior, 0);
+
+    continuous_analysis analysis; 
+    analysis.Y       =    new double[len]; 
+    analysis.n       =    len; 
+    analysis.doses   =    new double[len]; 
+    analysis.model   =    (cont_model) model; 
+    analysis.disttype     = disttype; 
+    analysis.isIncreasing = isIncreasing; 
+    analysis.alpha        = alpha; //alpha for analyses; 
+    analysis.BMD_type     = BMD_type; 
+    analysis.BMR          = BMR; 
+    analysis.samples      = samples; 
+    analysis.tail_prob    = tail_prob; 
+    analysis.suff_stat    = suff_stat;
+    analysis.parms        = parms;
+    analysis.prior_cols   = prior_cols; 
+    analysis.degree   = degree;
+    analysis.sd = new double[1];
+    analysis.n_group = new double[1];
+
+
+    analysis.prior   = new double[parms*prior_cols]; 
+    for (int i = 0; i < priorLen; i++){
+       analysis.prior[i] = priorBody[i];
+    }
+
+
+    for (int i = 0; i < len; i++){
+      analysis.Y[i] = yBody[i]; 
+      analysis.doses[i] = doseBody[i]; 
+      //if (suff_stat){ //sufficient statistics
+      //  analysis.n_group[i] = nGroupBody[i];
+      //  analysis.sd[i]      = sdBody[i];
+      //}
+    }
+    continuous_deviance aod;
+    estimate_normal_aod(&analysis,&aod);
+
+    
+   string jsonResults = convertDevianceResultToJSON(&aod);
+   del_continuous_analysis(analysis);
+  // delete &aod;
+
+   return env->NewStringUTF(jsonResults.c_str());
+
+
+}
 
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
@@ -193,7 +259,6 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
 
    estimate_ma_laplace(&ma_analysis,&analysis,ma_result);
    string jsonResults = convertMAContinuousResultToJSON(ma_result);
-   //string jsonResults = "hello ma world";
 
    // free up memory
    for (unsigned int i = 0; i < ma_result->nmodels; i++){
@@ -411,6 +476,22 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
 
 
 
+string convertDevianceResultToJSON(continuous_deviance* result)
+{
+  std::stringstream buffer;
+  buffer << "{" << std::endl;
+  
+  buffer << "\"A1\":" << result->A1<<","<< std::endl;
+  buffer << "\"N1\":" << result->N1<<","<< std::endl;
+  buffer << "\"A2\":" << result->A2<<","<< std::endl;
+  buffer << "\"N2\":" << result->N2<<","<< std::endl;
+  buffer << "\"A3\":" << result->A3<<","<< std::endl;
+  buffer << "\"N3\":" << result->N3<<std::endl;
+  buffer << "}" << std::endl;
+  return buffer.str();
+
+}
+
 
 
 
@@ -428,6 +509,8 @@ string convertSingleContinuousResultToJSON(continuous_model_result* result)
   buffer << "\"nparms\":" << result->nparms<<","<< std::endl;
   buffer << "\"max\":" << result->max<<","<< std::endl;
   buffer << "\"dist_numE\":" << result->dist_numE<<","<< std::endl;
+  buffer << "\"model_df\":" << result->model_df<<","<< std::endl;
+  buffer << "\"total_df\":" << result->total_df<<","<< std::endl;
   buffer << "\"parms\":";
 
   buffer <<"[";

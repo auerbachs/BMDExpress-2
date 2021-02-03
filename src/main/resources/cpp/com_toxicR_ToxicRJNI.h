@@ -14,8 +14,11 @@ extern "C" {
  */
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
   (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint, jint);
-
 string convertSingleContinuousResultToJSON(continuous_model_result* result);
+
+JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_calcDeviance
+  (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint, jint);
+string convertDevianceResultToJSON(continuous_deviance* result);
 
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
   (JNIEnv *, jobject, jint, jintArray, jintArray, jintArray,
