@@ -7,6 +7,7 @@ import com.toxicR.model.ContinuousMCMCMAResult;
 import com.toxicR.model.ContinuousMCMCResult;
 import com.toxicR.model.ContinuousResult;
 import com.toxicR.model.ContinuousResultMA;
+import com.toxicR.model.NormalDeviance;
 
 public class ToxicRJNI
 {
@@ -17,6 +18,13 @@ public class ToxicRJNI
 	}
 
 	// Declare a native method sayHello() that receives no arguments and returns void
+	
+	 private native String calcDeviance(int model, boolean suff_stat, double[] Y, double[] doses,
+				double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
+				double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
+				int degree);
+
+	
 	public native String runContinuousSingleJNI(int model, boolean suff_stat, double[] Y, double[] doses,
 			double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
 			double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
@@ -62,6 +70,32 @@ public class ToxicRJNI
 
 		return result;
 	}
+	
+	// entry point to run continuous
+		public NormalDeviance calculateDeviance(int model, double[] Y, double[] doses, int bmdType, double BMR,
+				boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+				throws JsonMappingException, JsonProcessingException
+		{
+
+			Priors pr = new Priors(isLogNormal, isMLE);
+			double[] sd = new double[10];
+			double[] n_group = new double[10];
+			int modelToRun = getModelToRun(model);
+			int colCount = pr.getColCounts(model);
+			int rowCount = pr.getRowCount(model);
+			double[] priors = pr.getPriors(model);
+			int distType = pr.getDistType();
+
+			int degree = getDegree(model);
+
+			String resultString = calcDeviance(modelToRun, false, Y, doses, sd, n_group, priors,
+					bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree);
+
+			NormalDeviance result = new ObjectMapper().readValue(fixNonNumerics(resultString),
+					NormalDeviance.class);
+
+			return result;
+		}
 
 	private int getDegree(int model)
 	{

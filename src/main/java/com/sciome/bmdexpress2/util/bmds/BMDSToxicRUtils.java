@@ -11,11 +11,13 @@ import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ModelAveragingResult;
 import com.sciome.bmdexpress2.mvp.model.stat.PowerResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
+import com.sciome.bmdexpress2.util.stat.ChiSquareCalculator;
 import com.toxicR.ToxicRConstants;
 import com.toxicR.ToxicRJNI;
 import com.toxicR.ToxicRUtils;
 import com.toxicR.model.ContinuousResult;
 import com.toxicR.model.ContinuousResultMA;
+import com.toxicR.model.NormalDeviance;
 
 public class BMDSToxicRUtils
 {
@@ -25,15 +27,24 @@ public class BMDSToxicRUtils
 		return 2 * K - 2 * maxlikelihood;
 	}
 
-	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
+	public static NormalDeviance calculateNormalDeviance(int model, double[] Y, double[] doses, int bmdType, double BMR,
 			boolean isNCV) throws JsonMappingException, JsonProcessingException
 	{
 		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
-		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing);
+		ToxicRJNI tRJNI = new ToxicRJNI();
+		return tRJNI.calculateDeviance (model, Y, doses, bmdType, BMR, true, isNCV,
+				isIncreasing);
+	}
+	
+	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
+			boolean isNCV, NormalDeviance deviance) throws JsonMappingException, JsonProcessingException
+	{
+		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
+		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing,deviance);
 	}
 
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isNCV, boolean isIncreasing) throws JsonMappingException, JsonProcessingException
+			boolean isNCV, boolean isIncreasing, NormalDeviance deviance) throws JsonMappingException, JsonProcessingException
 	{
 
 		if (bmdType == 1)
@@ -66,8 +77,14 @@ public class BMDSToxicRUtils
 		results[1] = getBMDL(continousResult.getBmdDist());
 		results[2] = getBMDU(continousResult.getBmdDist());
 
-		results[3] = 9999;
-		results[4] = -continousResult.getMax();
+		
+		
+		if(continousResult.getMax().doubleValue() - deviance.getA3().doubleValue() <0)
+			System.out.println();
+		ChiSquareCalculator chisq = new ChiSquareCalculator();
+		results[3] = chisq.pochisq(2*(continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
+				(int) Math.round(continousResult.getTotalDF())- (int) Math.round(continousResult.getModelDF()));
+		results[4] = continousResult.getMax();
 		results[5] = aic;
 
 		int start = 6;

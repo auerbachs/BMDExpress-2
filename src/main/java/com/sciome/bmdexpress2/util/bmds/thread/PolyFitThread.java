@@ -8,6 +8,7 @@ package com.sciome.bmdexpress2.util.bmds.thread;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
@@ -21,6 +22,7 @@ import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FilePolyFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.toxicR.ToxicRConstants;
+import com.toxicR.model.NormalDeviance;
 
 public class PolyFitThread extends Thread implements IFitThread
 {
@@ -46,11 +48,13 @@ public class PolyFitThread extends Thread implements IFitThread
 	private final double DEFAULTDOUBLE = -9999;
 
 	private String tmpFolder;
+	private Map<String,NormalDeviance> deviance;
 
 	public PolyFitThread(CountDownLatch cDownLatch, int degree, List<ProbeResponse> probeResponses,
 			List<StatResult> polyResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
+			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter,Map<String,NormalDeviance> deviance)
 	{
+		this.deviance = deviance;
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cDownLatch;
 		this.degree = degree;
@@ -119,6 +123,7 @@ public class PolyFitThread extends Thread implements IFitThread
 
 			try
 			{
+				NormalDeviance dev = deviance.get(probeResponses.get(probeIndex).getProbe().getId());
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
 						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
@@ -139,16 +144,16 @@ public class PolyFitThread extends Thread implements IFitThread
 				if (inputParameters.getPolyDegree() == 1)
 					results = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
 							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-							inputParameters.getConstantVariance() != 1);
+							inputParameters.getConstantVariance() != 1,dev);
 				else
 				{
 					// run it in both directions.
 					double[] results1 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
 							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-							inputParameters.getConstantVariance() != 1, true);
+							inputParameters.getConstantVariance() != 1, true,dev);
 					double[] results2 = BMDSToxicRUtils.calculateToxicR(polyModelConstant, responsesD, dosesd,
 							inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-							inputParameters.getConstantVariance() != 1, false);
+							inputParameters.getConstantVariance() != 1, false,dev);
 
 					if ((results1[0] > results2[0] && results2[0] != DEFAULTDOUBLE)
 							|| results1[0] == DEFAULTDOUBLE)

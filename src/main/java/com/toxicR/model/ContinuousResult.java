@@ -15,6 +15,8 @@ public class ContinuousResult
 	private List<Double> parms;
 	// private List<Double> cov;
 	private List<Double> bmdDist;
+	private Double modelDF;
+	private Double totalDF;
 
 	public Integer getModel()
 	{
@@ -97,5 +99,26 @@ public class ContinuousResult
 	{
 		this.bmdDist = bmdDist;
 	}
+
+	public Double getModelDF() {
+		return modelDF;
+	}
+
+	@JsonSetter("model_df")
+	public void setModelDF(Double modelDF) {
+		this.modelDF = modelDF;
+	}
+
+	public Double getTotalDF() {
+		return totalDF;
+	}
+
+	@JsonSetter("total_df")
+	public void setTotalDF(Double totalDF) {
+		this.totalDF = totalDF;
+	}
+	
+	
+	
 
 }

@@ -8,6 +8,7 @@ package com.sciome.bmdexpress2.util.bmds.thread;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
@@ -21,6 +22,7 @@ import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.FileHillFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.toxicR.ToxicRConstants;
+import com.toxicR.model.NormalDeviance;
 
 public class HillFitThread extends Thread implements IFitThread
 {
@@ -46,11 +48,13 @@ public class HillFitThread extends Thread implements IFitThread
 	private IProbeIndexGetter probeIndexGetter;
 
 	private String tmpFolder;
+	private Map<String,NormalDeviance> deviance;
 
 	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter)
+			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter, Map<String, NormalDeviance> deviance)
 	{
+		this.deviance = deviance;
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cdLatch;
 		this.probeResponses = probeResponses;
@@ -120,6 +124,7 @@ public class HillFitThread extends Thread implements IFitThread
 			try
 			{
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
+				NormalDeviance dev = deviance.get(probeResponses.get(probeIndex).getProbe().getId());
 				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
 						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
 				float[] responses = probeResponses.get(probeIndex).getResponseArray();
@@ -130,7 +135,7 @@ public class HillFitThread extends Thread implements IFitThread
 
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.HILL, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1);
+						inputParameters.getConstantVariance() != 1,dev);
 
 				double tmpr = results[8];
 				results[8] = results[9];

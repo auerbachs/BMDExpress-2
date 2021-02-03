@@ -1,5 +1,5 @@
 /**
- * PowerFitThread.java
+ * HillFitThread.java
  *
  *
  */
@@ -13,49 +13,49 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
-import com.sciome.bmdexpress2.mvp.model.stat.FunlResult;
+import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
 import com.sciome.bmdexpress2.shared.BMDExpressConstants;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.bmds.BMDSToxicRUtils;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
+import com.sciome.bmdexpress2.util.bmds.FileHillFit;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.toxicR.ToxicRConstants;
 import com.toxicR.model.NormalDeviance;
 
-public class FUNLFitThread extends Thread implements IFitThread
+public class FitDevianceThread extends Thread implements IFitThread
 {
 	private CountDownLatch cdLatch;
 
 	private ModelInputParameters inputParameters;
-
 	private float[] doses;
 
 	private List<ProbeResponse> probeResponses;
-	private List<StatResult> funlResults;
+
+	private boolean cancel = false;
+
 	private IModelProgressUpdater progressUpdater;
 	private IProbeIndexGetter probeIndexGetter;
-	private boolean cancel = false;
-	private String tmpFolder;
 
+	private String tmpFolder;
 	private Map<String,NormalDeviance> deviance;
 
-	public FUNLFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
-			List<StatResult> funlResults, int numThread, int instanceIndex, int killTime, String tmpFolder,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter,Map<String,NormalDeviance> deviance)
+	public FitDevianceThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
+			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter, Map<String, NormalDeviance> deviance)
 	{
 		this.deviance = deviance;
 		this.progressUpdater = progressUpdater;
 		this.cdLatch = cdLatch;
 		this.probeResponses = probeResponses;
-		this.funlResults = funlResults;
-
 		this.probeIndexGetter = probeIndexGetter;
-		this.tmpFolder = tmpFolder;
 
 		if (tmpFolder == null || tmpFolder.equals(""))
 			this.tmpFolder = BMDExpressConstants.getInstance().TEMP_FOLDER;
 
 	}
+
+	
 
 	public void setDoses(float[] doses)
 	{
@@ -70,9 +70,8 @@ public class FUNLFitThread extends Thread implements IFitThread
 	@Override
 	public void run()
 	{
-
-		toxicRFit();
-
+		
+			toxicRFit();
 		try
 		{
 			cdLatch.countDown();
@@ -96,8 +95,6 @@ public class FUNLFitThread extends Thread implements IFitThread
 		while (probeIndex != null)
 		{
 
-			FunlResult funlResult = (FunlResult) funlResults.get(probeIndex);
-			// System.out.println(probeResponses.get(probeIndex).getProbe().getId());
 
 			if (cancel)
 			{
@@ -106,7 +103,6 @@ public class FUNLFitThread extends Thread implements IFitThread
 
 			try
 			{
-				NormalDeviance dev = deviance.get( probeResponses.get(probeIndex).getProbe().getId());
 				String id = probeResponses.get(probeIndex).getProbe().getId().replaceAll("\\s", "_");
 				id = String.valueOf(randInt) + "_" + BMDExpressProperties.getInstance()
 						.getNextTempFile(this.tmpFolder, String.valueOf(Math.abs(id.hashCode())), ".(d)");
@@ -116,14 +112,12 @@ public class FUNLFitThread extends Thread implements IFitThread
 				for (float r : responses)
 					responsesD[ri++] = r;
 
-				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.FUNL, responsesD, dosesd,
+				NormalDeviance returnDev = BMDSToxicRUtils.calculateNormalDeviance(ToxicRConstants.HILL, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1,dev);
+						inputParameters.getConstantVariance() != 1);
+				deviance.put(probeResponses.get(probeIndex).getProbe().getId(), returnDev);
 
-				if (results != null)
-				{
-					fillOutput(results, funlResult);
-				}
+				
 			}
 			catch (Exception e)
 			{
@@ -135,29 +129,14 @@ public class FUNLFitThread extends Thread implements IFitThread
 
 	}
 
-	private void fillOutput(double[] results, FunlResult funlResult)
-	{
-		funlResult.setBMD(results[0]);
-		funlResult.setBMDL(results[1]);
-		funlResult.setBMDU(results[2]);
-		funlResult.setFitPValue(results[3]);
-		funlResult.setFitLogLikelihood(results[4]);
-		funlResult.setAIC(results[5]);
-
-		int direction = 1;
-
-		if (results[7] < 0)
-		{
-			direction = -1;
-		}
-		funlResult.setCurveParameters(Arrays.copyOfRange(results, 6, results.length));
-		funlResult.setAdverseDirection((short) direction);
-		funlResult.setSuccess("true");
-	}
+	
+	
 
 	@Override
 	public void cancel()
 	{
 		cancel = true;
 	}
+
+	
 }
