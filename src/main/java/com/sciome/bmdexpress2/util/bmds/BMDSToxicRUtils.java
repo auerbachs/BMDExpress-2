@@ -3,6 +3,8 @@ package com.sciome.bmdexpress2.util.bmds;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.sciome.bmdexpress2.mvp.model.stat.ExponentialResult;
@@ -18,8 +20,6 @@ import com.toxicR.ToxicRUtils;
 import com.toxicR.model.ContinuousResult;
 import com.toxicR.model.ContinuousResultMA;
 import com.toxicR.model.NormalDeviance;
-
-import weka.core.matrix.Maths;
 
 public class BMDSToxicRUtils
 {
@@ -58,7 +58,10 @@ public class BMDSToxicRUtils
 		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true, isNCV,
 				isIncreasing);
 
-		double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), -continousResult.getMax());
+		Double maxconstant = doses.length * Math.log((1 / Math.sqrt(2 * Math.PI)));
+		Double logMax = -1 * continousResult.getMax() - maxconstant;
+
+		double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), logMax);
 
 		int extraparms = 1;
 
@@ -79,21 +82,33 @@ public class BMDSToxicRUtils
 		results[1] = getBMDL(continousResult.getBmdDist());
 		results[2] = getBMDU(continousResult.getBmdDist());
 
-		if (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue() < 0)
-			System.out.println();
-		double wekaP = Maths.pchisq(
-				2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
-				(int) Math.round(continousResult.getTotalDF())
-						- (int) Math.round(continousResult.getModelDF()));
+		double p1 = -9999.0;
+		try
+		{
+			ChiSquaredDistribution csd = new ChiSquaredDistribution(
+					continousResult.getTotalDF() - continousResult.getModelDF());
+			p1 = csd.cumulativeProbability(
+					2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()));
+		}
+		catch (Exception e)
+		{}
 
+		// double wekaP = Maths.pchisq(
+		// 2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
+		// continousResult.getTotalDF() - continousResult.getModelDF());
+		// System.out.println("" + continousResult.getMax() + "\t" + deviance.getA3() + "\t"
+		// + continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t" + p1);
 		ChiSquareCalculator chisq = new ChiSquareCalculator();
-		double poP = chisq.pochisq(
-				2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
-				(int) Math.round(continousResult.getTotalDF())
-						- (int) Math.round(continousResult.getModelDF()));
+		// double poP = chisq.pochisq(
+		// 2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
+		// (int) Math.round(continousResult.getTotalDF())
+		// - (int) Math.round(continousResult.getModelDF()));
 
-		results[3] = wekaP;
-		results[4] = continousResult.getMax();
+		if (Double.isFinite(p1) && !Double.isNaN(p1))
+			results[3] = p1;
+		else
+			results[3] = -9999.0;
+		results[4] = logMax;
 		results[5] = aic;
 
 		int start = 6;
@@ -128,11 +143,13 @@ public class BMDSToxicRUtils
 			continousResultMA = tRJNI.runContinuousMCMCMA(models, Y, doses, bmdType, BMR, 25000, 1000, false,
 					isNCV, isIncreasing).getResult();
 
+		Double maxconstant = doses.length * Math.log((1 / Math.sqrt(2 * Math.PI)));
+
 		for (ContinuousResult continousResult : continousResultMA.getModels())
 		{
 			int model = continousResult.getModel();
-
-			double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), -continousResult.getMax());
+			Double logMax = -1 * continousResult.getMax() - maxconstant;
+			double aic = BMDSToxicRUtils.calculateAIC(continousResult.getNparms(), logMax);
 
 			int extraparms = 1;
 
@@ -161,7 +178,6 @@ public class BMDSToxicRUtils
 			Double bmdu = getBMDU(continousResult.getBmdDist());
 
 			Double fitp = 9999.0;
-			Double maxlike = -continousResult.getMax();
 
 			StatResult theStatResult = null;
 			if (model == ToxicRConstants.EXP3)
@@ -209,7 +225,7 @@ public class BMDSToxicRUtils
 				theStatResult.setBMD(bmd);
 				theStatResult.setBMDL(bmdl);
 				theStatResult.setBMDU(bmdu);
-				theStatResult.setFitLogLikelihood(maxlike);
+				theStatResult.setFitLogLikelihood(logMax);
 				theStatResult.setFitPValue(fitp);
 				maModels.add(theStatResult);
 				theStatResult.setCurveParameters(results);

@@ -48,11 +48,12 @@ public class HillFitThread extends Thread implements IFitThread
 	private IProbeIndexGetter probeIndexGetter;
 
 	private String tmpFolder;
-	private Map<String,NormalDeviance> deviance;
+	private Map<String, NormalDeviance> deviance;
 
 	public HillFitThread(CountDownLatch cdLatch, List<ProbeResponse> probeResponses,
 			List<StatResult> hillResults, int numThreads, int instanceIndex, int killTime, String tmpFolder,
-			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter, Map<String, NormalDeviance> deviance)
+			IModelProgressUpdater progressUpdater, IProbeIndexGetter probeIndexGetter,
+			Map<String, NormalDeviance> deviance)
 	{
 		this.deviance = deviance;
 		this.progressUpdater = progressUpdater;
@@ -133,9 +134,10 @@ public class HillFitThread extends Thread implements IFitThread
 				for (float r : responses)
 					responsesD[ri++] = r;
 
+				// System.out.print(probeResponses.get(probeIndex).getProbe().getId() + "\t");
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.HILL, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1,dev);
+						inputParameters.getConstantVariance() != 1, dev);
 
 				double tmpr = results[8];
 				results[8] = results[9];

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -105,7 +106,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private List<Integer> doseResponseQueue = new ArrayList<>();
 	private String tmpFolder = null;
 	private boolean isCustomTmpFolder = false;
-	Map<String, NormalDeviance> normalDevianceIndex = new HashMap<>();
+	Map<String, NormalDeviance> normalDevianceIndex = new Hashtable<>();
 
 	/**
 	 * Class constructor
@@ -363,13 +364,12 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 	private boolean fitSelectedModels()
 	{
 		// polys = new Vector<Integer>();
-		
-		if(inputParameters.getBmdMethod().equals(BMD_METHOD.TOXICR))
+
+		if (inputParameters.getBmdMethod().equals(BMD_METHOD.TOXICR))
 		{
 			currentMessage = "precalculating deviance (A3)";
-			this.normalDevianceIndex= calculateDevianceOnAllProbes();
+			this.normalDevianceIndex = calculateDevianceOnAllProbes();
 		}
-	
 
 		for (int i = 0; i < modelsToRun.size(); i++)
 		{
@@ -527,7 +527,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 	}
 
-	
 	/*
 	 * precalculate all the deviance stuff for toxicR so p-value can be computed
 	 * after models are run
@@ -548,9 +547,9 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		// each thread will work on part of the data.
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
-			FitDevianceThread devThread = new FitDevianceThread(cDownLatch, probeResponses,
-					 this, this,this.normalDevianceIndex);
-			
+			FitDevianceThread devThread = new FitDevianceThread(cDownLatch, probeResponses, this, this,
+					this.normalDevianceIndex);
+
 			devThread.setDoses(doses);
 			devThread.setObjects(inputParameters);
 			devThread.start();
@@ -570,8 +569,6 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 	}
 
-	
-	
 	/**
 	 * Modified 1/6/2009 to avoid "java.io.IOException: Stream closed..."
 	 *
@@ -602,7 +599,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		for (int i = 0; i < inputParameters.getNumThreads(); i++)
 		{
 			HillFitThread hillThread = new HillFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,this.normalDevianceIndex);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,
+					this.normalDevianceIndex);
 			hillThread.setFlag(modelSelectionParameters.isFlagHillModel(), flagDose);
 			hillThread.setDoses(doses);
 			hillThread.setObjects(inputParameters);
@@ -646,7 +644,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 
 			PowerFitThread powerThread = new PowerFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this, this.normalDevianceIndex);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,
+					this.normalDevianceIndex);
 
 			powerThread.setDoses(doses);
 			powerThread.setObjects(inputParameters);
@@ -690,7 +689,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 
 			FUNLFitThread funlThread = new FUNLFitThread(cDownLatch, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,this.normalDevianceIndex);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,
+					this.normalDevianceIndex);
 
 			funlThread.setDoses(doses);
 			funlThread.setObjects(inputParameters);
@@ -737,7 +737,8 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			inputParameters.setPolyDegree(degree);
 			PolyFitThread polyThread = new PolyFitThread(cDownLatch, degree, probeResponses, statResults,
-					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,this.normalDevianceIndex);
+					inputParameters.getNumThreads(), i, inputParameters.getKillTime(), tmpFolder, this, this,
+					this.normalDevianceIndex);
 			polyThread.setDoses(doses);
 			polyThread.setObjects(degree, inputParameters);
 			polyThread.start();
@@ -783,7 +784,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		{
 			ExponentialFitThread expThread = new ExponentialFitThread(cDownLatch, probeResponses, statResults,
 					inputParameters.getNumThreads(), i, option, inputParameters.getKillTime(), tmpFolder,
-					this, this,this.normalDevianceIndex);
+					this, this, this.normalDevianceIndex);
 			expThread.setDoses(doses);
 			expThread.setObjects(inputParameters);
 			expThread.start();
