@@ -64,7 +64,7 @@ public class BMDInput
 		bestPolyModelTest = BestPolyModelTestEnum.NESTED_CHI_SQUARED;
 		kParameterLessThan = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 		bestModelWithFlaggedHill = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
-		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE;
+		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL;
 	}
 
 	public boolean isFunl()

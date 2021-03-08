@@ -974,6 +974,28 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 
 			return better;
 		}
+		// use bmdl in chosing best
+		else if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+				.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL))
+		{
+			boolean better = (aic2 < aic1 && isConvergent(bmd2) && isConvergent(bmdl2));
+
+			// don't allow 0's no matter what.
+			if (bmd2 == 0.0 || bmdl2 == 0.0)
+				return false;
+
+			if (aic1 < aic2)
+			{ // second AIC smaller
+				if ((!isConvergent(bmd1) || !isConvergent(bmdl1))
+						&& (isConvergent(bmd2) && isConvergent(bmdl2)) && bmd2 > 0.0
+						&& bmdl2 > 0.0 )
+				{
+					better = true;
+				}
+			}
+
+			return better;
+		}
 		else // disregard bmdl and bmdu from chosing best
 		{
 			boolean better = (aic2 < aic1 && isConvergent(bmd2));
@@ -1405,6 +1427,15 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 					if (!isConvergent(probeStatResult.getBestStatResult().getBMD())
 							|| !isConvergent(probeStatResult.getBestStatResult().getBMDL())
 							|| !isConvergent(probeStatResult.getBestStatResult().getBMDU()))
+					{
+						probeStatResult.setBestStatResult(null);
+					}
+				}
+				else if (modelSelectionParameters.getBestModelSelectionBMDLandBMDU()
+						.equals(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL))
+				{
+					if (!isConvergent(probeStatResult.getBestStatResult().getBMD())
+							|| !isConvergent(probeStatResult.getBestStatResult().getBMDL()))
 					{
 						probeStatResult.setBestStatResult(null);
 					}

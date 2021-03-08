@@ -85,10 +85,13 @@ public class BMDSToxicRUtils
 		double p1 = -9999.0;
 		try
 		{
+			
 			ChiSquaredDistribution csd = new ChiSquaredDistribution(
 					continousResult.getTotalDF() - continousResult.getModelDF());
 			p1 = csd.cumulativeProbability(
 					2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()));
+			System.out.println(continousResult.getTotalDF() + "\t" +continousResult.getModelDF() + "\t" + continousResult.getMax() +"\t" +
+					deviance.getA3() + "\t" + p1);
 		}
 		catch (Exception e)
 		{}

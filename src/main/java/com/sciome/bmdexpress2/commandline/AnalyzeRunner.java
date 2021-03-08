@@ -477,6 +477,9 @@ public class AnalyzeRunner
 		else if (bmdsConfig.getBmdsBestModelSelection().getBmdlBMDUUse().equals(3))
 			modelSelectionParameters
 					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE);
+		else if (bmdsConfig.getBmdsBestModelSelection().getBmdlBMDUUse().equals(4))
+			modelSelectionParameters
+					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL);
 		BestPolyModelTestEnum polyTest = null;
 		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(2))
 			polyTest = BestPolyModelTestEnum.LOWEST_AIC;
