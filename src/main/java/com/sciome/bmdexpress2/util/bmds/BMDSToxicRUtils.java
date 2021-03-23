@@ -86,26 +86,21 @@ public class BMDSToxicRUtils
 		try
 		{
 			
+			Double avalue = deviance.getA3();
+			if(!isNCV)
+				avalue = deviance.getA1();
 			ChiSquaredDistribution csd = new ChiSquaredDistribution(
 					continousResult.getTotalDF() - continousResult.getModelDF());
-			p1 = csd.cumulativeProbability(
-					2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()));
+			p1 = 1.0-csd.cumulativeProbability(
+					2 * (continousResult.getMax().doubleValue() - avalue.doubleValue()));
 			System.out.println(continousResult.getTotalDF() + "\t" +continousResult.getModelDF() + "\t" + continousResult.getMax() +"\t" +
 					deviance.getA3() + "\t" + p1);
 		}
 		catch (Exception e)
-		{}
-
-		// double wekaP = Maths.pchisq(
-		// 2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
-		// continousResult.getTotalDF() - continousResult.getModelDF());
-		// System.out.println("" + continousResult.getMax() + "\t" + deviance.getA3() + "\t"
-		// + continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t" + p1);
-		ChiSquareCalculator chisq = new ChiSquareCalculator();
-		// double poP = chisq.pochisq(
-		// 2 * (continousResult.getMax().doubleValue() - deviance.getA3().doubleValue()),
-		// (int) Math.round(continousResult.getTotalDF())
-		// - (int) Math.round(continousResult.getModelDF()));
+		{
+			System.out.println(continousResult.getTotalDF() + "\t" +continousResult.getModelDF() + "\t" + continousResult.getMax() +"\t" +
+					deviance.getA3() + "\t" + p1 + "\terror");
+		}
 
 		if (Double.isFinite(p1) && !Double.isNaN(p1))
 			results[3] = p1;
@@ -188,7 +183,7 @@ public class BMDSToxicRUtils
 				ExponentialResult r = new ExponentialResult();
 				r.setOption(3);
 				r.setAdverseDirection((short) (isIncreasing ? 1 : -1));
-				results[3] = results[4];
+				//results[3] = results[4];
 				theStatResult = r;
 			}
 			else if (model == ToxicRConstants.EXP5)

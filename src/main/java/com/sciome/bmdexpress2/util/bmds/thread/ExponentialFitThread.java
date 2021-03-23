@@ -144,8 +144,8 @@ public class ExponentialFitThread extends Thread implements IFitThread
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
 						inputParameters.getConstantVariance() != 1,dev);
 
-				if (expModel == ToxicRConstants.EXP3) // move param d to param c
-					results[9] = results[10];
+				//if (expModel == ToxicRConstants.EXP3) // move param d to param c
+				//	results[9] = results[10];
 				if (expModel == ToxicRConstants.EXP5) // anti log c
 					results[9] = Math.pow(Math.E, results[9]);
 				if (results != null)

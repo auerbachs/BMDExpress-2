@@ -78,15 +78,17 @@ public class FunlResult extends StatResult
 		Double param5 = curveParameters[4];
 		Double param6 = curveParameters[5];
 
-		return param1 + param2 * Math.exp(Math.pow(dose - param5, 2) * (-param6))
+		return param1 + param2 * Math.exp(-(Math.exp(param6)) * Math.pow(param5-dose, 2))
 				* (1 / (1 + Math.exp(-(dose - param3) / param4)));
+//      a1 + a2 *exp(- exp(a6) * (a5-dose)^2) * (1/(1+exp(-(dose-a3)/a4).  
 
 	}
 
 	@Override
 	public String getFormulaText()
 	{
-		return "A[1] + A[2]*exp((doses-A[5])^2*(-A[6]))*(1/(1+exp(-(doses-A[3])/A[4])))";
+		return "A[1] + A[2]*exp(- exp(A[6]) * (A[5]-doses)^2)*(1/(1+exp(-(doses-A[3])/A[4])))";
+		
 	}
 
 	@Override

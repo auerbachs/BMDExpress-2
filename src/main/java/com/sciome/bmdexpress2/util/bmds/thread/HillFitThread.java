@@ -134,7 +134,7 @@ public class HillFitThread extends Thread implements IFitThread
 				for (float r : responses)
 					responsesD[ri++] = r;
 
-				// System.out.print(probeResponses.get(probeIndex).getProbe().getId() + "\t");
+				 System.out.print(probeResponses.get(probeIndex).getProbe().getId() + "\t");
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.HILL, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
 						inputParameters.getConstantVariance() != 1, dev);
