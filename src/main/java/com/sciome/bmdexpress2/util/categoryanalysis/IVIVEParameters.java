@@ -17,6 +17,9 @@ public class IVIVEParameters {
 	private Units							outputUnits;
 	private String							species;
 	private double							quantile;
+	private boolean							invivo;
+	private double							finalTime;
+	private double							doseSpacing;
 	
 	public Compound getCompound() {
 		return compound;
@@ -53,5 +56,23 @@ public class IVIVEParameters {
 	}
 	public void setQuantile(double quantile) {
 		this.quantile = quantile;
+	}
+	public boolean isInvivo() {
+		return invivo;
+	}
+	public void setInvivo(boolean invivo) {
+		this.invivo = invivo;
+	}
+	public double getFinalTime() {
+		return finalTime;
+	}
+	public void setFinalTime(double finalTime) {
+		this.finalTime = finalTime;
+	}
+	public double getDoseSpacing() {
+		return doseSpacing;
+	}
+	public void setDoseSpacing(double doseSpacing) {
+		this.doseSpacing = doseSpacing;
 	}
 }

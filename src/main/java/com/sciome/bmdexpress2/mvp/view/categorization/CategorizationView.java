@@ -52,8 +52,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -94,7 +97,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private CheckBox						conflictingProbeSetsCheckBox;
 	@FXML
-	private CheckBox						isInVitroCheckBox;
+	private CheckBox						doIVIVECheckBox;
 	@FXML
 	private CheckBox						removePromiscuousProbesCheckBox;
 
@@ -179,7 +182,15 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
 
 	// IVIVE
-
+	@FXML
+	private Label							quantile_doseSpacingLabel;
+	@FXML
+	private Label							finalTimeLabel;
+	ToggleGroup 							inVivoGroup;
+	@FXML
+	private RadioButton						inVitroRadioButton;
+	@FXML
+	private RadioButton						inVivoRadioButton;
 	@FXML
 	private TextField						nameTextField;
 	@FXML
@@ -199,7 +210,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private TextField						fubTextField;
 	@FXML
-	private TextField						quantileTextField;
+	private TextField						quantile_doseSpacingTextField;
+	@FXML
+	private TextField						finalTimeTextField;
 	@FXML
 	private ComboBox						doseUnitsComboBox;
 	@FXML
@@ -230,6 +243,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		ICategoryAnalysisService service = new CategoryAnalysisService();
 		presenter = new CategorizationPresenter(this, service, eventBus);
 		input = BMDExpressProperties.getInstance().getCategoryInput();
+		inVivoGroup = new ToggleGroup();
 	}
 
 	@Override
@@ -512,10 +526,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		// Initialize IVIVE check box listeners
 		toggleIVIVE(false);
 
-		if (!this.isInVitroCheckBox.isSelected())
+		if (!this.doIVIVECheckBox.isSelected())
 			iviveTab.setDisable(true);
 
-		isInVitroCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		doIVIVECheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue,
@@ -559,7 +573,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		});
 
 		// Initialize quantile text field
-		quantileTextField.setText("0.95");
+		quantile_doseSpacingTextField.setText("0.95");
 
 		// Initialize Combo box fields
 		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
@@ -578,6 +592,24 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		speciesComboBox.getItems().add("Dog");
 		speciesComboBox.getItems().add("Rabbit");
 		speciesComboBox.getSelectionModel().select(0);
+		
+		inVitroRadioButton.setToggleGroup(inVivoGroup);
+		inVivoRadioButton.setToggleGroup(inVivoGroup);
+		inVitroRadioButton.setSelected(true);
+		
+		inVivoGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+			@Override
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+				if(((RadioButton)inVivoGroup.getSelectedToggle()).getText().equals("In Vivo")) {
+					toggleInvivo(true);
+				} else {
+					toggleInvivo(false);
+				}
+			}
+		});
+		
+		finalTimeLabel.setVisible(true);
+		finalTimeTextField.setVisible(true);
 	}
 
 	@Override
@@ -660,7 +692,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 		params.setDeduplicateGeneSets(deduplicateGeneSetsCheckBox.isSelected());
 
-		if (isInVitroCheckBox.isSelected())
+		if (doIVIVECheckBox.isSelected())
 		{
 			compound.setName(nameTextField.getText());
 			compound.setCAS(casrnTextField.getText());
@@ -708,12 +740,22 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 			models.add(Model.THREECOMPSS);
 
+			parameters.setSpecies((String) speciesComboBox.getSelectionModel().getSelectedItem());
+			
 			parameters.setModels(models);
-			double quantile = Double.valueOf(quantileTextField.getText());
-			if (quantile < 0 || quantile > 1)
-				throw new IllegalArgumentException("Quantile must be between 0 and 1");
-			else
-				parameters.setQuantile(quantile);
+
+			if(((RadioButton)inVivoGroup.getSelectedToggle()).getText().equals("In Vitro")) {
+				double quantile = Double.valueOf(quantile_doseSpacingTextField.getText());
+				if (quantile < 0 || quantile > 1)
+					throw new IllegalArgumentException("Quantile must be between 0 and 1");
+				else
+					parameters.setQuantile(quantile);
+			} else {
+				double doseSpacing =  Double.valueOf(quantile_doseSpacingTextField.getText());
+				parameters.setDoseSpacing(doseSpacing);
+				double finalTime =  Double.valueOf(finalTimeTextField.getText());
+				parameters.setFinalTime(finalTime);
+			}
 
 			parameters.setDoseUnits((DoseUnits) doseUnitsComboBox.getSelectionModel().getSelectedItem());
 
@@ -723,8 +765,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				parameters.setOutputUnits(Units.MG);
 			else
 				parameters.setOutputUnits(Units.MOL);
-
-			parameters.setSpecies((String) speciesComboBox.getSelectionModel().getSelectedItem());
 			params.setIviveParameters(parameters);
 		}
 
@@ -742,10 +782,23 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		pKaAcceptorTextField.setDisable(disable);
 		clintTextField.setDisable(disable);
 		fubTextField.setDisable(disable);
-		quantileTextField.setDisable(disable);
+		quantile_doseSpacingTextField.setDisable(disable);
+		finalTimeTextField.setDisable(disable);
 		doseUnitsComboBox.setDisable(disable);
 		outputUnitsComboBox.setDisable(disable);
 		speciesComboBox.setDisable(false);
+	}
+	
+	private void toggleInvivo(boolean invivo) {
+		if(invivo) {
+			quantile_doseSpacingLabel.setText("Dose Spacing  ");
+			finalTimeLabel.setVisible(true);
+			finalTimeTextField.setVisible(true);
+		} else {
+			quantile_doseSpacingLabel.setText("Quantile  ");
+			finalTimeLabel.setVisible(false);
+			finalTimeTextField.setVisible(false);
+		}
 	}
 
 	private void addIVIVESearchTextBox(List<AutoCompleteChemical> list)
