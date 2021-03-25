@@ -29,7 +29,7 @@ import com.sciome.bmdexpress2.shared.CompoundTableLoader;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
-import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.ConcentrationUnits;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFileParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFilesTool;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
@@ -214,7 +214,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private TextField						finalTimeTextField;
 	@FXML
-	private ComboBox						doseUnitsComboBox;
+	private ComboBox						inputUnitsComboBox;
 	@FXML
 	private ComboBox						outputUnitsComboBox;
 	@FXML
@@ -575,17 +575,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		// Initialize quantile text field
 		quantile_doseSpacingTextField.setText("0.95");
 
-		// Initialize Combo box fields
-		doseUnitsComboBox.getItems().addAll(DoseUnits.values());
-		doseUnitsComboBox.getSelectionModel().select(0);
-
-		// kgs/mg/per day?
-		outputUnitsComboBox.getItems().add(MGPERKGPERDAY);
-
-		// is this milli-mols-per-kg-day?
-		outputUnitsComboBox.getItems().add(UMOLPERKGPERDAY);
-		outputUnitsComboBox.getSelectionModel().select(0);
-
 		speciesComboBox.getItems().add("Human");
 		speciesComboBox.getItems().add("Rat");
 		speciesComboBox.getItems().add("Mouse");
@@ -608,8 +597,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			}
 		});
 		
-		finalTimeLabel.setVisible(true);
-		finalTimeTextField.setVisible(true);
+		toggleInvivo(false);
 	}
 
 	@Override
@@ -750,22 +738,28 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 					throw new IllegalArgumentException("Quantile must be between 0 and 1");
 				else
 					parameters.setQuantile(quantile);
+				parameters.setInvivo(false);
+
+				parameters.setConcentrationUnits((ConcentrationUnits) inputUnitsComboBox.getSelectionModel().getSelectedItem());
+				// user has friendly text for specifying output units.
+				// we must translate to enum
+				if (outputUnitsComboBox.getSelectionModel().getSelectedItem().equals(MGPERKGPERDAY))
+					parameters.setDoseUnits(Units.MG);
+				else
+					parameters.setDoseUnits(Units.MOL);
+				params.setIviveParameters(parameters);
 			} else {
 				double doseSpacing =  Double.valueOf(quantile_doseSpacingTextField.getText());
 				parameters.setDoseSpacing(doseSpacing);
 				double finalTime =  Double.valueOf(finalTimeTextField.getText());
 				parameters.setFinalTime(finalTime);
+				parameters.setInvivo(true);
+				
+				parameters.setConcentrationUnits(ConcentrationUnits.uM);
+				parameters.setDoseUnits(Units.MG);
 			}
 
-			parameters.setDoseUnits((DoseUnits) doseUnitsComboBox.getSelectionModel().getSelectedItem());
 
-			// user has friendly text for specifying output units.
-			// we must translate to enum
-			if (outputUnitsComboBox.getSelectionModel().getSelectedItem().equals(MGPERKGPERDAY))
-				parameters.setOutputUnits(Units.MG);
-			else
-				parameters.setOutputUnits(Units.MOL);
-			params.setIviveParameters(parameters);
 		}
 
 		return params;
@@ -784,7 +778,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		fubTextField.setDisable(disable);
 		quantile_doseSpacingTextField.setDisable(disable);
 		finalTimeTextField.setDisable(disable);
-		doseUnitsComboBox.setDisable(disable);
+		inputUnitsComboBox.setDisable(disable);
 		outputUnitsComboBox.setDisable(disable);
 		speciesComboBox.setDisable(false);
 	}
@@ -794,10 +788,25 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			quantile_doseSpacingLabel.setText("Dose Spacing  ");
 			finalTimeLabel.setVisible(true);
 			finalTimeTextField.setVisible(true);
+
+			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
+			inputUnitsComboBox.getItems().add(MGPERKGPERDAY);
+			inputUnitsComboBox.getSelectionModel().select(0);
+			outputUnitsComboBox.getItems().removeAll(outputUnitsComboBox.getItems());
+			outputUnitsComboBox.getItems().add(ConcentrationUnits.uM);
+			outputUnitsComboBox.getSelectionModel().select(0);
 		} else {
 			quantile_doseSpacingLabel.setText("Quantile  ");
 			finalTimeLabel.setVisible(false);
 			finalTimeTextField.setVisible(false);
+
+			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
+			inputUnitsComboBox.getItems().addAll(ConcentrationUnits.values());
+			inputUnitsComboBox.getSelectionModel().select(0);
+			outputUnitsComboBox.getItems().removeAll(outputUnitsComboBox.getItems());
+			outputUnitsComboBox.getItems().add(MGPERKGPERDAY);
+			outputUnitsComboBox.getItems().add(UMOLPERKGPERDAY);
+			outputUnitsComboBox.getSelectionModel().select(0);
 		}
 	}
 

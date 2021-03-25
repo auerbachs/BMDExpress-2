@@ -367,10 +367,13 @@ public class AnalyzeRunner
 				models.add(Model.THREECOMPSS);
 			iviveParameters.setModels(models);
 
+			iviveParameters.setConcentrationUnits(config.getConcentrationUnits());
 			iviveParameters.setDoseUnits(config.getDoseUnits());
-			iviveParameters.setOutputUnits(config.getOutputUnits());
 			iviveParameters.setQuantile(config.getQuantile());
 			iviveParameters.setSpecies(config.getSpecies());
+			iviveParameters.setInvivo(config.getInVivo());
+			iviveParameters.setDoseSpacing(config.getDoseSpacing());
+			iviveParameters.setFinalTime(config.getFinalTime());
 
 			params.setIviveParameters(iviveParameters);
 		}

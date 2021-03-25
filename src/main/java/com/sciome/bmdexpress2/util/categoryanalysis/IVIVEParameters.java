@@ -7,14 +7,14 @@ import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 import com.sciome.commons.math.httk.model.Compound;
 
 public class IVIVEParameters {
-	public enum DoseUnits {
+	public enum ConcentrationUnits {
 		uM, nM, pM;
 	}
 	
 	private Compound						compound;
 	private List<Model>						models;
-	private DoseUnits						doseUnits;
-	private Units							outputUnits;
+	private ConcentrationUnits				concentrationUnits;
+	private Units							doseUnits;
 	private String							species;
 	private double							quantile;
 	private boolean							invivo;
@@ -33,17 +33,17 @@ public class IVIVEParameters {
 	public void setModels(List<Model> models) {
 		this.models = models;
 	}
-	public DoseUnits getDoseUnits() {
+	public ConcentrationUnits getConcentrationUnits() {
+		return concentrationUnits;
+	}
+	public void setConcentrationUnits(ConcentrationUnits concentrationUnits) {
+		this.concentrationUnits = concentrationUnits;
+	}
+	public Units getDoseUnits() {
 		return doseUnits;
 	}
-	public void setDoseUnits(DoseUnits doseUnits) {
+	public void setDoseUnits(Units doseUnits) {
 		this.doseUnits = doseUnits;
-	}
-	public Units getOutputUnits() {
-		return outputUnits;
-	}
-	public void setOutputUnits(Units outputUnits) {
-		this.outputUnits = outputUnits;
 	}
 	public String getSpecies() {
 		return species;

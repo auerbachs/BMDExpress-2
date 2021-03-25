@@ -2,33 +2,36 @@ package com.sciome.bmdexpress2.commandline.config.category;
 
 import java.util.ArrayList;
 
-import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.ConcentrationUnits;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 
 public class IVIVEConfig
 {
-	private Boolean				oneCompartment;
-	private Boolean				pbtk;
-	private Boolean				threeCompartment;
-	private Boolean				threeCompartmentSS;
+	private Boolean						inVivo;
+	private Boolean						oneCompartment;
+	private Boolean						pbtk;
+	private Boolean						threeCompartment;
+	private Boolean						threeCompartmentSS;
 
 	// Auto-populate fields
-	private Boolean				useAutoPopulate;
-	private String				compoundName;
-	private String				compoundCASRN;
-	private String				compoundSMILES;
-	private String				species;
+	private Boolean						useAutoPopulate;
+	private String						compoundName;
+	private String						compoundCASRN;
+	private String						compoundSMILES;
+	private String						species;
 
-	private Double				mw;
-	private Double				logP;
-	private ArrayList<Double>	pkaDonor;
-	private ArrayList<Double>	pkaAcceptor;
-	private Double				CLint;
-	private Double				fractionUnboundPlasma;
-	private Double				quantile;
+	private Double						mw;
+	private Double						logP;
+	private ArrayList<Double>			pkaDonor;
+	private ArrayList<Double>			pkaAcceptor;
+	private Double						CLint;
+	private Double						fractionUnboundPlasma;
+	private Double						quantile;
+	private Double						doseSpacing;
+	private Double						finalTime;
 
-	private DoseUnits			doseUnits;
-	private Units				outputUnits;
+	private ConcentrationUnits			concentrationUnits;
+	private Units						doseUnits;
 
 	public Boolean getOneCompartment()
 	{
@@ -170,16 +173,6 @@ public class IVIVEConfig
 		this.fractionUnboundPlasma = fractionUnboundPlamsa;
 	}
 
-	public DoseUnits getDoseUnits()
-	{
-		return doseUnits;
-	}
-
-	public void setDoseUnits(DoseUnits doseUnits)
-	{
-		this.doseUnits = doseUnits;
-	}
-
 	public String getSpecies()
 	{
 		return species;
@@ -200,13 +193,43 @@ public class IVIVEConfig
 		this.quantile = quantile;
 	}
 
-	public Units getOutputUnits()
-	{
-		return outputUnits;
+	public ConcentrationUnits getConcentrationUnits() {
+		return concentrationUnits;
 	}
 
-	public void setOutputUnits(Units outputUnits)
-	{
-		this.outputUnits = outputUnits;
+	public void setConcentrationUnits(ConcentrationUnits concentrationUnits) {
+		this.concentrationUnits = concentrationUnits;
+	}
+
+	public Units getDoseUnits() {
+		return doseUnits;
+	}
+
+	public void setDoseUnits(Units doseUnits) {
+		this.doseUnits = doseUnits;
+	}
+
+	public Boolean getInVivo() {
+		return inVivo;
+	}
+
+	public void setInVivo(Boolean inVivo) {
+		this.inVivo = inVivo;
+	}
+
+	public Double getDoseSpacing() {
+		return doseSpacing;
+	}
+
+	public void setDoseSpacing(Double doseSpacing) {
+		this.doseSpacing = doseSpacing;
+	}
+
+	public Double getFinalTime() {
+		return finalTime;
+	}
+
+	public void setFinalTime(Double finalTime) {
+		this.finalTime = finalTime;
 	}
 }

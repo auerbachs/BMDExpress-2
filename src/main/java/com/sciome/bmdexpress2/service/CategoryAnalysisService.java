@@ -20,7 +20,7 @@ import com.sciome.bmdexpress2.util.categoryanalysis.CategoryAnalysisParameters;
 import com.sciome.bmdexpress2.util.categoryanalysis.CategoryMapTool;
 import com.sciome.bmdexpress2.util.categoryanalysis.ICategoryMapToolProgress;
 import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters;
-import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.DoseUnits;
+import com.sciome.bmdexpress2.util.categoryanalysis.IVIVEParameters.ConcentrationUnits;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 import com.sciome.commons.math.httk.calc.calc_mc_oral_equiv;
@@ -73,12 +73,14 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 				calculateInVivoToInVitro(categoryAnalysisResults, bmdResult, params.getIviveParameters());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Spacing: " + params.getIviveParameters().getDoseSpacing());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Final Time: " + params.getIviveParameters().getFinalTime());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Input Units: " + params.getIviveParameters().getConcentrationUnits());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getDoseUnits());
 			} else {
 				calculateInVitroToInVivo(categoryAnalysisResults, params.getIviveParameters());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Quantile: " + params.getIviveParameters().getQuantile());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Input Units: " + params.getIviveParameters().getDoseUnits());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getConcentrationUnits());
 			}
-			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Units: " + params.getIviveParameters().getDoseUnits());
-			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getOutputUnits());
 		}
 		
 		if (params.getDeduplicateGeneSets())
@@ -102,9 +104,9 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			catResult.calculate5and10Percentiles();
 
 			double multiplicationFactor = 1.0;
-			if(params.getDoseUnits().equals(DoseUnits.nM)) {
+			if(params.getConcentrationUnits().equals(ConcentrationUnits.nM)) {
 				multiplicationFactor = 1.0 / 1e3;
-			} else if(params.getDoseUnits().equals(DoseUnits.pM)) {
+			} else if(params.getConcentrationUnits().equals(ConcentrationUnits.pM)) {
 				multiplicationFactor = 1.0 / 1e6;
 			}
 			rowConcentrations.add(catResult.getBmdMean() != null ? catResult.getBmdMean() * multiplicationFactor : null);
@@ -139,7 +141,7 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			concentrations.add(rowConcentrations);
 		}
 		Map<Model, List<List<Double>>> doses = calc_mc_oral_equiv.calcMultiple(concentrations,
-				params.getModels(), params.getCompound(), params.getQuantile(), params.getSpecies(), Units.UM, params.getOutputUnits(), true);
+				params.getModels(), params.getCompound(), params.getQuantile(), params.getSpecies(), Units.UM, params.getDoseUnits(), true);
 
 		for (int i = 0; i < results.getCategoryAnalsyisResults().size(); i++)
 		{

@@ -249,8 +249,8 @@
                                                    <children>
                                                       <TextField fx:id="quantile_doseSpacingTextField" GridPane.columnIndex="1" />
                                                       <Label fx:id="quantile_doseSpacingLabel" text="Quantile  " />
-                                                      <Label fx:id="doseUnitsLabel" text="Dose Units  " GridPane.rowIndex="1" />
-                                                      <ComboBox fx:id="doseUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <Label fx:id="inputUnitsLabel" text="Input Units  " GridPane.rowIndex="1" />
+                                                      <ComboBox fx:id="inputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                       <Label text="Output Units  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                       <ComboBox fx:id="outputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                                       <Label fx:id="finalTimeLabel" text="Final Time  " GridPane.columnIndex="2" />
