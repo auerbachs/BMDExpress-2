@@ -3,7 +3,9 @@ package com.sciome.bmdexpress2.mvp.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -189,6 +191,15 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 			return treatments.get(treatments.size() - 1).getDose().doubleValue();
 
 		return null;
+	}
+
+	@JsonIgnore
+	public Set<Double> getUniqueDoses() {
+		Set<Double> doseSet = new HashSet<Double>();
+		for(Treatment treatment : treatments)
+			doseSet.add(treatment.getDose().doubleValue());
+
+		return doseSet;
 	}
 
 	@Override

@@ -44,8 +44,8 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		categoryAnalysisResults.setBmdResult(bmdResult);
 		categoryAnalysisResults.setAnalysisInfo(analysisInfo);
 
-		if (params.getIviveParameters() != null && params.getIviveParameters().getModels() != null
-				&& !params.getIviveParameters().getModels().isEmpty()) {
+		System.out.println(params.getIviveParameters());
+		if (params.getIviveParameters() != null) {
 			String species = params.getIviveParameters().getSpecies();
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Name: " + params.getIviveParameters().getCompound().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CASRN: " + params.getIviveParameters().getCompound().getCAS());
@@ -63,11 +63,11 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			if(params.getIviveParameters().getCompound().getpKaAcceptorsSource() != null)
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound pKa Acceptor Source: " + params.getIviveParameters().getCompound().getpKaAcceptorsSource().getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Clint"));
-			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint") != null)
-				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint").getName());
+//			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint") != null)
+//				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound CLint Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Clint").getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup: " + params.getIviveParameters().getCompound().getInVitroParam(species, "Funbound.plasma"));
-			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma") != null)
-				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma").getName());
+//			if(params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma") != null)
+//				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Compound Fup Source: " + params.getIviveParameters().getCompound().getIVdataSourceForSpecies(species, "Funbound.plasma").getName());
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Species: " + params.getIviveParameters().getSpecies());
 			if(params.getIviveParameters().isInvivo()) {
 				calculateInVivoToInVitro(categoryAnalysisResults, bmdResult, params.getIviveParameters());
@@ -214,8 +214,12 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 		{
 			List<Double> cmax = new ArrayList<Double>();
 			for(int j = 0; j < doses.get(i).size(); j++) {
-				cmax.add(get_cmax_bycas.calc(params.getCompound(), doses.get(i).get(j), 
-						bmdResult.getDoseResponseExperiment().getTreatments().size(), (int)params.getDoseSpacing(), params.getFinalTime(), params.getSpecies()));
+				if(doses.get(i).get(j) != null) {
+					cmax.add(get_cmax_bycas.calc(params.getCompound(), doses.get(i).get(j), 
+						bmdResult.getDoseResponseExperiment().getUniqueDoses().size(), (int)params.getDoseSpacing(), params.getFinalTime(), params.getSpecies()));
+				} else {
+					cmax.add(null);
+				}
 			}
 			List<IVIVEResult> iviveResults = new ArrayList<IVIVEResult>();
 			IVIVEResult result = new ForwardPKResult();

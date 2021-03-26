@@ -747,7 +747,6 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 					parameters.setDoseUnits(Units.MG);
 				else
 					parameters.setDoseUnits(Units.MOL);
-				params.setIviveParameters(parameters);
 			} else {
 				double doseSpacing =  Double.valueOf(quantile_doseSpacingTextField.getText());
 				parameters.setDoseSpacing(doseSpacing);
@@ -758,8 +757,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				parameters.setConcentrationUnits(ConcentrationUnits.uM);
 				parameters.setDoseUnits(Units.MG);
 			}
-
-
+			params.setIviveParameters(parameters);
 		}
 
 		return params;
