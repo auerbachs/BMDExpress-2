@@ -15,6 +15,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
 
+import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.categorization.CategorizationPresenter;
@@ -784,8 +785,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private void toggleInvivo(boolean invivo) {
 		if(invivo) {
 			quantile_doseSpacingLabel.setText("Dose Spacing  ");
+			quantile_doseSpacingTextField.setText("24");
 			finalTimeLabel.setVisible(true);
 			finalTimeTextField.setVisible(true);
+			finalTimeTextField.setText("" + ((presenter.getNumDoses() - 1) * 24 + 2));
 
 			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
 			inputUnitsComboBox.getItems().add(MGPERKGPERDAY);
@@ -795,6 +798,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			outputUnitsComboBox.getSelectionModel().select(0);
 		} else {
 			quantile_doseSpacingLabel.setText("Quantile  ");
+			quantile_doseSpacingTextField.setText("0.95");
 			finalTimeLabel.setVisible(false);
 			finalTimeTextField.setVisible(false);
 

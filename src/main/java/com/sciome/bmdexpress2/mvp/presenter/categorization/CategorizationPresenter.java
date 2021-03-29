@@ -131,6 +131,13 @@ public class CategorizationPresenter
 		new Thread(task).start();
 
 	}
+	
+	public int getNumDoses() {
+		if(bmdResults != null && bmdResults.get(0) != null && bmdResults.get(0).getDoseResponseExperiment() != null)
+			return bmdResults.get(0).getDoseResponseExperiment().getUniqueDoses().size();
+		else
+			return 0;
+	}
 
 	@Override
 	public void updateProgress(String label, double value)
