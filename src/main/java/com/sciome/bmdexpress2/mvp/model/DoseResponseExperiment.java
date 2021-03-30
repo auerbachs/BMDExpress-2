@@ -194,10 +194,10 @@ public class DoseResponseExperiment extends BMDExpressAnalysisDataSet
 	}
 
 	@JsonIgnore
-	public Set<Double> getUniqueDoses() {
-		Set<Double> doseSet = new HashSet<Double>();
+	public Set<Float> getUniqueDoses() {
+		Set<Float> doseSet = new HashSet<Float>();
 		for(Treatment treatment : treatments)
-			doseSet.add(treatment.getDose().doubleValue());
+			doseSet.add(treatment.getDose());
 
 		return doseSet;
 	}

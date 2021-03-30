@@ -753,6 +753,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				parameters.setDoseSpacing(doseSpacing);
 				double finalTime =  Double.valueOf(finalTimeTextField.getText());
 				parameters.setFinalTime(finalTime);
+				int numDoses = presenter.getNumDoses();
+				if(finalTime <= (numDoses - 1) * doseSpacing) {
+					throw new IllegalArgumentException("Final time must be greater than dose spacing * (number of doses - 1)");
+				}
+				
 				parameters.setInvivo(true);
 				
 				parameters.setConcentrationUnits(ConcentrationUnits.uM);
@@ -814,6 +819,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 	private void addIVIVESearchTextBox(List<AutoCompleteChemical> list)
 	{
+		handle_auto_populate("Ametryn");
 		TextField stringAutoCompleteSelector = new TextField();
 
 		// create the data to show in the CheckComboBox
