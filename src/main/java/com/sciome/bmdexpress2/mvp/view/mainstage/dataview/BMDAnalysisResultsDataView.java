@@ -152,11 +152,11 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		public TableCell call(TableColumn param)
 		{
 
-			TableCell cell = new TableCell<ProbeStatResult, String>() {
+			TableCell cell = new TableCell<ProbeStatResult, Object>() {
 
 				// must override drawing the cell so we can color it blue.
 				@Override
-				public void updateItem(String item, boolean empty)
+				public void updateItem(Object item, boolean empty)
 				{
 					super.updateItem(item, empty);
 					setTextFill(javafx.scene.paint.Color.BLUE);
