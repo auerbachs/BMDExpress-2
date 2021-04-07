@@ -22,7 +22,6 @@ module com.sciome.bmdexpress2
 	requires org.controlsfx.controls;
 	requires javafx.graphics;
 	requires javafx.base;
-	requires weka.stable;
 
 	opens com.sciome.bmdexpress2 to javafx.fxml;
 	opens com.sciome.bmdexpress2.mvp.view.mainstage to javafx.fxml;
