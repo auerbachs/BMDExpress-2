@@ -13,7 +13,6 @@ import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.ModelAveragingResult;
 import com.sciome.bmdexpress2.mvp.model.stat.PowerResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
-import com.sciome.bmdexpress2.util.stat.ChiSquareCalculator;
 import com.toxicR.ToxicRConstants;
 import com.toxicR.ToxicRJNI;
 import com.toxicR.ToxicRUtils;
@@ -85,21 +84,21 @@ public class BMDSToxicRUtils
 		double p1 = -9999.0;
 		try
 		{
-			
+
 			Double avalue = deviance.getA3();
-			if(!isNCV)
+			if (!isNCV)
 				avalue = deviance.getA1();
-			ChiSquaredDistribution csd = new ChiSquaredDistribution(
-					continousResult.getTotalDF() - continousResult.getModelDF());
-			p1 = 1.0-csd.cumulativeProbability(
+			ChiSquaredDistribution csd = new ChiSquaredDistribution(continousResult.getTotalDF()); // -
+																									// continousResult.getModelDF());
+			p1 = 1.0 - csd.cumulativeProbability(
 					2 * (continousResult.getMax().doubleValue() - avalue.doubleValue()));
-			System.out.println(continousResult.getTotalDF() + "\t" +continousResult.getModelDF() + "\t" + continousResult.getMax() +"\t" +
-					deviance.getA3() + "\t" + p1);
+			System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+					+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
 		}
 		catch (Exception e)
 		{
-			System.out.println(continousResult.getTotalDF() + "\t" +continousResult.getModelDF() + "\t" + continousResult.getMax() +"\t" +
-					deviance.getA3() + "\t" + p1 + "\terror");
+			System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+					+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1 + "\terror");
 		}
 
 		if (Double.isFinite(p1) && !Double.isNaN(p1))
@@ -167,7 +166,7 @@ public class BMDSToxicRUtils
 
 			int start = 0;
 			if (extraoption != 0)
-				results[start++] = (double) extraoption;
+				results[start++] = extraoption;
 			for (int i = start; i < results.length; i++)
 				results[i] = continousResult.getParms().get(i - start);
 
@@ -183,7 +182,7 @@ public class BMDSToxicRUtils
 				ExponentialResult r = new ExponentialResult();
 				r.setOption(3);
 				r.setAdverseDirection((short) (isIncreasing ? 1 : -1));
-				//results[3] = results[4];
+				// results[3] = results[4];
 				theStatResult = r;
 			}
 			else if (model == ToxicRConstants.EXP5)
