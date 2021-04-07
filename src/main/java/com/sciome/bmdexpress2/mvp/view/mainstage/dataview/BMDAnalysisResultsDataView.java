@@ -46,30 +46,33 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		try
 		{
 			presenter = new BMDAnalysisResultsDataViewPresenter(this, BMDExpressEventBus.getInstance());
-			
+
 			if (bmdResult.getColumnHeader().size() == 0)
 				return;
 
-			//Add any new columns to the map and list
+			// Add any new columns to the map and list
 			columnMap = BMDExpressProperties.getInstance().getTableInformation().getBmdMap();
 			columnOrder = BMDExpressProperties.getInstance().getTableInformation().getBmdOrder();
-			for(String header : bmdResult.getColumnHeader()) {
-				if(!columnMap.containsKey(header)) {
+			for (String header : bmdResult.getColumnHeader())
+			{
+				if (!columnMap.containsKey(header))
+				{
 					columnMap.put(header, true);
 				}
-				if(!columnOrder.contains(header)) {
-					if(header.equals("Analysis"))
+				if (!columnOrder.contains(header))
+				{
+					if (header.equals("Analysis"))
 						columnOrder.add(0, header);
 					else
 						columnOrder.add(header);
 				}
 			}
-			
+
 			setUpTableView(bmdResult);
 			setUpTableListeners();
 
 			setCellFactory();
-			
+
 			presenter.showVisualizations(bmdResult);
 		}
 		catch (Exception e)
@@ -79,12 +82,14 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 	}
 
 	@Override
-	protected void setCellFactory() {
-		if(columnMap.get("Probe ID")) {
+	protected void setCellFactory()
+	{
+		if (columnMap.get("Probe ID"))
+		{
 			int probeIDColumn = columnOrder.indexOf("Probe ID");
-			
+
 			TableColumn tc = tableView.getColumns().get(probeIDColumn);
-	
+
 			if (bmdAnalysisDataSet instanceof BMDResult)
 			{
 				// Create a CellFactory for the probeid. The reason for this is to allow us to detect user
@@ -101,7 +106,7 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void close()
@@ -135,8 +140,8 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 
 	private class BMDTableCallBack implements Callback<TableColumn, TableCell>
 	{
-		BMDResult					bmdResult;
-		private CurveFitView	modelGraphics;
+		BMDResult bmdResult;
+		private CurveFitView modelGraphics;
 
 		public BMDTableCallBack(BMDResult bmdr)
 		{
@@ -152,11 +157,11 @@ public class BMDAnalysisResultsDataView extends BMDExpressDataView<BMDResult> im
 		public TableCell call(TableColumn param)
 		{
 
-			TableCell cell = new TableCell<ProbeStatResult, String>() {
+			TableCell cell = new TableCell<ProbeStatResult, Object>() {
 
 				// must override drawing the cell so we can color it blue.
 				@Override
-				public void updateItem(String item, boolean empty)
+				public void updateItem(Object item, boolean empty)
 				{
 					super.updateItem(item, empty);
 					setTextFill(javafx.scene.paint.Color.BLUE);
