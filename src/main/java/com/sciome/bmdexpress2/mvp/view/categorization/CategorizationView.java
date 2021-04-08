@@ -36,6 +36,7 @@ import com.sciome.bmdexpress2.util.categoryanalysis.defined.DefinedCategoryFiles
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Model;
 import com.sciome.commons.math.httk.calc.calc_analytic_css.Units;
 import com.sciome.commons.math.httk.model.Compound;
+import com.sciome.commons.math.httk.model.Compound.Source;
 import com.sciome.commons.math.httk.model.CompoundTable;
 import com.sciome.commons.math.httk.model.InVitroData;
 
@@ -440,14 +441,22 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				pKaDonorTextField.setTooltip(new Tooltip("pKa Donor Source: " + compound.getpKaDonorsSource()));
 			else
 				pKaDonorTextField.setTooltip(new Tooltip("No source available"));
-			
-			if(compound.getIVdataSourceForSpecies(species, "Clint") != null)
-				clintTextField.setTooltip(new Tooltip("Clint Source: " + compound.getIVdataSourceForSpecies(species, "Clint")));
+			Source dataSource = null;
+			try {
+			dataSource = compound.getIVdataSourceForSpecies(species, "Clint");
+			}catch(Exception e) {}
+			if(dataSource != null)
+				clintTextField.setTooltip(new Tooltip("Clint Source: " + dataSource));
 			else
 				clintTextField.setTooltip(new Tooltip("No source available"));
 			
-			if(compound.getIVdataSourceForSpecies(species, "Funbound.plasma") != null)
-				fubTextField.setTooltip(new Tooltip("Fup Source: " + compound.getIVdataSourceForSpecies(species, "Funbound.plasma")));
+			 dataSource = null;
+				try {
+				dataSource = compound.getIVdataSourceForSpecies(species, "Funbound.plasma");
+				}catch(Exception e) {}
+				
+			if(dataSource != null)
+				fubTextField.setTooltip(new Tooltip("Fup Source: " + dataSource));
 			else
 				fubTextField.setTooltip(new Tooltip("No source available"));
 		}
