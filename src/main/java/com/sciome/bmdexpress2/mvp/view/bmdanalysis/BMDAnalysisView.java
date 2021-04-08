@@ -551,7 +551,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(false);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
-		funlCheckBox.setDisable(false);
+		funlCheckBox.setDisable(true);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
