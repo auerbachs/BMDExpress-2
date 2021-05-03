@@ -763,7 +763,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				double finalTime =  Double.valueOf(finalTimeTextField.getText());
 				parameters.setFinalTime(finalTime);
 				int numDoses = presenter.getNumDoses();
-				if(finalTime <= (numDoses - 1) * doseSpacing) {
+				if(finalTime <= (numDoses - 2) * doseSpacing) { //subtract 2 from numDoses to ignore control dose
 					throw new IllegalArgumentException("Final time must be greater than dose spacing * (number of doses - 1)");
 				}
 				
@@ -802,7 +802,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			quantile_doseSpacingTextField.setText("24");
 			finalTimeLabel.setVisible(true);
 			finalTimeTextField.setVisible(true);
-			finalTimeTextField.setText("" + ((presenter.getNumDoses() - 1) * 24 + 2));
+			finalTimeTextField.setText("" + ((presenter.getNumDoses() - 2) * 24 + 2)); //subtract 2 from getnumdoses to ignore control dose
 
 			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
 			inputUnitsComboBox.getItems().add(MGPERKGPERDAY);

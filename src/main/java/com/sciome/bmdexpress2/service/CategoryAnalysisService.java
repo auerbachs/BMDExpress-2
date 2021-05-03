@@ -216,7 +216,8 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			for(int j = 0; j < doses.get(i).size(); j++) {
 				if(doses.get(i).get(j) != null) {
 					cmax.add(get_cmax_bycas.calc(params.getCompound(), doses.get(i).get(j), 
-						bmdResult.getDoseResponseExperiment().getUniqueDoses().size(), (int)params.getDoseSpacing(), params.getFinalTime(), params.getSpecies()));
+						bmdResult.getDoseResponseExperiment().getUniqueDoses().size()-1, //subtract 1 to ignore the control dose.
+						(int)params.getDoseSpacing(), params.getFinalTime(), params.getSpecies()));
 				} else {
 					cmax.add(null);
 				}
