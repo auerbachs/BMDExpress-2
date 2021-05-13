@@ -417,6 +417,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		input.setBestModelSelectionBMDLandBMDU(
 				(BestModelSelectionBMDLandBMDU) this.bmdlBmduComboBox.getValue());
+		
+		if(!this.useFastWaldCheckBox.isDisabled())
+			input.setUseWald(this.useFastWaldCheckBox.isSelected());
 
 		BMDExpressProperties.getInstance().saveBMDInput(input);
 
@@ -713,6 +716,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		// init best poly model test
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
 		bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
+		
+		this.useFastWaldCheckBox.setSelected(input.isUseWald());
 
 		// pValue Cut OFF
 		pValueCutoffComboBox.getItems().add("0.01");

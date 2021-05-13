@@ -66,12 +66,12 @@
                                        <children>
                                           <HBox fx:id="methodHBox" layoutX="14.0" layoutY="52.0" spacing="50.0">
                                              <children>
-                                                <RadioButton fx:id="origMethodRadio" layoutX="14.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_OrigMethod" selected="true" text="EPA BMDS Executables">
+                                                <RadioButton fx:id="origMethodRadio" layoutX="14.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_OrigMethod" selected="true" text="EPA BMDS 2.7.x">
                                                    <toggleGroup>
                                                       <ToggleGroup fx:id="methodGroup" />
                                                    </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="toxicRMethodRadio" layoutX="258.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRLaplaceMethod" text="New EPA BMDS" toggleGroup="$methodGroup" />
+                                                <RadioButton fx:id="toxicRMethodRadio" layoutX="258.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRLaplaceMethod" text="EPA BMDS 3.2.x" toggleGroup="$methodGroup" />
                                                 <RadioButton fx:id="toxicRMAMethodRadio" layoutX="403.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRLaplaceMAMethod" text="ToxicR Laplace with Model Averaging" toggleGroup="$methodGroup" />
                                                 <RadioButton fx:id="toxicRMCMCMAMethodRadio" layoutX="734.0" layoutY="52.0" mnemonicParsing="false" onAction="#handle_ToxicRMCMCMAMethod" text="ToxicR MCMC with Model Averaging" toggleGroup="$methodGroup" />
                                              </children>

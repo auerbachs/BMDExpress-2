@@ -22,6 +22,7 @@ public class BMDInput
 	private boolean power;
 	private boolean constantVariance;
 	private boolean flagHillModel;
+	private boolean useWald;
 	private int maxIterations;
 	private int numThreads;
 	private int killTime;
@@ -58,6 +59,7 @@ public class BMDInput
 		// default kill time to 600 seconds (akay 10 minutes)
 		killTime = 600;
 		bmrType = "Standard Deviation";
+		useWald = false;
 
 		BMRFactor = new BMRFactor("1.021 (5%)", "1.021");
 		restrictPower = RestrictPowerEnum.NO_RESTRICTION;
@@ -65,6 +67,17 @@ public class BMDInput
 		kParameterLessThan = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 		bestModelWithFlaggedHill = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
 		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL;
+	}
+
+	
+	
+	
+	public boolean isUseWald() {
+		return useWald;
+	}
+
+	public void setUseWald(boolean useWald) {
+		this.useWald = useWald;
 	}
 
 	public boolean isFunl()
