@@ -37,14 +37,14 @@ public class BMDSToxicRUtils
 	}
 
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isNCV, NormalDeviance deviance) throws JsonMappingException, JsonProcessingException
+			boolean isNCV, NormalDeviance deviance, boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
 		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
-		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing, deviance);
+		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing, deviance, isFast);
 	}
 
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isNCV, boolean isIncreasing, NormalDeviance deviance)
+			boolean isNCV, boolean isIncreasing, NormalDeviance deviance, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 
@@ -55,7 +55,7 @@ public class BMDSToxicRUtils
 
 		ToxicRJNI tRJNI = new ToxicRJNI();
 		ContinuousResult continousResult = tRJNI.runContinuous(model, Y, doses, bmdType, BMR, true, isNCV,
-				isIncreasing);
+				isIncreasing, isFast);
 
 		Double maxconstant = doses.length * Math.log((1 / Math.sqrt(2 * Math.PI)));
 		Double logMax = -1 * continousResult.getMax() - maxconstant;
@@ -92,8 +92,8 @@ public class BMDSToxicRUtils
 																									// continousResult.getModelDF());
 			p1 = 1.0 - csd.cumulativeProbability(
 					2 * (continousResult.getMax().doubleValue() - avalue.doubleValue()));
-			System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
-					+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
+			//System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+			//		+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
 		}
 		catch (Exception e)
 		{
@@ -116,9 +116,17 @@ public class BMDSToxicRUtils
 
 		return results;
 	}
-
+	
 	public static ModelAveragingResult calculateToxicRMA(int[] models, double[] Y, double[] doses,
 			int bmdType, double BMR, boolean isNCV, boolean useMCMC)
+			throws JsonMappingException, JsonProcessingException
+	{
+		return calculateToxicRMA(models,  Y,  doses,
+				 bmdType,  BMR,  isNCV,  useMCMC,  true);
+	}
+
+	public static ModelAveragingResult calculateToxicRMA(int[] models, double[] Y, double[] doses,
+			int bmdType, double BMR, boolean isNCV, boolean useMCMC, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
@@ -135,10 +143,10 @@ public class BMDSToxicRUtils
 
 		if (!useMCMC)
 			continousResultMA = tRJNI.runContinuousMA(models, Y, doses, bmdType, BMR, false, isNCV,
-					isIncreasing);
+					isIncreasing, isFast);
 		else
 			continousResultMA = tRJNI.runContinuousMCMCMA(models, Y, doses, bmdType, BMR, 25000, 1000, false,
-					isNCV, isIncreasing).getResult();
+					isNCV, isIncreasing, isFast).getResult();
 
 		Double maxconstant = doses.length * Math.log((1 / Math.sqrt(2 * Math.PI)));
 

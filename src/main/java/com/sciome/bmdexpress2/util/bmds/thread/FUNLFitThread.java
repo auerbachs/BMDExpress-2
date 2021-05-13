@@ -118,7 +118,7 @@ public class FUNLFitThread extends Thread implements IFitThread
 
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.FUNL, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1,dev);
+						inputParameters.getConstantVariance() != 1,dev, inputParameters.isFast());
 
 				if (results != null)
 				{

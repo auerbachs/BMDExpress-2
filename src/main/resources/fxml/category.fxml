@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="769.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
 	<center>
 		<AnchorPane minHeight="700.0" prefHeight="900.0" BorderPane.alignment="CENTER">
 			<children>
@@ -237,24 +237,51 @@
                                                 </HBox>
                                                 <GridPane vgap="20.0">
                                                   <columnConstraints>
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="67.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="247.0" minWidth="10.0" prefWidth="151.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="463.0" minWidth="10.0" prefWidth="463.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <TextField fx:id="quantile_doseSpacingTextField" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="quantile_doseSpacingTextField" prefHeight="25.0" prefWidth="102.0" GridPane.columnIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets right="15.0" />
+                                                         </GridPane.margin></TextField>
                                                       <Label fx:id="quantile_doseSpacingLabel" text="Quantile  " />
                                                       <Label fx:id="inputUnitsLabel" text="Input Units  " GridPane.rowIndex="1" />
-                                                      <ComboBox fx:id="inputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <Label text="Output Units  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                      <ComboBox fx:id="outputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                      <Label fx:id="finalTimeLabel" text="Final Time  " GridPane.columnIndex="2" />
-                                                      <TextField fx:id="finalTimeTextField" GridPane.columnIndex="3" />
+                                                      <ComboBox fx:id="inputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <GridPane.margin>
+                                                            <Insets right="15.0" />
+                                                         </GridPane.margin></ComboBox>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <children>
+                                                            <Label text="Output Units  " />
+                                                            <ComboBox fx:id="outputUnitsComboBox" prefHeight="30.0" prefWidth="148.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
+                                                         <children>
+                                                            <Label fx:id="doseCountLabel" text="Dose Count" />
+                                                            <TextField fx:id="doseCountTextField" prefHeight="25.0" prefWidth="76.0">
+                                                               <HBox.margin>
+                                                                  <Insets left="5.0" />
+                                                               </HBox.margin>
+                                                            </TextField>
+                                                            <Label fx:id="finalTimeLabel" text="Time From Last Dose to Sacrifice ">
+                                                               <HBox.margin>
+                                                                  <Insets left="15.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <TextField fx:id="finalTimeTextField" prefHeight="25.0" prefWidth="84.0" GridPane.columnIndex="3">
+                                                               <HBox.margin>
+                                                                  <Insets left="5.0" />
+                                                               </HBox.margin>
+                                                            </TextField>
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets left="20.0" right="20.0" top="20.0" />

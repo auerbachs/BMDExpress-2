@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (IZ[D[D[D[D[DIZDDIDIII)V
  */
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
-  (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint, jint);
+  (JNIEnv *, jobject, jint, jboolean, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jint, jboolean, jdouble, jdouble, jint, jdouble, jint,jint, jint, jint, jint, jboolean);
 string convertSingleContinuousResultToJSON(continuous_model_result* result);
 
 JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_calcDeviance
@@ -25,7 +25,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
    jintArray, jintArray, jdoubleArray, jboolean, 
    jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, 
    jint, jboolean, jdouble, jdouble, 
-   jdouble, jint, jint );
+   jdouble, jint, jint, jboolean );
 
 string convertMAContinuousResultToJSON(continuousMA_result* result);
 
@@ -34,7 +34,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree);
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree, jboolean isFast);
 
 string convertMCMCSingleContinuousResultToJSON(continuous_model_result* result, bmd_analysis_MCMC  *output);
 
@@ -44,7 +44,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
    jintArray jprior_cols, jintArray jdisttypes, jdoubleArray jmodelPriors, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray jpriors, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, 
-   jdouble alpha, jint samples, jint burnin );
+   jdouble alpha, jint samples, jint burnin, jboolean isFast );
 
 string convertMCMCMAContinuousResultToJSON(continuousMA_result* result, ma_MCMCfits* model_mcmc_info);
 

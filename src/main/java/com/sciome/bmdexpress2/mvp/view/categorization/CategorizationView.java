@@ -188,6 +188,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	private Label							quantile_doseSpacingLabel;
 	@FXML
 	private Label							finalTimeLabel;
+	
+	@FXML
+	private Label doseCountLabel;
+	
+	@FXML
+	private TextField doseCountTextField;
+	
+	
 	ToggleGroup 							inVivoGroup;
 	@FXML
 	private RadioButton						inVitroRadioButton;
@@ -758,19 +766,26 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				else
 					parameters.setDoseUnits(Units.MOL);
 			} else {
+				try {
 				double doseSpacing =  Double.valueOf(quantile_doseSpacingTextField.getText());
-				parameters.setDoseSpacing(doseSpacing);
-				double finalTime =  Double.valueOf(finalTimeTextField.getText());
-				parameters.setFinalTime(finalTime);
-				int numDoses = presenter.getNumDoses();
-				if(finalTime <= (numDoses - 2) * doseSpacing) { //subtract 2 from numDoses to ignore control dose
-					throw new IllegalArgumentException("Final time must be greater than dose spacing * (number of doses - 1)");
-				}
 				
+				//the finalTime is the sum of dosespacing between doses plus the time after last dose
+				double finalTime =  Double.valueOf(finalTimeTextField.getText()) + (doseSpacing * (Integer.valueOf(this.doseCountTextField.getText())-1));
+				
+				int numDoses = Integer.valueOf(this.doseCountTextField.getText());
+				
+				parameters.setFinalTime(finalTime);
+				parameters.setDoseSpacing(doseSpacing);
 				parameters.setInvivo(true);
+				parameters.setNumberOfDoses(numDoses);
 				
 				parameters.setConcentrationUnits(ConcentrationUnits.uM);
 				parameters.setDoseUnits(Units.MG);
+				}
+				catch(Exception e)
+				{
+					throw new IllegalArgumentException(e.getMessage());
+				}
 			}
 			params.setIviveParameters(parameters);
 		}
@@ -802,7 +817,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			quantile_doseSpacingTextField.setText("24");
 			finalTimeLabel.setVisible(true);
 			finalTimeTextField.setVisible(true);
-			finalTimeTextField.setText("" + ((presenter.getNumDoses() - 2) * 24 + 2)); //subtract 2 from getnumdoses to ignore control dose
+			finalTimeTextField.setText("24"); 
+			this.doseCountLabel.setVisible(true);
+			this.doseCountTextField.setVisible(true);
+			doseCountTextField.setText("5");
 
 			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
 			inputUnitsComboBox.getItems().add(MGPERKGPERDAY);
@@ -815,6 +833,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			quantile_doseSpacingTextField.setText("0.95");
 			finalTimeLabel.setVisible(false);
 			finalTimeTextField.setVisible(false);
+			
+			this.doseCountLabel.setVisible(false);
+			this.doseCountTextField.setVisible(false);
 
 			inputUnitsComboBox.getItems().removeAll(inputUnitsComboBox.getItems());
 			inputUnitsComboBox.getItems().addAll(ConcentrationUnits.values());

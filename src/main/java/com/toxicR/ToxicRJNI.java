@@ -28,26 +28,26 @@ public class ToxicRJNI
 	public native String runContinuousSingleJNI(int model, boolean suff_stat, double[] Y, double[] doses,
 			double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
 			double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
-			int degree);
+			int degree, boolean isFast);
 
 	public native String runContinuousMAJNI(int nmodels, int[] models, int[] parms, int[] actual_parms,
 			int[] prior_cols, int[] disttypes, double[] modelPriors, boolean suff_stat, double[] Y,
 			double[] doses, double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing,
-			double BMR, double tail_prob, double alpha, int samples, int burnin);
+			double BMR, double tail_prob, double alpha, int samples, int burnin, boolean isFast);
 
 	public native String runContinuousMCMCSingleJNI(int model, boolean suff_stat, double[] Y, double[] doses,
 			double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
 			double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
-			int degree);
+			int degree, boolean isFast);
 
 	public native String runContinuousMCMCMAJNI(int nmodels, int[] models, int[] parms, int[] actual_parms,
 			int[] prior_cols, int[] disttypes, double[] modelPriors, boolean suff_stat, double[] Y,
 			double[] doses, double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing,
-			double BMR, double tail_prob, double alpha, int samples, int burnin);
+			double BMR, double tail_prob, double alpha, int samples, int burnin, boolean isFast);
 
 	// entry point to run continuous
 	public ContinuousResult runContinuous(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+			boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 
@@ -63,7 +63,7 @@ public class ToxicRJNI
 		int degree = getDegree(model);
 
 		String resultString = runContinuousSingleJNI(modelToRun, false, Y, doses, sd, n_group, priors,
-				bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree);
+				bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree, isFast);
 
 		ContinuousResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousResult.class);
@@ -112,7 +112,7 @@ public class ToxicRJNI
 
 	// entry point to run coninuous model averaging
 	public ContinuousResultMA runContinuousMA(int[] models, double[] Y, double[] doses, int bmdType,
-			double BMR, boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+			double BMR, boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 
@@ -140,7 +140,7 @@ public class ToxicRJNI
 		int[] modelsToRun = getModelsToRun(models);
 		String resultString = runContinuousMAJNI(modelsToRun.length, modelsToRun, parms, actualparms,
 				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
-				isIncreasing, BMR, 0.001, 0.005, 25000, 1000);
+				isIncreasing, BMR, 0.001, 0.005, 25000, 1000,isFast);
 
 		ContinuousResultMA result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousResultMA.class);
@@ -149,7 +149,7 @@ public class ToxicRJNI
 
 	// entry point to run continuous mcmc
 	public ContinuousMCMCResult runContinuousMCMC(int model, double[] Y, double[] doses, int bmdType,
-			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 		Priors pr = new Priors(isLogNormal, isMLE);
@@ -159,7 +159,7 @@ public class ToxicRJNI
 		int degree = getDegree(model);
 		String resultString = runContinuousMCMCSingleJNI(modelToRun, false, Y, doses, sd, n_group,
 				pr.getPriors(model), bmdType, isIncreasing, BMR, .001, pr.getDistType(), 0.005, samples,
-				burnnin, pr.getRowCount(model), pr.getColCounts(model), degree);
+				burnnin, pr.getRowCount(model), pr.getColCounts(model), degree, isFast);
 		ContinuousMCMCResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousMCMCResult.class);
 
@@ -178,7 +178,7 @@ public class ToxicRJNI
 
 	// entry point to run coninuous mcmc model averaging
 	public ContinuousMCMCMAResult runContinuousMCMCMA(int[] models, double[] Y, double[] doses, int bmdType,
-			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
 			throws JsonMappingException, JsonProcessingException
 	{
 		Priors pr = new Priors(isLogNormal, isMLE);
@@ -198,7 +198,7 @@ public class ToxicRJNI
 		int[] modelsToRun = getModelsToRun(models);
 		String resultString = runContinuousMCMCMAJNI(models.length, modelsToRun, parms, actualparms,
 				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
-				isIncreasing, BMR, 0.001, 0.005, samples, burnnin);
+				isIncreasing, BMR, 0.001, 0.005, samples, burnnin, isFast);
 		ContinuousMCMCMAResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousMCMCMAResult.class);
 		return result;

@@ -40,7 +40,7 @@ public class ToxicRJNIMain
 				pr.getExp3Priors(), 2, false,
 				// ************************************* BMR tail_prob disttype alpha samples burnin parms
 				// prior_cols ************
-				1.1, .001, pr.getDistType(), 0.005, 210, 100, pr.getExp3RowCount(), pr.getExp3ColCount(), 0);
+				1.1, .001, pr.getDistType(), 0.005, 210, 100, pr.getExp3RowCount(), pr.getExp3ColCount(), 0,true);
 		System.out.println(results);
 
 	}
@@ -57,7 +57,7 @@ public class ToxicRJNIMain
 		try
 		{
 			results = new ToxicRJNI().runContinuousMCMC(6, Y, doses, 2, 1.3, 2100, 1000, true, true,
-					isIncreasing);
+					isIncreasing,true);
 		}
 		catch (JsonProcessingException e)
 		{
@@ -83,7 +83,7 @@ public class ToxicRJNIMain
 		ContinuousResult results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuous(6, Y, doses, 2, 1.3, true, true, isIncreasing);
+			results = new ToxicRJNI().runContinuous(6, Y, doses, 2, 1.3, true, true, isIncreasing,true);
 		}
 		catch (JsonProcessingException e)
 		{
@@ -122,7 +122,7 @@ public class ToxicRJNIMain
 				// ************************************* BMR tail_prob disttype alpha samples burnin parms
 				// prior_cols ************
 				1.2, 0.001, pr.getDistType(), 0.005, 21000, 1000, pr.getPowerRowCount(),
-				pr.getPowerColCount(), 0);
+				pr.getPowerColCount(), 0,true);
 		System.out.println(results);
 
 	}
@@ -141,7 +141,7 @@ public class ToxicRJNIMain
 		ContinuousResultMA results = null;
 		try
 		{
-			results = new ToxicRJNI().runContinuousMA(models, Y, doses, 2, 1.3, true, false, isIncreasing);
+			results = new ToxicRJNI().runContinuousMA(models, Y, doses, 2, 1.3, true, false, isIncreasing,true);
 		}
 		catch (Exception e)
 		{
@@ -180,7 +180,7 @@ public class ToxicRJNIMain
 		try
 		{
 			results = new ToxicRJNI().runContinuousMCMCMA(models, Y, doses, 2, 1.3, 20000, 1000, false, true,
-					isIncreasing);
+					isIncreasing,true);
 		}
 		catch (JsonProcessingException e)
 		{

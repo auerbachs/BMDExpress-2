@@ -69,6 +69,19 @@ public class ModelInputParameters
 	private String[][] columns = { { "DOSE", "RESPONSE" }, { "DOSE", "NI", "MEAN", "STD" } };
 	private String BMDSMajorVersion;
 	private String MAMethod;
+	
+	private boolean isFast =false;
+	
+	
+	
+
+	public boolean isFast() {
+		return isFast;
+	}
+
+	public void setFast(boolean isFast) {
+		this.isFast = isFast;
+	}
 
 	public BMD_METHOD getBmdMethod()
 	{

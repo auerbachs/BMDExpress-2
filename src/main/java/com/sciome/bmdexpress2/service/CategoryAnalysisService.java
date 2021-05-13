@@ -71,8 +71,9 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Species: " + params.getIviveParameters().getSpecies());
 			if(params.getIviveParameters().isInvivo()) {
 				calculateInVivoToInVitro(categoryAnalysisResults, bmdResult, params.getIviveParameters());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("Number of Doses: " + params.getIviveParameters().getNumberOfDoses());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Dose Spacing: " + params.getIviveParameters().getDoseSpacing());
-				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Final Time: " + params.getIviveParameters().getFinalTime());
+				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Time From Last Dose to Sacrifice: " + params.getIviveParameters().getFinalTime());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Input Units: " + params.getIviveParameters().getConcentrationUnits());
 				categoryAnalysisResults.getAnalysisInfo().getNotes().add("IVIVE Output Units: " + params.getIviveParameters().getDoseUnits());
 			} else {
@@ -216,7 +217,7 @@ public class CategoryAnalysisService implements ICategoryAnalysisService
 			for(int j = 0; j < doses.get(i).size(); j++) {
 				if(doses.get(i).get(j) != null) {
 					cmax.add(get_cmax_bycas.calc(params.getCompound(), doses.get(i).get(j), 
-						bmdResult.getDoseResponseExperiment().getUniqueDoses().size()-1, //subtract 1 to ignore the control dose.
+						params.getNumberOfDoses(), //subtract 1 to ignore the control dose.
 						(int)params.getDoseSpacing(), params.getFinalTime(), params.getSpecies()));
 				} else {
 					cmax.add(null);

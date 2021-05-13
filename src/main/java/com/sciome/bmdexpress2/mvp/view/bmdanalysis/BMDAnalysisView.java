@@ -84,7 +84,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	@FXML
 	private CheckBox constantVarianceCheckBox;
-
+	
+	@FXML
+	private CheckBox useFastWaldCheckBox;
 	@FXML
 	private CheckBox flagHillkParamCheckBox;
 	@FXML
@@ -211,9 +213,14 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.exponential2CheckBox.setDisable(false);
 
 		if (this.origMethodRadio.isSelected())
+		{
 			funlCheckBox.setDisable(true);
+			useFastWaldCheckBox.setDisable(true);
+		}
 		else
+		{
 			killTimeComboBox.setDisable(true);
+		}
 
 	}
 
@@ -523,6 +530,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.restrictPowerComboBox.setDisable(false);
 		this.maximumIterationsTextField.setDisable(false);
 		killTimeComboBox.setDisable(false);
+		useFastWaldCheckBox.setDisable(true);
 
 		if (powerCheckBox.isSelected())
 		{
@@ -552,6 +560,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
+		useFastWaldCheckBox.setDisable(false);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -582,6 +591,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(false);
+		useFastWaldCheckBox.setDisable(true);
 
 		this.constantVarianceCheckBox.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -620,6 +630,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
 		killTimeComboBox.setDisable(true);
+		useFastWaldCheckBox.setDisable(true);
 
 		// disable some parameters
 
@@ -883,6 +894,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 				inputParameters.setMAMethod("MCMC Model Averaging");
 			else
 				inputParameters.setMAMethod("");
+			
+			
+			inputParameters.setFast(this.useFastWaldCheckBox.isSelected());
+				
 
 		}
 

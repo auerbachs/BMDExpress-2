@@ -18,7 +18,8 @@ public class IVIVEParameters {
 	private String							species;
 	private double							quantile;
 	private boolean							invivo;
-	private double							finalTime;
+	private double							finalTime; 
+	private int numberOfDoses;
 	private double							doseSpacing;
 	
 	public Compound getCompound() {
@@ -75,4 +76,12 @@ public class IVIVEParameters {
 	public void setDoseSpacing(double doseSpacing) {
 		this.doseSpacing = doseSpacing;
 	}
+	public int getNumberOfDoses() {
+		return numberOfDoses;
+	}
+	public void setNumberOfDoses(int numberOfDoses) {
+		this.numberOfDoses = numberOfDoses;
+	}
+	
+	
 }

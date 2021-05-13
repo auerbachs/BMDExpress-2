@@ -105,7 +105,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree)
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols, jint degree, 
+   jboolean isFast)
 {
     
     ////////////////////////////////////////////////
@@ -158,7 +159,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
     }
     continuous_model_result *result = new_continuous_model_result( analysis.model, analysis.parms,
                                                                    200); //have 200 equally spaced values
-    estimate_sm_laplace(&analysis,result);
+    estimate_sm_laplace(&analysis,result,isFast);
 
     
    string jsonResults = convertSingleContinuousResultToJSON(result);
@@ -176,7 +177,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
    jintArray jprior_cols, jintArray jdisttypes, jdoubleArray jmodelPriors, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray jpriors, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, 
-   jdouble alpha, jint samples, jint burnin )
+   jdouble alpha, jint samples, jint burnin, jboolean isFast )
 {
     
     ////////////////////////////////////////////////
@@ -284,7 +285,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
   (JNIEnv *env, jobject thisObject, jint model, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray prior, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, jint disttype, 
-   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols,jint degree)
+   jdouble alpha, jint samples, jint burnin, jint parms, jint prior_cols,jint degree, jboolean isFast)
 {
     
     ////////////////////////////////////////////////
@@ -362,7 +363,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
    jintArray jprior_cols, jintArray jdisttypes, jdoubleArray jmodelPriors, jboolean suff_stat, 
    jdoubleArray Y, jdoubleArray doses, jdoubleArray sd, jdoubleArray n_group, jdoubleArray jpriors, 
    jint BMD_type, jboolean isIncreasing, jdouble BMR, jdouble tail_prob, 
-   jdouble alpha, jint samples, jint burnin )
+   jdouble alpha, jint samples, jint burnin, jboolean isFast )
 {
     
     ////////////////////////////////////////////////

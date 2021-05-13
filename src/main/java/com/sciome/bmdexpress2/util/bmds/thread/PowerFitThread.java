@@ -136,7 +136,7 @@ public class PowerFitThread extends Thread implements IFitThread
 
 				double[] results = BMDSToxicRUtils.calculateToxicR(ToxicRConstants.POWER, responsesD, dosesd,
 						inputParameters.getBmrType(), inputParameters.getBmrLevel(),
-						inputParameters.getConstantVariance() != 1,dev);
+						inputParameters.getConstantVariance() != 1,dev, inputParameters.isFast());
 
 				if (results != null)
 				{

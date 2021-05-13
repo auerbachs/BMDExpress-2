@@ -200,6 +200,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("BMDL and BMDU Model Selection: "
 				+ modelSelectionParameters.getBestModelSelectionBMDLandBMDU());
 
+		if(inputParameters.getBmdMethod().equals(BMD_METHOD.TOXICR))
+			notes.add("Use Wald (Fast BMD): " + inputParameters.isFast());
+		
+		
 		analysisInfo.setNotes(notes);
 
 		if (tmpFolder != null && !tmpFolder.equals(""))
