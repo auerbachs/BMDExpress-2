@@ -46,33 +46,33 @@ public class Priors
 		{
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 1
-					(isMLE ? MLE : LNORM), 0, 0.5, 0, 30, // 2
-					(isMLE ? MLE : NORM), 0, 1, -10, 10, // 3
-					(isMLE ? MLE : LNORM), Math.log(1.5), 0.3, 0, 18, // 4
-					(isMLE ? MLE : LNORM), 0, 0.5, 0, 18, // 5
+					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 2
+					(isMLE ? MLE : NORM), 0, 1, -20, 20, // 3
+					(isMLE ? MLE : LNORM), Math.log(2), 0.4215, 0, 18, // 4
+					(isMLE ? MLE : LNORM), 0, 0.75, 0, 18, // 5
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 6
 			}, 6, 5);
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -1e4, 1e4, // 2
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(1.5)), 0.5, (isMLE ? 1 : 0), 40, // 3
-					(isMLE ? MLE : LNORM), 0, 0.250099980007996, 0, 18, // 4
+					(isMLE ? MLE : NORM), 0, 10, -1e4, 1e4, // 2
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.4215, (isMLE ? 1 : 0), 40, // 3
+					(isMLE ? MLE : LNORM), 0, 0.75, 0, 18, // 4
 					(isMLE ? MLE : NORM), 0, 2, -18, 18 // 5
 			}, 5, 5);
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(isMLE ? MLE : NORM), 0, 5, -100, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -100, 100, // 2
-					(isMLE ? MLE : LNORM), 0, 1, 0, 18, // 3
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : 0), 0.3, (isMLE ? 1 : 0), 18, // 4
-					(isMLE ? MLE : LNORM), 0, .5, 0, 100, // 5
+					(isMLE ? MLE : NORM), 0, 1, -100, 100, // 1
+					(isMLE ? MLE : NORM), 0, 10, -1e4, 1e4, // 2
+					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 3
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.4215, (isMLE ? 1 : 0), 18, // 4
+					(isMLE ? MLE : LNORM), 0, .75, 0, 100, // 5
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 6
 			}, 6, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(isMLE ? MLE : LNORM), 0, 0.1, 0, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -30, 30, // 2
+					(isMLE ? MLE : LNORM), 0, 1, 1e-8, 100, // 1
+					(isMLE ? MLE : NORM), 0, 10, -100, 100, // 2
 					(isMLE ? MLE : NORM), 0, 1, -20, 20, // 3
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(1.5)), 0.3, (isMLE ? 1 : 0), 18, // 4
-					(isMLE ? MLE : LNORM), 0, 0.5, 0, 18, // 5
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.4215, (isMLE ? 1 : 0), 18, // 4
+					(isMLE ? MLE : LNORM), 0, 0.75, 0, 18, // 5
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 6
 			}, 6, 5);
 			linear = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
@@ -108,7 +108,7 @@ public class Priors
 
 			funl = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(isMLE ? MLE : NORM), 0, 10, -100, 100, // 1
-					(isMLE ? MLE : NORM), 0, 10, -10000, 10000, // 2
+					(isMLE ? MLE : NORM), 0, 10, -1e4, 1e4, // 2
 					(isMLE ? MLE : LNORM), 0, 0.5, 0, 100, // 3
 					(isMLE ? MLE : NORM), 0.5, 1, 0, 100, // 4
 					(isMLE ? MLE : LNORM), 0, 0.5, 0, 100, // 5
@@ -123,29 +123,29 @@ public class Priors
 		{
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(isMLE ? MLE : LNORM), 0, 1, -100, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -100, 100, // 2
-					(isMLE ? MLE : LNORM), 0, 1, 0, 18, // 3
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : 0), 1, (isMLE ? 1 : 0), 18, // 4
+					(isMLE ? MLE : NORM), 0, 10, -1e4, 1e4, // 2
+					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 3
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.4215, (isMLE ? 1 : 0), 18, // 4
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 5
 			}, 5, 5);
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(isMLE ? MLE : LNORM), 0, 0.1, 0, 100, // 1
-					(isMLE ? MLE : LNORM), 0, 1, 0, 30, // 2
-					(isMLE ? MLE : NORM), 0, 1, -10, 10, // 3
-					(isMLE ? MLE : LNORM), 0, 0.3, 0, 18, // 4
+					(isMLE ? MLE : LNORM), 0, 0.1, -100, 100, // 1
+					(isMLE ? MLE : LNORM), 0, 1, 0, 100, // 2
+					(isMLE ? MLE : NORM), 0, 1, -20, 20, // 3
+					(isMLE ? MLE : LNORM), Math.log(2), 0.4215, 0, 18, // 4
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 5
 			}, 5, 5);
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(isMLE ? MLE : LNORM), 0, .1, 0, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -1e2, 1e2, // 2
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : 0), 0.5, (isMLE ? 1 : 0), 40, // 3
+					(isMLE ? MLE : LNORM), 0, 1, -100, 100, // 1
+					(isMLE ? MLE : NORM), 0, 10, -1e2, 1e2, // 2
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.425, (isMLE ? 1 : 0), 40, // 3
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 4
 			}, 4, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(isMLE ? MLE : LNORM), 0, 0.1, 0, 100, // 1
-					(isMLE ? MLE : NORM), 0, 1, -30, 30, // 2
+					(isMLE ? MLE : LNORM), 0, 1, 1e-8, 100, // 1
+					(isMLE ? MLE : NORM), 0, 10, -30, 30, // 2
 					(isMLE ? MLE : NORM), 0, 2, -20, 20, // 3
-					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(1.5)), 0.3, (isMLE ? 1 : 0), 18, // 4
+					(isMLE ? MLE : LNORM), (isMLE ? 1 : Math.log(2)), 0.4215, (isMLE ? 1 : 0), 18, // 4
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 5
 			}, 5, 5);
 
