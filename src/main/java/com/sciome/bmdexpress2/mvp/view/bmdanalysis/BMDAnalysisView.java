@@ -83,10 +83,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private CheckBox funlCheckBox;
 
 	@FXML
-	private CheckBox constantVarianceCheckBox;
+	private ComboBox varianceType;
 	
 	@FXML
-	private CheckBox useFastWaldCheckBox;
+	private ComboBox bmdULEstimationMethod;
 	@FXML
 	private CheckBox flagHillkParamCheckBox;
 	@FXML
@@ -189,6 +189,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private BMDInput input;
 
 	private boolean useToxicR;
+	
+	private final String NON_CONSTANT_VARIANCE = "Non-Constant";
+	private final String CONSTANT_VARIANCE = "Constant";
+	
+	private final String WALD_METHOD_BMDUL_ESTIMATION = "Wald, Ewald Method";
+	private final String EPA_METHOD_BMDUL_ESTIMATION = "EPA Method";
 
 	public BMDAnalysisView()
 	{
@@ -215,7 +221,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		if (this.origMethodRadio.isSelected())
 		{
 			funlCheckBox.setDisable(true);
-			useFastWaldCheckBox.setDisable(true);
+			this.bmdULEstimationMethod.setDisable(true);
 		}
 		else
 		{
@@ -393,7 +399,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setFunl(this.funlCheckBox.isSelected());
 		input.setHill(this.hillCheckBox.isSelected());
 		input.setPower(this.powerCheckBox.isSelected());
-		input.setConstantVariance(this.constantVarianceCheckBox.isSelected());
+		input.setConstantVariance(this.varianceType.getValue().equals(CONSTANT_VARIANCE));
 		input.setFlagHillModel(this.flagHillkParamCheckBox.isSelected());
 
 		// Set numerical values
@@ -418,8 +424,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setBestModelSelectionBMDLandBMDU(
 				(BestModelSelectionBMDLandBMDU) this.bmdlBmduComboBox.getValue());
 		
-		if(!this.useFastWaldCheckBox.isDisabled())
-			input.setUseWald(this.useFastWaldCheckBox.isSelected());
+		if(!this.bmdULEstimationMethod.isDisable())
+			input.setUseWald(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
 
 		BMDExpressProperties.getInstance().saveBMDInput(input);
 
@@ -528,12 +534,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
 
-		this.constantVarianceCheckBox.setDisable(false);
+		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(false);
 		this.restrictPowerComboBox.setDisable(false);
 		this.maximumIterationsTextField.setDisable(false);
 		killTimeComboBox.setDisable(false);
-		useFastWaldCheckBox.setDisable(true);
+	this.bmdULEstimationMethod.setDisable(true);
 
 		if (powerCheckBox.isSelected())
 		{
@@ -563,9 +569,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
-		useFastWaldCheckBox.setDisable(false);
+		this.bmdULEstimationMethod.setDisable(false);
 
-		this.constantVarianceCheckBox.setDisable(false);
+		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
@@ -594,9 +600,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(false);
-		useFastWaldCheckBox.setDisable(true);
+		bmdULEstimationMethod.setDisable(true);
 
-		this.constantVarianceCheckBox.setDisable(false);
+		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
@@ -626,14 +632,14 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(false);
 
-		this.constantVarianceCheckBox.setDisable(false);
+		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
 		killTimeComboBox.setDisable(true);
-		useFastWaldCheckBox.setDisable(true);
+		bmdULEstimationMethod.setDisable(true);
 
 		// disable some parameters
 
@@ -655,7 +661,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			toxicRMAMethodRadio.setSelected(true);
 			handle_ToxicRLaplaceMAMethod(null);
 
-			this.constantVarianceCheckBox.setDisable(false);
+			this.varianceType.setDisable(false);
 			this.confidenceLevelComboBox.setDisable(true);
 			this.restrictPowerComboBox.setDisable(true);
 			this.maximumIterationsTextField.setDisable(true);
@@ -683,6 +689,23 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			oneWayANOVADataLabel.setText(processableData.get(0).toString());
 			expressionDataLabel.setText(processableData.get(0).getParentDataSetName());
 		}
+		
+		List<String> bmdULEstimationValues = new ArrayList<>();
+		bmdULEstimationValues.add(EPA_METHOD_BMDUL_ESTIMATION);
+		bmdULEstimationValues.add(WALD_METHOD_BMDUL_ESTIMATION);
+		
+		this.bmdULEstimationMethod.getItems().setAll(bmdULEstimationValues);
+		this.bmdULEstimationMethod.setValue(EPA_METHOD_BMDUL_ESTIMATION);
+		
+		
+		List<String> varianceValues = new ArrayList<>();
+		varianceValues.add(CONSTANT_VARIANCE);
+		varianceValues.add(NON_CONSTANT_VARIANCE);
+		
+		this.varianceType.getItems().setAll(varianceValues);
+		this.varianceType.setValue(CONSTANT_VARIANCE);
+		
+		
 
 		bMRTypeComboBox.getItems().add("Standard Deviation");
 		if (allIsNotLogScaled())
@@ -701,7 +724,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		funlCheckBox.setSelected(input.isFunl());
 		hillCheckBox.setSelected(input.isHill());
 		powerCheckBox.setSelected(input.isPower());
-		constantVarianceCheckBox.setSelected(input.isConstantVariance());
+		if(input.isConstantVariance())
+			varianceType.getSelectionModel().select(CONSTANT_VARIANCE);
+		else 
+			varianceType.getSelectionModel().select(NON_CONSTANT_VARIANCE);
 		flagHillkParamCheckBox.setSelected(input.isFlagHillModel());
 
 		// init confidence level
@@ -717,8 +743,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
 		bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
 		
-		this.useFastWaldCheckBox.setSelected(input.isUseWald());
+		
 
+		
 		// pValue Cut OFF
 		pValueCutoffComboBox.getItems().add("0.01");
 		pValueCutoffComboBox.getItems().add("0.05");
@@ -858,7 +885,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 						* 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
-			inputParameters.setConstantVariance((constantVarianceCheckBox.isSelected()) ? 1 : 0);
+			inputParameters.setConstantVariance((this.varianceType.getValue().equals(CONSTANT_VARIANCE)) ? 1 : 0);
 			// for simulation only?
 			inputParameters.setRestirctPower(restrictPowerComboBox.getSelectionModel().getSelectedIndex());
 
@@ -901,7 +928,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 				inputParameters.setMAMethod("");
 			
 			
-			inputParameters.setFast(this.useFastWaldCheckBox.isSelected());
+			inputParameters.setFast(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
 				
 
 		}

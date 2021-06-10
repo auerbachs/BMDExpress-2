@@ -178,7 +178,7 @@ public class Priors
 
 			funl = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(isMLE ? MLE : NORM), 0, 10, -100, 100, // 1
-					(isMLE ? MLE : NORM), 0, 10, -10000, 10000, // 2
+					(isMLE ? MLE : NORM), 0, 10, -1e4, 1e4, // 2
 					(isMLE ? MLE : LNORM), 0, 0.5, 0, 100, // 3
 					(isMLE ? MLE : NORM), 0.5, 1, 0, 100, // 4
 					(isMLE ? MLE : LNORM), 0, 0.5, 0, 100, // 5
