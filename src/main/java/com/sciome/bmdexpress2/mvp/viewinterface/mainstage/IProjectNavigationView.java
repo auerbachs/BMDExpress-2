@@ -6,6 +6,7 @@ import java.util.List;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
@@ -24,6 +25,8 @@ public interface IProjectNavigationView
 
 	public void addWilliamsTrendAnalysis(WilliamsTrendResults getPayload, boolean selectIt);
 
+	public void addCurveFitPrefilterAnalysis(CurveFitPrefilterResults getPayload, boolean selectIt);
+
 	public void addOriogenAnalysis(OriogenResults getPayload, boolean selectIt);
 
 	public void addBMDAnalysis(BMDResult getPayload, boolean selectIt);
@@ -33,6 +36,8 @@ public interface IProjectNavigationView
 	public void performOneWayANOVA();
 
 	public void performWilliamsTrend();
+
+	public void performCurveFitPreFilter();
 
 	public void performOriogen();
 

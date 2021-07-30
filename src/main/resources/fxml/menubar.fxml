@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 
-<MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.mainstage.MenuBarView">
+<MenuBar fx:id="menuBar" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.mainstage.MenuBarView">
    <menus>
       <Menu mnemonicParsing="false" text="File">
          <items>
@@ -48,7 +48,8 @@
       <Menu mnemonicParsing="false" text="Tools">
          <items>
             <Menu mnemonicParsing="false" text="Prefilter">
-              <items>            
+              <items>
+                  <MenuItem fx:id="curveFitPrefilterMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_curveFitPrefilter" text="Curve Fit Prefilter" />            
                   <MenuItem fx:id="williamsTrendMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_williamsTrend" text="Williams Trend Test" />
                   <MenuItem fx:id="oneWayANOVAMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oneWayANOVA" text="One Way ANOVA" />    
                   <MenuItem fx:id="oriogenMenuItem" disable="true" mnemonicParsing="false" onAction="#handle_oriogen" text="Oriogen" />

@@ -19,6 +19,7 @@ import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
@@ -29,6 +30,7 @@ import com.sciome.bmdexpress2.mvp.presenter.mainstage.ProjectNavigationPresenter
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisGCurvePView;
 import com.sciome.bmdexpress2.mvp.view.bmdanalysis.BMDAnalysisView;
 import com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView;
+import com.sciome.bmdexpress2.mvp.view.prefilter.CurveFitPrefilterView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OneWayANOVAView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.OriogenView;
 import com.sciome.bmdexpress2.mvp.view.prefilter.WilliamsTrendView;
@@ -81,6 +83,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String EXPRESSION_DATA = "Expression Data";
 	private final String ONEWAY_DATA = "One-way ANOVA";
 	private final String WILLIAMS_DATA = "Williams Trend Test";
+	private final String CURVE_FIT_PREFILTER_DATA = "Curve Fit Prefilter Data";
 	private final String ORIOGEN_DATA = "Oriogen";
 	private final String BENCHMARK_DATA = "Benchmark Dose Analyses";
 	private final String CATEGORY_DATA = "Functional Classifications";
@@ -179,6 +182,13 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		else if (selectedItem instanceof WilliamsTrendResults)
 		{
 			showWilliamsTrendContextMenu((WilliamsTrendResults) selectedItem).show(
+					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
+					mouseEvent.getScreenY());
+
+		}
+		else if (selectedItem instanceof CurveFitPrefilterResults)
+		{
+			showCurveFitPrefilterContextMenu((CurveFitPrefilterResults) selectedItem).show(
 					this.analysisCheckList.getScene().getWindow(), mouseEvent.getScreenX(),
 					mouseEvent.getScreenY());
 
@@ -307,6 +317,18 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	public void addWilliamsTrendAnalysis(WilliamsTrendResults williamsTrendResults, boolean selectIt)
 	{
 		addDataSetToList(WILLIAMS_DATA, williamsTrendResults);
+
+	}
+
+	/*
+	 * put the curve fit prefilter  result into the tree.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addCurveFitPrefilterAnalysis(CurveFitPrefilterResults curveFitPrefilterResults,
+			boolean selectIt)
+	{
+		addDataSetToList(CURVE_FIT_PREFILTER_DATA, curveFitPrefilterResults);
 
 	}
 
@@ -449,6 +471,66 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Williams Trend Test");
 						stage.setScene(new Scene((BorderPane) loader.load()));
 						WilliamsTrendView controller = loader.<WilliamsTrendView> getController();
+						controller.initData(selectedItems, processableDatas);
+
+						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+							@Override
+							public void handle(WindowEvent event)
+							{
+								controller.close();
+							}
+						});
+						stage.sizeToScene();
+						stage.show();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+
+	@Override
+	public void performCurveFitPreFilter()
+	{
+		// need to run this on the main ui thread. this is being called from event bus thread..hence the
+		// runlater.
+		Platform.runLater(new Runnable() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void run()
+			{
+				List<BMDExpressAnalysisDataSet> datasets = getSelectedItems();
+
+				List<IStatModelProcessable> selectedItems = new ArrayList<>();
+				for (BMDExpressAnalysisDataSet selectedItem : datasets)
+				{
+					if (selectedItem instanceof IStatModelProcessable)
+					{
+						IStatModelProcessable processableData = (IStatModelProcessable) selectedItem;
+						selectedItems.add(processableData);
+					}
+				}
+
+				if (datasets.size() > 0)
+				{
+					// now create a list of doseResponseExperement objects so the oneway anova view can offer
+					// a selection list.
+					List<IStatModelProcessable> processableDatas = new ArrayList<>();
+					for (BMDExpressAnalysisDataSet item : analysisCheckList.getItems())
+						processableDatas.add((IStatModelProcessable) item);
+					try
+					{
+
+						FXMLLoader loader = new FXMLLoader(
+								getClass().getResource("/fxml/curvefitprefilter.fxml"));
+
+						Stage stage = BMDExpressFXUtils.getInstance().generateStage("Curve Fit Prefilter");
+						stage.setScene(new Scene((BorderPane) loader.load()));
+						CurveFitPrefilterView controller = loader.<CurveFitPrefilterView> getController();
 						controller.initData(selectedItems, processableDatas);
 
 						stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -869,6 +951,15 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
 		setContextMenuCommonHandlers("Williams Trend Test", ctxMenu, williamsTrendResult);
+		return ctxMenu;
+	}
+
+	private ContextMenu showCurveFitPrefilterContextMenu(CurveFitPrefilterResults curveFitPrefilterResult)
+	{
+		ContextMenu ctxMenu = new ContextMenu();
+		ctxMenu.getItems().addAll(getCommonMenuItems());
+
+		setContextMenuCommonHandlers("Curve Fit Prefilter", ctxMenu, curveFitPrefilterResult);
 		return ctxMenu;
 	}
 
@@ -1438,6 +1529,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		dataSetMap.put(EXPRESSION_DATA, new ArrayList<>());
 		dataSetMap.put(ONEWAY_DATA, new ArrayList<>());
 		dataSetMap.put(WILLIAMS_DATA, new ArrayList<>());
+		dataSetMap.put(CURVE_FIT_PREFILTER_DATA, new ArrayList<>());
 		dataSetMap.put(ORIOGEN_DATA, new ArrayList<>());
 		dataSetMap.put(BENCHMARK_DATA, new ArrayList<>());
 		dataSetMap.put(CATEGORY_DATA, new ArrayList<>());
@@ -1456,7 +1548,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private void initializeDataGroupCombo()
 	{
 		dataGroupCombo.getItems().addAll(Arrays.asList(EXPRESSION_DATA, ONEWAY_DATA, WILLIAMS_DATA,
-				ORIOGEN_DATA, BENCHMARK_DATA, CATEGORY_DATA));
+				CURVE_FIT_PREFILTER_DATA, ORIOGEN_DATA, BENCHMARK_DATA, CATEGORY_DATA));
 
 		dataGroupCombo.setValue(EXPRESSION_DATA);
 
@@ -1511,6 +1603,7 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 		analysisCheckList.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<BMDExpressAnalysisDataSet>() {
+					@Override
 					public void onChanged(ListChangeListener.Change<? extends BMDExpressAnalysisDataSet> c)
 					{
 						delayedCheckBoxReaction();
@@ -1545,6 +1638,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			dataSetMap.get(ONEWAY_DATA).remove(selectedItem);
 		else if (selectedItem instanceof WilliamsTrendResults)
 			dataSetMap.get(WILLIAMS_DATA).remove(selectedItem);
+		else if (selectedItem instanceof CurveFitPrefilterResults)
+			dataSetMap.get(CURVE_FIT_PREFILTER_DATA).remove(selectedItem);
 		else if (selectedItem instanceof OriogenResults)
 			dataSetMap.get(ORIOGEN_DATA).remove(selectedItem);
 		else if (selectedItem instanceof BMDResult)

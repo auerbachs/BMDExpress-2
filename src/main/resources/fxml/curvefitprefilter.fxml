@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="700.0" maxWidth="600.0" minHeight="250.0" minWidth="600.0" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.prefilter.CurveFitPrefilterView">
+   <center>
+      <VBox maxHeight="699.0" prefHeight="699.0" prefWidth="600.0">
+         <children>
+            <AnchorPane prefHeight="215.0" prefWidth="600.0" VBox.vgrow="NEVER">
+               <children>
+                  <TitledPane collapsible="false" minHeight="250.0" prefHeight="350.0" prefWidth="600.0" text="Curve Fit Prefilter" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <GridPane prefHeight="180.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="224.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.0" minWidth="10.0" prefWidth="376.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                                 <children>
+                                    <ComboBox fx:id="expressionDataComboBox" layoutX="96.0" layoutY="7.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets left="20.0" />
+                                 </GridPane.margin>
+                              </AnchorPane>
+                           </children>
+                        </GridPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="150.0" prefHeight="125.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" maxHeight="250.0" minHeight="150.0" prefHeight="250.0" text="Fold Change " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="598.0">
+                           <children>
+                              <GridPane prefHeight="174.0" prefWidth="598.0">
+                                 <children>
+                                    <TextField fx:id="foldChangeValueTextField" layoutX="11.0" layoutY="1.0" prefHeight="26.0" prefWidth="164.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="100.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="138.0" spacing="10.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <CheckBox fx:id="useFoldChangeCheckBox" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handle_UseFoldChangeFilter" prefHeight="18.0" prefWidth="206.0" selected="true" text="Use Fold Change Filter" GridPane.columnSpan="2147483647">
+                                             <GridPane.margin>
+                                                <Insets left="100.0" />
+                                             </GridPane.margin>
+                                          </CheckBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="100.0" />
+                                       </padding>
+                                    </HBox>
+                                    <Label prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="100.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="220.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="395.0" minWidth="10.0" prefWidth="378.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="-Infinity" prefHeight="120.0" prefWidth="602.0">
+               <children>
+                  <TitledPane collapsible="false" maxHeight="-Infinity" minHeight="120.0" prefHeight="120.0" prefWidth="600.0" text="NOTEL/LOTEL Determination" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="127.0" prefWidth="600.0">
+                           <children>
+                              <GridPane layoutX="8.0" layoutY="16.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="77.0" prefWidth="592.0">
+                                 <children>
+                                    <TextField fx:id="pValueLoelTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="16.0" prefWidth="253.0" text="P-Value:" textAlignment="RIGHT">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <TextField fx:id="foldChangeLoelTextField" layoutX="11.0" layoutY="1.0" prefHeight="25.0" prefWidth="140.0" text="2" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="253.0" text="Fold Change Value:" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <RadioButton fx:id="dunnettsRadioButton" mnemonicParsing="false" text="Dunnett's Test" GridPane.columnIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin>
+                                    </RadioButton>
+                                    <RadioButton fx:id="tRadioButton" mnemonicParsing="false" text="T-Test" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin>
+                                    </RadioButton>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="68.0" minHeight="0.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="42.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="410.0" prefHeight="200.0" prefWidth="600.0">
+               <children>
+                  <TitledPane collapsible="false" maxHeight="-Infinity" minHeight="120.0" prefHeight="120.0" prefWidth="600.0" text="Execution Parameters" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <AnchorPane maxHeight="-Infinity" minHeight="120.0" minWidth="0.0" prefHeight="120.0" prefWidth="600.0">
+                           <children>
+                              <GridPane layoutY="25.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="95.0" prefWidth="600.0">
+                                 <children>
+                                    <ProgressBar fx:id="prefilterProgress" prefHeight="18.0" prefWidth="140.0" progress="0.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </ProgressBar>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="253.0" text="Number of Threads:">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <TextField fx:id="numberOfThreadsTextField" prefHeight="25.0" prefWidth="140.0" text="2" GridPane.columnIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label fx:id="datasetsCompletedLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="205.0" textAlignment="RIGHT" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label fx:id="progressMessage" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="205.0" textAlignment="RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="200.0" percentWidth="0.0" prefWidth="200.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </TitledPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="51.0" prefWidth="602.0">
+               <children>
+                  <HBox fx:id="adjustedPValueComboBox" alignment="CENTER" layoutY="6.0" prefHeight="43.0" prefWidth="600.0" spacing="50.0">
+                     <children>
+                        <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#handle_startButtonPressed" text="Start" />
+                        <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#handle_saveSettingsButtonPressed" text="Save Settings" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#handle_cancelButtonPressed" text="Cancel" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

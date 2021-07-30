@@ -14,6 +14,8 @@ public interface IMainDataView
 
 	void loadWilliamsTrendAnalysis(BMDExpressAnalysisDataSet getPayload);
 
+	void loadCurveFitPrefilterAnalysis(BMDExpressAnalysisDataSet getPayload);
+
 	void loadOriogenAnalysis(BMDExpressAnalysisDataSet getPayload);
 
 	void loadBMDResultAnalysis(BMDExpressAnalysisDataSet getPayload);

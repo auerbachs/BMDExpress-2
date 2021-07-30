@@ -54,6 +54,10 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	private MenuItem oneWayANOVAMenuItem;
 	@FXML
 	private MenuItem williamsTrendMenuItem;
+
+	@FXML
+	private MenuItem curveFitPrefilterMenuItem;
+
 	@FXML
 	private MenuItem oriogenMenuItem;
 	@FXML
@@ -306,6 +310,16 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	}
 
 	/*
+	 * curve fit prefilter  analysis
+	 */
+	public void handle_curveFitPrefilter(ActionEvent event)
+	{
+
+		presenter.performCurveFitPrefilter();
+
+	}
+
+	/*
 	 * oriogen analysis
 	 */
 	public void handle_oriogen(ActionEvent event)
@@ -469,6 +483,17 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 	}
 
 	@Override
+	public void curveFitPrefilterDataSelected()
+	{
+		this.bMDAnalysesMenuItem.setDisable(false);
+		bMDAnalysesGcurvePMenuItem.setDisable(false);
+		toxicRModelAveragingMenuItem.setDisable(false);
+		togglePrefilterMenuItems(true);
+		toggleCategoryMenuItems(true);
+
+	}
+
+	@Override
 	public void oriogenDataSelected()
 	{
 		this.bMDAnalysesMenuItem.setDisable(false);
@@ -535,6 +560,7 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		this.oneWayANOVAMenuItem.setDisable(disabled);
 		this.williamsTrendMenuItem.setDisable(disabled);
 		this.oriogenMenuItem.setDisable(disabled);
+		this.curveFitPrefilterMenuItem.setDisable(disabled);
 	}
 
 	private void toggleCategoryMenuItems(boolean disabled)

@@ -17,6 +17,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisToxicRRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedForProcessingEvent;
@@ -82,6 +84,17 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
 		// which dataset to analyze
 		getEventBus().post(new WilliamsTrendRequestEvent(""));
+
+	}
+
+	/*
+	 * request for someone to perform william's trend analysis
+	 */
+	public void performCurveFitPrefilter()
+	{
+		// fire off an event to tell somebody do this. MenuBar view doesn't have any information to figure out
+		// which dataset to analyze
+		getEventBus().post(new CurveFitPrefilterRequestEvent(""));
 
 	}
 
@@ -199,6 +212,13 @@ public class MenuBarPresenter extends PresenterBase<IMenuBarView>
 	public void onWilliamsTrendSelected(WilliamsTrendDataSelectedForProcessingEvent event)
 	{
 		getView().williamsTrendDataSelected();
+	}
+
+	@Subscribe
+	@AllowConcurrentEvents
+	public void onCurveFitPrefilterSelected(CurveFitPrefilterDataSelectedForProcessingEvent event)
+	{
+		getView().curveFitPrefilterDataSelected();
 	}
 
 	@Subscribe

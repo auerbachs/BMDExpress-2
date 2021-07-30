@@ -8,6 +8,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSe
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
@@ -60,6 +62,15 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 	 * listen for loading william's trend results so we can add it to the project
 	 */
 	@Subscribe
+	public void onLoadCurveFitPrefilter(CurveFitPrefilterDataSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	/*
+	 * listen for loading william's trend results so we can add it to the project
+	 */
+	@Subscribe
 	public void onLoadOriogen(OriogenDataSelectedEvent event)
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
@@ -97,6 +108,12 @@ public class InfoPresenter extends PresenterBase<IInfoView>
 
 	@Subscribe
 	public void onLoaCombineddWilliamsTrend(WilliamsTrendDataCombinedSelectedEvent event)
+	{
+		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
+	}
+
+	@Subscribe
+	public void onLoaCombinedCurveFitPrefilter(CurveFitPrefilterDataCombinedSelectedEvent event)
 	{
 		getView().showAnalysisInfo(event.GetPayload().getAnalysisInfo());
 	}

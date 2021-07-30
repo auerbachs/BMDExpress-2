@@ -10,6 +10,9 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEv
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
@@ -73,6 +76,15 @@ public class MainPresenter extends PresenterBase<IMainView>
 	}
 
 	/*
+	 * listen for loading curve fit prefilter results so we can add it to the project
+	 */
+	@Subscribe
+	public void onSelectCurveFitPrefilter(CurveFitPrefilterDataSelectedEvent event)
+	{
+		getView().updateSelectionLabel(event.GetPayload().getName());
+	}
+
+	/*
 	 * listen for loading oriogen results so we can add it to the project
 	 */
 	@Subscribe
@@ -122,6 +134,15 @@ public class MainPresenter extends PresenterBase<IMainView>
 	 */
 	@Subscribe
 	public void onSelectWilliamsTrend(WilliamsTrendDataCombinedSelectedEvent event)
+	{
+		getView().updateSelectionLabel(event.GetPayload().getName());
+	}
+
+	/*
+	 * listen for loading curve fit prefilter  results so we can add it to the project
+	 */
+	@Subscribe
+	public void onSelectCurveFitPrefilter(CurveFitPrefilterDataCombinedSelectedEvent event)
 	{
 		getView().updateSelectionLabel(event.GetPayload().getName());
 	}
@@ -286,6 +307,16 @@ public class MainPresenter extends PresenterBase<IMainView>
 	public void onLoadWilliamsTrendAnalysis(WilliamsTrendDataLoadedEvent event)
 	{
 		getView().updateActionStatusLabel("loaded williams trend test: " + event.GetPayload().getName());
+	}
+
+	/*
+	 * load curve fit prefilter results into the view.
+	 */
+	@Subscribe
+	public void onLoadCurveFitPrefilterAnalysis(CurveFitPrefilterDataLoadedEvent event)
+	{
+		getView().updateActionStatusLabel(
+				"loaded curve fit prefilter results: " + event.GetPayload().getName());
 	}
 
 	/*

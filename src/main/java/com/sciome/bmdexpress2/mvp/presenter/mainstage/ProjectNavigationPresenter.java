@@ -16,6 +16,7 @@ import com.sciome.bmdexpress2.mvp.model.CombinedDataSet;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
 import com.sciome.bmdexpress2.mvp.model.chip.ChipInfo;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
@@ -41,6 +42,11 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataLoade
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedForProcessingEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisRequestEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataLoadedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedForProcessingEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
@@ -126,6 +132,8 @@ public class ProjectNavigationPresenter
 			getEventBus().post(new OneWayANOVADataSelectedEvent((OneWayANOVAResults) dataset));
 		else if (dataset instanceof WilliamsTrendResults)
 			getEventBus().post(new WilliamsTrendDataSelectedEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof CurveFitPrefilterResults)
+			getEventBus().post(new CurveFitPrefilterDataSelectedEvent((CurveFitPrefilterResults) dataset));
 		else if (dataset instanceof OriogenResults)
 			getEventBus().post(new OriogenDataSelectedEvent((OriogenResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
@@ -153,6 +161,9 @@ public class ProjectNavigationPresenter
 		else if (dataset instanceof WilliamsTrendResults)
 			getEventBus()
 					.post(new WilliamsTrendDataSelectedForProcessingEvent((WilliamsTrendResults) dataset));
+		else if (dataset instanceof CurveFitPrefilterResults)
+			getEventBus().post(
+					new CurveFitPrefilterDataSelectedForProcessingEvent((CurveFitPrefilterResults) dataset));
 		else if (dataset instanceof OriogenResults)
 			getEventBus().post(new OriogenDataSelectedForProcessingEvent((OriogenResults) dataset));
 		else if (dataset instanceof CategoryAnalysisResults)
@@ -230,6 +241,18 @@ public class ProjectNavigationPresenter
 	}
 
 	/*
+	 * load curveFit prefilter results into the view.
+	 */
+	@Subscribe
+	public void onLoadCurveFitPrefilterAnalysis(CurveFitPrefilterDataLoadedEvent event)
+	{
+		// first make sure the name is unique
+		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
+		getView().addCurveFitPrefilterAnalysis(event.GetPayload(), true);
+		currentProject.getCurveFitPrefilterResults().add(event.GetPayload());
+	}
+
+	/*
 	 * load williams trend results into the view.
 	 */
 	@Subscribe
@@ -286,6 +309,18 @@ public class ProjectNavigationPresenter
 	{
 
 		getView().performWilliamsTrend();
+
+	}
+
+	/*
+	 * some one asked to do a williams trend. So let's tell the view about it so it can figure out what
+	 * objects are selected and do the right thing
+	 */
+	@Subscribe
+	public void onCurveFitPrefilterAnalsyisRequest(CurveFitPrefilterRequestEvent event)
+	{
+
+		getView().performCurveFitPreFilter();
 
 	}
 
@@ -872,6 +907,8 @@ public class ProjectNavigationPresenter
 			getEventBus().post(new OneWayANOVADataCombinedSelectedEvent(combined));
 		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
 			getEventBus().post(new WilliamsTrendDataCombinedSelectedEvent(combined));
+		else if (selectedItems.get(0) instanceof CurveFitPrefilterResults)
+			getEventBus().post(new CurveFitPrefilterDataCombinedSelectedEvent(combined));
 		else if (selectedItems.get(0) instanceof OriogenResults)
 			getEventBus().post(new OriogenDataCombinedSelectedEvent(combined));
 		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)
@@ -932,6 +969,8 @@ public class ProjectNavigationPresenter
 			getEventBus().post(new OneWayANOVADataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof WilliamsTrendResults)
 			getEventBus().post(new WilliamsTrendDataSelectedForProcessingEvent(null));
+		else if (selectedItems.get(0) instanceof CurveFitPrefilterResults)
+			getEventBus().post(new CurveFitPrefilterDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof OriogenResults)
 			getEventBus().post(new OriogenDataSelectedForProcessingEvent(null));
 		else if (selectedItems.get(0) instanceof CategoryAnalysisResults)

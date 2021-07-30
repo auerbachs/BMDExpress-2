@@ -16,6 +16,7 @@ import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.BMDAnalysisResultsDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.BMDExpressDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.CategoryAnalysisDataView;
+import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.CurveFitPrefilterDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.ExpressionDataSetDataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.OneWayANOVADataView;
 import com.sciome.bmdexpress2.mvp.view.mainstage.dataview.OriogenDataView;
@@ -37,10 +38,10 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 {
 
 	@FXML
-	private AnchorPane			tableAnchorPane;
-	private BMDExpressDataView	spreadSheetTableView;
+	private AnchorPane tableAnchorPane;
+	private BMDExpressDataView spreadSheetTableView;
 
-	MainDataPresenter			presenter;
+	MainDataPresenter presenter;
 
 	public MainDataView()
 	{
@@ -100,6 +101,21 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 		}
 
 		spreadSheetTableView = new WilliamsTrendDataView(williamsTrendResults, "main");
+
+		updateSpreadSheet();
+
+	}
+
+	@Override
+	public void loadCurveFitPrefilterAnalysis(BMDExpressAnalysisDataSet results)
+	{
+		// clear data in tableview if it is not null
+		if (spreadSheetTableView != null)
+		{
+			spreadSheetTableView.close();
+		}
+
+		spreadSheetTableView = new CurveFitPrefilterDataView(results, "main");
 
 		updateSpreadSheet();
 
@@ -168,25 +184,25 @@ public class MainDataView extends BMDExpressViewBase implements IMainDataView, I
 		BMDExpressDataView tableView = null;
 		String resultDesc = "BMD Analysis Results: ";
 		if (dataSet instanceof BMDResult)
-			tableView = new BMDAnalysisResultsDataView((BMDResult) dataSet, "spreadsheet");
+			tableView = new BMDAnalysisResultsDataView(dataSet, "spreadsheet");
 		else if (dataSet instanceof OneWayANOVAResults)
 		{
-			tableView = new OneWayANOVADataView((OneWayANOVAResults) dataSet, "spreadsheet");
+			tableView = new OneWayANOVADataView(dataSet, "spreadsheet");
 			resultDesc = "One Way ANOVA Results: ";
 		}
 		else if (dataSet instanceof WilliamsTrendResults)
 		{
-			tableView = new WilliamsTrendDataView((WilliamsTrendResults) dataSet, "spreadsheet");
+			tableView = new WilliamsTrendDataView(dataSet, "spreadsheet");
 			resultDesc = "Williams Trend Test Results: ";
 		}
 		else if (dataSet instanceof OriogenResults)
 		{
-			tableView = new OriogenDataView((OriogenResults) dataSet, "spreadsheet");
+			tableView = new OriogenDataView(dataSet, "spreadsheet");
 			resultDesc = "Oriogen Results: ";
 		}
 		else if (dataSet instanceof CategoryAnalysisResults)
 		{
-			tableView = new CategoryAnalysisDataView((CategoryAnalysisResults) dataSet, "spreadsheet");
+			tableView = new CategoryAnalysisDataView(dataSet, "spreadsheet");
 			resultDesc = "Category Analysis Results: ";
 		}
 

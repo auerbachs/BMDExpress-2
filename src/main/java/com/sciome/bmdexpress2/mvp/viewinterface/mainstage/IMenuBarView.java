@@ -11,6 +11,8 @@ public interface IMenuBarView
 
 	public void williamsTrendDataSelected();
 
+	public void curveFitPrefilterDataSelected();
+
 	public void oriogenDataSelected();
 
 	public void bMDAnalysisDataSelected();

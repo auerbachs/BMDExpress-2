@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -18,6 +16,8 @@ import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.info.AnalysisInfo;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResult;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResult;
@@ -43,11 +43,12 @@ import com.sciome.commons.math.williams.WilliamsTrendTestUtil;
 public class PrefilterService implements IPrefilterService
 {
 	private static final int DEFAULT_NUM_THREADS = 4;
-	
-	private WilliamsTrendTestUtil	williamsUtil	= new WilliamsTrendTestUtil();
-	private OriogenUtil				oriogenUtil		= new OriogenUtil();
-	private boolean					cancel			= false;
-	private ExecutorService 		executor;
+
+	private WilliamsTrendTestUtil williamsUtil = new WilliamsTrendTestUtil();
+	private OriogenUtil oriogenUtil = new OriogenUtil();
+	private boolean cancel = false;
+	private ExecutorService executor;
+
 	/**
 	 * Performs a william's trend analysis and returns the corresponding WilliamsTrendResult object
 	 */
@@ -101,17 +102,17 @@ public class PrefilterService implements IPrefilterService
 		{
 			doseVector[i] = treatments.get(i).getDose();
 		}
-		
-		if(updater != null)
+
+		if (updater != null)
 			updater.setMessage("Williams Trend");
-		
+
 		WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
 				MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
 				Integer.valueOf(numThreads), updater);
 
 		if (result == null)
 		{
-			if(updater != null)
+			if (updater != null)
 				updater.setProgress(0);
 			return null;
 		}
@@ -174,11 +175,12 @@ public class PrefilterService implements IPrefilterService
 		williamsTrendResults.setDoseResponseExperiement(doseResponseExperiment);
 		williamsTrendResults.setWilliamsTrendResults(williamsTrendResultList);
 
-		performFoldFilter(williamsTrendResults, processableData, foldFilterValue,
-				isLogTransformation, baseValue, useFoldFilter);
+		performFoldFilter(williamsTrendResults, processableData, foldFilterValue, isLogTransformation,
+				baseValue, useFoldFilter);
 		performNoelLoel(williamsTrendResults, loelPValue, loelFoldChange, tTest, numThreads, updater);
-		
-		if(cancel) {
+
+		if (cancel)
+		{
 			return null;
 		}
 
@@ -192,14 +194,14 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		if(tTest)
+		if (tTest)
 			notes.add("NOTEL/LOTEL Test: " + "T-Test");
-		else 
+		else
 			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
-		
+
 		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
-		
+
 		if (multipleTestingCorrection)
 		{
 			name += "_MTC";
@@ -263,11 +265,11 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Shrinkage Adjustment Percentile: " + String.valueOf(s0Adjustment));
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		if(tTest)
+		if (tTest)
 			notes.add("NOTEL/LOTEL Test: " + "T-Test");
-		else 
+		else
 			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
-		
+
 		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 
@@ -327,8 +329,9 @@ public class PrefilterService implements IPrefilterService
 				count = 1;
 			}
 			current = doseVector[i];
-			
-			if(i == doseVector.length - 1) {
+
+			if (i == doseVector.length - 1)
+			{
 				list.add(count);
 			}
 		}
@@ -365,7 +368,7 @@ public class PrefilterService implements IPrefilterService
 
 		if (result == null)
 		{
-			if(updater != null)
+			if (updater != null)
 				updater.setProgress(0);
 			return null;
 		}
@@ -429,7 +432,8 @@ public class PrefilterService implements IPrefilterService
 		oriogenResults.setDoseResponseExperiement(doseResponseExperiment);
 		oriogenResults.setOriogenResults(oriogenResultList);
 
-		performFoldFilter(oriogenResults, processableData, foldFilterValue, isLogTransformation, baseValue, useFoldFilter);
+		performFoldFilter(oriogenResults, processableData, foldFilterValue, isLogTransformation, baseValue,
+				useFoldFilter);
 		performNoelLoel(oriogenResults, loelPValue, loelFoldChange, tTest, DEFAULT_NUM_THREADS, updater);
 
 		if (multipleTestingCorrection)
@@ -489,11 +493,11 @@ public class PrefilterService implements IPrefilterService
 
 		notes.add("Multiple Testing Correction: " + String.valueOf(multipleTestingCorrection));
 		notes.add("Filter Out Control Genes: " + String.valueOf(filterOutControlGenes));
-		if(tTest)
+		if (tTest)
 			notes.add("NOTEL/LOTEL Test: " + "T-Test");
-		else 
+		else
 			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
-		
+
 		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
 		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
 		DoseResponseExperiment doseResponseExperiment = processableData
@@ -549,8 +553,8 @@ public class PrefilterService implements IPrefilterService
 		oneWayResults.setDoseResponseExperiement(doseResponseExperiment);
 		oneWayResults.setOneWayANOVAResults(oneWayResultList);
 
-		performFoldFilter(oneWayResults, processableData, foldFilterValue, isLogTransformation,
-				baseValue, useFoldFilter);
+		performFoldFilter(oneWayResults, processableData, foldFilterValue, isLogTransformation, baseValue,
+				useFoldFilter);
 		performNoelLoel(oneWayResults, loelPValue, loelFoldChange, tTest, DEFAULT_NUM_THREADS, updater);
 
 		String name = doseResponseExperiment.getName() + "_oneway_" + df.format(pCutOff);
@@ -584,27 +588,178 @@ public class PrefilterService implements IPrefilterService
 		return oneWayResults;
 	}
 
+	/**
+	 * Performs a william's trend analysis and returns the corresponding WilliamsTrendResult object
+	 */
+	@Override
+	public CurveFitPrefilterResults curveFitPrefilterAnalysis(IStatModelProcessable processableData,
+			boolean useFoldFilter, double foldFilterValue, double loelPValue, double loelFoldChange,
+			int numThreads, SimpleProgressUpdater updater, boolean tTest)
+	{
+		long startTime = System.currentTimeMillis();
+		DoseResponseExperiment doseResponseExperiment = processableData
+				.getProcessableDoseResponseExperiment();
+
+		AnalysisInfo analysisInfo = new AnalysisInfo();
+		List<String> notes = new ArrayList<>();
+
+		notes.add("Curve Fit Prefilter");
+		notes.add("Data Source: " + processableData);
+		notes.add("Work Source: " + processableData.getParentDataSetName());
+		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
+
+		double baseValue = 2.0;
+		boolean isLogTransformation = true;
+		if (processableData.getLogTransformation().equals(LogTransformationEnum.BASE10))
+			baseValue = 10.0f;
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+			baseValue = 2.718281828459045;
+		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
+			isLogTransformation = false;
+
+		// get a list of williamsTrendResult
+		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
+		List<Treatment> treatments = doseResponseExperiment.getTreatments();
+		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
+		double[] doseVector = new double[treatments.size()];
+
+		// Fill numeric matrix
+		for (int i = 0; i < numericMatrix.length; i++)
+		{
+			for (int j = 0; j < numericMatrix[i].length; j++)
+			{
+				numericMatrix[i][j] = responses.get(i).getResponses().get(j);
+			}
+		}
+
+		// Fill doseVector
+		for (int i = 0; i < doseVector.length; i++)
+		{
+			doseVector[i] = treatments.get(i).getDose();
+		}
+
+		if (updater != null)
+			updater.setMessage("Williams Trend");
+
+		// WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
+		// MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
+		// Integer.valueOf(numThreads), updater);
+
+		// if (result == null)
+		// {
+		// if (updater != null)
+		// updater.setProgress(0);
+		// return null;
+		// }
+
+		List<CurveFitPrefilterResult> curveFitResultList = new ArrayList<>();
+		// for (int i = 0; i < result.getTestStatistic().getDimension(); i++)
+		// {
+		// if (!cancel)
+		// {
+		// CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
+		// singleResult.setAdjustedPValue(result.getAdjustedPValue().getEntry(i));
+		// singleResult.setpValue(result.getpValue().getEntry(i));
+		// singleResult.setProbeResponse(responses.get(i));
+		// curveFitResultList.add(singleResult);
+		// }
+		// else
+		// {
+		// return null;
+		// }
+		// }
+		// now apply the filters to the list and remove items that don't match up
+		int resultSize = curveFitResultList.size();
+
+		for (int i = 0; i < resultSize; i++)
+		{
+			if (!cancel)
+			{
+				CurveFitPrefilterResult curveFitResult = curveFitResultList.get(i);
+
+				double pValueToCheck = curveFitResult.getpValue();
+
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		// create a new WilliamsTrendResults object and put it on the Event BuS
+		CurveFitPrefilterResults curveFitPrefilterResults = new CurveFitPrefilterResults();
+		curveFitPrefilterResults.setDoseResponseExperiement(doseResponseExperiment);
+		curveFitPrefilterResults.setCurveFitPrefilterResults(curveFitResultList);
+
+		performFoldFilter(curveFitPrefilterResults, processableData, foldFilterValue, isLogTransformation,
+				baseValue, useFoldFilter);
+		performNoelLoel(curveFitPrefilterResults, loelPValue, loelFoldChange, tTest, numThreads, updater);
+
+		if (cancel)
+		{
+			return null;
+		}
+
+		DecimalFormat df = new DecimalFormat("#.####");
+		String name = doseResponseExperiment.getName() + "_curvefitprefilter";
+
+		if (tTest)
+			notes.add("NOTEL/LOTEL Test: " + "T-Test");
+		else
+			notes.add("NOTEL/LOTEL Test: " + "Dunnett's Test");
+
+		notes.add("NOTEL/LOTEL p-Value Threshold: " + loelPValue);
+		notes.add("NOTEL/LOTEL Fold Change Threshold: " + loelFoldChange);
+
+		if (useFoldFilter)
+		{
+			notes.add("Used Fold Filter with cuttoff: " + foldFilterValue);
+			notes.add("Data marked as log transformation: " + String.valueOf(isLogTransformation));
+			name += "_foldfilter" + foldFilterValue;
+		}
+		else
+		{
+			name += "_nofoldfilter";
+		}
+		curveFitPrefilterResults.setName(name);
+		analysisInfo.setNotes(notes);
+		curveFitPrefilterResults.setAnalysisInfo(analysisInfo);
+
+		long endTime = System.currentTimeMillis();
+		long runTime = endTime - startTime;
+		analysisInfo.getNotes().add("Total Run Time: " + runTime / 1000 + " seconds");
+		return curveFitPrefilterResults;
+	}
+
+	@Override
 	public void cancel()
 	{
 		cancel = true;
-		
-		//Cancel any prefilter tests that are running
+
+		// Cancel any prefilter tests that are running
 		williamsUtil.cancel();
 		oriogenUtil.cancel();
-		
-		//Cancel the dunnett's test if it's running
-		if(executor != null) {
+
+		// Cancel the dunnett's test if it's running
+		if (executor != null)
+		{
 			executor.shutdownNow();
-			try {
+			try
+			{
 				executor.awaitTermination(5, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e)
+			{
 				Thread.currentThread().interrupt();
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public void start() {
+
+	@Override
+	public void start()
+	{
 		cancel = false;
 	}
 
@@ -633,11 +788,12 @@ public class PrefilterService implements IPrefilterService
 		}
 	}
 
-	private void performNoelLoel(PrefilterResults prefilterResults, double pValue, double foldFilterValue, boolean tTest, int numThreads, SimpleProgressUpdater updater)
+	private void performNoelLoel(PrefilterResults prefilterResults, double pValue, double foldFilterValue,
+			boolean tTest, int numThreads, SimpleProgressUpdater updater)
 	{
-		if(updater != null)
+		if (updater != null)
 			updater.setProgress(0);
-		
+
 		// Remove duplicates from treatments
 		List<Float> treatments = new ArrayList<Float>();
 		List<Integer> doseGroups = new ArrayList<Integer>();
@@ -679,29 +835,33 @@ public class PrefilterService implements IPrefilterService
 		for (int i = 0; i < prefilterResults.getPrefilterResults().size(); i++)
 		{
 			final int index = i;
-		    Runnable run = new Runnable() {
-		        @Override
-		        public void run() {
+			Runnable run = new Runnable() {
+				@Override
+				public void run()
+				{
 					List<Float> pValues = new ArrayList<Float>();
-		        	double[] control = new double[doseGroups.get(0)];
+					double[] control = new double[doseGroups.get(0)];
 					int count = 0;
 					for (int j = 0; j < doseGroups.get(0); j++)
 					{
-						control[j] = probeResponseMap.get(prefilterResults.getPrefilterResults().get(index).getProbeID())
+						control[j] = probeResponseMap
+								.get(prefilterResults.getPrefilterResults().get(index).getProbeID())
 								.get(count).doubleValue();
 						count++;
 					}
-					
-					if(tTest) {
-						//compare each dose group to the control dosegroup using TTest store the corresponding P values
+
+					if (tTest)
+					{
+						// compare each dose group to the control dosegroup using TTest store the
+						// corresponding P values
 						for (int j = 1; j < doseGroups.size(); j++)
 						{
 							double[] sample1 = new double[doseGroups.get(j)];
 							for (int k = 0; k < doseGroups.get(j); k++)
 							{
 								sample1[k] = probeResponseMap
-										.get(prefilterResults.getPrefilterResults().get(index).getProbeID()).get(count)
-										.doubleValue();
+										.get(prefilterResults.getPrefilterResults().get(index).getProbeID())
+										.get(count).doubleValue();
 								count++;
 							}
 							if (control.length > 1 && sample1.length > 1)
@@ -709,10 +869,13 @@ public class PrefilterService implements IPrefilterService
 							else
 								pValues.add(Float.NaN);
 						}
-					} else {
-						if(updater != null)
-							updater.setMessage("Dunnett's Test: " + index + "/" + prefilterResults.getPrefilterResults().size());
-						//Use Dunnett's test to calculate p values
+					}
+					else
+					{
+						if (updater != null)
+							updater.setMessage("Dunnett's Test: " + index + "/"
+									+ prefilterResults.getPrefilterResults().size());
+						// Use Dunnett's test to calculate p values
 						double[][] doses = new double[doseGroups.size() - 1][];
 						for (int j = 1; j < doseGroups.size(); j++)
 						{
@@ -720,51 +883,60 @@ public class PrefilterService implements IPrefilterService
 							for (int k = 0; k < doseGroups.get(j); k++)
 							{
 								sample1[k] = probeResponseMap
-										.get(prefilterResults.getPrefilterResults().get(index).getProbeID()).get(count)
-										.doubleValue();
+										.get(prefilterResults.getPrefilterResults().get(index).getProbeID())
+										.get(count).doubleValue();
 								count++;
 							}
 							doses[j - 1] = sample1;
 						}
 						double[] pVals = dunnetts.dunnettsTest(control, doses, 15000);
-						for(int j = 0; j < pVals.length; j++) {
-							pValues.add((float)pVals[j]);
+						for (int j = 0; j < pVals.length; j++)
+						{
+							pValues.add((float) pVals[j]);
 						}
 					}
 					prefilterResults.getPrefilterResults().get(index).setNoelLoelPValues(pValues);
 
 					// Loop through the doses (excluding control dose)
-					for (int j = 0; j < prefilterResults.getPrefilterResults().get(index).getFoldChanges().size(); j++)
+					for (int j = 0; j < prefilterResults.getPrefilterResults().get(index).getFoldChanges()
+							.size(); j++)
 					{
-						// If t test p value is less than parameter and fold change is above threshold, then set
+						// If t test p value is less than parameter and fold change is above threshold, then
+						// set
 						// NOEL/LOEL
 						// and stop.
 						if (Math.abs(prefilterResults.getPrefilterResults().get(index).getFoldChanges()
 								.get(j)) > foldFilterValue && pValues.get(j) < pValue)
 						{
 							prefilterResults.getPrefilterResults().get(index).setNoelDose(treatments.get(j));
-							prefilterResults.getPrefilterResults().get(index).setLoelDose(treatments.get(j + 1));
+							prefilterResults.getPrefilterResults().get(index)
+									.setLoelDose(treatments.get(j + 1));
 							break;
 						}
 					}
-					if(updater != null) {
-						double progress = index / (double)prefilterResults.getPrefilterResults().size();
+					if (updater != null)
+					{
+						double progress = index / (double) prefilterResults.getPrefilterResults().size();
 						updater.setProgress(progress);
 					}
-		        }
-		    };
-	    	executor.execute(run);
+				}
+			};
+			executor.execute(run);
 		}
-		//Stop accepting new runnables
-	    executor.shutdown();
-	    
-	    //Wait for all the threads to finish
-	    while (!executor.isTerminated()) {
-	    	try {
+		// Stop accepting new runnables
+		executor.shutdown();
+
+		// Wait for all the threads to finish
+		while (!executor.isTerminated())
+		{
+			try
+			{
 				Thread.sleep(500);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e)
+			{
 				e.printStackTrace();
 			}
-	    }
+		}
 	}
 }

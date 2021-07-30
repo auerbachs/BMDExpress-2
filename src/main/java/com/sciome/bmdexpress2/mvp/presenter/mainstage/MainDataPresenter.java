@@ -8,6 +8,8 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataCombinedSe
 import com.sciome.bmdexpress2.shared.eventbus.analysis.BMDAnalysisDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataCombinedSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.CategoryAnalysisDataSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataCombinedSelectedEvent;
+import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.ExpressionDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.NoDataSelectedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.analysis.OneWayANOVADataCombinedSelectedEvent;
@@ -57,9 +59,21 @@ public class MainDataPresenter extends PresenterBase<IMainDataView>
 	}
 
 	@Subscribe
+	public void onSelectCurveFitPrefilterAnalysis(CurveFitPrefilterDataSelectedEvent event)
+	{
+		getView().loadCurveFitPrefilterAnalysis(event.GetPayload());
+	}
+
+	@Subscribe
 	public void onSelectWilliamsAnalysis(WilliamsTrendDataCombinedSelectedEvent event)
 	{
 		getView().loadWilliamsTrendAnalysis(event.GetPayload());
+	}
+
+	@Subscribe
+	public void onSelectCurveFitPrefilterAnalysis(CurveFitPrefilterDataCombinedSelectedEvent event)
+	{
+		getView().loadCurveFitPrefilterAnalysis(event.GetPayload());
 	}
 
 	@Subscribe
