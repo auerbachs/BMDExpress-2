@@ -13,13 +13,13 @@ import com.sciome.bmdexpress2.shared.eventbus.analysis.CurveFitPrefilterDataLoad
 import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
-import com.sciome.commons.interfaces.SimpleProgressUpdater;
+import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterView, IPrefilterService>
-		implements SimpleProgressUpdater
+		implements IBMDSToolProgress
 {
 	private volatile boolean running = false;
 
@@ -36,7 +36,6 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 			String foldFilterValue, String loelPValue, String loelFoldChange, String numThreads,
 			boolean tTest)
 	{
-		SimpleProgressUpdater updater = this;
 
 		Task<Integer> task = new Task<Integer>() {
 			@Override
@@ -56,9 +55,9 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 							CurveFitPrefilterResults result = getService().curveFitPrefilterAnalysis(
 									processableData.get(i), useFoldFilter, Double.valueOf(foldFilterValue),
 									Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
-									Integer.valueOf(numThreads), updater, tTest);
+									Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest);
 							// Once the method is finished, set progress to 1
-							updater.setProgress(1);
+							CurveFitPrefilterPresenter.this.updateProgress("Curve Fit Prefilter", 1.0);
 							// post the results as they are completed
 							Platform.runLater(() ->
 							{
@@ -97,7 +96,6 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 			String foldFilterValue, String loelPValue, String loelFoldChange, String numThreads,
 			boolean tTest)
 	{
-		SimpleProgressUpdater me = this;
 		Task<Integer> task = new Task<Integer>() {
 			@Override
 			protected Integer call() throws Exception
@@ -109,7 +107,7 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 					CurveFitPrefilterResults curveFitResults = getService().curveFitPrefilterAnalysis(
 							processableData, useFoldFilter, Double.valueOf(foldFilterValue),
 							Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
-							Integer.valueOf(numThreads), me, tTest);
+							Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest);
 
 					// post the new williams object to the event bus so folks can do the right thing.
 					if (curveFitResults != null && running)
@@ -150,37 +148,10 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 
 	public void cancel()
 	{
-		setProgress(0.0);
-		setMessage("");
+		clearProgress();
 		setDatasetLabel("");
 		running = false;
 		getService().cancel();
-	}
-
-	@Override
-	public void setProgress(double progress)
-	{
-		if (running)
-		{
-			Platform.runLater(() ->
-			{
-				getView().updateProgress(progress);
-
-			});
-		}
-	}
-
-	@Override
-	public void setMessage(String message)
-	{
-		if (running)
-		{
-			Platform.runLater(() ->
-			{
-				getView().updateMessage(message);
-
-			});
-		}
 	}
 
 	public void setDatasetLabel(String message)
@@ -212,4 +183,30 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 			getView().closeWindow();
 		});
 	}
+
+	@Override
+	public void updateProgress(String label, double value)
+	{
+		if (running)
+		{
+			Platform.runLater(() ->
+			{
+				getView().updateProgress(value);
+				getView().updateMessage(label);
+			});
+		}
+
+	}
+
+	@Override
+	public void clearProgress()
+	{
+		Platform.runLater(() ->
+		{
+			getView().updateProgress(0.0);
+			getView().updateMessage("");
+		});
+
+	}
+
 }

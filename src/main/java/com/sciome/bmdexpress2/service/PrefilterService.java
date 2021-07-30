@@ -27,8 +27,21 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
+import com.sciome.bmdexpress2.util.bmds.BESTMODEL_METHOD;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
+import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
+import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
+import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
+import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
+import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
+import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.bmdexpress2.util.prefilter.OneWayANOVAAnalysis;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
@@ -594,8 +607,10 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public CurveFitPrefilterResults curveFitPrefilterAnalysis(IStatModelProcessable processableData,
 			boolean useFoldFilter, double foldFilterValue, double loelPValue, double loelFoldChange,
-			int numThreads, SimpleProgressUpdater updater, boolean tTest)
+			int numThreads, IBMDSToolProgress updater, boolean tTest)
 	{
+
+		BMDAnalysisService bmdAnalysisService = new BMDAnalysisService();
 		long startTime = System.currentTimeMillis();
 		DoseResponseExperiment doseResponseExperiment = processableData
 				.getProcessableDoseResponseExperiment();
@@ -639,8 +654,48 @@ public class PrefilterService implements IPrefilterService
 			doseVector[i] = treatments.get(i).getDose();
 		}
 
-		if (updater != null)
-			updater.setMessage("Williams Trend");
+		List<StatModel> modelsToRun = new ArrayList<>();
+		HillModel hill = new HillModel();
+		ExponentialModel exp3 = new ExponentialModel();
+		exp3.setOption(3);
+		ExponentialModel exp5 = new ExponentialModel();
+		exp3.setOption(5);
+		PowerModel power = new PowerModel();
+		PolyModel linear = new PolyModel();
+		linear.setDegree(1);
+
+		ModelInputParameters inputParams = new ModelInputParameters();
+		inputParams.setBestModelMethod(BESTMODEL_METHOD.CALCULATE);
+		inputParams.setFast(false);
+		inputParams.setBmrType(1);
+		inputParams.setBmdCalculation(1);
+		inputParams.setBmdlCalculation(1);
+		inputParams.setBmrLevel(3.0);
+		inputParams.setBmdMethod(BMD_METHOD.TOXICR);
+
+		inputParams.setBmdlCalculation(1);
+		inputParams.setBmdCalculation(1);
+		inputParams.setConstantVariance(1);
+		inputParams.setRestirctPower(1);
+
+		inputParams.setNumThreads(numThreads);
+		if (numThreads == 0)
+			inputParams.setNumThreads(1);
+
+		ModelSelectionParameters modelSelectionParams = new ModelSelectionParameters();
+		modelSelectionParams.setFlagHillModel(false);
+		modelSelectionParams
+				.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL);
+		modelSelectionParams.setBestPolyModelTest(BestPolyModelTestEnum.LOWEST_AIC);
+		modelSelectionParams.setpValue(0.05);
+
+		modelsToRun.add(hill);
+		modelsToRun.add(exp3);
+		modelsToRun.add(exp5);
+		modelsToRun.add(power);
+		// modelsToRun.add(linear);
+		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(processableData, inputParams,
+				modelSelectionParams, modelsToRun, null, updater);
 
 		// WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
 		// MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
@@ -694,7 +749,7 @@ public class PrefilterService implements IPrefilterService
 
 		performFoldFilter(curveFitPrefilterResults, processableData, foldFilterValue, isLogTransformation,
 				baseValue, useFoldFilter);
-		performNoelLoel(curveFitPrefilterResults, loelPValue, loelFoldChange, tTest, numThreads, updater);
+		performNoelLoel(curveFitPrefilterResults, loelPValue, loelFoldChange, tTest, numThreads, null);
 
 		if (cancel)
 		{
