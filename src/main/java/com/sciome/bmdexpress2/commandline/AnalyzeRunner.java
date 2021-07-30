@@ -1,6 +1,5 @@
 package com.sciome.bmdexpress2.commandline;
 
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -32,6 +31,7 @@ import com.sciome.bmdexpress2.commandline.config.category.PathwayConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.nonparametric.NonParametricConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.ANOVAConfig;
+import com.sciome.bmdexpress2.commandline.config.prefilter.CurveFitPrefilterConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.OriogenConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
 import com.sciome.bmdexpress2.commandline.config.prefilter.WilliamsConfig;
@@ -48,6 +48,7 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.CategoryAnalysisEnum;
 import com.sciome.bmdexpress2.util.FileIO;
 import com.sciome.bmdexpress2.util.MatrixData;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
@@ -445,6 +446,14 @@ public class AnalyzeRunner
 		// bmdsConfig setup
 		ModelInputParameters inputParameters = new ModelInputParameters();
 
+		inputParameters.setBmdMethod(BMD_METHOD.TOXICR);
+		if (bmdsConfig.getMethod().equals(1))
+			inputParameters.setBmdMethod(BMD_METHOD.ORIGINAL);
+
+		inputParameters.setFast(false);
+		if (bmdsConfig.getBmdsInputConfig().getBmdUBmdLEstimationMethod().equals(2))
+			inputParameters.setFast(true);
+
 		inputParameters.setIterations(bmdsConfig.getBmdsInputConfig().getMaxIterations());
 		inputParameters.setConfidence(bmdsConfig.getBmdsInputConfig().getConfidenceLevel());
 		inputParameters.setBmrLevel(bmdsConfig.getBmdsInputConfig().getBmrFactor());
@@ -481,8 +490,8 @@ public class AnalyzeRunner
 			modelSelectionParameters
 					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.DO_NOT_COMPUTE);
 		else if (bmdsConfig.getBmdsBestModelSelection().getBmdlBMDUUse().equals(4))
-			modelSelectionParameters
-					.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL);
+			modelSelectionParameters.setBestModelSelectionBMDLandBMDU(
+					BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL);
 		BestPolyModelTestEnum polyTest = null;
 		if (bmdsConfig.getBmdsBestModelSelection().getBestPolyTest().equals(2))
 			polyTest = BestPolyModelTestEnum.LOWEST_AIC;
@@ -735,6 +744,26 @@ public class AnalyzeRunner
 						preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
 						preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
 						preFilterConfig.getlotelTest().equals(2), project));
+			}
+		}
+		else if (preFilterConfig instanceof CurveFitPrefilterConfig)
+		{
+			CurveFitPrefilterRunner curveFitRunner = new CurveFitPrefilterRunner();
+
+			if (preFilterConfig.getInputName() != null)
+				stdoutInfo = "Curve Fit Prefilter Test on " + preFilterConfig.getInputName();
+			else
+				stdoutInfo = "Curve Fit Prefilter Test";
+
+			System.out.println("Starting " + stdoutInfo);
+			for (IStatModelProcessable processable : processables)
+			{
+				project.getCurveFitPrefilterResults()
+						.add(curveFitRunner.runCurveFitPrefilter(processable,
+								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
+								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
+								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
+								preFilterConfig.getlotelTest().equals(2), project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)

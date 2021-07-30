@@ -36,36 +36,37 @@ import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 public class BMDExpressCommandLine
 {
 
-	public final static String	CONFIG_FILE			= "config-file";
-	public final static String	INPUT_BM2			= "input-bm2";
-	public final static String	INPUT_BM2_FILES		= "input-bm2-files";
-	public final static String	OUTPUT_FORMAT		= "output-format";
-	public final static String	ANALYSIS_GROUP		= "analysis-group";
-	public final static String	ANALYSIS_NAME		= "analysis-name";
-	public final static String	OUTPUT_FILE_NAME	= "output-file-name";
+	public final static String CONFIG_FILE = "config-file";
+	public final static String INPUT_BM2 = "input-bm2";
+	public final static String INPUT_BM2_FILES = "input-bm2-files";
+	public final static String OUTPUT_FORMAT = "output-format";
+	public final static String ANALYSIS_GROUP = "analysis-group";
+	public final static String ANALYSIS_NAME = "analysis-name";
+	public final static String OUTPUT_FILE_NAME = "output-file-name";
 
-	public final static String	ANALYZE				= "analyze";
-	public final static String	QUERY				= "query";
-	public final static String	EXPORT				= "export";
-	public final static String	DELETE				= "delete";
-	public final static String	COMBINE				= "combine";
-	public final static String	VERSION				= "--version";
+	public final static String ANALYZE = "analyze";
+	public final static String QUERY = "query";
+	public final static String EXPORT = "export";
+	public final static String DELETE = "delete";
+	public final static String COMBINE = "combine";
+	public final static String VERSION = "--version";
 
 	// Analysis Group names Current working directory
-	public final static String	EXPRESSION			= "expression";
-	public final static String	ONE_WAY_ANOVA		= "anova";
-	public final static String	WILLIAMS			= "williams";
-	public final static String	ORIOGEN				= "oriogen";
-	public final static String	BMD_ANALYSIS		= "bmd";
-	public final static String	CATEGORICAL			= "categorical";
-	Options						analyzeOptions		= new Options();
+	public final static String EXPRESSION = "expression";
+	public final static String ONE_WAY_ANOVA = "anova";
+	public final static String WILLIAMS = "williams";
+	public final static String CURVE_FIT_PREFILTER = "curvefit_prefilter";
+	public final static String ORIOGEN = "oriogen";
+	public final static String BMD_ANALYSIS = "bmd";
+	public final static String CATEGORICAL = "categorical";
+	Options analyzeOptions = new Options();
 
-	Options						exportOptions		= new Options();
+	Options exportOptions = new Options();
 
-	Options						deleteOptions		= new Options();
+	Options deleteOptions = new Options();
 
-	Options						queryOptions		= new Options();
-	Options						combineOptions		= new Options();
+	Options queryOptions = new Options();
+	Options combineOptions = new Options();
 
 	public static void main(String[] args)
 	{
@@ -179,8 +180,8 @@ public class BMDExpressCommandLine
 		formatter.printHelp("bmdexpress2-cmd " + COMBINE, "", combineOptions, "", true);
 
 		// List of group possibilities
-		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", " + ORIOGEN
-				+ ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
+		System.out.println("<GROUP>: " + EXPRESSION + ", " + ONE_WAY_ANOVA + ", " + WILLIAMS + ", "
+				+ CURVE_FIT_PREFILTER + ", " + ORIOGEN + ", " + BMD_ANALYSIS + ", " + CATEGORICAL);
 	}
 
 	public void createStrawMan()
@@ -285,7 +286,7 @@ public class BMDExpressCommandLine
 		{
 			mapper.writerWithDefaultPrettyPrinter().writeValue(testFile, runConfig);
 		}
-		
+
 		catch (JsonMappingException e)
 		{
 			// TODO Auto-generated catch block
@@ -295,7 +296,8 @@ public class BMDExpressCommandLine
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

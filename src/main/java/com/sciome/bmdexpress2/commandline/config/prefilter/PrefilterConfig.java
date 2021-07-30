@@ -8,32 +8,33 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = ANOVAConfig.class, name = "anova"),
 		@Type(value = WilliamsConfig.class, name = "williams"),
-		@Type(value = OriogenConfig.class, name = "oriogen") })
+		@Type(value = OriogenConfig.class, name = "oriogen"),
+		@Type(value = CurveFitPrefilterConfig.class, name = "curvefit") })
 public abstract class PrefilterConfig
 {
 
 	// name of expression data to prefilter
-	private String	inputName;
+	private String inputName;
 
 	// name of output for the analysis
-	private String	outputName;
+	private String outputName;
 
-	private Double	pValueCutoff					= 0.05;
-	private Boolean	useMultipleTestingCorrection	= false;
-	private Boolean	filterOutControlGenes			= true;
+	private Double pValueCutoff = 0.05;
+	private Boolean useMultipleTestingCorrection = false;
+	private Boolean filterOutControlGenes = true;
 
-	private Boolean	useFoldChange					= true;
+	private Boolean useFoldChange = true;
 
-	private Double	foldChange						= 2.0;
-	private Double	foldChangeLotel					= 1.5;
-	private Double	pValueLotel						= 0.05;
+	private Double foldChange = 2.0;
+	private Double foldChangeLotel = 1.5;
+	private Double pValueLotel = 0.05;
 
-	private Integer	numberOfThreads					= 1;
+	private Integer numberOfThreads = 1;
 
 	// 1,2
 	// 1 Dunnett's test
 	// 2 T-Test
-	private Integer	lotelTest						= 1;
+	private Integer lotelTest = 1;
 
 	public String getInputName()
 	{

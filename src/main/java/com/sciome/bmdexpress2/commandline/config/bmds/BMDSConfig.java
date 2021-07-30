@@ -6,23 +6,24 @@ import java.util.List;
 public class BMDSConfig
 {
 
-	private List<BMDSModelConfig>			modelConfigs	= new ArrayList<>();
-	private BMDSBestModelSelectionConfig	bmdsBestModelSelection;
-	private BMDSInputConfig					bmdsInputConfig;
+	private Integer method = 2; // 1 for 2.7.x; 2 for 3.x.x. default to 2 which uses the dlls
+	private List<BMDSModelConfig> modelConfigs = new ArrayList<>();
+	private BMDSBestModelSelectionConfig bmdsBestModelSelection;
+	private BMDSInputConfig bmdsInputConfig;
 
 	// this could be dose response data or prefiltered data.
-	private String							inputCategory;
+	private String inputCategory;
 	// name of the data set that is being input to bmds analysis.
-	private String							inputName;
+	private String inputName;
 
 	// name of output for the analysis
-	private String							outputName;
+	private String outputName;
 
-	private Integer							killTime		= 600;
+	private Integer killTime = 600;
 
-	private Integer							numberOfThreads	= 1;
+	private Integer numberOfThreads = 1;
 
-	private String							tmpFolder;
+	private String tmpFolder;
 
 	public String getInputCategory()
 	{
@@ -112,6 +113,16 @@ public class BMDSConfig
 	public void setTmpFolder(String f)
 	{
 		this.tmpFolder = f;
+	}
+
+	public Integer getMethod()
+	{
+		return method;
+	}
+
+	public void setMethod(Integer method)
+	{
+		this.method = method;
 	}
 
 }
