@@ -194,6 +194,8 @@ public class BMDProject implements Serializable
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) categoryAnalysisResults;
 		else if (dataSet instanceof DoseResponseExperiment)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
+		else if (dataSet instanceof CurveFitPrefilterResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
 
 		int count = 0;
 		for (BMDExpressAnalysisDataSet ds : dataSetWithNames)

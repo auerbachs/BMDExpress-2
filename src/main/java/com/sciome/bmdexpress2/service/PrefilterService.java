@@ -28,6 +28,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
+import com.sciome.bmdexpress2.mvp.model.stat.ProbeStatResult;
 import com.sciome.bmdexpress2.serviceInterface.IPrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.util.bmds.BESTMODEL_METHOD;
@@ -696,51 +697,36 @@ public class PrefilterService implements IPrefilterService
 		// modelsToRun.add(linear);
 		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(processableData, inputParams,
 				modelSelectionParams, modelsToRun, null, updater);
-
-		// WilliamsTrendTestResult result = williamsUtil.williams(MatrixUtils.createRealMatrix(numericMatrix),
-		// MatrixUtils.createRealVector(doseVector), 23524, Integer.valueOf(numberOfPermutations), null,
-		// Integer.valueOf(numThreads), updater);
-
-		// if (result == null)
-		// {
-		// if (updater != null)
-		// updater.setProgress(0);
-		// return null;
-		// }
-
+		
+		
 		List<CurveFitPrefilterResult> curveFitResultList = new ArrayList<>();
-		// for (int i = 0; i < result.getTestStatistic().getDimension(); i++)
-		// {
-		// if (!cancel)
-		// {
-		// CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
-		// singleResult.setAdjustedPValue(result.getAdjustedPValue().getEntry(i));
-		// singleResult.setpValue(result.getpValue().getEntry(i));
-		// singleResult.setProbeResponse(responses.get(i));
-		// curveFitResultList.add(singleResult);
-		// }
-		// else
-		// {
-		// return null;
-		// }
-		// }
-		// now apply the filters to the list and remove items that don't match up
-		int resultSize = curveFitResultList.size();
-
-		for (int i = 0; i < resultSize; i++)
+		for(ProbeStatResult result: bmdResult.getProbeStatResults())
 		{
-			if (!cancel)
-			{
-				CurveFitPrefilterResult curveFitResult = curveFitResultList.get(i);
-
-				double pValueToCheck = curveFitResult.getpValue();
-
-			}
-			else
-			{
-				return null;
-			}
+			 if (!cancel)
+			 {
+			if(result.getBestStatResult()!=null)
+				if(result.getBestBMD() !=null)
+					if(result.getBestBMDL()!=null)
+						if(result.getBestBMD()/result.getBestBMDL() > 20.0)
+							if(result.getBestFitPValue() > 0.005)
+							{
+								 CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
+								 singleResult.setpValue(result.getBestFitPValue());
+								 singleResult.setProbeResponse(result.getProbeResponse());
+								 singleResult.setBestModel(result.getBestStatResult().getModel());
+								 singleResult.setBmd(result.getBestBMD());
+								 singleResult.setBmdl(result.getBestBMDL());
+								 curveFitResultList.add(singleResult);
+							}
+			 }
+			 else
+			 {
+				 return null;
+			 }
 		}
+
+
+		
 
 		// create a new WilliamsTrendResults object and put it on the Event BuS
 		CurveFitPrefilterResults curveFitPrefilterResults = new CurveFitPrefilterResults();

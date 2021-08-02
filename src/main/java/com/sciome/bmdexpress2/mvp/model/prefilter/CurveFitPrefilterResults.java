@@ -154,6 +154,9 @@ public class CurveFitPrefilterResults extends BMDExpressAnalysisDataSet
 		columnHeader.add(PrefilterResults.PROBE_ID);
 
 		columnHeader.add(PrefilterResults.GENE_ID);
+		columnHeader.add("Best Model");
+		columnHeader.add("Best BMD");
+		columnHeader.add("Best BMDL");
 
 		columnHeader.add(PrefilterResults.GENE_SYMBOL);
 

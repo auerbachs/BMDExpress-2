@@ -33,10 +33,13 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 
 	private ProbeResponse probeResponse;
 	private double pValue;
-	private double adjustedPValue;
 	private Float bestFoldChange;
 	private Float loelDose;
 	private Float noelDose;
+	private String bestModel;
+	private Double bmdl;
+	private Double bmd;
+	
 
 	private List<Float> foldChanges;
 
@@ -76,6 +79,33 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	{
 		this.probeResponse = probeResponse;
 	}
+	
+	
+	
+
+	public String getBestModel() {
+		return bestModel;
+	}
+
+	public void setBestModel(String bestModel) {
+		this.bestModel = bestModel;
+	}
+
+	public Double getBmdl() {
+		return bmdl;
+	}
+
+	public void setBmdl(Double bmdl) {
+		this.bmdl = bmdl;
+	}
+
+	public Double getBmd() {
+		return bmd;
+	}
+
+	public void setBmd(Double bmd) {
+		this.bmd = bmd;
+	}
 
 	@Override
 	@JsonIgnore
@@ -113,22 +143,6 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		this.pValue = pValue;
 	}
 
-	@JsonIgnore
-	public double getNegativeLogAdjustedPValue()
-	{
-		return NumberManager.negLog10(this.adjustedPValue);
-	}
-
-	@Override
-	public double getAdjustedPValue()
-	{
-		return adjustedPValue;
-	}
-
-	public void setAdjustedPValue(double adjustedPValue)
-	{
-		this.adjustedPValue = adjustedPValue;
-	}
 
 	@Override
 	public Float getBestFoldChange()
@@ -160,6 +174,9 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		row = new ArrayList<>();
 		geneSymbolSet = new HashSet<>();
 		row.add(probeResponse.getProbe().getId());
+		row.add(this.bestModel);
+		row.add(this.bmdl);
+		row.add(this.bmd);
 
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
 				.get(probeResponse.getProbe().getId());
@@ -187,7 +204,6 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		row.add(geneSymbols.toString());
 
 		row.add((pValue));
-		row.add((adjustedPValue));
 
 		if (bestFoldChange != null)
 		{
@@ -300,6 +316,15 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	public void setNoelDose(Float noelDose)
 	{
 		this.noelDose = noelDose;
+	}
+	
+	
+	
+	
+
+	@Override
+	public double getAdjustedPValue() {
+		return pValue;
 	}
 
 }

@@ -247,7 +247,12 @@ public class ProjectNavigationPresenter
 	public void onLoadCurveFitPrefilterAnalysis(CurveFitPrefilterDataLoadedEvent event)
 	{
 		// first make sure the name is unique
+		try {
 		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		getView().addCurveFitPrefilterAnalysis(event.GetPayload(), true);
 		currentProject.getCurveFitPrefilterResults().add(event.GetPayload());
 	}
