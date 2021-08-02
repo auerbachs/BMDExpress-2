@@ -659,7 +659,7 @@ public class PrefilterService implements IPrefilterService
 		ExponentialModel exp3 = new ExponentialModel();
 		exp3.setOption(3);
 		ExponentialModel exp5 = new ExponentialModel();
-		exp3.setOption(5);
+		exp5.setOption(5);
 		PowerModel power = new PowerModel();
 		PolyModel linear = new PolyModel();
 		linear.setDegree(1);
