@@ -218,7 +218,12 @@ public class ToxicRJNI
 
 	private String fixNonNumerics(String resultString)
 	{
-		return resultString.replace("-inf", "-9999").replace("inf", "-9999").replace("nan", "-9999");
+	
+		String returnString = resultString;
+
+		returnString = returnString.replace("-inf", "-9999").replace("-nan", "-9999").replace("inf", "-9999").replace("nan", "-9999");
+		
+		return returnString;
 	}
 
 }
