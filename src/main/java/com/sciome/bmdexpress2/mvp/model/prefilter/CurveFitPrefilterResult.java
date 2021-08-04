@@ -174,9 +174,7 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		row = new ArrayList<>();
 		geneSymbolSet = new HashSet<>();
 		row.add(probeResponse.getProbe().getId());
-		row.add(this.bestModel);
-		row.add(this.bmdl);
-		row.add(this.bmd);
+
 
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
 				.get(probeResponse.getProbe().getId());
@@ -184,7 +182,7 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		StringBuffer genes = new StringBuffer();
 		if (refGeneAnnotation != null)
 		{
-			// get the genes and symboles
+			// get the genes and symboles 
 			for (ReferenceGene refGene : refGeneAnnotation.getReferenceGenes())
 			{
 				if (genes.length() > 0)
@@ -202,7 +200,9 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		this.geneSymbols = geneSymbols.toString();
 		row.add(genes.toString());
 		row.add(geneSymbols.toString());
-
+		row.add(this.bestModel);
+		row.add(this.bmdl);
+		row.add(this.bmd);
 		row.add((pValue));
 
 		if (bestFoldChange != null)

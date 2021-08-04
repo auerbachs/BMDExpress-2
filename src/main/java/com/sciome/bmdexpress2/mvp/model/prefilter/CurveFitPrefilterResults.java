@@ -154,17 +154,15 @@ public class CurveFitPrefilterResults extends BMDExpressAnalysisDataSet
 		columnHeader.add(PrefilterResults.PROBE_ID);
 
 		columnHeader.add(PrefilterResults.GENE_ID);
+
+
+		columnHeader.add(PrefilterResults.GENE_SYMBOL);
 		columnHeader.add("Best Model");
 		columnHeader.add("Best BMD");
 		columnHeader.add("Best BMDL");
-
-		columnHeader.add(PrefilterResults.GENE_SYMBOL);
-
 		// p value
-		columnHeader.add(PrefilterResults.UNADJUSTED_PVALUE);
+		columnHeader.add("Goodness of Fit");
 
-		// adjusted p value
-		columnHeader.add(PrefilterResults.ADJUSTED_PVALUE);
 
 		if (curveFitPrefilterResults.get(0).getBestFoldChange() != null)
 		{

@@ -97,8 +97,8 @@ public class BMDSToxicRUtils
 		}
 		catch (Exception e)
 		{
-			System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
-					+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1 + "\terror");
+			//System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+			//		+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1 + "\terror");
 		}
 
 		if (Double.isFinite(p1) && !Double.isNaN(p1))

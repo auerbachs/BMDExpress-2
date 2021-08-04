@@ -674,8 +674,7 @@ public class PrefilterService implements IPrefilterService
 		inputParams.setBmrLevel(3.0);
 		inputParams.setBmdMethod(BMD_METHOD.TOXICR);
 
-		inputParams.setBmdlCalculation(1);
-		inputParams.setBmdCalculation(1);
+		//inc
 		inputParams.setConstantVariance(1);
 		inputParams.setRestirctPower(1);
 
@@ -707,7 +706,7 @@ public class PrefilterService implements IPrefilterService
 			if(result.getBestStatResult()!=null)
 				if(result.getBestBMD() !=null)
 					if(result.getBestBMDL()!=null)
-						if(result.getBestBMD()/result.getBestBMDL() > 20.0)
+						if(result.getBestBMD()/result.getBestBMDL() < 20.0)
 							if(result.getBestFitPValue() > 0.005)
 							{
 								 CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
