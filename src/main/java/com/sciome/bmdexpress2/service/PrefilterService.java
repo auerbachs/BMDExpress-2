@@ -637,6 +637,7 @@ public class PrefilterService implements IPrefilterService
 		// get a list of williamsTrendResult
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
+		Double maxDose = treatments.get(treatments.size() - 1).getDose().doubleValue();
 		double[][] numericMatrix = new double[responses.size()][responses.get(0).getResponses().size()];
 		double[] doseVector = new double[treatments.size()];
 
@@ -674,7 +675,7 @@ public class PrefilterService implements IPrefilterService
 		inputParams.setBmrLevel(3.0);
 		inputParams.setBmdMethod(BMD_METHOD.TOXICR);
 
-		//inc
+		// inc
 		inputParams.setConstantVariance(1);
 		inputParams.setRestirctPower(1);
 
@@ -693,39 +694,36 @@ public class PrefilterService implements IPrefilterService
 		modelsToRun.add(exp3);
 		modelsToRun.add(exp5);
 		modelsToRun.add(power);
-		// modelsToRun.add(linear);
+		modelsToRun.add(linear);
 		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(processableData, inputParams,
 				modelSelectionParams, modelsToRun, null, updater);
-		
-		
+
 		List<CurveFitPrefilterResult> curveFitResultList = new ArrayList<>();
-		for(ProbeStatResult result: bmdResult.getProbeStatResults())
+		for (ProbeStatResult result : bmdResult.getProbeStatResults())
 		{
-			 if (!cancel)
-			 {
-			if(result.getBestStatResult()!=null)
-				if(result.getBestBMD() !=null)
-					if(result.getBestBMDL()!=null)
-						if(result.getBestBMD()/result.getBestBMDL() < 20.0)
-							if(result.getBestFitPValue() > 0.005)
-							{
-								 CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
-								 singleResult.setpValue(result.getBestFitPValue());
-								 singleResult.setProbeResponse(result.getProbeResponse());
-								 singleResult.setBestModel(result.getBestStatResult().getModel());
-								 singleResult.setBmd(result.getBestBMD());
-								 singleResult.setBmdl(result.getBestBMDL());
-								 curveFitResultList.add(singleResult);
-							}
-			 }
-			 else
-			 {
-				 return null;
-			 }
+			if (!cancel)
+			{
+				if (result.getBestStatResult() != null)
+					if (result.getBestBMD() != null)
+						if (result.getBestBMD() < maxDose)
+							if (result.getBestBMDL() != null)
+								if (result.getBestBMD() / result.getBestBMDL() < 20.0)
+									if (result.getBestFitPValue() > 0.0001)
+									{
+										CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
+										singleResult.setpValue(result.getBestFitPValue());
+										singleResult.setProbeResponse(result.getProbeResponse());
+										singleResult.setBestModel(result.getBestStatResult().getModel());
+										singleResult.setBmd(result.getBestBMD());
+										singleResult.setBmdl(result.getBestBMDL());
+										curveFitResultList.add(singleResult);
+									}
+			}
+			else
+			{
+				return null;
+			}
 		}
-
-
-		
 
 		// create a new WilliamsTrendResults object and put it on the Event BuS
 		CurveFitPrefilterResults curveFitPrefilterResults = new CurveFitPrefilterResults();
