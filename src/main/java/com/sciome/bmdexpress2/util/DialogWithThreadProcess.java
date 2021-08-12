@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 
 import org.ciit.io.ProjectReader;
 
@@ -32,8 +31,8 @@ import javafx.stage.Window;
 public class DialogWithThreadProcess
 {
 
-	Dialog<String>	dialog	= new Dialog<>();
-	Window			owner;
+	Dialog<String> dialog = new Dialog<>();
+	Window owner;
 
 	public DialogWithThreadProcess(Window owner)
 	{
@@ -219,6 +218,10 @@ public class DialogWithThreadProcess
 
 					c.printStackTrace();
 				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 
 				return loadedProject;
 			}
@@ -252,7 +255,7 @@ public class DialogWithThreadProcess
 		showWaitDialog("Load Project", "Loading Project from " + selectedFile.getAbsolutePath());
 		return (BMDProject) task.getValue();
 	}
-	
+
 	public BMDProject addProject(File selectedFile)
 	{
 		Task task = new Task<BMDProject>() {

@@ -153,6 +153,9 @@ public class BMDProject implements Serializable
 		if (oriogenResults == null)
 			oriogenResults = new ArrayList<>();
 
+		if (curveFitPrefilterResults == null)
+			curveFitPrefilterResults = new ArrayList<>();
+
 		// now make sure all the names are unique
 		for (OneWayANOVAResults data : oneWayANOVAResults)
 			giveBMDAnalysisUniqueName(data, data.getName(), 1);
