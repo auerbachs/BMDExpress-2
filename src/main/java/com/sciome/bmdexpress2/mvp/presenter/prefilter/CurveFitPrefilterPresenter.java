@@ -14,6 +14,7 @@ import com.sciome.bmdexpress2.shared.eventbus.project.BMDProjectLoadedEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.CloseProjectRequestEvent;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -34,7 +35,7 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 	 */
 	public void performCurveFitPrefilter(List<IStatModelProcessable> processableData, boolean useFoldFilter,
 			String foldFilterValue, String loelPValue, String loelFoldChange, String numThreads,
-			boolean tTest)
+			boolean tTest, List<StatModel> modelsToRun, Double bmrFactor, int constantVariance)
 	{
 
 		Task<Integer> task = new Task<Integer>() {
@@ -55,7 +56,8 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 							CurveFitPrefilterResults result = getService().curveFitPrefilterAnalysis(
 									processableData.get(i), useFoldFilter, Double.valueOf(foldFilterValue),
 									Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
-									Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest);
+									Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest,
+									modelsToRun, bmrFactor, constantVariance);
 							// Once the method is finished, set progress to 1
 							CurveFitPrefilterPresenter.this.updateProgress("Curve Fit Prefilter", 1.0);
 							// post the results as they are completed
@@ -94,7 +96,7 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 	 */
 	public void performCurveFitPrefilter(IStatModelProcessable processableData, boolean useFoldFilter,
 			String foldFilterValue, String loelPValue, String loelFoldChange, String numThreads,
-			boolean tTest)
+			boolean tTest, List<StatModel> modelsToRun, Double bmrFactor, int constantVariance)
 	{
 		Task<Integer> task = new Task<Integer>() {
 			@Override
@@ -107,7 +109,8 @@ public class CurveFitPrefilterPresenter extends ServicePresenterBase<IPrefilterV
 					CurveFitPrefilterResults curveFitResults = getService().curveFitPrefilterAnalysis(
 							processableData, useFoldFilter, Double.valueOf(foldFilterValue),
 							Double.valueOf(loelPValue), Double.valueOf(loelFoldChange),
-							Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest);
+							Integer.valueOf(numThreads), CurveFitPrefilterPresenter.this, tTest, modelsToRun,
+							bmrFactor, constantVariance);
 
 					// post the new williams object to the event bus so folks can do the right thing.
 					if (curveFitResults != null && running)

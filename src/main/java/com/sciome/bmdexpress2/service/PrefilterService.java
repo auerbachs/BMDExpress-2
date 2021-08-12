@@ -38,10 +38,6 @@ import com.sciome.bmdexpress2.util.bmds.ModelInputParameters;
 import com.sciome.bmdexpress2.util.bmds.ModelSelectionParameters;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
-import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
-import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
-import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
-import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 import com.sciome.bmdexpress2.util.prefilter.OneWayANOVAAnalysis;
@@ -608,7 +604,8 @@ public class PrefilterService implements IPrefilterService
 	@Override
 	public CurveFitPrefilterResults curveFitPrefilterAnalysis(IStatModelProcessable processableData,
 			boolean useFoldFilter, double foldFilterValue, double loelPValue, double loelFoldChange,
-			int numThreads, IBMDSToolProgress updater, boolean tTest)
+			int numThreads, IBMDSToolProgress updater, boolean tTest, List<StatModel> modelsToRun,
+			Double bmrFactor, int constantVariance)
 	{
 
 		BMDAnalysisService bmdAnalysisService = new BMDAnalysisService();
@@ -624,6 +621,14 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Work Source: " + processableData.getParentDataSetName());
 		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
+		notes.add("Constant Variance: " + constantVariance);
+		notes.add("BMR Factor: " + bmrFactor);
+
+		String modelsUsed = "";
+		for (StatModel mod : modelsToRun)
+			modelsUsed += mod.getName() + ": " + mod.getVersion() + ",";
+
+		notes.add("Models Used: " + modelsUsed);
 
 		double baseValue = 2.0;
 		boolean isLogTransformation = true;
@@ -656,27 +661,17 @@ public class PrefilterService implements IPrefilterService
 			doseVector[i] = treatments.get(i).getDose();
 		}
 
-		List<StatModel> modelsToRun = new ArrayList<>();
-		HillModel hill = new HillModel();
-		ExponentialModel exp3 = new ExponentialModel();
-		exp3.setOption(3);
-		ExponentialModel exp5 = new ExponentialModel();
-		exp5.setOption(5);
-		PowerModel power = new PowerModel();
-		PolyModel linear = new PolyModel();
-		linear.setDegree(1);
-
 		ModelInputParameters inputParams = new ModelInputParameters();
 		inputParams.setBestModelMethod(BESTMODEL_METHOD.CALCULATE);
-		inputParams.setFast(false);
+		inputParams.setFast(true);
 		inputParams.setBmrType(1);
 		inputParams.setBmdCalculation(1);
 		inputParams.setBmdlCalculation(1);
-		inputParams.setBmrLevel(3.0);
+		inputParams.setBmrLevel(baseValue);
 		inputParams.setBmdMethod(BMD_METHOD.TOXICR);
 
 		// inc
-		inputParams.setConstantVariance(1);
+		inputParams.setConstantVariance(constantVariance);
 		inputParams.setRestirctPower(1);
 
 		inputParams.setNumThreads(numThreads);
@@ -686,15 +681,10 @@ public class PrefilterService implements IPrefilterService
 		ModelSelectionParameters modelSelectionParams = new ModelSelectionParameters();
 		modelSelectionParams.setFlagHillModel(false);
 		modelSelectionParams
-				.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL);
+				.setBestModelSelectionBMDLandBMDU(BestModelSelectionBMDLandBMDU.COMPUTE_BUT_IGNORE);
 		modelSelectionParams.setBestPolyModelTest(BestPolyModelTestEnum.LOWEST_AIC);
 		modelSelectionParams.setpValue(0.05);
 
-		modelsToRun.add(hill);
-		modelsToRun.add(exp3);
-		modelsToRun.add(exp5);
-		modelsToRun.add(power);
-		modelsToRun.add(linear);
 		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(processableData, inputParams,
 				modelSelectionParams, modelsToRun, null, updater);
 
@@ -706,18 +696,15 @@ public class PrefilterService implements IPrefilterService
 				if (result.getBestStatResult() != null)
 					if (result.getBestBMD() != null)
 						if (result.getBestBMD() < maxDose)
-							if (result.getBestBMDL() != null)
-								if (result.getBestBMD() / result.getBestBMDL() < 20.0)
-									if (result.getBestFitPValue() > 0.0001)
-									{
-										CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
-										singleResult.setpValue(result.getBestFitPValue());
-										singleResult.setProbeResponse(result.getProbeResponse());
-										singleResult.setBestModel(result.getBestStatResult().getModel());
-										singleResult.setBmd(result.getBestBMD());
-										singleResult.setBmdl(result.getBestBMDL());
-										curveFitResultList.add(singleResult);
-									}
+						{
+							CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
+							singleResult.setpValue(result.getBestFitPValue());
+							singleResult.setProbeResponse(result.getProbeResponse());
+							singleResult.setBestModel(result.getBestStatResult().getModel());
+							singleResult.setBmd(result.getBestBMD());
+							singleResult.setBmdl(result.getBestBMDL());
+							curveFitResultList.add(singleResult);
+						}
 			}
 			else
 			{

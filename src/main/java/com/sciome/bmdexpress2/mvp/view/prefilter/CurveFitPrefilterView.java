@@ -1,6 +1,7 @@
 package com.sciome.bmdexpress2.mvp.view.prefilter;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -12,6 +13,13 @@ import com.sciome.bmdexpress2.mvp.viewinterface.prefilter.IPrefilterView;
 import com.sciome.bmdexpress2.service.PrefilterService;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
+import com.sciome.bmdexpress2.util.bmds.shared.BMRFactor;
+import com.sciome.bmdexpress2.util.bmds.shared.ExponentialModel;
+import com.sciome.bmdexpress2.util.bmds.shared.FunlModel;
+import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
+import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +39,28 @@ import javafx.stage.Stage;
 // williamstrend.fxml
 public class CurveFitPrefilterView extends BMDExpressViewBase implements IPrefilterView, Initializable
 {
+
+	private final String NON_CONSTANT_VARIANCE = "Non-Constant";
+	private final String CONSTANT_VARIANCE = "Constant";
+
+	@FXML
+	private CheckBox hillCB;
+	@FXML
+	private CheckBox powerCB;
+	@FXML
+	private CheckBox exp3CB;
+	@FXML
+	private CheckBox exp5CB;
+	@FXML
+	private CheckBox linearCB;
+	@FXML
+	private CheckBox funlCB;
+
+	@FXML
+	private ComboBox<BMRFactor> bmrFCombo;
+	@FXML
+	private ComboBox<String> varianceCombo;
+
 	@FXML
 	private ComboBox expressionDataComboBox;
 
@@ -121,19 +151,78 @@ public class CurveFitPrefilterView extends BMDExpressViewBase implements IPrefil
 		pValueLoelTextField.setText("" + input.getLoelPValue());
 		foldChangeLoelTextField.setText("" + input.getLoelFoldChangeValue());
 		numberOfThreadsTextField.setText("" + input.getNumThreads());
+
+		List<String> varianceValues = new ArrayList<>();
+		varianceValues.add(CONSTANT_VARIANCE);
+		varianceValues.add(NON_CONSTANT_VARIANCE);
+
+		this.varianceCombo.getItems().setAll(varianceValues);
+		this.varianceCombo.setValue(CONSTANT_VARIANCE);
+
+		bmrFCombo.getItems().addAll(initBMRFactorsStandardDeviation());
+		bmrFCombo.getSelectionModel().select(bmrFCombo.getItems().get(bmrFCombo.getItems().size() - 1));
 	}
 
 	public void handle_startButtonPressed(ActionEvent event)
 	{
 		if (!presenter.hasStartedTask())
 		{
+			List<StatModel> modelsToRun = new ArrayList<>();
+			if (!hillCB.isDisabled() && hillCB.isSelected())
+			{
+				HillModel hillModel = new HillModel();
+				hillModel.setVersion("Hill EPA BMDS MLE ToxicR");
+
+				modelsToRun.add(hillModel);
+			}
+			if (!powerCB.isDisabled() && powerCB.isSelected())
+			{
+				PowerModel powerModel = new PowerModel();
+				powerModel.setVersion("Power EPA BMDS MLE ToxicR");
+
+				modelsToRun.add(powerModel);
+			}
+			if (!linearCB.isDisabled() && linearCB.isSelected())
+			{
+				PolyModel linearModel = new PolyModel();
+				linearModel.setVersion("Linear EPA BMDS MLE ToxicR");
+				linearModel.setDegree(1);
+				modelsToRun.add(linearModel);
+			}
+
+			if (!funlCB.isDisabled() && funlCB.isSelected())
+			{
+				FunlModel funlModel = new FunlModel();
+				funlModel.setVersion("Funl EPA BMDS MLE ToxicR");
+				modelsToRun.add(funlModel);
+			}
+
+			if (!exp3CB.isDisabled() && exp3CB.isSelected())
+			{
+				ExponentialModel exponentialModel = new ExponentialModel();
+				exponentialModel.setVersion("Exponential 3 EPA BMDS MLE ToxicR");
+
+				modelsToRun.add(exponentialModel);
+				exponentialModel.setOption(3);
+			}
+
+			if (!exp5CB.isDisabled() && exp5CB.isSelected())
+			{
+				ExponentialModel exponentialModel = new ExponentialModel();
+				exponentialModel.setVersion("Exponential 5 EPA BMDS MLE ToxicR");
+
+				exponentialModel.setOption(5);
+				modelsToRun.add(exponentialModel);
+			}
 
 			if (processableData.size() > 1)
 			{
 				presenter.performCurveFitPrefilter(processableData, useFoldChangeCheckBox.isSelected(),
 						foldChangeValueTextField.getText(), pValueLoelTextField.getText(),
 						foldChangeLoelTextField.getText(), numberOfThreadsTextField.getText(),
-						tRadioButton.isSelected());
+						tRadioButton.isSelected(), modelsToRun,
+						Double.valueOf(bmrFCombo.getValue().getValue()),
+						this.varianceCombo.getValue().equalsIgnoreCase(CONSTANT_VARIANCE) ? 1 : 0);
 			}
 			else
 			{
@@ -141,7 +230,9 @@ public class CurveFitPrefilterView extends BMDExpressViewBase implements IPrefil
 						(IStatModelProcessable) expressionDataComboBox.getSelectionModel().getSelectedItem(),
 						useFoldChangeCheckBox.isSelected(), foldChangeValueTextField.getText(),
 						pValueLoelTextField.getText(), foldChangeLoelTextField.getText(),
-						numberOfThreadsTextField.getText(), tRadioButton.isSelected());
+						numberOfThreadsTextField.getText(), tRadioButton.isSelected(), modelsToRun,
+						Double.valueOf(bmrFCombo.getValue().getValue()),
+						this.varianceCombo.getValue().equalsIgnoreCase(CONSTANT_VARIANCE) ? 1 : 0);
 			}
 			startButton.setDisable(true);
 		}
@@ -233,6 +324,22 @@ public class CurveFitPrefilterView extends BMDExpressViewBase implements IPrefil
 		if (presenter != null)
 			presenter.destroy();
 
+	}
+
+	private List<BMRFactor> initBMRFactorsStandardDeviation()
+	{
+		List<BMRFactor> factors = new ArrayList<>();
+		factors.add(new BMRFactor("0.522 (1%)", "0.522"));
+		factors.add(new BMRFactor("1 SD", "1.0"));
+		factors.add(new BMRFactor("1.021 (5%)", "1.021"));
+		factors.add(new BMRFactor("1.349 (10%)", "1.349"));
+		factors.add(new BMRFactor("1.581 (15%)", "1.581"));
+		factors.add(new BMRFactor("1.932484 (25%)", "1.932484"));
+		factors.add(new BMRFactor("2 SD", "2.0"));
+		factors.add(new BMRFactor("2.600898 (50%)", "2.600898"));
+		factors.add(new BMRFactor("2.855148 (60%)", "2.855148"));
+		factors.add(new BMRFactor("3 SD", "3.0"));
+		return factors;
 	}
 
 }

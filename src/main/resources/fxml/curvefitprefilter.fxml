@@ -25,19 +25,16 @@
                <children>
                   <TitledPane collapsible="false" minHeight="250.0" prefHeight="350.0" prefWidth="600.0" text="Curve Fit Prefilter" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <GridPane prefHeight="180.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <GridPane prefHeight="219.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="224.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.0" minWidth="10.0" prefWidth="376.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="119.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.0" minWidth="10.0" prefWidth="459.0" />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="35.0" minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="17.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="66.0" minHeight="10.0" prefHeight="66.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="52.0" minHeight="4.0" prefHeight="52.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="298.0" text="Expression Data:" GridPane.rowIndex="1" />
@@ -49,26 +46,35 @@
                                     <ComboBox fx:id="expressionDataComboBox" layoutX="96.0" layoutY="7.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <HBox alignment="CENTER_LEFT" spacing="20.0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                 <children>
+                                    <CheckBox fx:id="hillCB" mnemonicParsing="false" selected="true" text="Hill" />
+                                    <CheckBox fx:id="powerCB" mnemonicParsing="false" selected="true" text="Power" />
+                                    <CheckBox fx:id="exp3CB" mnemonicParsing="false" selected="true" text="Exp 3" />
+                                    <CheckBox fx:id="exp5CB" mnemonicParsing="false" selected="true" text="Exp 5" />
+                                    <CheckBox fx:id="linearCB" mnemonicParsing="false" selected="true" text="Linear" />
+                                    <CheckBox fx:id="funlCB" disable="true" mnemonicParsing="false" text="FUNL" />
+                                 </children>
                                  <GridPane.margin>
-                                    <Insets left="20.0" />
+                                    <Insets left="10.0" />
                                  </GridPane.margin>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets left="20.0" />
-                                 </GridPane.margin>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                 <GridPane.margin>
-                                    <Insets left="20.0" />
-                                 </GridPane.margin>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                 <GridPane.margin>
-                                    <Insets left="20.0" />
-                                 </GridPane.margin>
-                              </AnchorPane>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="276.0" spacing="7.0">
+                                       <children>
+                                          <Label text="BMR Factor:" />
+                                          <ComboBox fx:id="bmrFCombo" prefHeight="27.0" prefWidth="181.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="261.0" spacing="7.0">
+                                       <children>
+                                          <Label text="Variance:" />
+                                          <ComboBox fx:id="varianceCombo" prefHeight="27.0" prefWidth="185.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
                         </GridPane>
                      </content>

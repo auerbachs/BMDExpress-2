@@ -748,7 +748,42 @@ public class AnalyzeRunner
 		}
 		else if (preFilterConfig instanceof CurveFitPrefilterConfig)
 		{
+			CurveFitPrefilterConfig cfpreCfg = (CurveFitPrefilterConfig) preFilterConfig;
 			CurveFitPrefilterRunner curveFitRunner = new CurveFitPrefilterRunner();
+
+			// figure out which models are going to be run
+			List<StatModel> modelsToRun = new ArrayList<>();
+			for (BMDSModelConfig modelConfig : cfpreCfg.getModelConfigs())
+			{
+				if (modelConfig instanceof HillConfig)
+				{
+					HillModel hillModel = new HillModel();
+					hillModel.setVersion(BMDExpressProperties.getInstance().getHillVersion());
+					modelsToRun.add(hillModel);
+				}
+				if (modelConfig instanceof PowerConfig)
+				{
+					PowerModel powerModel = new PowerModel();
+					powerModel.setVersion(BMDExpressProperties.getInstance().getPowerVersion());
+					modelsToRun.add(powerModel);
+				}
+				if (modelConfig instanceof PolyConfig)
+				{
+					PolyModel polymodel = new PolyModel();
+					polymodel.setVersion(BMDExpressProperties.getInstance().getPolyVersion());
+					polymodel.setDegree(((PolyConfig) modelConfig).getDegree());
+					modelsToRun.add(polymodel);
+				}
+
+				if (modelConfig instanceof ExponentialConfig)
+				{
+					ExponentialModel exponentialModel = new ExponentialModel();
+					exponentialModel.setVersion(BMDExpressProperties.getInstance().getExponentialVersion());
+					exponentialModel.setOption(((ExponentialConfig) modelConfig).getExpModel());
+					modelsToRun.add(exponentialModel);
+				}
+
+			}
 
 			if (preFilterConfig.getInputName() != null)
 				stdoutInfo = "Curve Fit Prefilter Test on " + preFilterConfig.getInputName();
@@ -758,12 +793,16 @@ public class AnalyzeRunner
 			System.out.println("Starting " + stdoutInfo);
 			for (IStatModelProcessable processable : processables)
 			{
+				int constV = 1;
+				if (!cfpreCfg.getConstantVariance())
+					constV = 0;
 				project.getCurveFitPrefilterResults()
 						.add(curveFitRunner.runCurveFitPrefilter(processable,
 								preFilterConfig.getUseFoldChange(), preFilterConfig.getFoldChange(),
 								preFilterConfig.getpValueLotel(), preFilterConfig.getFoldChangeLotel(),
 								preFilterConfig.getOutputName(), preFilterConfig.getNumberOfThreads(),
-								preFilterConfig.getlotelTest().equals(2), project));
+								preFilterConfig.getlotelTest().equals(2), modelsToRun,
+								cfpreCfg.getBmrFactor(), constV, project));
 			}
 		}
 		else if (preFilterConfig instanceof OriogenConfig)

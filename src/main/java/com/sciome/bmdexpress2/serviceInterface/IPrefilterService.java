@@ -1,11 +1,14 @@
 package com.sciome.bmdexpress2.serviceInterface;
 
+import java.util.List;
+
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.util.bmds.IBMDSToolProgress;
+import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 import com.sciome.commons.interfaces.SimpleProgressUpdater;
 
 public interface IPrefilterService
@@ -27,7 +30,8 @@ public interface IPrefilterService
 
 	public CurveFitPrefilterResults curveFitPrefilterAnalysis(IStatModelProcessable processableData,
 			boolean useFoldFilter, double foldFilterValue, double loelPValue, double loelFoldChange,
-			int numThreads, IBMDSToolProgress updater, boolean tTest);
+			int numThreads, IBMDSToolProgress updater, boolean tTest, List<StatModel> modelsToRun,
+			Double bmrFactor, int constantVariance);
 
 	public void cancel();
 

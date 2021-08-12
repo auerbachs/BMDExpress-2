@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.util;
 import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
@@ -26,6 +27,11 @@ public class ProjectUtilities
 		{
 			project.giveBMDAnalysisUniqueName(data, data.getName());
 			project.getWilliamsTrendResults().add(data);
+		}
+		for (CurveFitPrefilterResults data : newProject.getCurveFitPrefilterResults())
+		{
+			project.giveBMDAnalysisUniqueName(data, data.getName());
+			project.getCurveFitPrefilterResults().add(data);
 		}
 		for (OneWayANOVAResults data : newProject.getOneWayANOVAResults())
 		{

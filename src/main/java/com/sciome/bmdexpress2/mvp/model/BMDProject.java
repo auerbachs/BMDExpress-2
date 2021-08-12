@@ -158,6 +158,8 @@ public class BMDProject implements Serializable
 			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (WilliamsTrendResults data : williamsTrendResults)
 			giveBMDAnalysisUniqueName(data, data.getName(), 1);
+		for (CurveFitPrefilterResults data : this.curveFitPrefilterResults)
+			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (OriogenResults data : oriogenResults)
 			giveBMDAnalysisUniqueName(data, data.getName(), 1);
 		for (BMDResult data : bMDResult)
@@ -184,6 +186,8 @@ public class BMDProject implements Serializable
 		List<BMDExpressAnalysisDataSet> dataSetWithNames = null;
 		if (dataSet instanceof WilliamsTrendResults)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) williamsTrendResults;
+		else if (dataSet instanceof CurveFitPrefilterResults)
+			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) curveFitPrefilterResults;
 		else if (dataSet instanceof OneWayANOVAResults)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) oneWayANOVAResults;
 		else if (dataSet instanceof BMDResult)
@@ -193,8 +197,6 @@ public class BMDProject implements Serializable
 		else if (dataSet instanceof CategoryAnalysisResults)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) categoryAnalysisResults;
 		else if (dataSet instanceof DoseResponseExperiment)
-			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
-		else if (dataSet instanceof CurveFitPrefilterResults)
 			dataSetWithNames = (List<BMDExpressAnalysisDataSet>) (List<?>) doseResponseExperiments;
 
 		int count = 0;
