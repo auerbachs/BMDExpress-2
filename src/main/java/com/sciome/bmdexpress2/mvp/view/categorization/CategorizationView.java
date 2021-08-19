@@ -15,7 +15,6 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.controlsfx.control.textfield.TextFields;
 
-import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.presenter.categorization.CategorizationPresenter;
@@ -69,175 +68,177 @@ import javafx.util.Callback;
 public class CategorizationView extends BMDExpressViewBase implements ICategorizationView, Initializable
 {
 
-	CategorizationPresenter					presenter;
+	CategorizationPresenter presenter;
 
-	private CategoryAnalysisEnum			catAnalysisEnum;
-	private DefinedCategoryFileParameters	probeFileParameters;
-	private DefinedCategoryFileParameters	categoryFileParameters;
+	private CategoryAnalysisEnum catAnalysisEnum;
+	private DefinedCategoryFileParameters probeFileParameters;
+	private DefinedCategoryFileParameters categoryFileParameters;
 
 	// FXML injection
 	@FXML
-	private Tab								iviveTab;
+	private Tab iviveTab;
 
 	@FXML
-	private HBox							autoPopulateHBox;
+	private HBox autoPopulateHBox;
 
 	// checkboxes
 	@FXML
-	private CheckBox						BMDUBMDCheckBox;
+	private CheckBox BMDUBMDCheckBox;
 	@FXML
-	private CheckBox						BMDUBMDLCheckBox;
+	private CheckBox BMDUBMDLCheckBox;
 
 	@FXML
-	private CheckBox						bmdFilter4CheckBox;
+	private CheckBox bmdFilter4CheckBox;
 	@FXML
-	private CheckBox						bmdFilter3CheckBox;
+	private CheckBox bmdFilter3CheckBox;
 	@FXML
-	private CheckBox						bmdFilter2CheckBox;
+	private CheckBox bmdFilter2CheckBox;
 	@FXML
-	private CheckBox						bmdFilter1CheckBox;
+	private CheckBox bmdFilter1CheckBox;
 	@FXML
-	private CheckBox						conflictingProbeSetsCheckBox;
+	private CheckBox conflictingProbeSetsCheckBox;
 	@FXML
-	private CheckBox						doIVIVECheckBox;
+	private CheckBox doIVIVECheckBox;
 	@FXML
-	private CheckBox						removePromiscuousProbesCheckBox;
+	private CheckBox removePromiscuousProbesCheckBox;
 
 	@FXML
-	private CheckBox						deduplicateGeneSetsCheckBox;
+	private CheckBox deduplicateGeneSetsCheckBox;
 
 	// textfields
 	@FXML
-	private TextField						correlationCutoffProbeSetsValue;
+	private TextField correlationCutoffProbeSetsValue;
 	@FXML
-	private TextField						bmdFilter2Value;
+	private TextField bmdFilter2Value;
 	@FXML
-	private TextField						bmdFilter3Value;
+	private TextField bmdFilter3Value;
 	@FXML
-	private TextField						bmdFilter4Value;
+	private TextField bmdFilter4Value;
 
 	@FXML
-	private TextField						BMDUBMDTextbox;
+	private TextField BMDUBMDTextbox;
 	@FXML
-	private TextField						BMDUBMDLTextbox;
+	private TextField BMDUBMDLTextbox;
 
 	// ComboBoxes
 	@FXML
-	private ComboBox						categoryComboBox;
+	private ComboBox categoryComboBox;
 	@FXML
-	private Label							selectionLabel;
+	private Label selectionLabel;
 
 	@FXML
-	private HBox							probeFileHBox;
+	private HBox probeFileHBox;
 	@FXML
-	private HBox							categoryFileHBox;
+	private HBox categoryFileHBox;
 	@FXML
-	private HBox							selectionHBox;
+	private HBox selectionHBox;
 
 	@FXML
-	private VBox							mainVBox;
+	private VBox mainVBox;
 
 	@FXML
-	private Label							probeFileLabel;
+	private Label probeFileLabel;
 	@FXML
-	private TextField						probeFileTextField;
+	private TextField probeFileTextField;
 	@FXML
-	private Button							browseProbeFile;
+	private Button browseProbeFile;
 
 	@FXML
-	private Label							categoryFileLabel;
+	private Label categoryFileLabel;
 	@FXML
-	private TextField						categoryFileTextField;
+	private TextField categoryFileTextField;
 	@FXML
-	private Button							browseCategoryFile;
+	private Button browseCategoryFile;
 
 	// labels
 	@FXML
-	private Label							bMDAnalysisName;
+	private Label bMDAnalysisName;
 
 	@FXML
-	private ProgressBar						progressBar;
+	private ProgressBar progressBar;
 	@FXML
-	private Label							progressLabel;
+	private Label progressLabel;
 	@FXML
-	private HBox							progressHBox;
+	private HBox progressHBox;
 
 	@FXML
-	private Button							startButton;
+	private Button startButton;
 	@FXML
-	private Button							closeButton;
+	private Button closeButton;
 	@FXML
-	private Button							saveSettingsButton;
+	private Button saveSettingsButton;
 
 	// ComboBoxes
 	@FXML
-	private CheckBox						bmdFilterMaxFoldChangeCheckBox;
+	private CheckBox bmdFilterMaxFoldChangeCheckBox;
 	@FXML
-	private TextField						bmdFilterMaxFoldChangeValue;
+	private TextField bmdFilterMaxFoldChangeValue;
 	@FXML
-	private CheckBox						bmdFilterMaxPValueCheckBox;
+	private CheckBox bmdFilterMaxPValueCheckBox;
 	@FXML
-	private TextField						bmdFilterMaxPValueChangeValue;
+	private TextField bmdFilterMaxPValueChangeValue;
 	@FXML
-	private CheckBox						bmdFilterMaxAdjustedPValueCheckBox;
+	private CheckBox bmdFilterMaxAdjustedPValueCheckBox;
 	@FXML
-	private TextField						bmdFilterMaxAdjustedPValueChangeValue;
+	private TextField bmdFilterMaxAdjustedPValueChangeValue;
 
 	// IVIVE
 	@FXML
-	private Label							quantile_doseSpacingLabel;
+	private Label quantile_doseSpacingLabel;
 	@FXML
-	private Label							finalTimeLabel;
-	
+	private Label finalTimeLabel;
+
 	@FXML
 	private Label doseCountLabel;
-	
+
 	@FXML
 	private TextField doseCountTextField;
-	
-	
-	ToggleGroup 							inVivoGroup;
-	@FXML
-	private RadioButton						inVitroRadioButton;
-	@FXML
-	private RadioButton						inVivoRadioButton;
-	@FXML
-	private TextField						nameTextField;
-	@FXML
-	private TextField						casrnTextField;
-	@FXML
-	private TextField						smilesTextField;
-	@FXML
-	private TextField						mwTextField;
-	@FXML
-	private TextField						logPTextField;
-	@FXML
-	private TextField						pKaDonorTextField;
-	@FXML
-	private TextField						pKaAcceptorTextField;
-	@FXML
-	private TextField						clintTextField;
-	@FXML
-	private TextField						fubTextField;
-	@FXML
-	private TextField						quantile_doseSpacingTextField;
-	@FXML
-	private TextField						finalTimeTextField;
-	@FXML
-	private ComboBox						inputUnitsComboBox;
-	@FXML
-	private ComboBox						outputUnitsComboBox;
-	@FXML
-	private ComboBox						speciesComboBox;
 
-	TextField								stringAutoCompleteSelector;
+	ToggleGroup inVivoGroup;
+	@FXML
+	private RadioButton inVitroRadioButton;
+	@FXML
+	private RadioButton inVivoRadioButton;
+	@FXML
+	private TextField nameTextField;
+	@FXML
+	private TextField casrnTextField;
+	@FXML
+	private TextField smilesTextField;
+	@FXML
+	private TextField mwTextField;
+	@FXML
+	private TextField logPTextField;
+	@FXML
+	private TextField pKaDonorTextField;
+	@FXML
+	private TextField pKaAcceptorTextField;
+	@FXML
+	private TextField clintTextField;
+	@FXML
+	private TextField fubTextField;
 
-	CompoundTable							compoundTable	= null;
-	Compound								compound		= null;
+	@FXML
+	private TextField fGutAbs;
+	@FXML
+	private TextField quantile_doseSpacingTextField;
+	@FXML
+	private TextField finalTimeTextField;
+	@FXML
+	private ComboBox inputUnitsComboBox;
+	@FXML
+	private ComboBox outputUnitsComboBox;
+	@FXML
+	private ComboBox speciesComboBox;
 
-	private CategoryInput					input;
-	private final String					MGPERKGPERDAY	= "mg/kg/day";
-	private final String					UMOLPERKGPERDAY	= "mmol/kg/day";
+	TextField stringAutoCompleteSelector;
+
+	CompoundTable compoundTable = null;
+	Compound compound = null;
+
+	private CategoryInput input;
+	private final String MGPERKGPERDAY = "mg/kg/day";
+	private final String UMOLPERKGPERDAY = "mmol/kg/day";
 
 	public CategorizationView()
 	{
@@ -362,8 +363,10 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			String species = (String) speciesComboBox.getSelectionModel().getSelectedItem();
 			Double clint = compound.getInVitroParam(species, "Clint", false);
 			Double fup = compound.getInVitroParam(species, "Funbound.plasma", false);
-			
-			if(clint == null || fup == null) {
+			Double fgutabs = compound.getInVitroParam(species, "Fgutabs", false);
+
+			if (clint == null || fup == null)
+			{
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Compound Data");
 				alert.setHeaderText(null);
@@ -372,37 +375,45 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				if (clint == null)
 				{
 					clint = compound.getInVitroParam("Human", "Clint", false);
-					if(clint == null) 
+					if (clint == null)
 						builder.append("No Clint values were found - Defaulted to 0\n");
-					else 
+					else
 						builder.append("Human values were used for Clint.\n");
 				}
 				if (fup == null)
 				{
 					fup = compound.getInVitroParam("Human", "Funbound.plasma", false);
-					if(clint == null) 
+					if (fup == null)
 						builder.append("No Fup values were found.\n");
-					else 
+					else
 						builder.append("Human values were used for Fup.\n");
 				}
+
 				alert.setContentText(builder.toString());
 				alert.showAndWait();
 			}
-			
+
+			if (fgutabs == null)
+			{
+				fgutabs = compound.getInVitroParam("Human", "Fgutabs", false);
+				if (fgutabs == null)
+					fgutabs = 1.0;
+			}
+
 			// If we got a compound fill in the fields
 			nameTextField.setText(compound.getName());
 			casrnTextField.setText(compound.getCAS());
 			smilesTextField.setText(compound.getSMILES());
-			if(compound.getMW() != null)
+			if (compound.getMW() != null)
 				mwTextField.setText("" + compound.getMW());
 			else
 				mwTextField.setText("");
-			
-			if(compound.getLogP() != null)
+
+			if (compound.getLogP() != null)
 				logPTextField.setText("" + compound.getLogP());
 			else
 				logPTextField.setText("");
-			
+
 			String pkaDonorString = "";
 			String pkaAcceptorString = "";
 			if (!compound.getpKaDonors().toString().equals("[]"))
@@ -418,55 +429,78 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			pKaDonorTextField.setText(pkaDonorString);
 			pKaAcceptorTextField.setText(pkaAcceptorString);
 			if ((compound.getInVitroParam(species, "Clint.pValue") == null
-					|| compound.getInVitroParam(species, "Clint.pValue") < .05) &&
-					clint != null)
+					|| compound.getInVitroParam(species, "Clint.pValue") < .05) && clint != null)
 				clintTextField.setText("" + clint);
 			else
 				clintTextField.setText("" + 0.0);
 
-			if(fup != null)
+			if (fup != null)
 				fubTextField.setText("" + fup);
 			else
 				fubTextField.setText("");
-			
-			//Initialize source hover
-			if(compound.getMWSource() != null)
+
+			fGutAbs.setText("" + fgutabs);
+
+			// Initialize source hover
+			if (compound.getMWSource() != null)
 				mwTextField.setTooltip(new Tooltip("MW Source: " + compound.getMWSource()));
 			else
 				mwTextField.setTooltip(new Tooltip("No source available"));
-			
-			if(compound.getLogPSource() != null)
+
+			if (compound.getLogPSource() != null)
 				logPTextField.setTooltip(new Tooltip("LogP Source: " + compound.getLogPSource()));
 			else
 				logPTextField.setTooltip(new Tooltip("No source available"));
-			
-			if(compound.getpKaAcceptorsSource() != null)
-				pKaAcceptorTextField.setTooltip(new Tooltip("pKa Acceptor Source: " + compound.getpKaAcceptorsSource()));
+
+			if (compound.getpKaAcceptorsSource() != null)
+				pKaAcceptorTextField
+						.setTooltip(new Tooltip("pKa Acceptor Source: " + compound.getpKaAcceptorsSource()));
 			else
 				pKaAcceptorTextField.setTooltip(new Tooltip("No source available"));
-			
-			if(compound.getpKaDonorsSource() != null)
-				pKaDonorTextField.setTooltip(new Tooltip("pKa Donor Source: " + compound.getpKaDonorsSource()));
+
+			if (compound.getpKaDonorsSource() != null)
+				pKaDonorTextField
+						.setTooltip(new Tooltip("pKa Donor Source: " + compound.getpKaDonorsSource()));
 			else
 				pKaDonorTextField.setTooltip(new Tooltip("No source available"));
 			Source dataSource = null;
-			try {
-			dataSource = compound.getIVdataSourceForSpecies(species, "Clint");
-			}catch(Exception e) {}
-			if(dataSource != null)
+			try
+			{
+				dataSource = compound.getIVdataSourceForSpecies(species, "Clint");
+			}
+			catch (Exception e)
+			{}
+			if (dataSource != null)
 				clintTextField.setTooltip(new Tooltip("Clint Source: " + dataSource));
 			else
 				clintTextField.setTooltip(new Tooltip("No source available"));
-			
-			 dataSource = null;
-				try {
+
+			dataSource = null;
+			try
+			{
 				dataSource = compound.getIVdataSourceForSpecies(species, "Funbound.plasma");
-				}catch(Exception e) {}
-				
-			if(dataSource != null)
+			}
+			catch (Exception e)
+			{}
+
+			if (dataSource != null)
 				fubTextField.setTooltip(new Tooltip("Fup Source: " + dataSource));
 			else
 				fubTextField.setTooltip(new Tooltip("No source available"));
+
+			dataSource = null;
+			try
+			{
+				dataSource = compound.getIVdataSourceForSpecies(species, "Fgutabs");
+			}
+			catch (Exception e)
+			{}
+
+			if (dataSource != null)
+				fGutAbs.setTooltip(new Tooltip("Fraction Absorbed: " + dataSource));
+			else
+				fGutAbs.setTooltip(new Tooltip("No source available"));
+
 		}
 		else
 		{
@@ -599,22 +633,27 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		speciesComboBox.getItems().add("Dog");
 		speciesComboBox.getItems().add("Rabbit");
 		speciesComboBox.getSelectionModel().select(0);
-		
+
 		inVitroRadioButton.setToggleGroup(inVivoGroup);
 		inVivoRadioButton.setToggleGroup(inVivoGroup);
 		inVitroRadioButton.setSelected(true);
-		
-		inVivoGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+
+		inVivoGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-				if(((RadioButton)inVivoGroup.getSelectedToggle()).getText().equals("In Vivo")) {
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue,
+					Toggle newValue)
+			{
+				if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().equals("In Vivo"))
+				{
 					toggleInvivo(true);
-				} else {
+				}
+				else
+				{
 					toggleInvivo(false);
 				}
 			}
 		});
-		
+
 		toggleInvivo(false);
 	}
 
@@ -730,6 +769,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			InVitroData data = new InVitroData();
 			data.setParam("Clint", Double.valueOf(clintTextField.getText()));
 			data.setParam("Funbound.plasma", Double.valueOf(fubTextField.getText()));
+			data.setParam("Fgutabs", Double.valueOf(fGutAbs.getText()));
+
 			HashMap<String, InVitroData> map = new HashMap<String, InVitroData>();
 			map.put((String) speciesComboBox.getSelectionModel().getSelectedItem(), data);
 			compound.setIVdata(map);
@@ -747,10 +788,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			models.add(Model.THREECOMPSS);
 
 			parameters.setSpecies((String) speciesComboBox.getSelectionModel().getSelectedItem());
-			
+
 			parameters.setModels(models);
 
-			if(((RadioButton)inVivoGroup.getSelectedToggle()).getText().equals("In Vitro")) {
+			if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().equals("In Vitro"))
+			{
 				double quantile = Double.valueOf(quantile_doseSpacingTextField.getText());
 				if (quantile < 0 || quantile > 1)
 					throw new IllegalArgumentException("Quantile must be between 0 and 1");
@@ -758,31 +800,36 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 					parameters.setQuantile(quantile);
 				parameters.setInvivo(false);
 
-				parameters.setConcentrationUnits((ConcentrationUnits) inputUnitsComboBox.getSelectionModel().getSelectedItem());
+				parameters.setConcentrationUnits(
+						(ConcentrationUnits) inputUnitsComboBox.getSelectionModel().getSelectedItem());
 				// user has friendly text for specifying output units.
 				// we must translate to enum
 				if (outputUnitsComboBox.getSelectionModel().getSelectedItem().equals(MGPERKGPERDAY))
 					parameters.setDoseUnits(Units.MG);
 				else
 					parameters.setDoseUnits(Units.MOL);
-			} else {
-				try {
-				double doseSpacing =  Double.valueOf(quantile_doseSpacingTextField.getText());
-				
-				//the finalTime is the sum of dosespacing between doses plus the time after last dose
-				double finalTime =  Double.valueOf(finalTimeTextField.getText()) + (doseSpacing * (Integer.valueOf(this.doseCountTextField.getText())-1));
-				
-				int numDoses = Integer.valueOf(this.doseCountTextField.getText());
-				
-				parameters.setFinalTime(finalTime);
-				parameters.setDoseSpacing(doseSpacing);
-				parameters.setInvivo(true);
-				parameters.setNumberOfDoses(numDoses);
-				
-				parameters.setConcentrationUnits(ConcentrationUnits.uM);
-				parameters.setDoseUnits(Units.MG);
+			}
+			else
+			{
+				try
+				{
+					double doseSpacing = Double.valueOf(quantile_doseSpacingTextField.getText());
+
+					// the finalTime is the sum of dosespacing between doses plus the time after last dose
+					double finalTime = Double.valueOf(finalTimeTextField.getText())
+							+ (doseSpacing * (Integer.valueOf(this.doseCountTextField.getText()) - 1));
+
+					int numDoses = Integer.valueOf(this.doseCountTextField.getText());
+
+					parameters.setFinalTime(finalTime);
+					parameters.setDoseSpacing(doseSpacing);
+					parameters.setInvivo(true);
+					parameters.setNumberOfDoses(numDoses);
+
+					parameters.setConcentrationUnits(ConcentrationUnits.uM);
+					parameters.setDoseUnits(Units.MG);
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					throw new IllegalArgumentException(e.getMessage());
 				}
@@ -804,20 +851,23 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		pKaAcceptorTextField.setDisable(disable);
 		clintTextField.setDisable(disable);
 		fubTextField.setDisable(disable);
+		fGutAbs.setDisable(disable);
 		quantile_doseSpacingTextField.setDisable(disable);
 		finalTimeTextField.setDisable(disable);
 		inputUnitsComboBox.setDisable(disable);
 		outputUnitsComboBox.setDisable(disable);
 		speciesComboBox.setDisable(false);
 	}
-	
-	private void toggleInvivo(boolean invivo) {
-		if(invivo) {
+
+	private void toggleInvivo(boolean invivo)
+	{
+		if (invivo)
+		{
 			quantile_doseSpacingLabel.setText("Dose Spacing  ");
 			quantile_doseSpacingTextField.setText("24");
 			finalTimeLabel.setVisible(true);
 			finalTimeTextField.setVisible(true);
-			finalTimeTextField.setText("24"); 
+			finalTimeTextField.setText("24");
 			this.doseCountLabel.setVisible(true);
 			this.doseCountTextField.setVisible(true);
 			doseCountTextField.setText("5");
@@ -828,12 +878,14 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			outputUnitsComboBox.getItems().removeAll(outputUnitsComboBox.getItems());
 			outputUnitsComboBox.getItems().add(ConcentrationUnits.uM);
 			outputUnitsComboBox.getSelectionModel().select(0);
-		} else {
+		}
+		else
+		{
 			quantile_doseSpacingLabel.setText("Quantile  ");
 			quantile_doseSpacingTextField.setText("0.95");
 			finalTimeLabel.setVisible(false);
 			finalTimeTextField.setVisible(false);
-			
+
 			this.doseCountLabel.setVisible(false);
 			this.doseCountTextField.setVisible(false);
 
@@ -905,8 +957,8 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 	private class AutoCompleteChemical
 	{
-		public String	casrn;
-		public String	name;
+		public String casrn;
+		public String name;
 
 		public boolean contains(String s)
 		{

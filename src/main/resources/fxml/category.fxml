@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" prefHeight="700.0" prefWidth="769.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" prefHeight="751.0" prefWidth="767.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sciome.bmdexpress2.mvp.view.categorization.CategorizationView">
 	<center>
 		<AnchorPane minHeight="700.0" prefHeight="900.0" BorderPane.alignment="CENTER">
 			<children>
@@ -146,22 +159,25 @@
 												</AnchorPane>
 											</content>
 										</Tab>
-										<Tab fx:id="iviveTab" text="IVIVE">
+										<Tab fx:id="iviveTab" text="Toxicokinetic Modeling">
 											<content>
 												<AnchorPane minHeight="500.0" minWidth="650.0" prefHeight="555.0" prefWidth="650.0">
                                        <children>
                                           <VBox prefHeight="500.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
                                                 <Separator prefHeight="5.0" prefWidth="650.0" />
-                                                <HBox fx:id="autoPopulateHBox" prefHeight="49.0" prefWidth="610.0">
+                                                <VBox spacing="15.0">
+                                                   <children>
+                                                      <Label text="TK analysis Type" />
+                                                      <RadioButton fx:id="inVitroRadioButton" mnemonicParsing="false" text="IVIVE/Reverse TK (convert internal dose/well concentration to estimated external dose)" />
+                                                      <RadioButton fx:id="inVivoRadioButton" contentDisplay="CENTER" mnemonicParsing="false" text="Forward TK (convert external to estimated internal dose)" />
+                                                   </children>
                                                    <VBox.margin>
-                                                      <Insets left="20.0" right="20.0" />
+                                                      <Insets bottom="10.0" left="30.0" />
                                                    </VBox.margin>
-                                                   <padding>
-                                                      <Insets top="12.5" />
-                                                   </padding>
-                                                </HBox>
-                                                <HBox prefHeight="50.0" prefWidth="200.0">
+                                                </VBox>
+                                                <Separator prefHeight="5.0" prefWidth="650.0" />
+                                                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
                                                    <children>
                                                       <Label prefHeight="30.0" prefWidth="50.0" text="Species">
                                                          <HBox.margin>
@@ -175,66 +191,7 @@
                                                       </ComboBox>
                                                    </children>
                                                 </HBox>
-                                                <Separator prefHeight="5.0" prefWidth="650.0" />
-                                                <GridPane vgap="20.0">
-                                                  <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <VBox.margin>
-                                                      <Insets left="20.0" right="20.0" top="20.0" />
-                                                   </VBox.margin>
-                                                   <children>
-                                                      <Label text="Name  " />
-                                                      <Label text="CASRN  " GridPane.rowIndex="1" />
-                                                      <Label text="SMILES  " GridPane.rowIndex="2" />
-                                                      <Label text="MW  " GridPane.rowIndex="3" />
-                                                      <TextField fx:id="nameTextField" GridPane.columnIndex="1" />
-                                                      <TextField fx:id="casrnTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="smilesTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                      <TextField fx:id="mwTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                      <TextField fx:id="pKaDonorTextField" GridPane.columnIndex="3" />
-                                                      <TextField fx:id="pKaAcceptorTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="clintTextField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                                      <TextField fx:id="fubTextField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                                      <Label text="pKa Donor  " GridPane.columnIndex="2" />
-                                                      <Label text="pKa Acceptor  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                      <Label text="CLint (uM/min/10^6 cells)  " GridPane.columnIndex="2" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="12.0" />
-                                                         </font></Label>
-                                                      <Label text="Fup (Fraction unbound in plasma)  " GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font size="12.0" />
-                                                         </font></Label>
-                                                      <Label text="LogP  " GridPane.rowIndex="4" />
-                                                      <TextField fx:id="logPTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                   </children>
-                                                </GridPane>
                                                 <Separator prefWidth="200.0" />
-                                                <HBox prefHeight="48.0" prefWidth="650.0">
-                                                   <children>
-                                                      <RadioButton fx:id="inVitroRadioButton" mnemonicParsing="false" text="In Vitro">
-                                                         <HBox.margin>
-                                                            <Insets left="225.0" top="15.0" />
-                                                         </HBox.margin>
-                                                      </RadioButton>
-                                                      <RadioButton fx:id="inVivoRadioButton" contentDisplay="CENTER" mnemonicParsing="false" text="In Vivo">
-                                                         <HBox.margin>
-                                                            <Insets left="50.0" top="15.0" />
-                                                         </HBox.margin>
-                                                      </RadioButton>
-                                                   </children>
-                                                </HBox>
                                                 <GridPane vgap="20.0">
                                                   <columnConstraints>
                                                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="67.0" />
@@ -287,6 +244,64 @@
                                                       <Insets left="20.0" right="20.0" top="20.0" />
                                                    </VBox.margin>
                                                 </GridPane>
+                                                <HBox fx:id="autoPopulateHBox" alignment="CENTER" prefHeight="58.0" prefWidth="727.0">
+                                                   <VBox.margin>
+                                                      <Insets left="20.0" right="20.0" />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets top="12.5" />
+                                                   </padding>
+                                                </HBox>
+                                                <GridPane vgap="20.0">
+                                                  <columnConstraints>
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <VBox.margin>
+                                                      <Insets left="20.0" right="20.0" top="20.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <Label text="Name  " />
+                                                      <Label text="CASRN  " GridPane.rowIndex="1" />
+                                                      <Label text="SMILES  " GridPane.rowIndex="2" />
+                                                      <Label text="MW  " GridPane.rowIndex="3" />
+                                                      <TextField fx:id="nameTextField" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="casrnTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="smilesTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="mwTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="pKaDonorTextField" GridPane.columnIndex="3" />
+                                                      <TextField fx:id="pKaAcceptorTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="clintTextField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="fubTextField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                      <Label text="pKa Donor  " GridPane.columnIndex="2" />
+                                                      <Label text="pKa Acceptor  " GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                      <Label text="CLint (uM/min/10^6 cells)  " GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="12.0" />
+                                                         </font></Label>
+                                                      <Label text="Fup (Fraction unbound in plasma)  " GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="12.0" />
+                                                         </font></Label>
+                                                      <Label text="LogP  " GridPane.rowIndex="4" />
+                                                      <TextField fx:id="logPTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <TextField fx:id="fGutAbs" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                      <Label text="Fraction Absorbed" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                         <font>
+                                                            <Font size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
                                              </children>
                                           </VBox>
                                        </children></AnchorPane>
@@ -296,7 +311,7 @@
 								</TabPane>
 							</children>
 						</AnchorPane>
-                  <AnchorPane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="650.0">
+                  <AnchorPane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="769.0">
                      <children>
                         <HBox fx:id="progressHBox" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="650.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
