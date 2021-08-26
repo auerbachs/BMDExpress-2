@@ -29,6 +29,11 @@ public class CurveFitPrefilterResults extends BMDExpressAnalysisDataSet
 	 */
 	private static final long serialVersionUID = -5704632335867988973L;
 
+	public static final String BEST_BMD = "Best BMD";
+	public static final String BEST_BMDL = "Best BMDL";
+	public static final String GOODNESS_OF_FIT = "Goodness of Fit";
+	public static final String BEST_MODEL = "Best Model";
+
 	private String name;
 
 	private DoseResponseExperiment doseResponseExperiment;
@@ -155,14 +160,12 @@ public class CurveFitPrefilterResults extends BMDExpressAnalysisDataSet
 
 		columnHeader.add(PrefilterResults.GENE_ID);
 
-
 		columnHeader.add(PrefilterResults.GENE_SYMBOL);
-		columnHeader.add("Best Model");
-		columnHeader.add("Best BMD");
-		columnHeader.add("Best BMDL");
+		columnHeader.add(BEST_MODEL);
+		columnHeader.add(BEST_BMD);
+		columnHeader.add(BEST_BMDL);
 		// p value
-		columnHeader.add("Goodness of Fit");
-
+		columnHeader.add(GOODNESS_OF_FIT);
 
 		if (curveFitPrefilterResults.get(0).getBestFoldChange() != null)
 		{

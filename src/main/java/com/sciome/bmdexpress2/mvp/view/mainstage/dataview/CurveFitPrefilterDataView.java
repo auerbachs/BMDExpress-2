@@ -10,8 +10,8 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
 import com.sciome.bmdexpress2.mvp.presenter.mainstage.dataview.CurveFitPrefilterDataViewPresenter;
+import com.sciome.bmdexpress2.mvp.view.visualization.CurveFitPrefilterDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.view.visualization.DataVisualizationView;
-import com.sciome.bmdexpress2.mvp.view.visualization.WilliamsTrendDataVisualizationView;
 import com.sciome.bmdexpress2.mvp.viewinterface.mainstage.dataview.IBMDExpressDataView;
 import com.sciome.bmdexpress2.shared.BMDExpressProperties;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
@@ -60,7 +60,7 @@ public class CurveFitPrefilterDataView extends BMDExpressDataView<WilliamsTrendR
 	@Override
 	protected DataVisualizationView getDataVisualizationView()
 	{
-		return new WilliamsTrendDataVisualizationView();
+		return new CurveFitPrefilterDataVisualizationView();
 	}
 
 	@Override

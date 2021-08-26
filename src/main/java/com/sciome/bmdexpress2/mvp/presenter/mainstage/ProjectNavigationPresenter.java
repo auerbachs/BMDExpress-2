@@ -247,9 +247,11 @@ public class ProjectNavigationPresenter
 	public void onLoadCurveFitPrefilterAnalysis(CurveFitPrefilterDataLoadedEvent event)
 	{
 		// first make sure the name is unique
-		try {
-		currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
-		}catch (Exception e)
+		try
+		{
+			currentProject.giveBMDAnalysisUniqueName(event.GetPayload(), event.GetPayload().getName());
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -430,6 +432,12 @@ public class ProjectNavigationPresenter
 		for (BMDResult bmdResult : bmdProject.getbMDResult())
 		{
 			getView().addBMDAnalysis(bmdResult, false);
+		}
+
+		// populate all the bmdanalysis data.
+		for (CurveFitPrefilterResults cfpr : bmdProject.getCurveFitPrefilterResults())
+		{
+			getView().addCurveFitPrefilterAnalysis(cfpr, false);
 		}
 
 		getView().expandTree();
@@ -941,6 +949,7 @@ public class ProjectNavigationPresenter
 		classesOfInterest.add(OneWayANOVAResults.class);
 		classesOfInterest.add(OriogenResults.class);
 		classesOfInterest.add(DoseResponseExperiment.class);
+		classesOfInterest.add(CurveFitPrefilterResults.class);
 		for (Class c : classesOfInterest)
 			classesOfInterestMapCount.put(c, 0);
 		for (Object obj : selectedItems)

@@ -208,15 +208,20 @@
                                                             <Insets right="15.0" />
                                                          </GridPane.margin></TextField>
                                                       <Label fx:id="quantile_doseSpacingLabel" text="Quantile  " />
-                                                      <Label fx:id="inputUnitsLabel" text="Input Units  " GridPane.rowIndex="1" />
-                                                      <ComboBox fx:id="inputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                         <GridPane.margin>
-                                                            <Insets right="15.0" />
-                                                         </GridPane.margin></ComboBox>
-                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                      <HBox alignment="CENTER_LEFT" spacing="30.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label text="Output Units  " />
-                                                            <ComboBox fx:id="outputUnitsComboBox" prefHeight="30.0" prefWidth="148.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                            <HBox alignment="CENTER_LEFT" spacing="7.0">
+                                                               <children>
+                                                                  <Label fx:id="inputUnitsLabel" text="Internal dose/In Vitro Dose Units" />
+                                                                  <ComboBox fx:id="inputUnitsComboBox" prefHeight="39.0" prefWidth="167.0" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="7.0">
+                                                               <children>
+                                                                  <Label fx:id="outputUnitsLabel" text="External Dose Units" />
+                                                                  <ComboBox fx:id="outputUnitsComboBox" prefHeight="30.0" prefWidth="148.0" />
+                                                               </children>
+                                                            </HBox>
                                                          </children>
                                                       </HBox>
                                                       <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">

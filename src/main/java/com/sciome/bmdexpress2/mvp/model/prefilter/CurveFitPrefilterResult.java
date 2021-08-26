@@ -29,6 +29,7 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	/**
 	 * 
 	 */
+
 	private static final long serialVersionUID = -465506000834082809L;
 
 	private ProbeResponse probeResponse;
@@ -39,7 +40,6 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	private String bestModel;
 	private Double bmdl;
 	private Double bmd;
-	
 
 	private List<Float> foldChanges;
 
@@ -79,31 +79,34 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	{
 		this.probeResponse = probeResponse;
 	}
-	
-	
-	
 
-	public String getBestModel() {
+	public String getBestModel()
+	{
 		return bestModel;
 	}
 
-	public void setBestModel(String bestModel) {
+	public void setBestModel(String bestModel)
+	{
 		this.bestModel = bestModel;
 	}
 
-	public Double getBmdl() {
+	public Double getBmdl()
+	{
 		return bmdl;
 	}
 
-	public void setBmdl(Double bmdl) {
+	public void setBmdl(Double bmdl)
+	{
 		this.bmdl = bmdl;
 	}
 
-	public Double getBmd() {
+	public Double getBmd()
+	{
 		return bmd;
 	}
 
-	public void setBmd(Double bmd) {
+	public void setBmd(Double bmd)
+	{
 		this.bmd = bmd;
 	}
 
@@ -143,7 +146,6 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		this.pValue = pValue;
 	}
 
-
 	@Override
 	public Float getBestFoldChange()
 	{
@@ -175,14 +177,13 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		geneSymbolSet = new HashSet<>();
 		row.add(probeResponse.getProbe().getId());
 
-
 		ReferenceGeneAnnotation refGeneAnnotation = referenceGeneAnnotations
 				.get(probeResponse.getProbe().getId());
 		StringBuffer geneSymbols = new StringBuffer();
 		StringBuffer genes = new StringBuffer();
 		if (refGeneAnnotation != null)
 		{
-			// get the genes and symboles 
+			// get the genes and symboles
 			for (ReferenceGene refGene : refGeneAnnotation.getReferenceGenes())
 			{
 				if (genes.length() > 0)
@@ -201,8 +202,8 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 		row.add(genes.toString());
 		row.add(geneSymbols.toString());
 		row.add(this.bestModel);
-		row.add(this.bmdl);
 		row.add(this.bmd);
+		row.add(this.bmdl);
 		row.add((pValue));
 
 		if (bestFoldChange != null)
@@ -317,13 +318,10 @@ public class CurveFitPrefilterResult extends BMDExpressAnalysisRow
 	{
 		this.noelDose = noelDose;
 	}
-	
-	
-	
-	
 
 	@Override
-	public double getAdjustedPValue() {
+	public double getAdjustedPValue()
+	{
 		return pValue;
 	}
 

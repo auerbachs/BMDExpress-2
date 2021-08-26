@@ -231,6 +231,11 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 	@FXML
 	private ComboBox speciesComboBox;
 
+	@FXML
+	private Label inputUnitsLabel;
+	@FXML
+	private Label outputUnitsLabel;
+
 	TextField stringAutoCompleteSelector;
 
 	CompoundTable compoundTable = null;
@@ -294,6 +299,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 		}
 		catch (IllegalArgumentException e)
 		{
+			e.printStackTrace();
 			if (e.getMessage() != null)
 				alert.setContentText(e.getMessage());
 			else
@@ -643,7 +649,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue,
 					Toggle newValue)
 			{
-				if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().equals("In Vivo"))
+				if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().contains("Forward"))
 				{
 					toggleInvivo(true);
 				}
@@ -791,7 +797,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 
 			parameters.setModels(models);
 
-			if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().equals("In Vitro"))
+			if (((RadioButton) inVivoGroup.getSelectedToggle()).getText().contains("IVIVE"))
 			{
 				double quantile = Double.valueOf(quantile_doseSpacingTextField.getText());
 				if (quantile < 0 || quantile > 1)
@@ -831,6 +837,7 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 				}
 				catch (Exception e)
 				{
+					e.printStackTrace();
 					throw new IllegalArgumentException(e.getMessage());
 				}
 			}
@@ -878,6 +885,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			outputUnitsComboBox.getItems().removeAll(outputUnitsComboBox.getItems());
 			outputUnitsComboBox.getItems().add(ConcentrationUnits.uM);
 			outputUnitsComboBox.getSelectionModel().select(0);
+			inputUnitsLabel.setText("External Dose Units");
+			outputUnitsLabel.setText("Internal dose/In Vitro Dose Units");
+
 		}
 		else
 		{
@@ -896,6 +906,9 @@ public class CategorizationView extends BMDExpressViewBase implements ICategoriz
 			outputUnitsComboBox.getItems().add(MGPERKGPERDAY);
 			outputUnitsComboBox.getItems().add(UMOLPERKGPERDAY);
 			outputUnitsComboBox.getSelectionModel().select(0);
+			inputUnitsLabel.setText("Internal dose/In Vitro Dose Units");
+			outputUnitsLabel.setText("External Dose Units");
+
 		}
 	}
 
