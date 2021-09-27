@@ -200,10 +200,9 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("BMDL and BMDU Model Selection: "
 				+ modelSelectionParameters.getBestModelSelectionBMDLandBMDU());
 
-		if(inputParameters.getBmdMethod().equals(BMD_METHOD.TOXICR))
+		if (inputParameters.getBmdMethod().equals(BMD_METHOD.TOXICR))
 			notes.add("Use Wald (Fast BMD): " + inputParameters.isFast());
-		
-		
+
 		analysisInfo.setNotes(notes);
 
 		if (tmpFolder != null && !tmpFolder.equals(""))
@@ -230,6 +229,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		}
 		this.tmpFolder = tmpFolder;
 
+		bmdResults.setBmdMethod(inputParameters.getBmdMethod());
 		bmdResults.setName(processableData.toString() + "_BMD");
 
 	}
@@ -991,8 +991,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 			if (aic1 < aic2)
 			{ // second AIC smaller
 				if ((!isConvergent(bmd1) || !isConvergent(bmdl1))
-						&& (isConvergent(bmd2) && isConvergent(bmdl2)) && bmd2 > 0.0
-						&& bmdl2 > 0.0 )
+						&& (isConvergent(bmd2) && isConvergent(bmdl2)) && bmd2 > 0.0 && bmdl2 > 0.0)
 				{
 					better = true;
 				}

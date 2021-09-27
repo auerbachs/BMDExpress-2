@@ -135,7 +135,7 @@ public class BMDAnalysisPresenter extends ServicePresenterBase<IBMDAnalysisView,
 		{
 			List<StatModel> modelsToRun = new ArrayList<>();
 			BMDResult bmdResult = new BMDResult((BMDResult) processableData);
-
+			inputParameters.setBmdMethod(bmdResult.getBmdMethod());
 			for (StatResult statResult : bmdResult.getProbeStatResults().get(0).getStatResults())
 			{
 				StatModel statModel = null;

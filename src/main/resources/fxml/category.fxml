@@ -60,7 +60,7 @@
 																</HBox>
 																<HBox alignment="CENTER" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">
 																	<children>
-																		<CheckBox id="bmdFilter4CheckBox" fx:id="doIVIVECheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" text="Load IVIVE data" wrapText="true" />
+																		<CheckBox id="bmdFilter4CheckBox" fx:id="doIVIVECheckBox" mnemonicParsing="false" prefHeight="-1.0" prefWidth="396.0" text="Load Toxicokinetic Parameters" wrapText="true" />
 																	</children>
 																</HBox>
                                                 <HBox alignment="CENTER" layoutX="10.0" layoutY="130.0" maxHeight="-Infinity" minHeight="27.0" prefHeight="27.0" prefWidth="627.0">

@@ -20,6 +20,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResult;
 import com.sciome.bmdexpress2.mvp.model.prefilter.PrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.refgene.ReferenceGeneAnnotation;
+import com.sciome.bmdexpress2.util.bmds.BMD_METHOD;
 import com.sciome.bmdexpress2.util.prefilter.FoldChange;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
@@ -30,53 +31,54 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	/**
 	 * 
 	 */
-	private static final long		serialVersionUID			= 4821688005886618518L;
+	private static final long serialVersionUID = 4821688005886618518L;
 
-	private String					name;
-	private List<ProbeStatResult>	probeStatResults;
+	private String name;
+	private List<ProbeStatResult> probeStatResults;
 
-	private DoseResponseExperiment	doseResponseExperiment;
-	private AnalysisInfo			analysisInfo;
+	private DoseResponseExperiment doseResponseExperiment;
+	private AnalysisInfo analysisInfo;
+	private BMD_METHOD bmdMethod;
 
-	private PrefilterResults		prefilterResults;
+	private PrefilterResults prefilterResults;
 
-	private List<Float>				wAUCList;
-	private List<Float>				logwAUCList;
+	private List<Float> wAUCList;
+	private List<Float> logwAUCList;
 
-	private transient List<String>	columnHeader;
+	private transient List<String> columnHeader;
 
-	private Long					id;
+	private Long id;
 
 	/* define chartabble key values */
-	public static final String		BMD							= "Best BMD";
-	public static final String		BMDL						= "Best BMDL";
-	public static final String		BMDU						= "Best BMDU";
-	public static final String		BMD_BMDL_RATIO				= "Best BMD/BMDL";
-	public static final String		BMDU_BMDL_RATIO				= "Best BMDU/BMDL";
-	public static final String		BMDU_BMD_RATIO				= "Best BMDU/BMD";
-	public static final String		PREFILTER_PVALUE			= "Prefilter P-Value";
-	public static final String		PREFILTER_ADJUSTEDPVALUE	= "Prefilter Adjusted P-Value";
-	public static final String		BEST_FOLDCHANGE				= "Max Fold Change";
-	public static final String		BEST_ABSFOLDCHANGE			= "Max Fold Change Absolute Value";
-	public static final String		PROBE_ID					= "Probe ID";
-	public static final String		GENE_IDS					= "Entrez Gene IDs";
-	public static final String		GENE_SYMBOLS				= "Genes Symbols";
-	public static final String		BEST_MODEL					= "Best Model";
-	public static final String		BEST_BMD					= "Best BMD";
-	public static final String		BEST_BMDL					= "Best BMDL";
-	public static final String		BEST_BMDU					= "Best BMDU";
-	public static final String		BEST_FITPVALUE				= "Best fitPValue";
-	public static final String		BEST_LOGLIKLIHOOD			= "Best fitLogLikelihood";
-	public static final String		BEST_AIC					= "Best AIC";
-	public static final String		BEST_ADVERSE_DIRECTION		= "Best adverseDirection";
-	public static final String		BEST_BMD_BMDL_RATIO			= "Best BMD/BMDL";
-	public static final String		BEST_BMDU_BMDL_RATIO		= "Best BMDU/BMDL";
-	public static final String		BEST_BMDU_BMD_RATIO			= "Best BMDU/BMD";
-	public static final String		BEST_POLY					= "Best Poly";
-	public static final String		WAUC						= "wAUC";
-	public static final String		LOG_WAUC					= "Log 2 wAUC";
-	public static final String		LOEL_VALUE					= "LOTEL";
-	public static final String		NOEL_VALUE					= "NOTEL";
+	public static final String BMD = "Best BMD";
+	public static final String BMDL = "Best BMDL";
+	public static final String BMDU = "Best BMDU";
+	public static final String BMD_BMDL_RATIO = "Best BMD/BMDL";
+	public static final String BMDU_BMDL_RATIO = "Best BMDU/BMDL";
+	public static final String BMDU_BMD_RATIO = "Best BMDU/BMD";
+	public static final String PREFILTER_PVALUE = "Prefilter P-Value";
+	public static final String PREFILTER_ADJUSTEDPVALUE = "Prefilter Adjusted P-Value";
+	public static final String BEST_FOLDCHANGE = "Max Fold Change";
+	public static final String BEST_ABSFOLDCHANGE = "Max Fold Change Absolute Value";
+	public static final String PROBE_ID = "Probe ID";
+	public static final String GENE_IDS = "Entrez Gene IDs";
+	public static final String GENE_SYMBOLS = "Genes Symbols";
+	public static final String BEST_MODEL = "Best Model";
+	public static final String BEST_BMD = "Best BMD";
+	public static final String BEST_BMDL = "Best BMDL";
+	public static final String BEST_BMDU = "Best BMDU";
+	public static final String BEST_FITPVALUE = "Best fitPValue";
+	public static final String BEST_LOGLIKLIHOOD = "Best fitLogLikelihood";
+	public static final String BEST_AIC = "Best AIC";
+	public static final String BEST_ADVERSE_DIRECTION = "Best adverseDirection";
+	public static final String BEST_BMD_BMDL_RATIO = "Best BMD/BMDL";
+	public static final String BEST_BMDU_BMDL_RATIO = "Best BMDU/BMDL";
+	public static final String BEST_BMDU_BMD_RATIO = "Best BMDU/BMD";
+	public static final String BEST_POLY = "Best Poly";
+	public static final String WAUC = "wAUC";
+	public static final String LOG_WAUC = "Log 2 wAUC";
+	public static final String LOEL_VALUE = "LOTEL";
+	public static final String NOEL_VALUE = "NOTEL";
 
 	// clone a bmdexpress result
 	public BMDResult(BMDResult bmdResult)
@@ -173,6 +175,19 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 	public void setLogwAUC(List<Float> logwAUCList)
 	{
 		this.logwAUCList = logwAUCList;
+	}
+
+	public BMD_METHOD getBmdMethod()
+	{
+		if (bmdMethod == null)
+			return BMD_METHOD.ORIGINAL;
+		return bmdMethod;
+	}
+
+	public void setBmdMethod(BMD_METHOD bmdMethod)
+	{
+
+		this.bmdMethod = bmdMethod;
 	}
 
 	/*
@@ -291,16 +306,16 @@ public class BMDResult extends BMDExpressAnalysisDataSet implements Serializable
 			// it's not too expensive.
 			if (bestFoldChange == null)
 			{
-				FoldChange fc = null; 
-				if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE10))
+				FoldChange fc = null;
+				if (doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE10))
 					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 10.0);
-				else if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE2))
+				else if (doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.BASE2))
 					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, 2.0);
-				else if(doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.NATURAL))
+				else if (doseResponseExperiment.getLogTransformation().equals(LogTransformationEnum.NATURAL))
 					fc = new FoldChange(doseResponseExperiment.getTreatments(), true, Math.E);
 				else
 					fc = new FoldChange(doseResponseExperiment.getTreatments(), false, 10.0);
-				
+
 				bestFoldChange = fc.getBestFoldChangeValue(probeStatResult.getProbeResponse().getResponses())
 						.doubleValue();
 				foldChanges = fc.getFoldChanges();

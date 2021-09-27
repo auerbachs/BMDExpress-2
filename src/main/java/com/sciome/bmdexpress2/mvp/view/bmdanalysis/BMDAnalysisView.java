@@ -84,7 +84,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	@FXML
 	private ComboBox varianceType;
-	
+
 	@FXML
 	private ComboBox bmdULEstimationMethod;
 	@FXML
@@ -165,6 +165,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private AnchorPane parametersPane;
 	@FXML
 	private AnchorPane modelsPane;
+
+	@FXML
+	private AnchorPane methodsPane;
+
 	@FXML
 	private AnchorPane dataOptionsPane;
 
@@ -189,10 +193,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private BMDInput input;
 
 	private boolean useToxicR;
-	
+
 	private final String NON_CONSTANT_VARIANCE = "Non-Constant";
 	private final String CONSTANT_VARIANCE = "Constant";
-	
+
 	private final String WALD_METHOD_BMDUL_ESTIMATION = "Wald, Ewald Method";
 	private final String EPA_METHOD_BMDUL_ESTIMATION = "EPA Method";
 
@@ -423,8 +427,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		input.setBestModelSelectionBMDLandBMDU(
 				(BestModelSelectionBMDLandBMDU) this.bmdlBmduComboBox.getValue());
-		
-		if(!this.bmdULEstimationMethod.isDisable())
+
+		if (!this.bmdULEstimationMethod.isDisable())
 			input.setUseWald(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
 
 		BMDExpressProperties.getInstance().saveBMDInput(input);
@@ -539,7 +543,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.restrictPowerComboBox.setDisable(false);
 		this.maximumIterationsTextField.setDisable(false);
 		killTimeComboBox.setDisable(false);
-	this.bmdULEstimationMethod.setDisable(true);
+		this.bmdULEstimationMethod.setDisable(true);
 
 		if (powerCheckBox.isSelected())
 		{
@@ -656,7 +660,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		{
 			// using model averaging. So no need for model selection parameters
 			mainVBox.getChildren().remove(modelSelectionPane);
-
+			// mainVBox.getChildren().remove(methodHBox);
 			methodHBox.getChildren().removeAll(origMethodRadio, toxicRMethodRadio);
 			toxicRMAMethodRadio.setSelected(true);
 			handle_ToxicRLaplaceMAMethod(null);
@@ -689,23 +693,20 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			oneWayANOVADataLabel.setText(processableData.get(0).toString());
 			expressionDataLabel.setText(processableData.get(0).getParentDataSetName());
 		}
-		
+
 		List<String> bmdULEstimationValues = new ArrayList<>();
 		bmdULEstimationValues.add(EPA_METHOD_BMDUL_ESTIMATION);
 		bmdULEstimationValues.add(WALD_METHOD_BMDUL_ESTIMATION);
-		
+
 		this.bmdULEstimationMethod.getItems().setAll(bmdULEstimationValues);
 		this.bmdULEstimationMethod.setValue(EPA_METHOD_BMDUL_ESTIMATION);
-		
-		
+
 		List<String> varianceValues = new ArrayList<>();
 		varianceValues.add(CONSTANT_VARIANCE);
 		varianceValues.add(NON_CONSTANT_VARIANCE);
-		
+
 		this.varianceType.getItems().setAll(varianceValues);
 		this.varianceType.setValue(CONSTANT_VARIANCE);
-		
-		
 
 		bMRTypeComboBox.getItems().add("Standard Deviation");
 		if (allIsNotLogScaled())
@@ -724,9 +725,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		funlCheckBox.setSelected(input.isFunl());
 		hillCheckBox.setSelected(input.isHill());
 		powerCheckBox.setSelected(input.isPower());
-		if(input.isConstantVariance())
+		if (input.isConstantVariance())
 			varianceType.getSelectionModel().select(CONSTANT_VARIANCE);
-		else 
+		else
 			varianceType.getSelectionModel().select(NON_CONSTANT_VARIANCE);
 		flagHillkParamCheckBox.setSelected(input.isFlagHillModel());
 
@@ -742,10 +743,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		// init best poly model test
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
 		bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
-		
-		
 
-		
 		// pValue Cut OFF
 		pValueCutoffComboBox.getItems().add("0.01");
 		pValueCutoffComboBox.getItems().add("0.05");
@@ -811,6 +809,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		// remove most of the panes.
 		if (selectModelsOnly)
 		{
+			mainVBox.getChildren().remove(methodsPane);
 			mainVBox.getChildren().remove(modelsPane);
 			mainVBox.getChildren().remove(parametersPane);
 			mainVBox.getChildren().remove(threadPane);
@@ -885,7 +884,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 						* 1000);
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
-			inputParameters.setConstantVariance((this.varianceType.getValue().equals(CONSTANT_VARIANCE)) ? 1 : 0);
+			inputParameters
+					.setConstantVariance((this.varianceType.getValue().equals(CONSTANT_VARIANCE)) ? 1 : 0);
 			// for simulation only?
 			inputParameters.setRestirctPower(restrictPowerComboBox.getSelectionModel().getSelectedIndex());
 
@@ -926,10 +926,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 				inputParameters.setMAMethod("MCMC Model Averaging");
 			else
 				inputParameters.setMAMethod("");
-			
-			
-			inputParameters.setFast(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
-				
+
+			inputParameters
+					.setFast(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
 
 		}
 
