@@ -36,6 +36,7 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenInput;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendInput;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDMAInput;
 import com.sciome.bmdexpress2.mvp.model.stat.GCurvePInput;
 import com.sciome.filter.DataFilter;
 import com.sciome.filter.DataFilterPack;
@@ -43,41 +44,43 @@ import com.sciome.filter.DataFilterPack;
 public class BMDExpressProperties
 {
 
-	private PropertiesParser			propertiesParser;
-	private int							locX, locY, sizeX, sizeY, precision;
-	private String						user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet,
-			proxyHost, proxyPort, endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE,
-			powerVersion, polyVersion, hillVersion, exponentialEXE, exponentialVersion, Rscript,
-			pathwayFilterScript, projectPath, expressionPath, exportPath, definedPath;
-	private boolean						useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate,
-			isWindows, hideTable, hideFilter, hideCharts, applyFilter;
+	private PropertiesParser propertiesParser;
+	private int locX, locY, sizeX, sizeY, precision;
+	private String user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet, proxyHost, proxyPort,
+			endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE, powerVersion, polyVersion,
+			hillVersion, exponentialEXE, exponentialVersion, Rscript, pathwayFilterScript, projectPath,
+			expressionPath, exportPath, definedPath;
+	private boolean useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate, isWindows, hideTable,
+			hideFilter, hideCharts, applyFilter;
 
 	// boolean to be set if the console version is running
-	private boolean						isConsole			= false;
+	private boolean isConsole = false;
 
-	private File						propertyFile;
+	private File propertyFile;
 
-	private static BMDExpressProperties	instance			= null;
+	private static BMDExpressProperties instance = null;
 
-	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
+	private Map<String, DataFilterPack> dataFilterPackMap = new HashMap<>();
 
-	private TableInformation			tableInformation;
+	private TableInformation tableInformation;
 
-	private Properties					versionProperties	= new Properties();
+	private Properties versionProperties = new Properties();
 
-	private WilliamsTrendInput			williamsInput;
+	private WilliamsTrendInput williamsInput;
 
-	private OriogenInput				oriogenInput;
+	private OriogenInput oriogenInput;
 
-	private OneWayANOVAInput			oneWayInput;
+	private OneWayANOVAInput oneWayInput;
 
-	private BMDInput					bmdInput;
+	private BMDInput bmdInput;
 
-	private GCurvePInput				gCurvePInput;
+	private BMDMAInput bmdMAInput;
 
-	private CategoryInput				categoryInput;
+	private GCurvePInput gCurvePInput;
 
-	private String						processInformation;
+	private CategoryInput categoryInput;
+
+	private String processInformation;
 
 	protected BMDExpressProperties()
 	{
@@ -136,6 +139,8 @@ public class BMDExpressProperties
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "oriogenInput.json");
 		File bmdInputFile = new File(
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdInput.json");
+		File bmdMAInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdMAInput.json");
 		File categoryInputFile = new File(
 				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "categoryInput.json");
 		File gCurvePInputFile = new File(
@@ -176,6 +181,15 @@ public class BMDExpressProperties
 		{
 			bmdInput = new BMDInput();
 			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdInput);
+		}
+		if (bmdMAInputFile.exists())
+		{
+			bmdMAInput = mapper.readValue(bmdInputFile, BMDMAInput.class);
+		}
+		else
+		{
+			bmdMAInput = new BMDMAInput();
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdMAInputFile, bmdMAInput);
 		}
 		if (categoryInputFile.exists())
 		{
@@ -239,6 +253,22 @@ public class BMDExpressProperties
 		try
 		{
 			mapper.writerWithDefaultPrettyPrinter().writeValue(oneWayInputFile, oneWayInput);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveBMDMAInput(BMDMAInput input)
+	{
+		File bmdInputFile = new File(
+				BMDExpressConstants.getInstance().BMDBASEPATH + File.separator + "bmdMAInput.json");
+		ObjectMapper mapper = new ObjectMapper();
+		this.bmdMAInput = input;
+		try
+		{
+			mapper.writerWithDefaultPrettyPrinter().writeValue(bmdInputFile, bmdMAInput);
 		}
 		catch (IOException e)
 		{
@@ -1129,6 +1159,11 @@ public class BMDExpressProperties
 	public BMDInput getBmdInput()
 	{
 		return bmdInput;
+	}
+
+	public BMDMAInput getBmdMAInput()
+	{
+		return bmdMAInput;
 	}
 
 	public GCurvePInput getGCurvePnput()

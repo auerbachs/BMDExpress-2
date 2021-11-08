@@ -25,6 +25,16 @@ public class BMDAnalysisRunner implements IBMDSToolProgress
 				tmpFolder, this);
 	}
 
+	public BMDResult runMAAnalysis(IStatModelProcessable processableData, List<StatModel> modelsToRun,
+			ModelInputParameters inputParameters, boolean laplace)
+	{
+		BMDAnalysisService service = new BMDAnalysisService();
+		if (laplace)
+			return service.bmdAnalysisLaPlaceMA(processableData, inputParameters, modelsToRun, this);
+		else
+			return service.bmdAnalysisMCMCMA(processableData, inputParameters, modelsToRun, this);
+	}
+
 	@Override
 	public void updateProgress(String label, double value)
 	{

@@ -20,6 +20,7 @@ import com.sciome.bmdexpress2.commandline.config.bmds.BMDSConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSModelConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.ExponentialConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.HillConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.ModelAveragingConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.PolyConfig;
 import com.sciome.bmdexpress2.commandline.config.bmds.PowerConfig;
 import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
@@ -39,6 +40,7 @@ import com.sciome.bmdexpress2.mvp.model.BMDProject;
 import com.sciome.bmdexpress2.mvp.model.DoseResponseExperiment;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.category.CategoryAnalysisResults;
+import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
@@ -132,11 +134,17 @@ public class AnalyzeRunner
 			for (PrefilterConfig preFilterConfig : preFilterConfigs)
 				doPrefilter(preFilterConfig);
 
-		// 3: get all the analysis configs
+		// 3.1: get all the analysis configs
 		List<BMDSConfig> bmdsConfigs = runConfig.getBmdsConfigs();
 		if (bmdsConfigs != null)
 			for (BMDSConfig bmdsConfig : bmdsConfigs)
 				doBMDSAnalysis(bmdsConfig);
+
+		// 3.2: get all the analysis configs
+		List<ModelAveragingConfig> maConfigs = runConfig.getMaConfigs();
+		if (maConfigs != null)
+			for (ModelAveragingConfig maConfig : maConfigs)
+				doMaAnalysis(maConfig);
 
 		// 4: get all the analysis configs
 		List<NonParametricConfig> nonParametricConfigs = runConfig.getNonParametricConfigs();
@@ -437,11 +445,15 @@ public class AnalyzeRunner
 	 */
 	private void doBMDSAnalysis(BMDSConfig bmdsConfig)
 	{
+		String method = "BMDS 3.x.x MLE";
+		if (bmdsConfig.getMethod().equals(1))
+			method = "BMDS 2.7.x MLE";
+
 		if (bmdsConfig.getInputName() != null)
-			System.out.println("bmd analysis on " + bmdsConfig.getInputName() + " from group "
+			System.out.println(method + " analysis on " + bmdsConfig.getInputName() + " from group "
 					+ bmdsConfig.getInputCategory());
 		else
-			System.out.println("bmd analysis on group " + bmdsConfig.getInputCategory());
+			System.out.println(method + " analysis on group " + bmdsConfig.getInputCategory());
 		// first set up the model input parameters basedo n
 		// bmdsConfig setup
 		ModelInputParameters inputParameters = new ModelInputParameters();
@@ -599,6 +611,13 @@ public class AnalyzeRunner
 				else if (ori.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
 					processables.add(ori);
 
+		for (CurveFitPrefilterResults curve : project.getCurveFitPrefilterResults())
+			if (bmdsConfig.getInputCategory().equalsIgnoreCase("curvefit"))
+				if (bmdsConfig.getInputName() == null)
+					processables.add(curve);
+				else if (curve.getName().equalsIgnoreCase(bmdsConfig.getInputName()))
+					processables.add(curve);
+
 		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
 			if (bmdsConfig.getInputCategory().equalsIgnoreCase("expression"))
 				if (bmdsConfig.getInputName() == null)
@@ -613,6 +632,139 @@ public class AnalyzeRunner
 					modelSelectionParameters, modelsToRun, inputParameters, bmdsConfig.getTmpFolder());
 			if (bmdsConfig.getOutputName() != null)
 				result.setName(bmdsConfig.getOutputName());
+			else
+				project.giveBMDAnalysisUniqueName(result, result.getName());
+			project.getbMDResult().add(result);
+		}
+
+	}
+
+	/*
+	 * perform bmd analysis on the data.
+	 */
+	private void doMaAnalysis(ModelAveragingConfig maConfig)
+	{
+		String method = "ToxicR MCMC";
+		if (maConfig.getMethod().equals(1))
+			method = "ToxicR Laplace";
+		if (maConfig.getInputName() != null)
+			System.out.println(method + " model averaging on " + maConfig.getInputName() + " from group "
+					+ maConfig.getInputCategory());
+		else
+			System.out.println(method + " model averaging on group " + maConfig.getInputCategory());
+		// first set up the model input parameters basedo n
+		// bmdsConfig setup
+		ModelInputParameters inputParameters = new ModelInputParameters();
+
+		inputParameters.setBmdMethod(BMD_METHOD.TOXICR);
+		if (maConfig.getMethod().equals(2))
+			inputParameters.setBmdMethod(BMD_METHOD.TOXICR_MCMC);
+
+		inputParameters.setFast(false);
+		if (maConfig.getBmdsInputConfig().getBmdUBmdLEstimationMethod().equals(2))
+			inputParameters.setFast(true);
+
+		inputParameters.setBmrLevel(maConfig.getBmdsInputConfig().getBmrFactor());
+		inputParameters.setNumThreads(maConfig.getNumberOfThreads());
+
+		inputParameters.setConstantVariance((maConfig.getBmdsInputConfig().getConstantVariance()) ? 1 : 0);
+		// for simulation only?
+		inputParameters.setRestirctPower((maConfig.getBmdsInputConfig().getRestrictPower()) ? 1 : 0);
+
+		// in practice bmrtype can only be set to relative deviation for non-log normalized data.
+		inputParameters.setBmrType(1);
+		if (maConfig.getBmdsInputConfig().getBmrType() != null)
+			inputParameters.setBmrType(maConfig.getBmdsInputConfig().getBmrType().intValue());
+
+		if (inputParameters.getConstantVariance() == 0)
+			inputParameters.setRho(inputParameters.getNegative());
+
+		// figure out which models are going to be run
+		List<StatModel> modelsToRun = new ArrayList<>();
+		for (BMDSModelConfig modelConfig : maConfig.getModelConfigs())
+		{
+			if (modelConfig instanceof HillConfig)
+			{
+				HillModel hillModel = new HillModel();
+				hillModel.setVersion("ToxicR 3.x.x");
+				modelsToRun.add(hillModel);
+			}
+			if (modelConfig instanceof PowerConfig)
+			{
+				PowerModel powerModel = new PowerModel();
+				powerModel.setVersion("ToxicR 3.x.x");
+				modelsToRun.add(powerModel);
+			}
+			if (modelConfig instanceof PolyConfig)
+			{
+				PolyModel polymodel = new PolyModel();
+				polymodel.setVersion("ToxicR 3.x.x");
+				polymodel.setDegree(((PolyConfig) modelConfig).getDegree());
+				modelsToRun.add(polymodel);
+			}
+
+			if (modelConfig instanceof ExponentialConfig)
+			{
+				ExponentialModel exponentialModel = new ExponentialModel();
+				exponentialModel.setVersion("ToxicR 3.x.x");
+				exponentialModel.setOption(((ExponentialConfig) modelConfig).getExpModel());
+				modelsToRun.add(exponentialModel);
+			}
+
+		}
+
+		// if inputname is specified then get the analysis that matches name.
+		// otherwise get all the analysis based on the given input category.
+		// input category can be "anova" or "expression" which means
+		// one way anova results or dose response expersssion data.
+		List<IStatModelProcessable> processables = new ArrayList<>();
+		// get the dataset to run
+
+		for (OneWayANOVAResults ways : project.getOneWayANOVAResults())
+			if (maConfig.getInputCategory().equalsIgnoreCase("anova"))
+				if (maConfig.getInputName() == null)
+					processables.add(ways);
+				else if (ways.getName().equalsIgnoreCase(maConfig.getInputName()))
+					processables.add(ways);
+
+		for (WilliamsTrendResults will : project.getWilliamsTrendResults())
+			if (maConfig.getInputCategory().equalsIgnoreCase("williams"))
+				if (maConfig.getInputName() == null)
+					processables.add(will);
+				else if (will.getName().equalsIgnoreCase(maConfig.getInputName()))
+					processables.add(will);
+
+		for (OriogenResults ori : project.getOriogenResults())
+			if (maConfig.getInputCategory().equalsIgnoreCase("oriogen"))
+				if (maConfig.getInputName() == null)
+					processables.add(ori);
+				else if (ori.getName().equalsIgnoreCase(maConfig.getInputName()))
+					processables.add(ori);
+
+		for (CurveFitPrefilterResults curve : project.getCurveFitPrefilterResults())
+			if (maConfig.getInputCategory().equalsIgnoreCase("curvefit"))
+				if (maConfig.getInputName() == null)
+					processables.add(curve);
+				else if (curve.getName().equalsIgnoreCase(maConfig.getInputName()))
+					processables.add(curve);
+
+		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
+			if (maConfig.getInputCategory().equalsIgnoreCase("expression"))
+				if (maConfig.getInputName() == null)
+					processables.add(exps);
+				else if (exps.getName().equalsIgnoreCase(maConfig.getInputName()))
+					processables.add(exps);
+
+		// for each processable analysis, run the models and select best models.
+		boolean laplace = true;
+		if (maConfig.getMethod().equals(2))
+			laplace = false;
+		for (IStatModelProcessable processableData : processables)
+		{
+			BMDResult result = new BMDAnalysisRunner().runMAAnalysis(processableData, modelsToRun,
+					inputParameters, laplace);
+			if (maConfig.getOutputName() != null)
+				result.setName(maConfig.getOutputName());
 			else
 				project.giveBMDAnalysisUniqueName(result, result.getName());
 			project.getbMDResult().add(result);
@@ -664,6 +816,13 @@ public class AnalyzeRunner
 					processables.add(ori);
 				else if (ori.getName().equalsIgnoreCase(config.getInputName()))
 					processables.add(ori);
+
+		for (CurveFitPrefilterResults curve : project.getCurveFitPrefilterResults())
+			if (config.getInputCategory().equalsIgnoreCase("curvefit"))
+				if (config.getInputName() == null)
+					processables.add(curve);
+				else if (curve.getName().equalsIgnoreCase(config.getInputName()))
+					processables.add(curve);
 
 		for (DoseResponseExperiment exps : project.getDoseResponseExperiments())
 			if (config.getInputCategory().equalsIgnoreCase("expression"))

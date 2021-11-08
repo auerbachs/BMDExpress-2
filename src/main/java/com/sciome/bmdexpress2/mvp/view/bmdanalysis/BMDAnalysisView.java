@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import com.sciome.bmdexpress2.mvp.model.IStatModelProcessable;
 import com.sciome.bmdexpress2.mvp.model.LogTransformationEnum;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDInput;
+import com.sciome.bmdexpress2.mvp.model.stat.BMDMAInput;
 import com.sciome.bmdexpress2.mvp.presenter.bmdanalysis.BMDAnalysisPresenter;
 import com.sciome.bmdexpress2.mvp.view.BMDExpressViewBase;
 import com.sciome.bmdexpress2.mvp.viewinterface.bmdanalysis.IBMDAnalysisView;
@@ -191,6 +192,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private boolean selectModelsOnly = false;
 
 	private BMDInput input;
+	private BMDMAInput maInput;
 
 	private boolean useToxicR;
 
@@ -214,6 +216,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		IBMDAnalysisService service = new BMDAnalysisService();
 		presenter = new BMDAnalysisPresenter(this, service, eventBus);
 		input = BMDExpressProperties.getInstance().getBmdInput();
+		maInput = BMDExpressProperties.getInstance().getBmdMAInput();
 	}
 
 	@Override
@@ -391,6 +394,11 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	public void handle_saveSettingsButtonPressed(ActionEvent event)
 	{
+		if (toxicRMCMCMAMethodRadio.isSelected() || toxicRMAMethodRadio.isSelected())
+		{
+			handle_saveSettingsModelAveraging();
+			return;
+		}
 		// Set check box values
 		input.setExp2(this.exponential2CheckBox.isSelected());
 		input.setExp3(this.exponential3CheckBox.isSelected());
@@ -441,6 +449,42 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		alert.showAndWait();
 	}
 
+	private void handle_saveSettingsModelAveraging()
+	{
+		// Set check box values
+		maInput.setExp3(this.exponential3CheckBox.isSelected());
+		maInput.setExp5(this.exponential5CheckBox.isSelected());
+		maInput.setFunl(this.funlCheckBox.isSelected());
+		maInput.setHill(this.hillCheckBox.isSelected());
+		maInput.setPower(this.powerCheckBox.isSelected());
+		maInput.setConstantVariance(this.varianceType.getValue().equals(CONSTANT_VARIANCE));
+		maInput.setFlagHillModel(this.flagHillkParamCheckBox.isSelected());
+		if (this.toxicRMAMethodRadio.isSelected())
+			maInput.setLaplace(true);
+		else
+			maInput.setLaplace(false);
+
+		// Set numerical values
+		maInput.setNumThreads(Integer.parseInt(this.numberOfThreadsComboBox.getEditor().getText()));
+
+		// Set String values
+		maInput.setBmrType(this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString());
+		maInput.setBMRFactor((BMRFactor) this.bMRFactorComboBox.getValue());
+
+		if (!this.bmdULEstimationMethod.isDisable())
+			maInput.setUseWald(this.bmdULEstimationMethod.getValue().equals(WALD_METHOD_BMDUL_ESTIMATION));
+
+		BMDExpressProperties.getInstance().saveBMDMAInput(maInput);
+
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Saved Settings");
+		alert.setHeaderText(null);
+		alert.setContentText("Your settings have been saved");
+
+		alert.showAndWait();
+
+	}
+
 	/*
 	 * use clicked done button
 	 */
@@ -476,7 +520,6 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	public void handle_FlagHillCheckBox(ActionEvent event)
 	{
-
 		if (hillCheckBox.isSelected())
 		{
 			flagHillkParamComboBox.setDisable(!flagHillkParamCheckBox.isSelected());
@@ -712,78 +755,30 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		if (allIsNotLogScaled())
 			bMRTypeComboBox.getItems().add("Relative Deviation");
 		bMRTypeComboBox.getSelectionModel().select(0);
-
-		// init checkboxes
-		exponential2CheckBox.setSelected(input.isExp2());
-		exponential3CheckBox.setSelected(input.isExp3());
-		exponential4CheckBox.setSelected(input.isExp4());
-		exponential5CheckBox.setSelected(input.isExp5());
-		linearCheckBox.setSelected(input.isLinear());
-		poly2CheckBox.setSelected(input.isPoly2());
-		poly3CheckBox.setSelected(input.isPoly3());
-		poly4CheckBox.setSelected(input.isPoly4());
-		funlCheckBox.setSelected(input.isFunl());
-		hillCheckBox.setSelected(input.isHill());
-		powerCheckBox.setSelected(input.isPower());
-		if (input.isConstantVariance())
-			varianceType.getSelectionModel().select(CONSTANT_VARIANCE);
-		else
-			varianceType.getSelectionModel().select(NON_CONSTANT_VARIANCE);
-		flagHillkParamCheckBox.setSelected(input.isFlagHillModel());
-
 		// init confidence level
 		confidenceLevelComboBox.getItems().add("0.95");
 		confidenceLevelComboBox.getItems().add("0.99");
-		confidenceLevelComboBox.getSelectionModel().select(input.getConfidenceLevel());
-
 		// init restrict power
 		restrictPowerComboBox.getItems().addAll(RestrictPowerEnum.values());
-		restrictPowerComboBox.getSelectionModel().select(input.getRestrictPower());
-
 		// init best poly model test
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
-		bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
-
 		// pValue Cut OFF
 		pValueCutoffComboBox.getItems().add("0.01");
 		pValueCutoffComboBox.getItems().add("0.05");
 		pValueCutoffComboBox.getItems().add("0.10");
 		pValueCutoffComboBox.getItems().add("0.5");
 		pValueCutoffComboBox.getItems().add("1");
-		pValueCutoffComboBox.getSelectionModel().select(input.getpValueCutoff());
-
-		flagHillkParamComboBox.getItems().setAll(FlagHillModelDoseEnum.values());
-		flagHillkParamComboBox.getSelectionModel().select(input.getkParameterLessThan());
-
-		bmdlBmduComboBox.getItems().setAll(BestModelSelectionBMDLandBMDU.values());
-		bmdlBmduComboBox.getSelectionModel().select(input.getBestModelSelectionBMDLandBMDU());
-
 		bestModelSeletionWithFlaggedHillComboBox.getItems()
 				.setAll(BestModelSelectionWithFlaggedHillModelEnum.values());
 
-		bestModelSeletionWithFlaggedHillComboBox.getSelectionModel()
-				.select(input.getBestModelWithFlaggedHill());
-
-		bestModelSeletionWithFlaggedHillComboBox.valueProperty()
-				.addListener(new ChangeListener<BestModelSelectionWithFlaggedHillModelEnum>() {
-
-					@Override
-					public void changed(
-							ObservableValue<? extends BestModelSelectionWithFlaggedHillModelEnum> observable,
-							BestModelSelectionWithFlaggedHillModelEnum oldValue,
-							BestModelSelectionWithFlaggedHillModelEnum newValue)
-					{
-						setModifyBMDOfFlaggedHillEnabledness();
-					}
-
-				});
+		bmdlBmduComboBox.getItems().setAll(BestModelSelectionBMDLandBMDU.values());
+		flagHillkParamComboBox.getItems().setAll(FlagHillModelDoseEnum.values());
 
 		// let's add 100 threads to drop down
 		for (int i = 1; i <= 100; i++)
 		{
 			numberOfThreadsComboBox.getItems().add(String.valueOf(i));
 		}
-		numberOfThreadsComboBox.setValue(input.getNumThreads());
 
 		// Add values to kill time combo box
 		killTimeComboBox.getItems().add("30");
@@ -802,31 +797,113 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		killTimeComboBox.getItems().add("600 (default)");
 		killTimeComboBox.getItems().add("none");
 		killTimeComboBox.setValue("600 (default)");
-		if (input.getKillTime() == 600)
-			killTimeComboBox.setValue(String.valueOf(input.getKillTime()) + " (default)");
-		else
-			killTimeComboBox.setValue(String.valueOf(input.getKillTime()));
-		// remove most of the panes.
-		if (selectModelsOnly)
-		{
-			mainVBox.getChildren().remove(methodsPane);
-			mainVBox.getChildren().remove(modelsPane);
-			mainVBox.getChildren().remove(parametersPane);
-			mainVBox.getChildren().remove(threadPane);
-			mainVBox.getChildren().remove(dataOptionsPane);
 
-			this.progressBar.setVisible(false);
-			this.progressLabel.setVisible(false);
+		if (!useToxicR)
+		{
+			// init checkboxes
+			exponential2CheckBox.setSelected(input.isExp2());
+			exponential3CheckBox.setSelected(input.isExp3());
+			exponential4CheckBox.setSelected(input.isExp4());
+			exponential5CheckBox.setSelected(input.isExp5());
+			linearCheckBox.setSelected(input.isLinear());
+			poly2CheckBox.setSelected(input.isPoly2());
+			poly3CheckBox.setSelected(input.isPoly3());
+			poly4CheckBox.setSelected(input.isPoly4());
+			funlCheckBox.setSelected(input.isFunl());
+			hillCheckBox.setSelected(input.isHill());
+			powerCheckBox.setSelected(input.isPower());
+			if (input.isConstantVariance())
+				varianceType.getSelectionModel().select(CONSTANT_VARIANCE);
+			else
+				varianceType.getSelectionModel().select(NON_CONSTANT_VARIANCE);
+			flagHillkParamCheckBox.setSelected(input.isFlagHillModel());
+
+			confidenceLevelComboBox.getSelectionModel().select(input.getConfidenceLevel());
+
+			restrictPowerComboBox.getSelectionModel().select(input.getRestrictPower());
+
+			bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
+			pValueCutoffComboBox.getSelectionModel().select(input.getpValueCutoff());
+
+			flagHillkParamComboBox.getSelectionModel().select(input.getkParameterLessThan());
+
+			bmdlBmduComboBox.getSelectionModel().select(input.getBestModelSelectionBMDLandBMDU());
+
+			bestModelSeletionWithFlaggedHillComboBox.getSelectionModel()
+					.select(input.getBestModelWithFlaggedHill());
+
+			bestModelSeletionWithFlaggedHillComboBox.valueProperty()
+					.addListener(new ChangeListener<BestModelSelectionWithFlaggedHillModelEnum>() {
+
+						@Override
+						public void changed(
+								ObservableValue<? extends BestModelSelectionWithFlaggedHillModelEnum> observable,
+								BestModelSelectionWithFlaggedHillModelEnum oldValue,
+								BestModelSelectionWithFlaggedHillModelEnum newValue)
+						{
+							setModifyBMDOfFlaggedHillEnabledness();
+						}
+
+					});
+
+			numberOfThreadsComboBox.setValue(input.getNumThreads());
+
+			if (input.getKillTime() == 600)
+				killTimeComboBox.setValue(String.valueOf(input.getKillTime()) + " (default)");
+			else
+				killTimeComboBox.setValue(String.valueOf(input.getKillTime()));
+			// remove most of the panes.
+			if (selectModelsOnly)
+			{
+				mainVBox.getChildren().remove(methodsPane);
+				mainVBox.getChildren().remove(modelsPane);
+				mainVBox.getChildren().remove(parametersPane);
+				mainVBox.getChildren().remove(threadPane);
+				mainVBox.getChildren().remove(dataOptionsPane);
+
+				this.progressBar.setVisible(false);
+				this.progressLabel.setVisible(false);
+			}
+			this.selectModelsOnly = selectModelsOnly;
+			bMRTypeComboBox.getSelectionModel().select(input.getBmrType());
+			// add data to the bmrFactor combobox
+			if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
+					.equalsIgnoreCase("standard deviation"))
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsStandardDeviation());
+			else
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsRelativeDeviation());
+			bMRFactorComboBox.getSelectionModel().select(input.getBMRFactor());
 		}
-		this.selectModelsOnly = selectModelsOnly;
-		bMRTypeComboBox.getSelectionModel().select(input.getBmrType());
-		// add data to the bmrFactor combobox
-		if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
-				.equalsIgnoreCase("standard deviation"))
-			bMRFactorComboBox.getItems().addAll(initBMRFactorsStandardDeviation());
 		else
-			bMRFactorComboBox.getItems().addAll(initBMRFactorsRelativeDeviation());
-		bMRFactorComboBox.getSelectionModel().select(input.getBMRFactor());
+		{
+
+			// init checkboxes
+			exponential3CheckBox.setSelected(maInput.isExp3());
+			exponential5CheckBox.setSelected(maInput.isExp5());
+			funlCheckBox.setSelected(maInput.isFunl());
+			hillCheckBox.setSelected(maInput.isHill());
+			powerCheckBox.setSelected(maInput.isPower());
+			if (maInput.isConstantVariance())
+				varianceType.getSelectionModel().select(CONSTANT_VARIANCE);
+			else
+				varianceType.getSelectionModel().select(NON_CONSTANT_VARIANCE);
+
+			numberOfThreadsComboBox.setValue(maInput.getNumThreads());
+			if (maInput.isLaplace())
+				this.toxicRMAMethodRadio.setSelected(true);
+			else
+				this.toxicRMCMCMAMethodRadio.setSelected(true);
+
+			this.selectModelsOnly = selectModelsOnly;
+			bMRTypeComboBox.getSelectionModel().select(maInput.getBmrType());
+			// add data to the bmrFactor combobox
+			if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
+					.equalsIgnoreCase("standard deviation"))
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsStandardDeviation());
+			else
+				bMRFactorComboBox.getItems().addAll(initBMRFactorsRelativeDeviation());
+			bMRFactorComboBox.getSelectionModel().select(maInput.getBMRFactor());
+		}
 
 		this.bMRTypeComboBox.getSelectionModel().selectedItemProperty().addListener(listener ->
 		{

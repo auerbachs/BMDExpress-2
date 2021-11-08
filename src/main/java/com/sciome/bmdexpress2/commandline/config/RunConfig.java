@@ -3,6 +3,7 @@ package com.sciome.bmdexpress2.commandline.config;
 import java.util.List;
 
 import com.sciome.bmdexpress2.commandline.config.bmds.BMDSConfig;
+import com.sciome.bmdexpress2.commandline.config.bmds.ModelAveragingConfig;
 import com.sciome.bmdexpress2.commandline.config.category.CategoryConfig;
 import com.sciome.bmdexpress2.commandline.config.expression.ExpressionDataConfig;
 import com.sciome.bmdexpress2.commandline.config.nonparametric.NonParametricConfig;
@@ -11,19 +12,20 @@ import com.sciome.bmdexpress2.commandline.config.prefilter.PrefilterConfig;
 public class RunConfig
 {
 
-	private List<ExpressionDataConfig>	expressionDataConfigs;
-	private List<PrefilterConfig>		preFilterConfigs;
-	private List<BMDSConfig>			bmdsConfigs;
-	private List<NonParametricConfig>	nonParametricConfigs;
-	private List<CategoryConfig>		categoryAnalysisConfigs;
+	private List<ExpressionDataConfig> expressionDataConfigs;
+	private List<PrefilterConfig> preFilterConfigs;
+	private List<BMDSConfig> bmdsConfigs;
+	private List<ModelAveragingConfig> maConfigs;
+	private List<NonParametricConfig> nonParametricConfigs;
+	private List<CategoryConfig> categoryAnalysisConfigs;
 
-	private String						bm2FileName;
-	private String						basePath;
-	private String						jsonExportFileName;
+	private String bm2FileName;
+	private String basePath;
+	private String jsonExportFileName;
 
-	private String						preprendToNames	= "";
-	private String						appendToNames	= "";
-	private Boolean						overwrite		= false;
+	private String preprendToNames = "";
+	private String appendToNames = "";
+	private Boolean overwrite = false;
 
 	public String getBm2FileName()
 	{
@@ -118,6 +120,16 @@ public class RunConfig
 	public String getBasePath()
 	{
 		return basePath;
+	}
+
+	public List<ModelAveragingConfig> getMaConfigs()
+	{
+		return maConfigs;
+	}
+
+	public void setMaConfigs(List<ModelAveragingConfig> maConfigs)
+	{
+		this.maConfigs = maConfigs;
 	}
 
 	public void setBasePath(String basePath)

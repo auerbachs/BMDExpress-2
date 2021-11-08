@@ -65,4 +65,11 @@ module com.sciome.bmdexpress2
 	exports com.sciome.bmdexpress2.util.visualizations.curvefit;
 	exports com.toxicR;
 	exports com.toxicR.model;
+	exports com.sciome.bmdexpress2.commandline.config;
+	exports com.sciome.bmdexpress2.commandline.config.bmds;
+	exports com.sciome.bmdexpress2.commandline.config.prefilter;
+	exports com.sciome.bmdexpress2.commandline.config.expression;
+	exports com.sciome.bmdexpress2.commandline.config.nonparametric;
+	exports com.sciome.bmdexpress2.commandline.config.category;
+	exports com.sciome.bmdexpress2.commandline;
 }
