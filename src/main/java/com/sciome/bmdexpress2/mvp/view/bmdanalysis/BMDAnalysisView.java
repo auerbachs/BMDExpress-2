@@ -941,10 +941,30 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private ModelInputParameters assignParameters()
 	{
 		ModelInputParameters inputParameters = new ModelInputParameters();
+		boolean isModelAveraging = false;
+		if (this.toxicRMCMCMAMethodRadio.isSelected() || this.toxicRMAMethodRadio.isSelected())
+			isModelAveraging = true;
 		if (!selectModelsOnly)
 		{
-			inputParameters.setIterations(Integer.valueOf(maximumIterationsTextField.getText()));
-			inputParameters.setConfidence(Double.valueOf(confidenceLevelComboBox.getEditor().getText()));
+			if (isModelAveraging)
+			{// dummy values
+				inputParameters.setIterations(2);
+				inputParameters.setConfidence(.96);
+
+				inputParameters.setKillTime(2);
+			}
+			else
+			{
+				inputParameters.setIterations(Integer.valueOf(maximumIterationsTextField.getText()));
+				inputParameters.setConfidence(Double.valueOf(confidenceLevelComboBox.getEditor().getText()));
+				// Multiply by 1000 to convert seconds to milliseconds
+				if (killTimeComboBox.getEditor().getText().equals("none"))
+					inputParameters.setKillTime(-1);
+				else
+					inputParameters.setKillTime(Integer.valueOf(
+							killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim())
+							* 1000);
+			}
 			inputParameters.setBmrType(1);
 			if (this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString()
 					.equalsIgnoreCase("relative deviation"))
@@ -952,13 +972,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			inputParameters.setBmrLevel(Double.valueOf(
 					((BMRFactor) bMRFactorComboBox.getSelectionModel().getSelectedItem()).getValue()));
 			inputParameters.setNumThreads(Integer.valueOf(numberOfThreadsComboBox.getEditor().getText()));
-			// Multiply by 1000 to convert seconds to milliseconds
-			if (killTimeComboBox.getEditor().getText().equals("none"))
-				inputParameters.setKillTime(-1);
-			else
-				inputParameters.setKillTime(Integer.valueOf(
-						killTimeComboBox.getEditor().getText().replaceAll("\\(default\\)", "").trim())
-						* 1000);
+
 			inputParameters.setBmdlCalculation(1);
 			inputParameters.setBmdCalculation(1);
 			inputParameters
