@@ -7,9 +7,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.controlsfx.control.CheckListView;
 
@@ -23,6 +25,8 @@ import com.sciome.bmdexpress2.mvp.model.prefilter.CurveFitPrefilterResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OneWayANOVAResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.OriogenResults;
 import com.sciome.bmdexpress2.mvp.model.prefilter.WilliamsTrendResults;
+import com.sciome.bmdexpress2.mvp.model.probe.Probe;
+import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 import com.sciome.bmdexpress2.mvp.model.stat.BMDResult;
 import com.sciome.bmdexpress2.mvp.model.stat.HillResult;
 import com.sciome.bmdexpress2.mvp.model.stat.StatResult;
@@ -91,6 +95,8 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	private final String RENAME = "Rename";
 	private final String REMOVE = "Remove";
 	private final String EXPORT = "Export";
+	private final String EXPORT_DOSE = "Export Dose Response Data";
+	private final String EXPORT_BMDANALYSIS = "Export BMD Analysis Data";
 	private final String SPREADSHEET_VIEW = "Spreedsheet View";
 	private final String REMOVE_ALL = "Remove All Selected Items";
 
@@ -941,6 +947,24 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				oneWayResult.getProbeResponses().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbe());
+				});
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						oneWayResult.getDoseResponseExperiement(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
+
 		setContextMenuCommonHandlers("One Way ANOVA", ctxMenu, oneWayResult);
 		return ctxMenu;
 	}
@@ -949,6 +973,23 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	{
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				williamsTrendResult.getProbeResponses().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbe());
+				});
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						williamsTrendResult.getDoseResponseExperiement(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
 
 		setContextMenuCommonHandlers("Williams Trend Test", ctxMenu, williamsTrendResult);
 		return ctxMenu;
@@ -959,6 +1000,24 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				curveFitPrefilterResult.getProbeResponses().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbe());
+				});
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						curveFitPrefilterResult.getDoseResponseExperiement(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
+
 		setContextMenuCommonHandlers("Curve Fit Prefilter", ctxMenu, curveFitPrefilterResult);
 		return ctxMenu;
 	}
@@ -968,6 +1027,24 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				oriogenResult.getProbeResponses().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbe());
+				});
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						oriogenResult.getDoseResponseExperiement(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
+
 		setContextMenuCommonHandlers("Oriogen", ctxMenu, oriogenResult);
 		return ctxMenu;
 	}
@@ -976,6 +1053,44 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 	{
 		ContextMenu ctxMenu = new ContextMenu();
 		ctxMenu.getItems().addAll(getCommonMenuItems());
+
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				categoryAnalysisResult.getBmdResult().getProbeStatResults().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbeResponse().getProbe());
+				});
+
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						categoryAnalysisResult.getBmdResult().getDoseResponseExperiment(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
+
+		MenuItem exportBMDAnalysisMenuItem = new MenuItem(EXPORT_BMDANALYSIS);
+		exportBMDAnalysisMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				categoryAnalysisResult.getBmdResult().getProbeStatResults().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbeResponse().getProbe());
+				});
+
+				handle_AnalsyisResultExportBMDAnalysisForCertainProbes(categoryAnalysisResult.getBmdResult(),
+						forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportBMDAnalysisMenuItem);
 
 		setContextMenuCommonHandlers("Category Analysis", ctxMenu, categoryAnalysisResult);
 		return ctxMenu;
@@ -1008,6 +1123,24 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 
 		ctxMenu.getItems().addAll(getCommonMenuItems());
 		setContextMenuCommonHandlers("BMD Analysis", ctxMenu, bmdResults);
+
+		MenuItem exportDoseResponseMenuItem = new MenuItem(EXPORT_DOSE);
+		exportDoseResponseMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event)
+			{
+				Set<Probe> forTheseProbes = new HashSet<>();
+				bmdResults.getProbeStatResults().forEach(consumer ->
+				{
+					forTheseProbes.add(consumer.getProbeResponse().getProbe());
+				});
+				handle_AnalsyisResultExportDoseResponseForCertainProbes(
+						bmdResults.getDoseResponseExperiment(), forTheseProbes);
+			}
+		});
+
+		ctxMenu.getItems().add(exportDoseResponseMenuItem);
 
 		MenuItem exportBestModelsMenuItem = new MenuItem("Export Best Models");
 		exportBestModelsMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -1315,6 +1448,51 @@ public class ProjectNavigationView extends VBox implements IProjectNavigationVie
 			}
 		});
 
+	}
+
+	private void handle_AnalsyisResultExportBMDAnalysisForCertainProbes(BMDResult bmdResult,
+			Set<Probe> forTheseProbes)
+	{
+		File selectedFile = getFileToSave("Export Dose Response Data" + bmdResult.toString(),
+				"DoseResponse_" + bmdResult.toString() + ".txt");
+		if (selectedFile == null)
+			return;
+
+		BMDResult newBMDResult = new BMDResult(bmdResult);
+		newBMDResult.setProbeStatResults(new ArrayList<>());
+
+		bmdResult.getProbeStatResults().forEach(consumer ->
+		{
+			if (forTheseProbes.contains(consumer.getProbeResponse().getProbe()))
+				newBMDResult.getProbeStatResults().add(consumer);
+		});
+
+		presenter.exportBMDResultBestModel(newBMDResult, selectedFile);
+	}
+
+	private void handle_AnalsyisResultExportDoseResponseForCertainProbes(DoseResponseExperiment exp,
+			Set<Probe> forTheseProbes)
+	{
+		File selectedFile = getFileToSave("Export Dose Response Data" + exp.toString(),
+				"DoseResponse_" + exp.toString() + ".txt");
+		if (selectedFile == null)
+			return;
+
+		DoseResponseExperiment newExp = new DoseResponseExperiment();
+		newExp.setAnalysisInfo(exp.getAnalysisInfo());
+		newExp.setChip(exp.getChip());
+		newExp.setChipCreationDate(exp.getChipCreationDate());
+		newExp.setTreatments(exp.getTreatments());
+		newExp.setLogTransformation(exp.getLogTransformation());
+		newExp.setReferenceGeneAnnotations(exp.getReferenceGeneAnnotations());
+		newExp.setProbeResponses(new ArrayList<>());
+		for (ProbeResponse pr : exp.getProbeResponses())
+		{
+			if (forTheseProbes.contains(pr.getProbe()))
+				newExp.getProbeResponses().add(pr);
+		}
+
+		presenter.exportDoseResponseExperiment(newExp, selectedFile);
 	}
 
 	private void handle_BMDResultExportBestModels(BMDResult bmdResults)

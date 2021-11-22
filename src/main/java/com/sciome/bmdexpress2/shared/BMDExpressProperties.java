@@ -184,7 +184,7 @@ public class BMDExpressProperties
 		}
 		if (bmdMAInputFile.exists())
 		{
-			bmdMAInput = mapper.readValue(bmdInputFile, BMDMAInput.class);
+			bmdMAInput = mapper.readValue(bmdMAInputFile, BMDMAInput.class);
 		}
 		else
 		{
