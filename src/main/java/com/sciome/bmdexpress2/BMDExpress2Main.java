@@ -79,7 +79,7 @@ public class BMDExpress2Main extends Application
 			// permission the first time it is run. might as well get it
 			// out of the way while the It Admin is hanging around.
 			// runRScript();
-			primaryStage.setTitle("BMDExpress 2");
+			primaryStage.setTitle("BMDExpress 3");
 			primaryStage.show();
 
 			Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) ->

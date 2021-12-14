@@ -140,7 +140,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		notes.add("Benchmark Dose Analyses");
 		notes.add("Data Source: " + processableData.getParentDataSetName());
 		notes.add("Work Source: " + processableData.toString());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		notes.add("Operating System: " + System.getProperty("os.name"));
 

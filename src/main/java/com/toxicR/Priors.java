@@ -16,9 +16,9 @@ public class Priors
 	boolean isNCV = false;
 	boolean isMLE = false;
 	int distType = 1;
-	private final int LNORM=2;
-	private final int NORM=1;
-	private final int MLE=0;
+	private final int LNORM = 2;
+	private final int NORM = 1;
+	private final int MLE = 0;
 
 	// intialialize priors
 	public Priors(boolean ln, boolean ism)
@@ -38,9 +38,9 @@ public class Priors
 		// hill k is 3rd
 		// hill n is 4th
 		// power power is 3rd
-		
-		//lnormprior is 2
-		//normprior is 1
+
+		// lnormprior is 2
+		// normprior is 1
 
 		if (isNCV)
 		{
@@ -116,7 +116,7 @@ public class Priors
 					(isMLE ? MLE : LNORM), 0, 0.75, 0, 18, // 7
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 8
 			}, 8, 5);
-			
+
 		}
 
 		else if (!isNCV)
@@ -185,8 +185,6 @@ public class Priors
 					(isMLE ? MLE : NORM), 0, 10, -200, 200, // 6
 					(isMLE ? MLE : NORM), 0, 2, -18, 18// 7
 			}, 7, 5);
-			
-			
 
 		}
 

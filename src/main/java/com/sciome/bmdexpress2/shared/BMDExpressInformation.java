@@ -30,35 +30,34 @@ public class BMDExpressInformation
 
 	public void showVersionDialog(Scene scene, String version)
 	{
-		Platform.runLater(()->{
+		Platform.runLater(() ->
+		{
 			Dialog<String> dialog = new Dialog<>();
 			dialog.setTitle("About");
 			dialog.setHeaderText("Features and Bugs " + version);
-	
+
 			dialog.getDialogPane().setMinHeight(600);
 			dialog.getDialogPane().setMinWidth(800);
 			ScrollPane sp = new ScrollPane();
-	
-			
+
 			String content = BMDExpressProperties.getInstance().getVersionInfo();
-		
+
 			AnchorPane ap = new AnchorPane();
-		
-	
+
 			dialog.getDialogPane().getChildren().add(ap);
-	
+
 			ButtonType buttonTypeOk = new ButtonType("Okay", ButtonData.OK_DONE);
 			dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
 			dialog.initOwner(scene.getWindow());
 			dialog.initModality(Modality.WINDOW_MODAL);
-	
+
 			center(dialog, scene, 600, 800);
-			WebView label = new WebView();	
+			WebView label = new WebView();
 			label.getEngine().loadContent(content);
 			ap.getChildren().add(label);
 			label.setMinHeight(500);
 			label.setMaxHeight(500);
-	
+
 			dialog.showAndWait();
 		});
 
@@ -67,7 +66,7 @@ public class BMDExpressInformation
 	public void showSplashDialog(Scene scene)
 	{
 		Dialog<String> dialog = new Dialog<>();
-		dialog.setTitle("Welcome to BMDExpress 2.0");
+		dialog.setTitle("Welcome to BMDExpress 3");
 
 		Image simage = new Image("splash.png");
 

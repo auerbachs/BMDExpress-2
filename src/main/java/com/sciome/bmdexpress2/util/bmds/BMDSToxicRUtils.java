@@ -3,6 +3,8 @@ package com.sciome.bmdexpress2.util.bmds;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +39,8 @@ public class BMDSToxicRUtils
 	}
 
 	public static double[] calculateToxicR(int model, double[] Y, double[] doses, int bmdType, double BMR,
-			boolean isNCV, NormalDeviance deviance, boolean isFast) throws JsonMappingException, JsonProcessingException
+			boolean isNCV, NormalDeviance deviance, boolean isFast)
+			throws JsonMappingException, JsonProcessingException
 	{
 		boolean isIncreasing = ToxicRUtils.calculateDirection(doses, Y) > 0;
 		return calculateToxicR(model, Y, doses, bmdType, BMR, isNCV, isIncreasing, deviance, isFast);
@@ -77,9 +80,14 @@ public class BMDSToxicRUtils
 		// special logic for EXP3
 		double[] results = new double[6 + continousResult.getNparms() - extraparms
 				+ (extraoption != 0 ? 1 : 0) + (model == ToxicRConstants.EXP3 ? 1 : 0)];
-		results[0] = getBMD(continousResult.getBmdDist());
-		results[1] = getBMDL(continousResult.getBmdDist());
-		results[2] = getBMDU(continousResult.getBmdDist());
+
+		// throw away instance. just using this to get the bmd values
+		StatResult statResult = new HillResult();
+
+		calculateAndAssignBMDValues(continousResult.getBmdDist(), statResult);
+		results[0] = statResult.getBMD();
+		results[1] = statResult.getBMDL();
+		results[2] = statResult.getBMDU();
 
 		double p1 = -9999.0;
 		try
@@ -92,13 +100,13 @@ public class BMDSToxicRUtils
 																									// continousResult.getModelDF());
 			p1 = 1.0 - csd.cumulativeProbability(
 					2 * (continousResult.getMax().doubleValue() - avalue.doubleValue()));
-			//System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
-			//		+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
+			// System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+			// + continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
 		}
 		catch (Exception e)
 		{
-			//System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
-			//		+ continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1 + "\terror");
+			// System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
+			// + continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1 + "\terror");
 		}
 
 		if (Double.isFinite(p1) && !Double.isNaN(p1))
@@ -116,13 +124,12 @@ public class BMDSToxicRUtils
 
 		return results;
 	}
-	
+
 	public static ModelAveragingResult calculateToxicRMA(int[] models, double[] Y, double[] doses,
 			int bmdType, double BMR, boolean isNCV, boolean useMCMC)
 			throws JsonMappingException, JsonProcessingException
 	{
-		return calculateToxicRMA(models,  Y,  doses,
-				 bmdType,  BMR,  isNCV,  useMCMC,  true);
+		return calculateToxicRMA(models, Y, doses, bmdType, BMR, isNCV, useMCMC, false);
 	}
 
 	public static ModelAveragingResult calculateToxicRMA(int[] models, double[] Y, double[] doses,
@@ -178,10 +185,6 @@ public class BMDSToxicRUtils
 			for (int i = start; i < results.length; i++)
 				results[i] = continousResult.getParms().get(i - start);
 
-			Double bmd = getBMD(continousResult.getBmdDist());
-			Double bmdl = getBMDL(continousResult.getBmdDist());
-			Double bmdu = getBMDU(continousResult.getBmdDist());
-
 			Double fitp = 9999.0;
 
 			StatResult theStatResult = null;
@@ -227,9 +230,8 @@ public class BMDSToxicRUtils
 			{
 
 				theStatResult.setAIC(aic);
-				theStatResult.setBMD(bmd);
-				theStatResult.setBMDL(bmdl);
-				theStatResult.setBMDU(bmdu);
+
+				calculateAndAssignBMDValues(continousResult.getBmdDist(), theStatResult);
 				theStatResult.setFitLogLikelihood(logMax);
 				theStatResult.setFitPValue(fitp);
 				maModels.add(theStatResult);
@@ -242,9 +244,10 @@ public class BMDSToxicRUtils
 		List<Double> postProbs = new ArrayList<>();
 		postProbs.addAll(continousResultMA.getPostProbs());
 		maResult.setPosteriorProbabilities(postProbs);
-		maResult.setBMD(getBMD(continousResultMA.getBmdDist()));
-		maResult.setBMDL(getBMDL(continousResultMA.getBmdDist()));
-		maResult.setBMDU(getBMDU(continousResultMA.getBmdDist()));
+
+		// spline interpolation
+		calculateAndAssignBMDValues(continousResultMA.getBmdDist(), maResult);
+
 		maResult.setFitPValue(9999);
 		maResult.setSuccess("true");
 		maResult.setAdverseDirection((short) (isIncreasing ? 1 : -1));
@@ -252,32 +255,112 @@ public class BMDSToxicRUtils
 		return maResult;
 	}
 
-	private static double getBMDL(List<Double> bmdDist)
-	{
-		return getValueAtPercentile(0.05, bmdDist);
-	}
+	// private static double getBMDL(List<Double> bmdDist)
+	// {
+	// return getValueAtPercentile(0.05, bmdDist);
+	// }
 
-	private static double getBMDU(List<Double> bmdDist)
-	{
-		return getValueAtPercentile(0.95, bmdDist);
-	}
+	// private static double getBMDU(List<Double> bmdDist)
+	// {
+	// return getValueAtPercentile(0.95, bmdDist);
+	// }
 
-	private static double getBMD(List<Double> bmdDist)
-	{
-		return getValueAtPercentile(0.5, bmdDist);
-	}
+	// private static double getBMD(List<Double> bmdDist)
+	// {
+	// return getValueAtPercentile(0.5, bmdDist);
+	// }
 
-	private static double getValueAtPercentile(double percentile, List<Double> bmdDist)
+	// private static double getValueAtPercentile(double percentile, List<Double> bmdDist)
+	// {
+	// double currentPercentile = bmdDist.get(1);
+	// for (int i = 3; i < bmdDist.size(); i += 2)
+	// {
+	// if (percentile >= currentPercentile && percentile <= bmdDist.get(i))
+	// return bmdDist.get(i - 1);
+
+	// currentPercentile = bmdDist.get(i);
+	// }
+	// return Double.NaN;
+	// }
+
+	private static void calculateAndAssignBMDValues(List<Double> values, StatResult statResult)
 	{
-		double currentPercentile = bmdDist.get(1);
-		for (int i = 3; i < bmdDist.size(); i += 2)
+		List<Double> yValues = new ArrayList<>();
+		List<Double> xValues = new ArrayList<>();
+
+		// init these values to not-a-num
+		statResult.setBMD(Double.NaN);
+		statResult.setBMDL(Double.NaN);
+		statResult.setBMDU(Double.NaN);
+
+		Double prevX = values.get(values.size() - 1);
+		Double prevY = values.get(values.size() - 2);
+		for (int i = values.size() - 2; i >= 0; i -= 2)
 		{
-			if (percentile >= currentPercentile && percentile <= bmdDist.get(i))
-				return bmdDist.get(i - 1);
+			if (values.get(i) == -9999) // ignore the non numbers or 0.0 on x
+				continue;
 
-			currentPercentile = bmdDist.get(i);
+			// maintain strict monotonicity
+			if (i >= 0 && values.get(i) >= prevY)
+				continue;
+
+			if (i >= 0 && values.get(i + 1) >= prevX)
+				continue;
+			xValues.add(0, values.get(i + 1));
+			yValues.add(0, values.get(i));
+			prevX = values.get(i + 1);
+			prevY = values.get(i);
 		}
-		return Double.NaN;
+
+		LinearInterpolator interpolator = new LinearInterpolator();
+
+		double[] xarr = new double[xValues.size()];
+		double[] yarr = new double[yValues.size()];
+		int i = 0;
+		for (Double v : xValues)
+			xarr[i++] = v.doubleValue();
+		i = 0;
+		for (Double v : yValues)
+			yarr[i++] = v.doubleValue();
+
+		PolynomialSplineFunction func = null;
+		try
+		{
+			func = interpolator.interpolate(xarr, yarr);
+		}
+		catch (Exception e)
+		{}
+		if (func == null)
+			return; // get the heck out of here
+
+		try
+		{
+			statResult.setBMD(func.value(0.5));
+		}
+		catch (Exception e)
+		{
+			statResult.setBMD(Double.NaN);
+		}
+
+		try
+		{
+			statResult.setBMDL(func.value(0.05));
+		}
+		catch (Exception e)
+		{
+			statResult.setBMDL(Double.NaN);
+
+		}
+
+		try
+		{
+			statResult.setBMDU(func.value(0.95));
+		}
+		catch (Exception e)
+		{
+			statResult.setBMDU(Double.NaN);
+		}
+
 	}
 
 }

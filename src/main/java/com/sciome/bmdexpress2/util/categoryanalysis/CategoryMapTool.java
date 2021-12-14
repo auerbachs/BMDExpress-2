@@ -60,18 +60,18 @@ import com.sciome.bmdexpress2.util.stat.FishersExact;
 public class CategoryMapTool
 {
 
-	private BMDResult					bmdResults;
-	private ProbeGeneMaps				probeGeneMaps;
-	private BMDStatatistics				bmdStats;
-	private CategoryMapBase				categoryGeneMap;
+	private BMDResult bmdResults;
+	private ProbeGeneMaps probeGeneMaps;
+	private BMDStatatistics bmdStats;
+	private CategoryMapBase categoryGeneMap;
 
-	private String						rstName;
-	private ICategoryMapToolProgress	categoryMapProgress;
-	private AnalysisInfo				analysisInfo;
+	private String rstName;
+	private ICategoryMapToolProgress categoryMapProgress;
+	private AnalysisInfo analysisInfo;
 
-	String								pathwayDB;
+	String pathwayDB;
 
-	private CategoryAnalysisParameters	params;
+	private CategoryAnalysisParameters params;
 
 	/**
 	 * Class constructor
@@ -238,7 +238,7 @@ public class CategoryMapTool
 		analysisInfo.getNotes().add("Data Source: " + bmdResults.getDoseResponseExperiment().getName());
 		analysisInfo.getNotes().add("Work Source: " + bmdResults.getName());
 		analysisInfo.getNotes()
-				.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+				.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		analysisInfo.getNotes()
 				.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 
@@ -621,7 +621,6 @@ public class CategoryMapTool
 
 		}
 
-
 		return categoryAnalysisResults;
 	}
 
@@ -697,13 +696,13 @@ public class CategoryMapTool
 
 	private class FisherResult
 	{
-		Integer	a		= null;
-		Integer	b		= null;
-		Integer	c		= null;
-		Integer	d		= null;
-		Double	left	= null;
-		Double	right	= null;
-		Double	twoTail	= null;
+		Integer a = null;
+		Integer b = null;
+		Integer c = null;
+		Integer d = null;
+		Double left = null;
+		Double right = null;
+		Double twoTail = null;
 
 	}
 

@@ -67,22 +67,22 @@ import javafx.util.Callback;
 public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 {
 
-	private List<String>							pathways						= new ArrayList<>();
-	Set<String>										pathwaySet						= new HashSet<>();
+	private List<String> pathways = new ArrayList<>();
+	Set<String> pathwaySet = new HashSet<>();
 	// textfield to select pathway for whose genes to plot on curve viewer
-	private TextField								pathwayAutoCompleteTextField	= new TextField();
+	private TextField pathwayAutoCompleteTextField = new TextField();
 	// which categoryanalysis results to include. this is likley equivalent to which chemical. you might
 	// want to view more than one chemical
-	private CheckComboBox<CategoryAnalysisResults>	categoryAnalysisResultsCombo	= new CheckComboBox<>();
+	private CheckComboBox<CategoryAnalysisResults> categoryAnalysisResultsCombo = new CheckComboBox<>();
 
 	// the genes that are available to curveplot based on pathway and categoryanalysisresults selected.
-	private CheckComboBox<String>					geneCombo						= new CheckComboBox<>();
+	private CheckComboBox<String> geneCombo = new CheckComboBox<>();
 
-	private List<BMDExpressAnalysisDataSet>			categoryAnalysisResults;
-	private JFreeCurve								jfreeCurve;
-	private HBox									hbox;
-	private DataFilterPack							filterPack;
-	private VBox									vBox							= new VBox(8);
+	private List<BMDExpressAnalysisDataSet> categoryAnalysisResults;
+	private JFreeCurve jfreeCurve;
+	private HBox hbox;
+	private DataFilterPack filterPack;
+	private VBox vBox = new VBox(8);
 
 	public PathwayCurveViewer(List<BMDExpressAnalysisDataSet> categoryAnalysisResults,
 			DataFilterPack filterPack, SciomeChartListener chartListener)
@@ -129,7 +129,7 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 			alert.setTitle("Not Available For Your Data");
 			alert.setHeaderText("Not Available For Your Data");
 			alert.setContentText(
-					"The category analysis curve viewer is not available for at least one of these datasets because the data was generated with an older version of BMDExpress2.  Please rerun category analysis on the bmdanalysis results with the latest version of BMDExpress2 to be able to view them in curve viewer.");
+					"The category analysis curve viewer is not available for at least one of these datasets because the data was generated with an older version of BMDExpress.  Please rerun category analysis on the bmdanalysis results with the latest version of BMDExpress2 to be able to view them in curve viewer.");
 
 			alert.showAndWait();
 			return;
@@ -185,14 +185,15 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 	{
 		categoryAnalysisResultsCombo.getCheckModel().getCheckedItems()
 				.addListener(new ListChangeListener<CategoryAnalysisResults>() {
+					@Override
 					public void onChanged(ListChangeListener.Change<? extends CategoryAnalysisResults> c)
 					{
 						hbox.getChildren().remove(geneCombo);
 						geneCombo = new CheckComboBox<>();
 						geneCombo.getItems()
 								.setAll(getGenesThatAreInPathwayAndCategoryResults(
-										pathwayAutoCompleteTextField.getText(), categoryAnalysisResultsCombo
-												.getCheckModel().getCheckedItems()));
+										pathwayAutoCompleteTextField.getText(),
+										categoryAnalysisResultsCombo.getCheckModel().getCheckedItems()));
 						hbox.getChildren().add(geneCombo);
 						geneCombo.setMaxWidth(200);
 
@@ -207,6 +208,7 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 	private void setUpGeneComboListener()
 	{
 		geneCombo.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>() {
+			@Override
 			public void onChanged(ListChangeListener.Change<? extends String> c)
 			{
 				Map<BMDResult, Set<ProbeStatResult>> bmdResultMap = getBMDResultsForCurveView(
@@ -295,8 +297,8 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 
 					// if it is a combined row, make sure that the parent object is in the list
 					// of selected categoryanalysis results
-					if (row instanceof CombinedRow && !catResults
-							.contains((CategoryAnalysisResults) ((CombinedRow) row).getParentObject()))
+					if (row instanceof CombinedRow
+							&& !catResults.contains(((CombinedRow) row).getParentObject()))
 						continue;
 
 					// get the category analysis result
@@ -342,8 +344,8 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 
 					// if it is a combined row, make sure that the parent object is in the list
 					// of selected categoryanalysis results
-					if (row instanceof CombinedRow && !catResults
-							.contains((CategoryAnalysisResults) ((CombinedRow) row).getParentObject()))
+					if (row instanceof CombinedRow
+							&& !catResults.contains(((CombinedRow) row).getParentObject()))
 						continue;
 
 					CategoryAnalysisResults results = null;

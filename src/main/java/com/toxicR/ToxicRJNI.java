@@ -18,13 +18,12 @@ public class ToxicRJNI
 	}
 
 	// Declare a native method sayHello() that receives no arguments and returns void
-	
-	 private native String calcDeviance(int model, boolean suff_stat, double[] Y, double[] doses,
-				double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
-				double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
-				int degree);
 
-	
+	private native String calcDeviance(int model, boolean suff_stat, double[] Y, double[] doses, double[] sd,
+			double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
+			double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
+			int degree);
+
 	public native String runContinuousSingleJNI(int model, boolean suff_stat, double[] Y, double[] doses,
 			double[] sd, double[] n_group, double[] prior, int BMD_type, boolean isIncreasing, double BMR,
 			double tail_prob, int disttype, double alpha, int samples, int burnin, int parms, int prior_cols,
@@ -63,39 +62,40 @@ public class ToxicRJNI
 		int degree = getDegree(model);
 
 		String resultString = runContinuousSingleJNI(modelToRun, false, Y, doses, sd, n_group, priors,
-				bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree, isFast);
+				bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree,
+				isFast);
 
 		ContinuousResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousResult.class);
 
 		return result;
 	}
-	
+
 	// entry point to run continuous
-		public NormalDeviance calculateDeviance(int model, double[] Y, double[] doses, int bmdType, double BMR,
-				boolean isMLE, boolean isLogNormal, boolean isIncreasing)
-				throws JsonMappingException, JsonProcessingException
-		{
+	public NormalDeviance calculateDeviance(int model, double[] Y, double[] doses, int bmdType, double BMR,
+			boolean isMLE, boolean isLogNormal, boolean isIncreasing)
+			throws JsonMappingException, JsonProcessingException
+	{
 
-			Priors pr = new Priors(isLogNormal, isMLE);
-			double[] sd = new double[10];
-			double[] n_group = new double[10];
-			int modelToRun = getModelToRun(model);
-			int colCount = pr.getColCounts(model);
-			int rowCount = pr.getRowCount(model);
-			double[] priors = pr.getPriors(model);
-			int distType = pr.getDistType();
+		Priors pr = new Priors(isLogNormal, isMLE);
+		double[] sd = new double[10];
+		double[] n_group = new double[10];
+		int modelToRun = getModelToRun(model);
+		int colCount = pr.getColCounts(model);
+		int rowCount = pr.getRowCount(model);
+		double[] priors = pr.getPriors(model);
+		int distType = pr.getDistType();
 
-			int degree = getDegree(model);
+		int degree = getDegree(model);
 
-			String resultString = calcDeviance(modelToRun, false, Y, doses, sd, n_group, priors,
-					bmdType, isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree);
+		String resultString = calcDeviance(modelToRun, false, Y, doses, sd, n_group, priors, bmdType,
+				isIncreasing, BMR, .001, distType, 0.005, 21000, 1000, rowCount, colCount, degree);
 
-			NormalDeviance result = new ObjectMapper().readValue(fixNonNumerics(resultString),
-					NormalDeviance.class);
+		NormalDeviance result = new ObjectMapper().readValue(fixNonNumerics(resultString),
+				NormalDeviance.class);
 
-			return result;
-		}
+		return result;
+	}
 
 	private int getDegree(int model)
 	{
@@ -140,17 +140,18 @@ public class ToxicRJNI
 		int[] modelsToRun = getModelsToRun(models);
 		String resultString = runContinuousMAJNI(modelsToRun.length, modelsToRun, parms, actualparms,
 				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
-				isIncreasing, BMR, 0.001, 0.005, 25000, 1000,isFast);
+				isIncreasing, BMR, 0.001, 0.005, 25000, 1000, isFast);
 
 		ContinuousResultMA result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousResultMA.class);
+
 		return result;
 	}
 
 	// entry point to run continuous mcmc
 	public ContinuousMCMCResult runContinuousMCMC(int model, double[] Y, double[] doses, int bmdType,
-			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
-			throws JsonMappingException, JsonProcessingException
+			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
+			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
 		Priors pr = new Priors(isLogNormal, isMLE);
 		double[] sd = new double[10];
@@ -178,8 +179,8 @@ public class ToxicRJNI
 
 	// entry point to run coninuous mcmc model averaging
 	public ContinuousMCMCMAResult runContinuousMCMCMA(int[] models, double[] Y, double[] doses, int bmdType,
-			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing, boolean isFast)
-			throws JsonMappingException, JsonProcessingException
+			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
+			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
 		Priors pr = new Priors(isLogNormal, isMLE);
 		int[] disttypes = new int[models.length];
@@ -199,8 +200,11 @@ public class ToxicRJNI
 		String resultString = runContinuousMCMCMAJNI(models.length, modelsToRun, parms, actualparms,
 				prior_cols, disttypes, modelPriors, false, Y, doses, sd, n_group, priors, bmdType,
 				isIncreasing, BMR, 0.001, 0.005, samples, burnnin, isFast);
+
+		// System.out.println(resultString);
 		ContinuousMCMCMAResult result = new ObjectMapper().readValue(fixNonNumerics(resultString),
 				ContinuousMCMCMAResult.class);
+
 		return result;
 	}
 
@@ -218,11 +222,12 @@ public class ToxicRJNI
 
 	private String fixNonNumerics(String resultString)
 	{
-	
+
 		String returnString = resultString;
 
-		returnString = returnString.replace("-inf", "-9999").replace("-nan", "-9999").replace("inf", "-9999").replace("nan", "-9999");
-		
+		returnString = returnString.replace("-inf", "-9999").replace("-nan", "-9999").replace("inf", "-9999")
+				.replace("nan", "-9999");
+
 		return returnString;
 	}
 

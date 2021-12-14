@@ -78,9 +78,10 @@ public class HillResult extends StatResult
 	public double getResponseAt(double dose)
 	{
 		int base = 0;
-		double nom = curveParameters[base + 1] * Math.pow(dose, curveParameters[base + 2]);
+		double theDose = dose; // Math.log(dose + Math.sqrt(dose * dose + 1.0));
+		double nom = curveParameters[base + 1] * Math.pow(theDose, curveParameters[base + 2]);
 		double denom = Math.pow(curveParameters[base + 3], curveParameters[base + 2])
-				+ Math.pow(dose, curveParameters[base + 2]);
+				+ Math.pow(theDose, curveParameters[base + 2]);
 
 		return curveParameters[base] + nom / denom;
 	}
