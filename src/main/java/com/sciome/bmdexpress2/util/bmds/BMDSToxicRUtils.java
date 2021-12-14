@@ -301,7 +301,7 @@ public class BMDSToxicRUtils
 				continue;
 
 			// maintain strict monotonicity
-			if (i >= 0 && values.get(i) >= prevY)
+			if (i >= 0 && values.get(i) >= prevY && prevY != -9999)
 				continue;
 
 			if (i >= 0 && values.get(i + 1) >= prevX)
