@@ -70,6 +70,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_calcDeviance
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
     analysis.degree   = degree;
+    analysis.transform_dose   = 0;
     analysis.sd = new double[1];
     analysis.n_group = new double[1];
 
@@ -139,6 +140,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousSingleJNI
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
     analysis.degree   = degree;
+    analysis.transform_dose   = 0;
     analysis.sd = new double[1];
     analysis.n_group = new double[1];
 
@@ -210,8 +212,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
 
    continuousMA_result *ma_result = new continuousMA_result;
    ma_result->nmodels    = ma_analysis.nmodels;
-   ma_result->dist_numE  = 300;
-   ma_result->bmd_dist   = new double[300*2];
+   ma_result->dist_numE  = 400;
+   ma_result->bmd_dist   = new double[400*2];
    ma_result->post_probs = new double[ma_analysis.nmodels];
    ma_result->models     = new continuous_model_result*[ma_analysis.nmodels];
 
@@ -231,7 +233,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMAJNI
         ma_analysis.prior_cols[i] = pcols;
         ma_analysis.models[i]     = (int) models[i];
         ma_analysis.disttype[i]   = (int) disttypes[i];
-        ma_result->models[i] = new_continuous_model_result( ma_analysis.models[i], ma_analysis.nparms[i], 300); //have 300 equally
+        ma_result->models[i] = new_continuous_model_result( ma_analysis.models[i], ma_analysis.nparms[i], 400); //have 400 equally
     }
 
 
@@ -319,6 +321,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCSingleJNI
     analysis.parms        = parms;
     analysis.prior_cols   = prior_cols; 
     analysis.degree   = degree;
+    analysis.transform_dose   = 0;
     analysis.sd = new double[1];
     analysis.n_group = new double[1];
 
@@ -402,8 +405,8 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
   model_mcmc_info.nfits = ma_analysis.nmodels;
 
    ma_result->nmodels    = ma_analysis.nmodels;
-   ma_result->dist_numE  = 300;
-   ma_result->bmd_dist   = new double[300*2];
+   ma_result->dist_numE  = 400;
+   ma_result->bmd_dist   = new double[400*2];
    ma_result->post_probs = new double[ma_analysis.nmodels];
    ma_result->models     = new continuous_model_result*[ma_analysis.nmodels];
 
@@ -422,7 +425,7 @@ JNIEXPORT jstring JNICALL Java_com_toxicR_ToxicRJNI_runContinuousMCMCMAJNI
         ma_analysis.prior_cols[i] = pcols;
         ma_analysis.models[i]     = (int) models[i];
         ma_analysis.disttype[i]   = (int) disttypes[i];
-        ma_result->models[i] = new_continuous_model_result( ma_analysis.models[i], ma_analysis.nparms[i], 300); //have 300 equally
+        ma_result->models[i] = new_continuous_model_result( ma_analysis.models[i], ma_analysis.nparms[i], 400); //have 400 equally
         model_mcmc_info.analyses[i] = new_mcmc_analysis(ma_analysis.models[i], ma_analysis.nparms[i], samples);
     }
 
@@ -629,13 +632,13 @@ string convertMCMCSingleContinuousResultToJSON(continuous_model_result* result, 
   
   buffer << "\"result\":" <<  std::endl;
   buffer << convertSingleContinuousResultToJSON(result)<<endl;
-  buffer << ","<< std::endl;
+  //buffer << ","<< std::endl;
 
-  buffer << std::endl;
+  //buffer << std::endl;
 
-  buffer << "\"output\":";
-  buffer << convertBMDAnalysisMCMCOutputToJSON(output)<<endl;
-  buffer << std::endl;
+  //buffer << "\"output\":";
+  //buffer << convertBMDAnalysisMCMCOutputToJSON(output)<<endl;
+  //buffer << std::endl;
 
 
   buffer << "}" << std::endl;
@@ -657,12 +660,12 @@ string convertMCMCMAContinuousResultToJSON(continuousMA_result* result, ma_MCMCf
 
 
   buffer << "\"output\":" << "["<< std::endl;
-  for(unsigned int i=0;i<model_mcmc_info->nfits;i++)
-  {
-     buffer << convertBMDAnalysisMCMCOutputToJSON(model_mcmc_info->analyses[i])<< endl;
-     if(i+1 < model_mcmc_info->nfits)
-        buffer << ","<<endl;
-  }
+//  for(unsigned int i=0;i<model_mcmc_info->nfits;i++)
+// {
+//     buffer << convertBMDAnalysisMCMCOutputToJSON(model_mcmc_info->analyses[i])<< endl;
+//     if(i+1 < model_mcmc_info->nfits)
+//        buffer << ","<<endl;
+//  }
 
   buffer << "]"<< std::endl;
 
