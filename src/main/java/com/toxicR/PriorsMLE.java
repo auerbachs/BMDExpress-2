@@ -71,7 +71,7 @@ public class PriorsMLE
 			}, 6, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(MLE), 0, .1, -100, 100, // 1
-					(MLE), 0, 1, (isIncreasing ? 0 : -100), (isIncreasing ? 100 : 0), // 2
+					(MLE), 0, 1, (0), (100), // 2
 					(MLE), 0, .5, -20, 20, // 3
 					(MLE), 1, 0.2, 1, 18, // 4
 					(MLE), 0, 0.5, 0, 18, // 5
