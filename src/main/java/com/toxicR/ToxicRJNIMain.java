@@ -25,7 +25,7 @@ public class ToxicRJNIMain
 	{
 		// Constant
 
-		Priors pr = new Priors(false, false);
+		PriorsMLE pr = new PriorsMLE(false, false);
 
 		double[] doses = { 0, 0, 0, 0, 18, 18, 18, 18, 18, 20, 20, 20, 20, 30, 30, 30, 30, 35, 35, 35, 35, 40,
 				40, 40, 40, 40 };
@@ -97,7 +97,7 @@ public class ToxicRJNIMain
 
 	private void runPowerExample()
 	{
-		Priors pr = new Priors(false, false);
+		PriorsMLE pr = new PriorsMLE(false, false);
 
 		double[] doses = { 0, 0, 0, 0, 18, 18, 18, 18, 18, 20, 20, 20, 20, 30, 30, 30, 30, 35, 35, 35, 35, 40,
 				40, 40, 40, 40 };

@@ -50,7 +50,7 @@ public class ToxicRJNI
 			throws JsonMappingException, JsonProcessingException
 	{
 
-		Priors pr = new Priors(isLogNormal, isMLE);
+		PriorsMLE pr = new PriorsMLE(isLogNormal, isIncreasing);
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
 		int modelToRun = getModelToRun(model);
@@ -77,7 +77,7 @@ public class ToxicRJNI
 			throws JsonMappingException, JsonProcessingException
 	{
 
-		Priors pr = new Priors(isLogNormal, isMLE);
+		PriorsMLE pr = new PriorsMLE(isLogNormal, isIncreasing);
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
 		int modelToRun = getModelToRun(model);
@@ -123,7 +123,7 @@ public class ToxicRJNI
 		// System.out.print(Y[i] + ", ");
 		// System.out.println();
 
-		Priors pr = new Priors(isLogNormal, isMLE);
+		PriorsMA pr = new PriorsMA(isLogNormal);
 		int[] disttypes = new int[models.length];
 		for (int i = 0; i < models.length; i++)
 			disttypes[i] = pr.getDistType();
@@ -153,7 +153,7 @@ public class ToxicRJNI
 			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
 			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
-		Priors pr = new Priors(isLogNormal, isMLE);
+		PriorsMA pr = new PriorsMA(isLogNormal);
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
 		int modelToRun = getModelToRun(model);
@@ -182,7 +182,7 @@ public class ToxicRJNI
 			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
 			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
-		Priors pr = new Priors(isLogNormal, isMLE);
+		PriorsMA pr = new PriorsMA(isLogNormal);
 		int[] disttypes = new int[models.length];
 		for (int i = 0; i < models.length; i++)
 			disttypes[i] = pr.getDistType();
