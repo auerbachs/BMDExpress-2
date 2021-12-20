@@ -1,5 +1,7 @@
 package com.toxicR;
 
+import org.apache.commons.math3.stat.StatUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -122,8 +124,9 @@ public class ToxicRJNI
 		// for (int i = 0; i < Y.length; i++)
 		// System.out.print(Y[i] + ", ");
 		// System.out.println();
+		double lv = Math.log(StatUtils.variance(Y));
 
-		PriorsMA pr = new PriorsMA(isLogNormal);
+		PriorsMA pr = new PriorsMA(isLogNormal, lv);
 		int[] disttypes = new int[models.length];
 		for (int i = 0; i < models.length; i++)
 			disttypes[i] = pr.getDistType();
@@ -153,7 +156,7 @@ public class ToxicRJNI
 			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
 			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
-		PriorsMA pr = new PriorsMA(isLogNormal);
+		PriorsMA pr = new PriorsMA(isLogNormal, Math.log(StatUtils.variance(Y)));
 		double[] sd = new double[10];
 		double[] n_group = new double[10];
 		int modelToRun = getModelToRun(model);
@@ -182,7 +185,7 @@ public class ToxicRJNI
 			double BMR, int samples, int burnnin, boolean isMLE, boolean isLogNormal, boolean isIncreasing,
 			boolean isFast) throws JsonMappingException, JsonProcessingException
 	{
-		PriorsMA pr = new PriorsMA(isLogNormal);
+		PriorsMA pr = new PriorsMA(isLogNormal, Math.log(StatUtils.variance(Y)));
 		int[] disttypes = new int[models.length];
 		for (int i = 0; i < models.length; i++)
 			disttypes[i] = pr.getDistType();

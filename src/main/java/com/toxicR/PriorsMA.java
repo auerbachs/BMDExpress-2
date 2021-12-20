@@ -15,13 +15,13 @@ public class PriorsMA
 	private final int NORM = 1;
 
 	// intialialize priors
-	public PriorsMA(boolean ln)
+	public PriorsMA(boolean ln, double variance)
 	{
-		this(ln, 1);
+		this(ln, 1, 0.0);
 
 	}
 
-	public PriorsMA(boolean ln, double powerrestrict)
+	public PriorsMA(boolean ln, double powerrestrict, double logVariance)
 	{
 
 		isNCV = ln;
@@ -38,35 +38,35 @@ public class PriorsMA
 		if (isNCV)
 		{
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, 0, 100, // 1
-					(LNORM), 0, 1, 0, 100, // 2
+					(NORM), 0, 1, -100, 100, // 1
+					(LNORM), 0, 2, 0, 100, // 2
 					(NORM), 0, 1, -20, 20, // 3
-					(LNORM), Math.log(2), 0.4215, 0, 18, // 4
-					(LNORM), 0, 0.75, 0, 18, // 5
-					(NORM), 0, 2, -18, 18// 6
+					(LNORM), Math.log(1.6), 0.4214036, 0, 18, // 4
+					(LNORM), 0, 0.5, 0, 18, // 5
+					(NORM), logVariance, 1, -30, 30// 6
 			}, 6, 5);
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, 0, 100, // 1
-					(NORM), 0, 10, -1e4, 1e4, // 2
-					(LNORM), (Math.log(2)), 0.4215, (0), 40, // 3
-					(LNORM), 0, 0.75, 0, 18, // 4
-					(NORM), 0, 2, -18, 18 // 5
-			}, 5, 5);
-			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 0, 1, -100, 100, // 1
 					(NORM), 0, 10, -1e4, 1e4, // 2
-					(LNORM), 0, 1, 0, 100, // 3
-					(LNORM), (Math.log(2)), 0.4215, (0), 18, // 4
-					(LNORM), 0, .75, 0, 100, // 5
-					(NORM), 0, 2, -18, 18// 6
+					(LNORM), (Math.log(1.6)), 0.4214036, (0), 40, // 3
+					(LNORM), 0, 0.5, 0, 18, // 4
+					(NORM), logVariance, 1, -18, 18 // 5
+			}, 5, 5);
+			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
+					(NORM), 1, 1, -100, 100, // 1
+					(NORM), 0, 1, -100, 100, // 2
+					(LNORM), 0, 2, 0, 100, // 3
+					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
+					(LNORM), 0, 1, 0, 100, // 5
+					(NORM), logVariance, 1, -18, 18// 6
 			}, 6, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, 1e-8, 100, // 1
-					(NORM), 0, 10, -100, 100, // 2
-					(NORM), 0, 1, -20, 20, // 3
-					(LNORM), (Math.log(2)), 0.4215, (0), 18, // 4
+					(LNORM), 0, 1, 0, 100, // 1
+					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1, -100, 100, // 3
+					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
 					(LNORM), 0, 0.75, 0, 18, // 5
-					(NORM), 0, 2, -18, 18// 6
+					(NORM), logVariance, 1, -18, 18// 6
 			}, 6, 5);
 
 			funl = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
@@ -77,7 +77,7 @@ public class PriorsMA
 					(LNORM), 0, 0.5, 0, 100, // 5
 					(NORM), 0, 10, -200, 200, // 6
 					(LNORM), 0, 0.75, 0, 18, // 7
-					(NORM), 0, 2, -18, 18// 8
+					(NORM), logVariance, 2, -18, 18// 8
 			}, 8, 5);
 
 		}
@@ -85,31 +85,31 @@ public class PriorsMA
 		else if (!isNCV)
 		{
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, -100, 100, // 1
-					(NORM), 0, 2, 0, 100, // 2
-					(LNORM), 0, 1, 0, 18, // 3
-					(LNORM), (Math.log(2)), 1.2, (0), 18, // 4
-					(NORM), 0, 1, -18, 18// 5
+					(NORM), 1, 1, -100, 100, // 1
+					(NORM), 0, 1, -100, 100, // 2
+					(LNORM), 0, 2, 0, 100, // 3
+					(LNORM), (Math.log(1.6)), .4214036, 0, 18, // 4
+					(NORM), logVariance, 1, -30, 30 // 5
 			}, 5, 5);
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 0.1, -100, 100, // 1
-					(LNORM), 0, 1, 0, 100, // 2
+					(NORM), 0, 1, -100, 100, // 1
+					(LNORM), 0, 2, 0, 100, // 2
 					(NORM), 0, 1, -20, 20, // 3
-					(LNORM), Math.log(2), 0.4215, 0, 18, // 4
-					(NORM), 0, 2, -18, 18// 5
+					(LNORM), Math.log(1.6), 0.4214036, 0, 18, // 4
+					(NORM), logVariance, 2, -18, 18// 5
 			}, 5, 5);
 			power = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, -100, 100, // 1
-					(NORM), 0, 10, -1e2, 1e2, // 2
-					(LNORM), (Math.log(2)), 0.425, (0), 40, // 3
-					(NORM), 0, 2, -18, 18// 4
+					(NORM), 0, 1, -100, 100, // 1
+					(NORM), 0, 1, -100, 100, // 2
+					(LNORM), (Math.log(1.6)), 0.4214036, (0), 40, // 3
+					(NORM), logVariance, 1, -18, 18// 4
 			}, 4, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
-					(LNORM), 0, 1, 1e-8, 100, // 1
-					(NORM), 0, 10, -30, 30, // 2
-					(NORM), 0, 2, -20, 20, // 3
-					(LNORM), (Math.log(2)), 0.4215, (0), 18, // 4
-					(NORM), 0, 2, -18, 18// 5
+					(LNORM), 0, 1, 0, 100, // 1
+					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1, -100, 100, // 3
+					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
+					(NORM), logVariance, 1, -18, 18// 5
 			}, 5, 5);
 
 			funl = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
@@ -119,7 +119,7 @@ public class PriorsMA
 					(NORM), 0.5, 1, 0, 100, // 4
 					(LNORM), 0, 0.5, 0, 100, // 5
 					(NORM), 0, 10, -200, 200, // 6
-					(NORM), 0, 2, -18, 18// 7
+					(NORM), logVariance, 2, -18, 18// 7
 			}, 7, 5);
 
 		}
