@@ -17,7 +17,7 @@ public class PriorsMA
 	// intialialize priors
 	public PriorsMA(boolean ln, double variance)
 	{
-		this(ln, 1, 0.0);
+		this(ln, 1, variance);
 
 	}
 
