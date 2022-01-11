@@ -19,9 +19,11 @@ import com.sciome.bmdexpress2.mvp.model.probe.Treatment;
 import com.sciome.bmdexpress2.shared.eventbus.BMDExpressEventBus;
 import com.sciome.bmdexpress2.shared.eventbus.project.ShowErrorEvent;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -249,6 +251,7 @@ public class ExperimentFileUtil
 	 */
 	private boolean isFirstVecHeader(String[] headers, Window owner)
 	{
+		
 		for (int i = 1; i < headers.length; i++)
 		{
 			if (!isNumeric(headers[i]))
@@ -269,11 +272,17 @@ public class ExperimentFileUtil
 		alert.getDialogPane().setPrefSize(500, 300);
 		alert.initOwner(owner);
 		alert.initModality(Modality.WINDOW_MODAL);
-		WebView webView = new WebView();
-		webView.getEngine().loadContent(
-				"<html><b>First line looks like this:</b><p><pre> " + headerPreview + "</pre></html>");
-		webView.setPrefSize(150, 60);
-		alert.getDialogPane().setContent(webView);;
+		
+		final String finalHeaderPreview = headerPreview;
+	
+		//WebView webView = new WebView();
+		//webView.getEngine().loadContent(
+		//		"<html><b>First line looks like this:</b><p><pre> " + finalHeaderPreview + "</pre></html>");
+		//webView.setPrefSize(150, 60);
+		
+		Label headerLabel = new Label();
+		headerLabel.setText("First line looks like this: " + finalHeaderPreview );
+		alert.getDialogPane().setContent(headerLabel);
 		// alert.setContentText("<b> First line looks like this: </b><p>" + headerPreview);
 
 		ButtonType buttonYes = new ButtonType("Yes");
