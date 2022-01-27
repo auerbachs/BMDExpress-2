@@ -639,7 +639,6 @@ public class PrefilterService implements IPrefilterService
 		else if (processableData.getLogTransformation().equals(LogTransformationEnum.NONE))
 			isLogTransformation = false;
 
-		// get a list of williamsTrendResult
 		List<ProbeResponse> responses = doseResponseExperiment.getProbeResponses();
 		List<Treatment> treatments = doseResponseExperiment.getTreatments();
 		Double maxDose = treatments.get(treatments.size() - 1).getDose().doubleValue();
@@ -685,26 +684,16 @@ public class PrefilterService implements IPrefilterService
 		modelSelectionParams.setBestPolyModelTest(BestPolyModelTestEnum.LOWEST_AIC);
 		modelSelectionParams.setpValue(0.05);
 
-		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(processableData, inputParams,
-				modelSelectionParams, modelsToRun, null, updater);
-
+		// first do the fold filter and trend test
 		List<CurveFitPrefilterResult> curveFitResultList = new ArrayList<>();
-		for (ProbeStatResult result : bmdResult.getProbeStatResults())
+		for (ProbeResponse result : processableData.getProcessableProbeResponses())
 		{
 			if (!cancel)
 			{
-				if (result.getBestStatResult() != null)
-					if (result.getBestBMD() != null)
-						if (result.getBestBMD() < maxDose)
-						{
-							CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
-							singleResult.setpValue(result.getBestFitPValue());
-							singleResult.setProbeResponse(result.getProbeResponse());
-							singleResult.setBestModel(result.getBestStatResult().getModel());
-							singleResult.setBmd(result.getBestBMD());
-							singleResult.setBmdl(result.getBestBMDL());
-							curveFitResultList.add(singleResult);
-						}
+
+				CurveFitPrefilterResult singleResult = new CurveFitPrefilterResult();
+				singleResult.setProbeResponse(result);
+				curveFitResultList.add(singleResult);
 			}
 			else
 			{
@@ -712,7 +701,7 @@ public class PrefilterService implements IPrefilterService
 			}
 		}
 
-		// create a new WilliamsTrendResults object and put it on the Event BuS
+		// create a new curve fit prefilter object and put it on the Event BuS
 		CurveFitPrefilterResults curveFitPrefilterResults = new CurveFitPrefilterResults();
 		curveFitPrefilterResults.setDoseResponseExperiement(doseResponseExperiment);
 		curveFitPrefilterResults.setCurveFitPrefilterResults(curveFitResultList);
@@ -721,10 +710,54 @@ public class PrefilterService implements IPrefilterService
 				baseValue, useFoldFilter);
 		performNoelLoel(curveFitPrefilterResults, loelPValue, loelFoldChange, tTest, numThreads, null);
 
+		Map<String, CurveFitPrefilterResult> probesThatPassedSet = new HashMap<>();
+		for (CurveFitPrefilterResult r : curveFitPrefilterResults.getCurveFitPrefilterResults())
+			probesThatPassedSet.put(r.getProbeID(), r);
+
 		if (cancel)
 		{
 			return null;
 		}
+
+		// create a reduced processable data input to make things more efficient
+		DoseResponseExperiment de = new DoseResponseExperiment();
+		de.setTreatments(processableData.getProcessableDoseResponseExperiment().getTreatments());
+		de.setLogTransformation(processableData.getLogTransformation());
+		de.setName(processableData.getDataSetName());
+		List<ProbeResponse> responseList = new ArrayList<>();
+		curveFitResultList.forEach(c -> responseList.add(c.getProbeResponse()));
+		de.setProbeResponses(responseList);
+
+		// second do the analysis
+		BMDResult bmdResult = bmdAnalysisService.bmdAnalysis(de, inputParams, modelSelectionParams,
+				modelsToRun, null, updater);
+
+		List<CurveFitPrefilterResult> nextcurveFitResultList = new ArrayList<>();
+		for (ProbeStatResult result : bmdResult.getProbeStatResults())
+		{
+			if (!cancel)
+			{
+				if (result.getBestStatResult() != null)
+					if (result.getBestBMD() != null)
+						if (result.getBestBMD() < maxDose)
+						{
+							CurveFitPrefilterResult singleResult = probesThatPassedSet
+									.get(result.getProbeResponse().getProbe().getId());
+							singleResult.setpValue(result.getBestFitPValue());
+							singleResult.setProbeResponse(result.getProbeResponse());
+							singleResult.setBestModel(result.getBestStatResult().getModel());
+							singleResult.setBmd(result.getBestBMD());
+							singleResult.setBmdl(result.getBestBMDL());
+							nextcurveFitResultList.add(singleResult);
+						}
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		curveFitPrefilterResults.setCurveFitPrefilterResults(nextcurveFitResultList);
 
 		DecimalFormat df = new DecimalFormat("#.####");
 		String name = doseResponseExperiment.getName() + "_curvefitprefilter";

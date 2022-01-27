@@ -12,7 +12,9 @@ import com.sciome.bmdexpress2.mvp.model.probe.ProbeResponse;
 
 @JsonTypeInfo(use = Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({ @Type(value = OneWayANOVAResult.class, name = "onewayanovaresult"),
-		@Type(value = WilliamsTrendResult.class, name = "williamstrendresult") })
+		@Type(value = WilliamsTrendResult.class, name = "williamstrendresult"),
+		@Type(value = OriogenResult.class, name = "oriogentrendresult"),
+		@Type(value = CurveFitPrefilterResult.class, name = "curvefittrendresult") })
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@ref")
 public interface PrefilterResult
 {

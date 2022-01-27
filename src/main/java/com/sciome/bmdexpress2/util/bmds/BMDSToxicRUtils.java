@@ -92,16 +92,13 @@ public class BMDSToxicRUtils
 		double p1 = -9999.0;
 		try
 		{
-
 			Double avalue = deviance.getA3();
 			if (!isNCV)
 				avalue = deviance.getA1();
-			ChiSquaredDistribution csd = new ChiSquaredDistribution(continousResult.getTotalDF()); // -
-																									// continousResult.getModelDF());
+			ChiSquaredDistribution csd = new ChiSquaredDistribution(continousResult.getModelDF());
 			p1 = 1.0 - csd.cumulativeProbability(
 					2 * (continousResult.getMax().doubleValue() - avalue.doubleValue()));
-			// System.out.println(continousResult.getTotalDF() + "\t" + continousResult.getModelDF() + "\t"
-			// + continousResult.getMax() + "\t" + deviance.getA3() + "\t" + p1);
+
 		}
 		catch (Exception e)
 		{

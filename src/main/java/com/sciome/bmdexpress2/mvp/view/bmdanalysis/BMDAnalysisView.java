@@ -200,7 +200,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private final String CONSTANT_VARIANCE = "Constant";
 
 	private final String WALD_METHOD_BMDUL_ESTIMATION = "Wald, Ewald Method";
-	private final String EPA_METHOD_BMDUL_ESTIMATION = "EPA Method";
+	private final String EPA_METHOD_BMDUL_ESTIMATION = "Profile Likelihood";
 
 	public BMDAnalysisView()
 	{
@@ -551,7 +551,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 	public void handle_PowerCheckBox(ActionEvent event)
 	{
-		if (!useToxicR)
+		if (!useToxicR && !this.toxicRMethodRadio.isSelected())
 		{
 			restrictPowerComboBox.setDisable(!powerCheckBox.isSelected());
 			restrictPowerLabel.setDisable(!powerCheckBox.isSelected());
@@ -592,6 +592,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		{
 			restrictPowerComboBox.setDisable(false);
 			restrictPowerLabel.setDisable(false);
+
+		}
+		else
+		{
+			restrictPowerComboBox.setDisable(true);
+			restrictPowerLabel.setDisable(true);
 
 		}
 
@@ -646,7 +652,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(true);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
-		funlCheckBox.setDisable(false);
+		funlCheckBox.setDisable(true);
 		bmdULEstimationMethod.setDisable(true);
 
 		this.varianceType.setDisable(false);
@@ -677,7 +683,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		poly4CheckBox.setDisable(true);
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
-		funlCheckBox.setDisable(false);
+		funlCheckBox.setDisable(true);
 
 		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
