@@ -228,6 +228,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		if (this.origMethodRadio.isSelected())
 		{
 			funlCheckBox.setDisable(true);
+			funlCheckBox.setVisible(false);
 			this.bmdULEstimationMethod.setDisable(true);
 		}
 		else
@@ -580,6 +581,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
+		funlCheckBox.setVisible(false);
 
 		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(false);
@@ -622,6 +624,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
+		funlCheckBox.setVisible(false);
 		this.bmdULEstimationMethod.setDisable(false);
 
 		this.varianceType.setDisable(false);
@@ -653,7 +656,15 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		powerCheckBox.setDisable(false);
 		hillCheckBox.setDisable(false);
 		funlCheckBox.setDisable(true);
+		funlCheckBox.setVisible(false);
 		bmdULEstimationMethod.setDisable(true);
+
+		exponential2CheckBox.setVisible(false);
+		exponential4CheckBox.setVisible(false);
+		linearCheckBox.setVisible(false);
+		poly2CheckBox.setVisible(false);
+		poly3CheckBox.setVisible(false);
+		poly4CheckBox.setVisible(false);
 
 		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
@@ -673,17 +684,28 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		if (value == false)
 			return;
 		// enable certain models;
-		exponential2CheckBox.setDisable(true);
 		exponential3CheckBox.setDisable(false);
-		exponential4CheckBox.setDisable(true);
+
 		exponential5CheckBox.setDisable(false);
+		powerCheckBox.setDisable(false);
+		hillCheckBox.setDisable(false);
+
+		exponential2CheckBox.setDisable(true);
+		exponential4CheckBox.setDisable(true);
 		linearCheckBox.setDisable(true);
 		poly2CheckBox.setDisable(true);
 		poly3CheckBox.setDisable(true);
 		poly4CheckBox.setDisable(true);
-		powerCheckBox.setDisable(false);
-		hillCheckBox.setDisable(false);
+
+		exponential2CheckBox.setVisible(false);
+		exponential4CheckBox.setVisible(false);
+		linearCheckBox.setVisible(false);
+		poly2CheckBox.setVisible(false);
+		poly3CheckBox.setVisible(false);
+		poly4CheckBox.setVisible(false);
+
 		funlCheckBox.setDisable(true);
+		funlCheckBox.setVisible(false);
 
 		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
