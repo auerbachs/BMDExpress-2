@@ -241,6 +241,12 @@
                                                 <Label alignment="CENTER_RIGHT" prefHeight="16.0" text="Variance:" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                                                 <Label alignment="CENTER_RIGHT" prefHeight="17.0" text="BMDU/L Estimation Method:" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                                                 <Label fx:id="restrictPowerLabel" alignment="CENTER_RIGHT" prefHeight="17.0" text="Restrict Power:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" />
+                                                <ComboBox fx:id="restrictHillComboBox" prefHeight="27.0" prefWidth="124.0" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets left="10.0" />
+                                                   </GridPane.margin>
+                                                </ComboBox>
+                                                <Label fx:id="restrictHillLabel" alignment="CENTER_RIGHT" prefHeight="17.0" text="Restrict Hill:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                                              </children>
                                           </GridPane>
                                        </children>

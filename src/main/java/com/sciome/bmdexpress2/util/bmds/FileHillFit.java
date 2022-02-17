@@ -112,7 +112,7 @@ public class FileHillFit extends FileFitBase
 		bf.append(inputParameters.getRelFuncConvergence() + space1);
 		bf.append(inputParameters.getParamConvergence() + space1);
 		bf.append(inputParameters.getBmdlCalculation() + space1);
-		bf.append(inputParameters.getRestrictN() + space1);
+		bf.append(inputParameters.getRestrictHill() + space1);
 		bf.append(inputParameters.getBmdCalculation() + space1);
 		bf.append(inputParameters.getAppend() + space1);
 		bf.append(inputParameters.getSmooth() + newline);// 1.00E-08 1.00E-08 0 1 1 0 0

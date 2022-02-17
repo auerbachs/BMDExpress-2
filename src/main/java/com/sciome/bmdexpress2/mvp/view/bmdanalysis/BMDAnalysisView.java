@@ -30,6 +30,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.FunlModel;
 import com.sciome.bmdexpress2.util.bmds.shared.HillModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PolyModel;
 import com.sciome.bmdexpress2.util.bmds.shared.PowerModel;
+import com.sciome.bmdexpress2.util.bmds.shared.RestrictHillEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.RestrictPowerEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.StatModel;
 
@@ -110,6 +111,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private ComboBox restrictPowerComboBox;
 
 	@FXML
+	private ComboBox restrictHillComboBox;
+
+	@FXML
 	private ComboBox bestPolyTestComboBox;
 	@FXML
 	private ComboBox pValueCutoffComboBox;
@@ -140,6 +144,9 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	private Label bestModelSeletionWithFlaggedHillLabel;
 	@FXML
 	private Label restrictPowerLabel;
+
+	@FXML
+	private Label restrictHillLabel;
 
 	@FXML
 	private ProgressBar progressBar;
@@ -428,6 +435,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		input.setBmrType(this.bMRTypeComboBox.getSelectionModel().getSelectedItem().toString());
 		input.setBMRFactor((BMRFactor) this.bMRFactorComboBox.getValue());
 		input.setRestrictPower((RestrictPowerEnum) this.restrictPowerComboBox.getValue());
+		input.setRestrictHill((RestrictHillEnum) this.restrictHillComboBox.getValue());
 		input.setBestPolyModelTest((BestPolyModelTestEnum) this.bestPolyTestComboBox.getValue());
 		input.setkParameterLessThan((FlagHillModelDoseEnum) this.flagHillkParamComboBox.getValue());
 		input.setBestModelWithFlaggedHill(
@@ -548,6 +556,17 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		modifyFlaggedHillBMDLabel.setDisable(!hillCheckBox.isSelected());
 		modifyFlaggedHillBMDTextField.setDisable(!hillCheckBox.isSelected());
 		handle_FlagHillCheckBox(event);
+
+		if (!useToxicR && !this.toxicRMethodRadio.isSelected())
+		{
+			restrictHillComboBox.setDisable(!hillCheckBox.isSelected());
+			restrictHillLabel.setDisable(!hillCheckBox.isSelected());
+		}
+		else
+		{
+			restrictHillComboBox.setDisable(true);
+			restrictHillLabel.setDisable(true);
+		}
 	}
 
 	public void handle_PowerCheckBox(ActionEvent event)
@@ -603,6 +622,19 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		}
 
+		if (hillCheckBox.isSelected())
+		{
+			restrictHillComboBox.setDisable(false);
+			restrictHillLabel.setDisable(false);
+
+		}
+		else
+		{
+			restrictHillComboBox.setDisable(true);
+			restrictHillLabel.setDisable(true);
+
+		}
+
 		// enable all parameters
 
 	}
@@ -629,7 +661,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 
 		this.varianceType.setDisable(false);
 		this.confidenceLevelComboBox.setDisable(true);
+		this.restrictPowerLabel.setDisable(true);
 		this.restrictPowerComboBox.setDisable(true);
+		this.restrictHillLabel.setDisable(true);
+		this.restrictHillComboBox.setDisable(true);
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
@@ -672,6 +707,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
+		restrictHillComboBox.setDisable(true);
+		restrictHillLabel.setDisable(true);
 		killTimeComboBox.setDisable(true);
 
 		// disable some parameters
@@ -713,6 +750,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		this.maximumIterationsTextField.setDisable(true);
 		restrictPowerComboBox.setDisable(true);
 		restrictPowerLabel.setDisable(true);
+		restrictHillComboBox.setDisable(true);
+		restrictHillLabel.setDisable(true);
 		killTimeComboBox.setDisable(true);
 		bmdULEstimationMethod.setDisable(true);
 
@@ -739,6 +778,10 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			this.varianceType.setDisable(false);
 			this.confidenceLevelComboBox.setDisable(true);
 			this.restrictPowerComboBox.setDisable(true);
+			restrictPowerComboBox.setDisable(true);
+			restrictPowerLabel.setDisable(true);
+			restrictHillComboBox.setDisable(true);
+			restrictHillLabel.setDisable(true);
 			this.maximumIterationsTextField.setDisable(true);
 		}
 		else
@@ -788,6 +831,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 		confidenceLevelComboBox.getItems().add("0.99");
 		// init restrict power
 		restrictPowerComboBox.getItems().addAll(RestrictPowerEnum.values());
+		restrictHillComboBox.getItems().addAll(RestrictHillEnum.values());
 		// init best poly model test
 		bestPolyTestComboBox.getItems().setAll(BestPolyModelTestEnum.values());
 		// pValue Cut OFF
@@ -849,6 +893,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 			confidenceLevelComboBox.getSelectionModel().select(input.getConfidenceLevel());
 
 			restrictPowerComboBox.getSelectionModel().select(input.getRestrictPower());
+			restrictHillComboBox.getSelectionModel().select(input.getRestrictHill());
 
 			bestPolyTestComboBox.getSelectionModel().select(input.getBestPolyModelTest());
 			pValueCutoffComboBox.getSelectionModel().select(input.getpValueCutoff());
@@ -1007,6 +1052,7 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 					.setConstantVariance((this.varianceType.getValue().equals(CONSTANT_VARIANCE)) ? 1 : 0);
 			// for simulation only?
 			inputParameters.setRestirctPower(restrictPowerComboBox.getSelectionModel().getSelectedIndex());
+			inputParameters.setRestrictHill(restrictHillComboBox.getSelectionModel().getSelectedIndex());
 
 			if (inputParameters.getConstantVariance() == 0)
 			{

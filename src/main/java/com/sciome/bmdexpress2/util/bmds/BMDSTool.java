@@ -175,6 +175,10 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		if (modelsToRun != null && isModelInThere("power", modelsToRun)
 				&& inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
 			notes.add("Restrict Power: " + inputParameters.getRestirctPower());
+
+		if (modelsToRun != null && isModelInThere("hill", modelsToRun)
+				&& inputParameters.getBmdMethod().equals(BMD_METHOD.ORIGINAL))
+			notes.add("Restrict Hill: " + inputParameters.getRestrictHill());
 		notes.add("Highest Dose: " + maxDose);
 		notes.add("Lowest Positive Dose: " + lowPDose);
 

@@ -64,7 +64,7 @@ public class PriorsMLE
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(MLE), 0, 1, -100, 100, // 1
 					(MLE), 0, 2, (isIncreasing ? 0 : -100), (isIncreasing ? 100 : 0), // 2
-					(MLE), 0, 1, 0, 18, // 3
+					(MLE), 0, 1, 0, 5, // 3
 					(MLE), 0.1823216, 1, 1, 18, // 4
 					(MLE), 0, 2, -18, 18, // 5
 					(MLE), 0, 2, -18, 18// 6
@@ -126,7 +126,7 @@ public class PriorsMLE
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(MLE), 0, 1, -100, 100, // 1
 					(MLE), 0, 2, (isIncreasing ? 0 : -100), (isIncreasing ? 100 : 0), // 2
-					(MLE), 0, 1, 0, 18, // 3
+					(MLE), 0, 1, 0, 5, // 3
 					(MLE), 1, 1.2, 1, 18, // 4
 					(MLE), 0, 1, -18, 18// 5
 			}, 5, 5);

@@ -5,6 +5,7 @@ import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionBMDLandBMDU;
 import com.sciome.bmdexpress2.util.bmds.shared.BestModelSelectionWithFlaggedHillModelEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.BestPolyModelTestEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.FlagHillModelDoseEnum;
+import com.sciome.bmdexpress2.util.bmds.shared.RestrictHillEnum;
 import com.sciome.bmdexpress2.util.bmds.shared.RestrictPowerEnum;
 
 public class BMDInput
@@ -32,6 +33,7 @@ public class BMDInput
 	private BMRFactor BMRFactor;
 	private String bmrType;
 	private RestrictPowerEnum restrictPower;
+	private RestrictHillEnum restrictHill;
 	private BestPolyModelTestEnum bestPolyModelTest;
 	private FlagHillModelDoseEnum kParameterLessThan;
 	private BestModelSelectionWithFlaggedHillModelEnum bestModelWithFlaggedHill;
@@ -63,21 +65,31 @@ public class BMDInput
 
 		BMRFactor = new BMRFactor("1.021 (5%)", "1.021");
 		restrictPower = RestrictPowerEnum.NO_RESTRICTION;
+		restrictHill = RestrictHillEnum.NO_RESTRICTION;
 		bestPolyModelTest = BestPolyModelTestEnum.NESTED_CHI_SQUARED;
 		kParameterLessThan = FlagHillModelDoseEnum.ONE_THIRD_OF_LOWEST_DOSE;
 		bestModelWithFlaggedHill = BestModelSelectionWithFlaggedHillModelEnum.SELECT_NEXT_BEST_PVALUE_GREATER_OO5;
 		bestModelSelectionBMDLandBMDU = BestModelSelectionBMDLandBMDU.COMPUTE_AND_UTILIZE_BMD_BMDL;
 	}
 
-	
-	
-	
-	public boolean isUseWald() {
+	public boolean isUseWald()
+	{
 		return useWald;
 	}
 
-	public void setUseWald(boolean useWald) {
+	public void setUseWald(boolean useWald)
+	{
 		this.useWald = useWald;
+	}
+
+	public RestrictHillEnum getRestrictHill()
+	{
+		return restrictHill;
+	}
+
+	public void setRestrictHill(RestrictHillEnum restrictHill)
+	{
+		this.restrictHill = restrictHill;
 	}
 
 	public boolean isFunl()

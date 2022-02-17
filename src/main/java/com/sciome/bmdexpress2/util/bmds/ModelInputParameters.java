@@ -24,6 +24,7 @@ public class ModelInputParameters
 	private int restrictN = 1;
 	private int restrictBetas = 1;
 	private int restirctPower = 1;
+	private int restrictHill = 1;
 	private int append = 0;
 	private int smooth = 0;
 	private int bmrType = 1;
@@ -69,17 +70,16 @@ public class ModelInputParameters
 	private String[][] columns = { { "DOSE", "RESPONSE" }, { "DOSE", "NI", "MEAN", "STD" } };
 	private String BMDSMajorVersion;
 	private String MAMethod;
-	
-	private boolean isFast =false;
-	
-	
-	
 
-	public boolean isFast() {
+	private boolean isFast = false;
+
+	public boolean isFast()
+	{
 		return isFast;
 	}
 
-	public void setFast(boolean isFast) {
+	public void setFast(boolean isFast)
+	{
 		this.isFast = isFast;
 	}
 
@@ -211,6 +211,16 @@ public class ModelInputParameters
 	public void setRestirctPower(int restirctPower)
 	{
 		this.restirctPower = restirctPower;
+	}
+
+	public int getRestrictHill()
+	{
+		return restrictHill;
+	}
+
+	public void setRestrictHill(int restirctHill)
+	{
+		this.restrictHill = restirctHill;
 	}
 
 	public int getAppend()
