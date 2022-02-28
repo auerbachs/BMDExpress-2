@@ -231,6 +231,8 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 	{
 		this.progressBar.setVisible(false);
 		this.exponential2CheckBox.setDisable(false);
+		this.restrictHillComboBox.setVisible(false);
+		restrictHillLabel.setVisible(false);
 
 		if (this.origMethodRadio.isSelected())
 		{
@@ -1052,7 +1054,12 @@ public class BMDAnalysisView extends BMDExpressViewBase implements IBMDAnalysisV
 					.setConstantVariance((this.varianceType.getValue().equals(CONSTANT_VARIANCE)) ? 1 : 0);
 			// for simulation only?
 			inputParameters.setRestirctPower(restrictPowerComboBox.getSelectionModel().getSelectedIndex());
-			inputParameters.setRestrictHill(restrictHillComboBox.getSelectionModel().getSelectedIndex());
+
+			// restrict hill has been tried, but to no avail. we will default restrict hill to 1. but we have
+			// code
+			// if in the future we want to turn this on
+			// inputParameters.setRestrictHill(restrictHillComboBox.getSelectionModel().getSelectedIndex());
+			inputParameters.setRestrictHill(1);
 
 			if (inputParameters.getConstantVariance() == 0)
 			{

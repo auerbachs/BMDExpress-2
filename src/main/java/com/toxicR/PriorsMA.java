@@ -39,7 +39,7 @@ public class PriorsMA
 		{
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 0, 1, -100, 100, // 1
-					(LNORM), 0, 2, 0, 100, // 2
+					(LNORM), 0, 6.9, 0, 10000, // 2
 					(NORM), 0, 1, -20, 20, // 3
 					(LNORM), Math.log(1.6), 0.4214036, 0, 18, // 4
 					(LNORM), 0, 0.5, 0, 18, // 5
@@ -54,7 +54,7 @@ public class PriorsMA
 			}, 5, 5);
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 1, 1, -100, 100, // 1
-					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1000, -10000, 10000, // 2
 					(LNORM), 0, 2, 0, 100, // 3
 					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
 					(LNORM), 0, 1, 0, 100, // 5
@@ -62,7 +62,7 @@ public class PriorsMA
 			}, 6, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(LNORM), 0, 1, 0, 100, // 1
-					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1000, -10000, 10000, // 2
 					(NORM), 0, 1, -100, 100, // 3
 					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
 					(LNORM), 0, 0.75, 0, 18, // 5
@@ -86,14 +86,14 @@ public class PriorsMA
 		{
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 1, 1, -100, 100, // 1
-					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1000, -10000, 10000, // 2
 					(LNORM), 0, 2, 0, 100, // 3
 					(LNORM), (Math.log(1.6)), .4214036, 0, 18, // 4
 					(NORM), logVariance, 1, -30, 30 // 5
 			}, 5, 5);
 			exp3 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 0, 1, -100, 100, // 1
-					(LNORM), 0, 2, 0, 100, // 2
+					(LNORM), 0, 6.9, 0, 10000, // 2
 					(NORM), 0, 1, -20, 20, // 3
 					(LNORM), Math.log(1.6), 0.4214036, 0, 18, // 4
 					(NORM), logVariance, 2, -18, 18// 5
@@ -106,7 +106,7 @@ public class PriorsMA
 			}, 4, 5);
 			exp5 = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(LNORM), 0, 1, 0, 100, // 1
-					(NORM), 0, 1, -100, 100, // 2
+					(NORM), 0, 1000, -10000, 10000, // 2
 					(NORM), 0, 1, -100, 100, // 3
 					(LNORM), (Math.log(1.6)), 0.4214036, (0), 18, // 4
 					(NORM), logVariance, 1, -18, 18// 5
