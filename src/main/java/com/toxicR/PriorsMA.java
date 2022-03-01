@@ -82,7 +82,7 @@ public class PriorsMA
 
 		}
 
-		else if (!isNCV)
+		else if (!isNCV) // aka: Constant Variance
 		{
 			hill = ToxicRUtils.convert2ColumnMajorOrder(new double[] { // priors
 					(NORM), 1, 1, -100, 100, // 1
