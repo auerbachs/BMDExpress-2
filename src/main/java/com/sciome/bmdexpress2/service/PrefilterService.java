@@ -78,7 +78,7 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Williams Trend Test");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		notes.add("Number of Permutations: " + String.valueOf(numberOfPermutations));
@@ -262,7 +262,7 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Oriogen");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		if (multipleTestingCorrection)
@@ -493,7 +493,7 @@ public class PrefilterService implements IPrefilterService
 		notes.add("One-way ANOVA");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 
 		if (multipleTestingCorrection)
@@ -619,7 +619,7 @@ public class PrefilterService implements IPrefilterService
 		notes.add("Curve Fit Prefilter");
 		notes.add("Data Source: " + processableData);
 		notes.add("Work Source: " + processableData.getParentDataSetName());
-		notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+		notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		notes.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		notes.add("Constant Variance: " + constantVariance);
 		notes.add("BMR Factor: " + bmrFactor);

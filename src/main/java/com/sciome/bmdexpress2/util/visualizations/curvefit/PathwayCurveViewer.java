@@ -129,7 +129,7 @@ public class PathwayCurveViewer extends SciomeChartBase<Number, Number>
 			alert.setTitle("Not Available For Your Data");
 			alert.setHeaderText("Not Available For Your Data");
 			alert.setContentText(
-					"The category analysis curve viewer is not available for at least one of these datasets because the data was generated with an older version of BMDExpress.  Please rerun category analysis on the bmdanalysis results with the latest version of BMDExpress2 to be able to view them in curve viewer.");
+					"The category analysis curve viewer is not available for at least one of these datasets because the data was generated with an older version of BMDExpress.  Please rerun category analysis on the bmdanalysis results with the latest version of BMDExpress3 to be able to view them in curve viewer.");
 
 			alert.showAndWait();
 			return;

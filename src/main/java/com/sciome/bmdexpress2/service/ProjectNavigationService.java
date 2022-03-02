@@ -46,6 +46,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 
 	private final int MAX_FILES_FOR_MULTI_EXPORT = 10;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void assignArrayAnnotations(ChipInfo chipInfo, List<DoseResponseExperiment> experiments,
 			FileAnnotation fileAnnotation)
@@ -100,7 +101,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 			notes.add("Chip File Creation Date: " + df2.format(date));
 
 			notes.add("Log Transformation: " + doseResponseExperiment.getLogTransformation());
-			notes.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+			notes.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 			notes.add("Timestamp: " + BMDExpressProperties.getInstance().getTimeStamp());
 			fileAnnotation.getGene2ProbeHash();
 
@@ -121,7 +122,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 						continue;
 					for (String gene : genes)
 					{
-							
+
 						ReferenceGene refGene = refCache.get(gene);
 						if (refGene == null)
 						{
@@ -223,6 +224,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		return filesCreateString;
 	}
 
+	@Override
 	public void exportBMDExpressAnalysisDataSet(BMDExpressAnalysisDataSet bmdResults, File selectedFile)
 	{
 		try
@@ -240,6 +242,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		}
 	}
 
+	@Override
 	public void exportFilteredResults(BMDExpressAnalysisDataSet bmdResults,
 			FilteredList<BMDExpressAnalysisRow> filteredResults, File selectedFile, DataFilterPack pack)
 	{
@@ -272,6 +275,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		}
 	}
 
+	@Override
 	public void exportDoseResponseExperiment(DoseResponseExperiment doseResponseExperiment, File selectedFile)
 	{
 		try
@@ -289,6 +293,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 
 	}
 
+	@Override
 	public void exportBMDResultBestModel(BMDResult bmdResults, File selectedFile)
 	{
 		try
@@ -341,6 +346,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		}
 	}
 
+	@Override
 	public void exportModelParameters(BMDProject bmdProject)
 	{
 		File selectedFile = new File("/tmp/modelParams.txt");
@@ -384,6 +390,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		}
 	}
 
+	@Override
 	public Object[][] showProbeToGeneMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 
@@ -420,6 +427,7 @@ public class ProjectNavigationService implements IProjectNavigationService
 		return matrixData;
 	}
 
+	@Override
 	public Object[][] showGenesToProbeMatrix(DoseResponseExperiment doseResponseExperiment)
 	{
 

@@ -382,7 +382,7 @@ public class BMDAnalysisService implements IBMDAnalysisService
 		analysisInfo.getNotes().add("Data Source: " + processableData.getParentDataSetName());
 		analysisInfo.getNotes().add("Work Source: " + processableData.toString());
 		analysisInfo.getNotes()
-				.add("BMDExpress2 Version: " + BMDExpressProperties.getInstance().getVersion());
+				.add("BMDExpress3 Version: " + BMDExpressProperties.getInstance().getVersion());
 		analysisInfo.getNotes()
 				.add("Timestamp (Start Time): " + BMDExpressProperties.getInstance().getTimeStamp());
 		analysisInfo.getNotes().add("Operating System: " + System.getProperty("os.name"));
