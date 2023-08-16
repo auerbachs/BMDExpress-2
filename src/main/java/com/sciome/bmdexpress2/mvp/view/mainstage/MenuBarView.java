@@ -39,38 +39,38 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 
 	// Menu Bar
 	@FXML
-	private MenuBar			menuBar;
+	private MenuBar menuBar;
 
 	// Menu check items
 	@FXML
-	private CheckMenuItem	useWebServiceCheckMenu;
+	private CheckMenuItem useWebServiceCheckMenu;
 	@FXML
-	private CheckMenuItem	usePrecisionCheckMenu;
+	private CheckMenuItem usePrecisionCheckMenu;
 	@FXML
-	private CheckMenuItem	autoUpdateCheckMenu;
+	private CheckMenuItem autoUpdateCheckMenu;
 
 	// Menu items
 	@FXML
-	private MenuItem		oneWayANOVAMenuItem;
+	private MenuItem oneWayANOVAMenuItem;
 	@FXML
-	private MenuItem		williamsTrendMenuItem;
+	private MenuItem williamsTrendMenuItem;
 	@FXML
-	private MenuItem		oriogenMenuItem;
+	private MenuItem oriogenMenuItem;
 	@FXML
-	private MenuItem		bMDAnalysesMenuItem;
+	private MenuItem bMDAnalysesMenuItem;
 	@FXML
-	private MenuItem		GOAnalysesMenuItem;
+	private MenuItem GOAnalysesMenuItem;
 	@FXML
-	private MenuItem		pathwayAnalysesMenuItem;
+	private MenuItem pathwayAnalysesMenuItem;
 	@FXML
-	private MenuItem		definedCategoryAnalysesMenuItem;
+	private MenuItem definedCategoryAnalysesMenuItem;
 	@FXML
-	private MenuItem		geneLevelBMDMenuItem;
+	private MenuItem geneLevelBMDMenuItem;
 
 	@FXML
-	private MenuItem		bMDAnalysesGcurvePMenuItem;
+	private MenuItem bMDAnalysesGcurvePMenuItem;
 
-	MenuBarPresenter		presenter;
+	MenuBarPresenter presenter;
 
 	public MenuBarView()
 	{
@@ -135,9 +135,14 @@ public class MenuBarView extends BMDExpressViewBase implements IMenuBarView, Ini
 		// prompt the user to select a file and then tell the presenter to fire off loading the experiment
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Import Expression Data");
-		File initialDirectory = new File(BMDExpressProperties.getInstance().getExpressionPath());
-		if (initialDirectory.exists())
-			fileChooser.setInitialDirectory(initialDirectory);
+		try
+		{
+			File initialDirectory = new File(BMDExpressProperties.getInstance().getExpressionPath());
+			if (initialDirectory.exists())
+				fileChooser.setInitialDirectory(initialDirectory);
+		}
+		catch (Exception e)
+		{}
 		fileChooser.getExtensionFilters()
 				.addAll(new ExtensionFilter("Text Files", "*.txt", "*.csv", "*.dat"));
 

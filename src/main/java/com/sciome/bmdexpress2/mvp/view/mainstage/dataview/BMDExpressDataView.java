@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.controlsfx.control.CheckListView;
-import org.controlsfx.control.action.ActionUtils;
 //import org.controlsfx.control.tableview2.actions.ColumnFixAction;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
@@ -55,7 +54,6 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -80,48 +78,47 @@ import javafx.util.Callback;
 public abstract class BMDExpressDataView<T> extends VBox
 		implements DataFilterComponentListener, IBMDExpressDataView
 {
-	protected TableView<BMDExpressAnalysisRow>					tableView				= null;
-	protected HBox												topHBox;
-	protected Label												totalItemsLabel;
-	protected CheckBox											enableFilterCheckBox;
-	protected SplitPane											splitPaneMain;
-	protected SplitPane											splitPane;
-	protected FilterComponentsNode								filtrationNode;
-	protected Button											exportData;
-	protected Button											markData;
-	protected Button											hideFilter;
-	protected Button											hideTable;
-	protected Button											hideCharts;
-	protected Button											toggleColumns;
-	protected Node												dataVisualizationNode;
+	protected TableView<BMDExpressAnalysisRow> tableView = null;
+	protected HBox topHBox;
+	protected Label totalItemsLabel;
+	protected CheckBox enableFilterCheckBox;
+	protected SplitPane splitPaneMain;
+	protected SplitPane splitPane;
+	protected FilterComponentsNode filtrationNode;
+	protected Button exportData;
+	protected Button markData;
+	protected Button hideFilter;
+	protected Button hideTable;
+	protected Button hideCharts;
+	protected Button toggleColumns;
+	protected Node dataVisualizationNode;
 
-	private final String										EXPORT_DATA				= "Export";
-	private final String										EXPORT_FILTERED_DATA	= "Export Filtered Data";
-	private final String										MARK_DATA				= "Mark Data";
-	private final String										HIDE_TABLE				= "Hide Table";
-	private final String										SHOW_TABLE				= "Show Table";
-	private final String										HIDE_FILTER				= "Hide Filter";
-	private final String										SHOW_FILTER				= "Show Filter";
-	private final String										HIDE_CHART				= "Hide Charts";
-	private final String										SHOW_CHART				= "Show Charts";
-	private final String										APPLY_FILTER			= "Apply Filter";
-	private final String										TOGGLE_COLUMNS			= "Toggle Columns";
+	private final String EXPORT_DATA = "Export";
+	private final String EXPORT_FILTERED_DATA = "Export Filtered Data";
+	private final String MARK_DATA = "Mark Data";
+	private final String HIDE_TABLE = "Hide Table";
+	private final String SHOW_TABLE = "Show Table";
+	private final String HIDE_FILTER = "Hide Filter";
+	private final String SHOW_FILTER = "Show Filter";
+	private final String HIDE_CHART = "Hide Charts";
+	private final String SHOW_CHART = "Show Charts";
+	private final String APPLY_FILTER = "Apply Filter";
+	private final String TOGGLE_COLUMNS = "Toggle Columns";
 
-	private FilteredList<BMDExpressAnalysisRow>					filteredData;
-	private BMDExpressAnalysisDataSet							analysisDataSet;
-	protected DataVisualizationView								dataVisualizationController;
-	protected BMDExpressDataViewPresenter<IBMDExpressDataView>	presenter;
-	private Class<?>											filterableClass;
-	protected BMDExpressAnalysisDataSet							bmdAnalysisDataSet;
-	private DataFilterPack										defaultDPack			= null;
-	protected ObservableList<BMDExpressAnalysisRow>				rawTableData			= null;
-	protected LinkedList<String>								columnOrder;
-	protected Map<String, Boolean>								columnMap;
+	private FilteredList<BMDExpressAnalysisRow> filteredData;
+	private BMDExpressAnalysisDataSet analysisDataSet;
+	protected DataVisualizationView dataVisualizationController;
+	protected BMDExpressDataViewPresenter<IBMDExpressDataView> presenter;
+	private Class<?> filterableClass;
+	protected BMDExpressAnalysisDataSet bmdAnalysisDataSet;
+	private DataFilterPack defaultDPack = null;
+	protected ObservableList<BMDExpressAnalysisRow> rawTableData = null;
+	protected LinkedList<String> columnOrder;
+	protected Map<String, Boolean> columnMap;
 
-	private List<String>										prevHeaderList;
-	private Map<String, Map<String, Set<String>>>				dbToPathwayToGeneSet;
-	private Set<String>											markedData				= new TreeSet<>(
-			String.CASE_INSENSITIVE_ORDER);
+	private List<String> prevHeaderList;
+	private Map<String, Map<String, Set<String>>> dbToPathwayToGeneSet;
+	private Set<String> markedData = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
 	@SuppressWarnings("unchecked")
 	public BMDExpressDataView(Class<?> filterableClass, BMDExpressAnalysisDataSet bmdAnalysisDataSet,
@@ -459,8 +456,8 @@ public abstract class BMDExpressDataView<T> extends VBox
 						continue;
 
 					tc = new TableColumn(columnOrder.get(i));
-				//	ContextMenu cm = ActionUtils.createContextMenu(Arrays.asList(new ColumnFixAction(tc)));
-				//	tc.setContextMenu(cm);
+					// ContextMenu cm = ActionUtils.createContextMenu(Arrays.asList(new ColumnFixAction(tc)));
+					// tc.setContextMenu(cm);
 
 					if (columnHeaders2 != null)
 					{
@@ -976,9 +973,14 @@ public abstract class BMDExpressDataView<T> extends VBox
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
-		File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
-		if (initialDirectory.exists())
-			fileChooser.setInitialDirectory(initialDirectory);
+		try
+		{
+			File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
+			if (initialDirectory.exists())
+				fileChooser.setInitialDirectory(initialDirectory);
+		}
+		catch (Exception e)
+		{}
 		fileChooser.setInitialFileName(initName);
 		File selectedFile = fileChooser.showSaveDialog(topHBox.getScene().getWindow());
 

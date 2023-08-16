@@ -43,41 +43,41 @@ import com.sciome.filter.DataFilterPack;
 public class BMDExpressProperties
 {
 
-	private PropertiesParser			propertiesParser;
-	private int							locX, locY, sizeX, sizeY, precision;
-	private String						user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet,
-			proxyHost, proxyPort, endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE,
-			powerVersion, polyVersion, hillVersion, exponentialEXE, exponentialVersion, Rscript,
-			pathwayFilterScript, projectPath, expressionPath, exportPath, definedPath;
-	private boolean						useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate,
-			isWindows, hideTable, hideFilter, hideCharts, applyFilter;
+	private PropertiesParser propertiesParser;
+	private int locX, locY, sizeX, sizeY, precision;
+	private String user, imgName, logoName, projectName, updateURL, httpKEGG, proxySet, proxyHost, proxyPort,
+			endpoint, sqlservice, timeoutMilliseconds, powerEXE, polyEXE, hillEXE, powerVersion, polyVersion,
+			hillVersion, exponentialEXE, exponentialVersion, Rscript, pathwayFilterScript, projectPath,
+			expressionPath, exportPath, definedPath;
+	private boolean useWS, usePrecision, useJNI, ctrldown, projectChanged, autoUpdate, isWindows, hideTable,
+			hideFilter, hideCharts, applyFilter;
 
 	// boolean to be set if the console version is running
-	private boolean						isConsole			= false;
+	private boolean isConsole = false;
 
-	private File						propertyFile;
+	private File propertyFile;
 
-	private static BMDExpressProperties	instance			= null;
+	private static BMDExpressProperties instance = null;
 
-	private Map<String, DataFilterPack>	dataFilterPackMap	= new HashMap<>();
+	private Map<String, DataFilterPack> dataFilterPackMap = new HashMap<>();
 
-	private TableInformation			tableInformation;
+	private TableInformation tableInformation;
 
-	private Properties					versionProperties	= new Properties();
+	private Properties versionProperties = new Properties();
 
-	private WilliamsTrendInput			williamsInput;
+	private WilliamsTrendInput williamsInput;
 
-	private OriogenInput				oriogenInput;
+	private OriogenInput oriogenInput;
 
-	private OneWayANOVAInput			oneWayInput;
+	private OneWayANOVAInput oneWayInput;
 
-	private BMDInput					bmdInput;
+	private BMDInput bmdInput;
 
-	private GCurvePInput				gCurvePInput;
+	private GCurvePInput gCurvePInput;
 
-	private CategoryInput				categoryInput;
+	private CategoryInput categoryInput;
 
-	private String						processInformation;
+	private String processInformation;
 
 	protected BMDExpressProperties()
 	{
@@ -687,6 +687,8 @@ public class BMDExpressProperties
 
 	public String getUpdateURL()
 	{
+		if (updateURL == null)
+			return "https://apps.sciome.com/bmdexpress2/annotations/";
 		return updateURL;
 	}
 

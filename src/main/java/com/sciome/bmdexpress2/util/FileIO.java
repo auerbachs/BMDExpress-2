@@ -105,9 +105,14 @@ public class FileIO
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Tab delimited", "*.txt"));
-		File initialDirectory = new File(BMDExpressProperties.getInstance().getDefinedPath());
-		if (initialDirectory.exists())
-			fileChooser.setInitialDirectory(initialDirectory);
+		try
+		{
+			File initialDirectory = new File(BMDExpressProperties.getInstance().getDefinedPath());
+			if (initialDirectory.exists())
+				fileChooser.setInitialDirectory(initialDirectory);
+		}
+		catch (Exception e)
+		{}
 		File selectedFile = fileChooser.showOpenDialog(owner);
 
 		if (selectedFile != null)

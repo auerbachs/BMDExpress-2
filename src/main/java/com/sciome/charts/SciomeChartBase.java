@@ -52,34 +52,34 @@ import javafx.util.Callback;
  */
 public abstract class SciomeChartBase<X, Y> extends StackPane
 {
-	private String						title;
-	private SciomeChartListener			chartListener;
-	private List<ChartDataPack>			chartDataPacks;
-	private int							maxGraphItems			= 2000000;
-	private Node						chart;
-	private HBox						chartBox;
-	private CheckBox					logXAxis				= new CheckBox("Log X Axis");
-	private CheckBox					logYAxis				= new CheckBox("Log Y Axis");
-	private CheckBox					lockXAxis				= new CheckBox("Lock X Axis");
-	private CheckBox					lockYAxis				= new CheckBox("Lock Y Axis");
-	private VBox						vBox;
-	private Control						vSlider;
-	private Control						hSlider;
-	private boolean						allowXAxisSlider;
-	private boolean						allowYAxisSlider;
+	private String title;
+	private SciomeChartListener chartListener;
+	private List<ChartDataPack> chartDataPacks;
+	private int maxGraphItems = 2000000;
+	private Node chart;
+	private HBox chartBox;
+	private CheckBox logXAxis = new CheckBox("Log X Axis");
+	private CheckBox logYAxis = new CheckBox("Log Y Axis");
+	private CheckBox lockXAxis = new CheckBox("Lock X Axis");
+	private CheckBox lockYAxis = new CheckBox("Lock Y Axis");
+	private VBox vBox;
+	private Control vSlider;
+	private Control hSlider;
+	private boolean allowXAxisSlider;
+	private boolean allowYAxisSlider;
 
-	protected Button					exportToTextButton;
-	protected Button					maxMinButton;
-	protected Button					closeButton;
-	protected Button					configurationButton;
-	private HBox						checkBoxes;
-	private ChartKey[]					chartableKeys;
-	private ChartConfiguration			chartConfiguration;
-	private HBox						overlayButtons;
+	protected Button exportToTextButton;
+	protected Button maxMinButton;
+	protected Button closeButton;
+	protected Button configurationButton;
+	private HBox checkBoxes;
+	private ChartKey[] chartableKeys;
+	private ChartConfiguration chartConfiguration;
+	private HBox overlayButtons;
 
-	private List<SciomeSeries<X, Y>>	seriesData				= new ArrayList<>();
+	private List<SciomeSeries<X, Y>> seriesData = new ArrayList<>();
 
-	private Set<Object>					conversationalObjects	= new HashSet<>();
+	private Set<Object> conversationalObjects = new HashSet<>();
 
 	public SciomeChartBase(String title, List<ChartDataPack> chartDataPacks, ChartKey[] keys,
 			boolean allowXAxisSlider, boolean allowYAxisSlider, SciomeChartListener chartListener)
@@ -630,9 +630,14 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(title);
-		File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
-		if (initialDirectory.exists())
-			fileChooser.setInitialDirectory(initialDirectory);
+		try
+		{
+			File initialDirectory = new File(BMDExpressProperties.getInstance().getExportPath());
+			if (initialDirectory.exists())
+				fileChooser.setInitialDirectory(initialDirectory);
+		}
+		catch (Exception e)
+		{}
 		fileChooser.setInitialFileName("chartdataExport.txt");
 		File selectedFile = fileChooser.showSaveDialog(this.getScene().getWindow());
 
@@ -660,9 +665,9 @@ public abstract class SciomeChartBase<X, Y> extends StackPane
 	 */
 	protected class ChartExtraValue
 	{
-		public String	label;
-		public Integer	count;
-		public Object	userData;
+		public String label;
+		public Integer count;
+		public Object userData;
 
 		public ChartExtraValue(String l, Integer c, Object u)
 		{
