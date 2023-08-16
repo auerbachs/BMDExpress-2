@@ -5,7 +5,17 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on January 5, 2021</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on August 16, 2023</h2>
+<h3>
+Bug Fix on August 16, 2023
+</h3>
+<ul>
+<li>Fixed issue when running multiple One Way Anova analyses causing LOTEL/NOTEL 
+calculation to shuffle p-value and fold change parameters in GUI. This was not
+an issue when running one dataset at a time and in the command line version </li>
+<li>Fixed issue cause by invalid default folder path for exporting and importing data.</li>
+</ul>
+
 <h3>
 New Features on July 15, 2020
 </h3>
