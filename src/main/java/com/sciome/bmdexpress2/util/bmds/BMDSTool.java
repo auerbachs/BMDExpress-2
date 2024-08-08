@@ -340,7 +340,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 				i = 3.0;
 			}
 
-			flagRatio = 1.0 / (1.0 + i);
+			flagRatio = 1.0 / ( i);
 			flagRatio = NumberManager.numberFormat(8, flagRatio);
 		}
 
