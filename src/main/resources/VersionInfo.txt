@@ -5,7 +5,17 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on August 16, 2023</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on August 8, 2024</h2>
+
+<h3>
+Bug Fixes
+</h3>
+<ul>
+<li>Fixed issue when flagging hill models when BMD is below the lowest dose. Previously the application would
+interpret 1/3 as 1/4 and 1/2 as 1/3 due to an issue creating the flag hill ratio value.
+</li>
+</ul>
+
 <h3>
 Bug Fix on August 16, 2023
 </h3>
