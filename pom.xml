@@ -182,7 +182,7 @@
          <dependency>
          	<groupId>sciome-commons</groupId>
   			<artifactId>math</artifactId>
- 	 		<version>1.04.0134</version>
+ 	 		<version>1.04.0139</version>
          </dependency>
          
          	<!-- https://mvnrepository.com/artifact/gov.nist.math/jama -->
