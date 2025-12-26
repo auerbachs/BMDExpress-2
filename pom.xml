@@ -178,11 +178,11 @@
 		    <version>11.0.1</version>
 		</dependency>
 
-		<!-- sciome commons math functions-->
+		<!-- sciome commons math functions -->
          <dependency>
          	<groupId>sciome-commons</groupId>
   			<artifactId>math</artifactId>
- 	 		<version>1.04.0139</version>
+ 	 		<version>1.04.0144</version>
          </dependency>
          
          	<!-- https://mvnrepository.com/artifact/gov.nist.math/jama -->
