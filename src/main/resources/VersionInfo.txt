@@ -5,7 +5,17 @@
 </h1>
 
 
-<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on September 18, 2025</h2>
+<h2>Version <MAJOR_VERSION> BUILD <SUBVERSION_VERSION_NUMBER> released on December 26, 2025</h2>
+
+<h3>
+Bug Fixes
+</h3>
+<ul>
+<li>Update httk library used within software.
+</li>
+</ul>
+
+<h2>Bug Fix on September 18, 2025</h2>
 
 <h3>
 Bug Fixes
@@ -14,7 +24,6 @@ Bug Fixes
 <li>Update Java version and fix Windows runtime issue.
 </li>
 </ul>
-
 
 <h2>Bug Fix on August 8, 2024</h2>
 
@@ -236,4 +245,5 @@ New Major Release 2.2
 
 </body>
 </html>
+
 
