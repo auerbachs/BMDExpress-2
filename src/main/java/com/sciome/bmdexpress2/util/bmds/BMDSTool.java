@@ -328,7 +328,7 @@ public class BMDSTool implements IModelProgressUpdater, IProbeIndexGetter
 		if (modelSelectionParameters.isFlagHillModel())
 		{
 
-			double i = 0.0;
+			double i = 1.0;
 			if (modelSelectionParameters
 					.getFlagHillModelDose() == FlagHillModelDoseEnum.ONE_HALF_OF_LOWEST_DOSE)
 			{
